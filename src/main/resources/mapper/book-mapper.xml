@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.BookMapper">
+
+    <sql id="selectFields">
+        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, personnel, authors,
+        companies, serials, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
+        edited_time, status
+    </sql>
+
+    <sql id="insertFields">
+        title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, personnel, authors,
+        companies, serials, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
+        edited_time, status
+    </sql>
+
+    <select id="getAll" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+    </select>
+
+    <select id="getBook" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getBooks" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by
+        <if test="ids != null and ids.size() != 0">
+            <foreach item="item" index="index" collection="ids" open="FIELD(id,"
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <insert id="addBook" parameterType="Book" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into book (<include refid="insertFields"></include>)
+        values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{franchises}, #{products}, #{region},
+        #{lang}, #{personnel}, #{authors}, #{companies}, #{serials}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
+        #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{status})
+    </insert>
+
+    <update id="updateBook" parameterType="Book" keyProperty="id">
+        update book
+        set
+        title = #{book.title}, title_en = #{book.titleEn}, title_zh = #{book.titleZh}, isbn_10 = #{book.isbn10},
+        isbn_13 = #{book.isbn13}, book_type = #{book.bookType}, franchises = #{book.franchises}, products = #{book.products},
+        region = #{book.region}, lang = #{book.lang}, serials = #{book.serials},
+        publish_date = #{book.publishDate}, price = #{book.price}, summary = #{book.summary},
+        has_bonus = #{book.hasBonus}, remark = #{book.remark}, edited_time = #{book.editedTime}
+        where id = #{book.id}
+    </update>
+
+    <delete id="deleteBook">
+        delete
+        from book
+        where id = #{id}
+    </delete>
+
+    <update id="updateBookAuthors" keyProperty="id">
+        update book
+        set
+        authors = #{authors}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <select id="getBooksByFilter" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        <where>
+            <if test="title != null and title != '' ">
+                and title like concat('%', #{title}, '%')
+            </if>
+            <if test="isbn10 != null and isbn10 != '' ">
+                and isbn_10 like concat('%', #{isbn10}, '%')
+            </if>
+            <if test="isbn13 != null and isbn13 != '' ">
+                and isbn_13 like concat('%', #{isbn13}, '%')
+            </if>
+            <if test="serials != null and serials.size() != 0">
+                <foreach item="item" index="index" collection="serials" open=""
+                         close="" separator="">
+                    and json_contains(book.serials, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="region != null and region != '' ">
+                and region = #{region}
+            </if>
+            <if test="lang != null and lang != '' ">
+                and lang = #{lang}
+            </if>
+            <if test="bookType != 100 ">
+                and book_type = #{bookType}
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(book.franchises, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(book.products, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'publishDate'">
+            <if test="sortOrder == 1">
+                order by publish_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by publish_date desc
+            </if>
+        </if>
+        <if test="sortField == 'price'">
+            <if test="sortOrder == 1">
+                order by price asc
+            </if>
+            <if test="sortOrder == -1">
+                order by price desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getBooksRowsByFilter" resultType="int">
+        select count(id)
+        from book
+        <where>
+            <if test="title != null and title != '' ">
+                and title like concat('%', #{title}, '%')
+            </if>
+            <if test="isbn10 != null and isbn10 != '' ">
+                and isbn_10 like concat('%', #{isbn10}, '%')
+            </if>
+            <if test="isbn13 != null and isbn13 != '' ">
+                and isbn_13 like concat('%', #{isbn13}, '%')
+            </if>
+            <if test="serials != null and serials.size() != 0">
+                <foreach item="item" index="index" collection="serials" open=""
+                         close="" separator="">
+                    and json_contains(book.serials, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="region != null and region != '' ">
+                and region = #{region}
+            </if>
+            <if test="lang != null and lang != '' ">
+                and lang = #{lang}
+            </if>
+            <if test="bookType != 100 ">
+                and book_type = #{bookType}
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(book.franchises, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(book.products, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="simpleSearch" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where
+        (
+        isbn_10 like concat('%', #{keyWorld}, '%')
+        or isbn_13 like concat('%', #{keyWorld}, '%')
+        or title like concat('%', #{keyWorld}, '%')
+        or title_zh like concat('%', #{keyWorld}, '%')
+        or title_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by publish_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from book
+        where
+        (
+        isbn_10 like concat('%', #{keyWorld}, '%')
+        or isbn_13 like concat('%', #{keyWorld}, '%')
+        or title like concat('%', #{keyWorld}, '%')
+        or title_zh like concat('%', #{keyWorld}, '%')
+        or title_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
+
+    <select id="getBooksOrderByAddedTime" resultType="Book">
+        select
+        <include refid="selectFields"></include>
+        from book
+        where status = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+</mapper>

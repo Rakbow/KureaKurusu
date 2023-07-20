@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.AlbumMapper">
+
+    <sql id="selectFields">
+        id, catalog_no, name, name_zh, name_en, barcode, release_date, publish_format,
+        price, currency_unit, album_format, media_format, companies,
+        has_bonus, bonus, description, remark, franchises, products, artists, images, track_info,
+        added_time, edited_time, status
+    </sql>
+
+    <sql id="insertFields">
+        catalog_no, name, name_zh, name_en, barcode, release_date, publish_format, price, currency_unit,
+        album_format, media_format, companies, has_bonus, bonus, description,
+        remark, franchises, products, artists, images, track_info, added_time, edited_time, status
+    </sql>
+
+    <select id="getAlbum" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getAlbums" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by
+        <if test="ids != null and ids.size() != 0">
+            <foreach item="item" index="index" collection="ids" open="FIELD(id,"
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getAll" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+    </select>
+
+    <insert id="addAlbum" useGeneratedKeys="true" keyProperty="id">
+        insert into album (<include refid="insertFields"></include>)
+        values (#{catalogNo}, #{name}, #{nameZh}, #{nameEn}, #{barcode}, #{releaseDate}, #{publishFormat},
+        #{price}, #{currencyUnit}, #{albumFormat}, #{mediaFormat}, #{companies},
+        #{hasBonus}, #{bonus}, #{description}, #{remark}, #{franchises}, #{products}, #{artists}, #{images},
+        #{trackInfo}, #{addedTime}, #{editedTime}, #{status})
+    </insert>
+
+    <update id="updateAlbum" parameterType="Album" keyProperty="id">
+        update album
+        set
+        catalog_no = #{album.catalogNo}, name = #{album.name}, name_zh = #{album.nameZh}, name_en = #{album.nameEn},
+        barcode = #{album.barcode}, release_date = #{album.releaseDate}, publish_format = #{album.publishFormat},
+        price = #{album.price}, currency_unit = #{album.currencyUnit}, album_format = #{album.albumFormat},
+        media_format = #{album.mediaFormat}, has_bonus = #{album.hasBonus},
+        remark = #{album.remark}, franchises = #{album.franchises}, products = #{album.products},
+        edited_time = #{album.editedTime}
+        where id = #{album.id}
+    </update>
+
+    <delete id="deleteAlbumById">
+        delete
+        from album
+        where id = #{id}
+    </delete>
+
+    <update id="updateAlbumImages" keyProperty="id">
+        update album
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateAlbumTrackInfo" keyProperty="id">
+        update album
+        set
+        track_info = #{trackInfo}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <select id="getAlbumOrderByAddedTime" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where status = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="getAlbumsByFilter" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        <where>
+            <if test="catalogNo != null and catalogNo != '' ">
+                and catalog_no like concat('%', #{catalogNo}, '%')
+            </if>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(album.franchises, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(album.products, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="publishFormat != null and publishFormat.size() != 0">
+                <foreach item="item" index="index" collection="publishFormat" open=""
+                         close="" separator="">
+                    and json_contains(album.publish_format, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="albumFormat != null and albumFormat.size() != 0">
+                <foreach item="item" index="index" collection="albumFormat" open=""
+                         close="" separator="">
+                    and json_contains(album.album_format, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="mediaFormat != null and mediaFormat.size() != 0">
+                <foreach item="item" index="index" collection="mediaFormat" open=""
+                         close="" separator="">
+                    and json_contains(album.media_format, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'price'">
+            <if test="sortOrder == 1">
+                order by price asc
+            </if>
+            <if test="sortOrder == -1">
+                order by price desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getAlbumRowsByFilter" resultType="int">
+        select count(id)
+        from album
+        <where>
+            <if test="catalogNo != null and catalogNo != '' ">
+                and catalog_no like concat('%', #{catalogNo}, '%')
+            </if>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(album.franchises, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(album.products, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="publishFormat != null and publishFormat.size() != 0">
+                <foreach item="item" index="index" collection="publishFormat" open=""
+                         close="" separator="">
+                    and json_contains(album.publish_format, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="albumFormat != null and albumFormat.size() != 0">
+                <foreach item="item" index="index" collection="albumFormat" open=""
+                         close="" separator="">
+                    and json_contains(album.album_format, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="mediaFormat != null and mediaFormat.size() != 0">
+                <foreach item="item" index="index" collection="mediaFormat" open=""
+                         close="" separator="">
+                    and json_contains(album.media_format, JSON_ARRAY( #{item} ))
+                </foreach>
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="simpleSearch" resultType="Album">
+        select
+        <include refid="selectFields"></include>
+        from album
+        where
+        (
+        catalog_no like concat('%', #{keyWorld}, '%')
+        or name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by release_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from album
+        where
+        (
+        catalog_no like concat('%', #{keyWorld}, '%')
+        or name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
+
+</mapper>

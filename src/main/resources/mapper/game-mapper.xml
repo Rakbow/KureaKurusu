@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.GameMapper">
+
+    <sql id="selectFields">
+        id, name, name_zh, name_en, barcode, franchises, products, release_date, release_type, platform,
+        region, has_bonus, organizations, staffs, images, description, bonus, remark, added_time, edited_time, status
+    </sql>
+
+    <sql id="insertFields">
+        name, name_zh, name_en, barcode, franchises, products, release_date, release_type, platform,
+        region, has_bonus, organizations, staffs, images, description, bonus, remark, added_time, edited_time, status
+    </sql>
+
+    <select id="getGame" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getGames" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by
+        <if test="ids != null and ids.size() != 0">
+            <foreach item="item" index="index" collection="ids" open="FIELD(id,"
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getAll" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+    </select>
+
+    <insert id="addGame" parameterType="Game" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into game (<include refid="insertFields"></include>)
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{releaseDate},#{releaseType},
+        #{platform}, #{region}, #{hasBonus}, #{organizations}, #{staffs}, #{images}, #{description}, #{bonus}, #{remark},
+        #{addedTime}, #{editedTime}, #{status})
+    </insert>
+
+    <update id="updateGame" parameterType="Game" keyProperty="id">
+        update game
+        set
+        name = #{game.name}, name_zh = #{game.nameZh}, name_en = #{game.nameEn}, barcode = #{game.barcode},
+        franchises = #{game.franchises}, products = #{game.products}, release_date = #{game.releaseDate},
+        release_type = #{game.releaseType}, platform = #{game.platform}, region = #{game.region},
+        has_bonus = #{game.hasBonus}, remark = #{game.remark}, edited_time = #{game.editedTime}
+        where id = #{game.id}
+    </update>
+
+    <delete id="deleteGame">
+        delete
+        from game
+        where id = #{id}
+    </delete>
+
+    <update id="updateGameOrganizations" keyProperty="id">
+        update game
+        set
+        organizations = #{organizations}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateGameStaffs" keyProperty="id">
+        update game
+        set
+        staffs = #{staffs}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <select id="getGamesByFilter" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="platform != 100 ">
+                and platform = #{platform}
+            </if>
+            <if test="region != null and region != '' ">
+                and region = #{region}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getGamesRowsByFilter" resultType="int">
+        select count(id)
+        from game
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="hasBonus != null and hasBonus != '' ">
+                and has_bonus = #{hasBonus}
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="platform != 100 ">
+                and platform = #{platform}
+            </if>
+            <if test="region != null and region != '' ">
+                and region = #{region}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="getGamesOrderByAddedTime" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+        where status = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="simpleSearch" resultType="Game">
+        select
+        <include refid="selectFields"></include>
+        from game
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by release_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from game
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
+
+</mapper>

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.MerchMapper">
+
+    <sql id="selectFields">
+        id, name, name_zh, name_en, barcode, franchises, products, category, region, release_date, price, currency_unit,
+        not_for_sale, spec, description, images, remark, added_time, edited_time, status
+    </sql>
+
+    <sql id="insertFields">
+        name, name_zh, name_en, barcode, franchises, products, category, region, release_date, price, currency_unit,
+        not_for_sale, spec, description, images, remark, added_time, edited_time, status
+    </sql>
+
+    <select id="getMerch" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where id = #{id}
+        <if test="!status">
+            and status = 1
+        </if>
+    </select>
+
+    <select id="getMerchs" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by
+        <if test="ids != null and ids.size() != 0">
+            <foreach item="item" index="index" collection="ids" open="FIELD(id,"
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getAll" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+    </select>
+
+    <insert id="addMerch" parameterType="Merch" useGeneratedKeys="true" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into merch (<include refid="insertFields"></include>)
+        values (#{name}, #{nameZh}, #{nameEn}, #{barcode}, #{franchises}, #{products}, #{category}, #{region},
+        #{releaseDate}, #{price}, #{currencyUnit}, #{notForSale}, #{spec}, #{description}, #{images}, #{remark},
+        #{addedTime}, #{editedTime}, #{status})
+    </insert>
+
+    <update id="updateMerch" parameterType="Merch" keyProperty="id">
+        update merch
+        set
+        name = #{merch.name}, name_zh = #{merch.nameZh}, name_en = #{merch.nameEn}, barcode = #{merch.barcode},
+        franchises = #{merch.franchises}, products = #{merch.products}, category = #{merch.category},
+        region = #{merch.region}, release_date = #{merch.releaseDate}, price = #{merch.price},
+        currency_unit = #{merch.currencyUnit}, not_for_sale = #{merch.notForSale}, description = #{merch.description},
+        remark = #{merch.remark}, edited_time = #{merch.editedTime}
+        where id = #{merch.id}
+    </update>
+
+    <delete id="deleteMerch">
+        delete
+        from merch
+        where id = #{id}
+    </delete>
+
+    <select id="getMerchsByFilter" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="barcode != null and barcode != '' ">
+                and barcode like concat('%', #{barcode}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="category != 100 ">
+                and category = #{category}
+            </if>
+            <if test="region != null and region != '' ">
+                and region like concat('%', #{region}, '%')
+            </if>
+            <if test="notForSale != null and notForSale != '' ">
+                and not_for_sale = #{notForSale}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+        <if test="sortField == 'id'">
+            <if test="sortOrder == 1">
+                order by id asc
+            </if>
+            <if test="sortOrder == -1">
+                order by id desc
+            </if>
+        </if>
+        <if test="sortField == 'releaseDate'">
+            <if test="sortOrder == 1">
+                order by release_date asc
+            </if>
+            <if test="sortOrder == -1">
+                order by release_date desc
+            </if>
+        </if>
+        <if test="sortField == 'price'">
+            <if test="sortOrder == 1">
+                order by price asc
+            </if>
+            <if test="sortOrder == -1">
+                order by price desc
+            </if>
+        </if>
+        <if test="sortField == 'status'">
+            <if test="sortOrder == 1">
+                order by status asc
+            </if>
+            <if test="sortOrder == -1">
+                order by status desc
+            </if>
+        </if>
+        <if test="sortField == null">
+            order by id desc
+        </if>
+        <if test="row != 0">
+            limit #{first}, #{row}
+        </if>
+    </select>
+
+    <select id="getMerchsRowsByFilter" resultType="int">
+        select count(id)
+        from merch
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="barcode != null and barcode != '' ">
+                and barcode like concat('%', #{barcode}, '%')
+            </if>
+            <if test="franchises != null and franchises.size() != 0">
+                <foreach item="item" index="index" collection="franchises" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(franchises as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="products != null and products.size() != 0">
+                <foreach item="item" index="index" collection="products" open=""
+                         close="" separator="">
+                    and json_contains(JSON_EXTRACT(cast(products as json), '$.ids'),JSON_ARRAY( #{item} )) = 1
+                </foreach>
+            </if>
+            <if test="category != 100 ">
+                and category = #{category}
+            </if>
+            <if test="region != null and region != '' ">
+                and region like concat('%', #{region}, '%')
+            </if>
+            <if test="notForSale != null and notForSale != '' ">
+                and not_for_sale = #{notForSale}
+            </if>
+            <if test="!status">
+                and status = 1
+            </if>
+        </where>
+    </select>
+
+    <select id="getMerchsOrderByAddedTime" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where status = 1
+        order by added_time desc
+        limit #{limit}
+    </select>
+
+    <select id="simpleSearch" resultType="Merch">
+        select
+        <include refid="selectFields"></include>
+        from merch
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+        order by release_date desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="simpleSearchCount" resultType="int">
+        select count(id)
+        from merch
+        where
+        (
+        name like concat('%', #{keyWorld}, '%')
+        or name_zh like concat('%', #{keyWorld}, '%')
+        or name_en like concat('%', #{keyWorld}, '%')
+        )
+        and status = 1
+    </select>
+
+</mapper>
