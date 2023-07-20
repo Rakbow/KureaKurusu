@@ -68,7 +68,8 @@ public class EntryUtil {
                 newItem.put("main", 1);
             }
 
-            newItem.put("role", DataFinder.findAttributeByValue(orgItem.getIntValue("role"), allRole));
+            Attribute role = DataFinder.findAttributeByValue(orgItem.getIntValue("role"), allRole);
+            newItem.put("role", role != null ? role : new Attribute(0, "default"));
 
             List<Attribute> members = new ArrayList<>();
             List<Integer> memberIds = orgItem.getList("members", Integer.class);

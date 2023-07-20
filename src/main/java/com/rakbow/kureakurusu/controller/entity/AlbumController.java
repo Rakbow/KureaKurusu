@@ -114,7 +114,20 @@ public class AlbumController {
 
             String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
 
-            res.data = albumService.buildVO(album, musics);
+            JSONObject detailResult = new JSONObject();
+
+            detailResult.put("album", albumService.buildVO(album, musics));
+
+            if(AuthorityInterceptor.isUser()) {
+                detailResult.put("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
+            }
+
+            detailResult.put("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
+            detailResult.put("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
+            detailResult.put("pageInfo", entityService.getPageInfo(Entity.ALBUM.getId(), id, album));
+            detailResult.put("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
+
+            res.data = detailResult;
         }catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
