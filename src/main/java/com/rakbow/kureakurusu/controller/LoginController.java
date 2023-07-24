@@ -1,6 +1,9 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.google.code.kaptcha.Producer;
+import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.data.ApiInfo;
@@ -91,7 +94,7 @@ public class LoginController {
         return "/site/operate-result";
     }
 
-    //获取验证码
+    //获取验证码图片
     @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
     public void getKaptcha(HttpServletResponse response, HttpSession session) {
         // 生成验证码
@@ -112,6 +115,7 @@ public class LoginController {
     }
 
     //登录
+    /*
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public String login(String username, String password, String verifyCode, boolean rememberMe,
                         Model model, HttpSession session, HttpServletResponse response) {
@@ -135,6 +139,44 @@ public class LoginController {
             model.addAttribute("error", map.get("error"));
             return "/site/login";
         }
+    }
+    */
+
+    @RequestMapping(path = "/login", method = RequestMethod.POST)
+    @ResponseBody
+    public String login(@RequestBody JSONObject json, HttpSession session, HttpServletResponse response) {
+        ApiResult res = new ApiResult();
+        try {
+            String verifyCode = json.getString("verifyCode");
+            // 检查验证码
+            String kaptcha = (String) session.getAttribute("kaptcha");
+            if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
+                res.setErrorMessage(ApiInfo.INCORRECT_VERIFY_CODE);
+                return JSON.toJSONString(res);
+            }
+
+            //检查是否记住 => 设置缓存时间
+            boolean rememberMe = json.getBoolean("rememberMe");
+            int expiredSeconds = rememberMe ? CommonConstant.REMEMBER_EXPIRED_SECONDS : CommonConstant.DEFAULT_EXPIRED_SECONDS;
+
+            String username = json.getString("username");
+            String password = json.getString("password");
+
+            //// 检查账号,密码
+            Map<String, String> map = userService.login(username, password, expiredSeconds);
+            if (!map.containsKey("ticket")) {
+                res.setErrorMessage(map.get("error"));
+                return JSON.toJSONString(res);
+            } else {
+                Cookie cookie = new Cookie("ticket", map.get("ticket"));
+                cookie.setPath(contextPath);
+                cookie.setMaxAge(expiredSeconds);
+                response.addCookie(cookie);
+            }
+        }catch (Exception e) {
+            res.setErrorMessage(e.getMessage());
+        }
+        return JSON.toJSONString(res);
     }
 
     @RequestMapping(path = "/logout", method = RequestMethod.GET)
