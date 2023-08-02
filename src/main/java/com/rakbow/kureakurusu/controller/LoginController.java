@@ -114,34 +114,6 @@ public class LoginController {
         }
     }
 
-    //登录
-    /*
-    @RequestMapping(path = "/login", method = RequestMethod.POST)
-    public String login(String username, String password, String verifyCode, boolean rememberMe,
-                        Model model, HttpSession session, HttpServletResponse response) {
-        // 检查验证码
-        String kaptcha = (String) session.getAttribute("kaptcha");
-        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
-            model.addAttribute("error", ApiInfo.INCORRECT_VERIFY_CODE);
-            return "/site/login";
-        }
-
-        // 检查账号,密码
-        int expiredSeconds = rememberMe ? CommonConstant.REMEMBER_EXPIRED_SECONDS : CommonConstant.DEFAULT_EXPIRED_SECONDS;
-        Map<String, String> map = userService.login(username, password, expiredSeconds);
-        if (map.containsKey("ticket")) {
-            Cookie cookie = new Cookie("ticket", map.get("ticket"));
-            cookie.setPath(contextPath);
-            cookie.setMaxAge(expiredSeconds);
-            response.addCookie(cookie);
-            return "redirect:/";
-        } else {
-            model.addAttribute("error", map.get("error"));
-            return "/site/login";
-        }
-    }
-    */
-
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     @ResponseBody
     public String login(@RequestBody JSONObject json, HttpSession session, HttpServletResponse response) {
@@ -173,17 +145,30 @@ public class LoginController {
                 cookie.setMaxAge(expiredSeconds);
                 response.addCookie(cookie);
             }
-        }catch (Exception e) {
+
+            JSONObject result = new JSONObject();
+            result.put("user", map.get("user"));
+            result.put("token", map.get("ticket"));
+            res.data = result;
+
+        } catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
         return JSON.toJSONString(res);
     }
 
-    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    @RequestMapping(path = "/logout", method = RequestMethod.POST)
+    @ResponseBody
     public String logout(@CookieValue("ticket") String ticket) {
-        userService.logout(ticket);
-        SecurityContextHolder.clearContext();
-        return "redirect:/login";
+        ApiResult res = new ApiResult();
+        try {
+            userService.logout(ticket);
+            SecurityContextHolder.clearContext();
+        } catch (Exception e) {
+            res.setErrorMessage(e.getMessage());
+        }
+        return JSON.toJSONString(res);
     }
+
 
 }

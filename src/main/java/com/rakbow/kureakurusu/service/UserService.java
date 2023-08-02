@@ -1,8 +1,10 @@
 package com.rakbow.kureakurusu.service;
 
+import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
+import com.rakbow.kureakurusu.data.system.LoginUser;
 import com.rakbow.kureakurusu.entity.LoginTicket;
 import com.rakbow.kureakurusu.entity.User;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
@@ -12,7 +14,6 @@ import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.MailClient;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -157,11 +158,16 @@ public class UserService{
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommonUtil.generateUUID());
-        loginTicket.setStatus(0);
-        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
         loginTicketMapper.insertLoginTicket(loginTicket);
 
         map.put("ticket", loginTicket.getTicket());
+
+        LoginUser loginUser = new LoginUser();
+        loginUser.create(user);
+
+        map.put("user", JSON.toJSONString(loginUser));
+
         return map;
     }
 
@@ -173,8 +179,8 @@ public class UserService{
         return loginTicketMapper.selectByTicket(ticket);
     }
 
-    public int updateHeader(int userId, String headerUrl) {
-        return userMapper.updateHeader(userId, headerUrl);
+    public void updateHeader(int userId, String headerUrl) {
+        userMapper.updateHeader(userId, headerUrl);
     }
 
     //配置用户权限!!!
@@ -184,33 +190,12 @@ public class UserService{
         List<GrantedAuthority> list = new ArrayList<>();
 
         switch (user.getType()) {
-            case 0:
-                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.ADMIN.getNameEn()));
-                break;
-            case 1:
-                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.USER.getNameEn()));
-                break;
-            case 2:
-                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()));
-                break;
-            case 3:
-                list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()));
-                break;
+            case 0 -> list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.ADMIN.getNameEn()));
+            case 1 -> list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.USER.getNameEn()));
+            case 2 -> list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()));
+            case 3 -> list.add(new SimpleGrantedAuthority("ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()));
         }
 
-        // list.add((GrantedAuthority) () -> {
-        //     switch (user.getType()) {
-        //         case 0:
-        //             return UserAuthority.ADMIN.getNameEn();
-        //         case 1:
-        //             return UserAuthority.USER.getNameEn();
-        //         case 2:
-        //             return UserAuthority.JUNIOR_EDITOR.getNameEn();
-        //         case 3:
-        //             return UserAuthority.SENIOR_EDITOR.getNameEn();
-        //     }
-        //     return null;
-        // });
         return list;
     }
 

@@ -19,4 +19,11 @@ public class LoginTicket {
     private int status;
     private Date expired;
 
+    public LoginTicket() {
+        id = 0;
+        userId = 0;
+        ticket = "";
+        status = 0;
+    }
+
 }
