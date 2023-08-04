@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
+import com.rakbow.kureakurusu.data.system.LoginResult;
 import com.rakbow.kureakurusu.data.system.LoginUser;
 import com.rakbow.kureakurusu.entity.LoginTicket;
 import com.rakbow.kureakurusu.entity.User;
@@ -122,36 +123,36 @@ public class UserService{
     }
 
     //登录
-    public Map<String, String> login(String username, String password, int expiredSeconds) {
-        Map<String, String> map = new HashMap<>();
+    public LoginResult login(String username, String password, int expiredSeconds) {
+        LoginResult res = new LoginResult();
         // 空值处理
         if (StringUtils.isBlank(username)) {
-            map.put("error", ApiInfo.USERNAME_ARE_EMPTY);
-            return map;
+            res.setError(ApiInfo.USERNAME_ARE_EMPTY);
+            return res;
         }
         if (StringUtils.isBlank(password)) {
-            map.put("error", ApiInfo.PASSWORD_ARE_EMPTY);
-            return map;
+            res.setError(ApiInfo.PASSWORD_ARE_EMPTY);
+            return res;
         }
 
         // 验证账号
         User user = userMapper.selectUserByUsername(username);
         if (user == null) {
-            map.put("error", ApiInfo.USER_NOT_EXIST);
-            return map;
+            res.setError(ApiInfo.USER_NOT_EXIST);
+            return res;
         }
 
         // 验证状态
         if (user.getStatus() == 0) {
-            map.put("error", ApiInfo.USER_ARE_INACTIVATED);
-            return map;
+            res.setError(ApiInfo.USER_ARE_INACTIVATED);
+            return res;
         }
 
         // 验证密码
         password = CommonUtil.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
-            map.put("error", ApiInfo.INCORRECT_PASSWORD);
-            return map;
+            res.setError(ApiInfo.INCORRECT_PASSWORD);
+            return res;
         }
 
         // 生成登录凭证
@@ -161,14 +162,14 @@ public class UserService{
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
         loginTicketMapper.insertLoginTicket(loginTicket);
 
-        map.put("ticket", loginTicket.getTicket());
+        res.setTicket(loginTicket.getTicket());
 
         LoginUser loginUser = new LoginUser();
         loginUser.create(user);
 
-        map.put("user", JSON.toJSONString(loginUser));
+        res.setUser(loginUser);
 
-        return map;
+        return res;
     }
 
     public void logout(String ticket) {

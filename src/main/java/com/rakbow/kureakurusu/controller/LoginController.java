@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.system.LoginResult;
 import com.rakbow.kureakurusu.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.data.ApiInfo;
@@ -135,20 +136,20 @@ public class LoginController {
             String password = json.getString("password");
 
             //// 检查账号,密码
-            Map<String, String> map = userService.login(username, password, expiredSeconds);
-            if (!map.containsKey("ticket")) {
-                res.setErrorMessage(map.get("error"));
+            LoginResult loginResult = userService.login(username, password, expiredSeconds);
+            if (loginResult.getTicket() == null) {
+                res.setErrorMessage(loginResult.getError());
                 return JSON.toJSONString(res);
             } else {
-                Cookie cookie = new Cookie("ticket", map.get("ticket"));
+                Cookie cookie = new Cookie("ticket", loginResult.getTicket());
                 cookie.setPath(contextPath);
                 cookie.setMaxAge(expiredSeconds);
                 response.addCookie(cookie);
             }
 
             JSONObject result = new JSONObject();
-            result.put("user", map.get("user"));
-            result.put("token", map.get("ticket"));
+            result.put("user", loginResult.getUser());
+            result.put("token", loginResult.getTicket());
             res.data = result;
 
         } catch (Exception e) {
@@ -159,11 +160,17 @@ public class LoginController {
 
     @RequestMapping(path = "/logout", method = RequestMethod.POST)
     @ResponseBody
-    public String logout(@CookieValue("ticket") String ticket) {
+    public String logout(@CookieValue("ticket") String ticket, HttpServletResponse response) {
         ApiResult res = new ApiResult();
         try {
             userService.logout(ticket);
             SecurityContextHolder.clearContext();
+
+            //清楚cookie
+            Cookie cookie = new Cookie("ticket", null);
+            cookie.setPath(contextPath);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
         } catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
