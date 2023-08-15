@@ -223,7 +223,7 @@ public class EntityController {
         try {
             int entityId = json.getInteger("entityId");
             String entityName = Entity.getTableName(json.getIntValue("entityType"));
-            String description = json.get("description").toString();
+            String description = json.get("text").toString();
             entityService.updateItemDescription(entityName, entityId, description);
             res.message = ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
         } catch (Exception e) {
@@ -240,7 +240,7 @@ public class EntityController {
         try {
             int entityId = json.getInteger("entityId");
             String tableName = Entity.getTableName(json.getIntValue("entityType"));
-            String bonus = json.getString("bonus");
+            String bonus = json.getString("text");
             entityService.updateItemBonus(tableName, entityId, bonus);
             res.message = ApiInfo.UPDATE_BONUS_SUCCESS;
         } catch (Exception e) {
