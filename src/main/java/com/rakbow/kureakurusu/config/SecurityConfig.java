@@ -56,9 +56,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .antMatchers(
                         //region 需要初级编辑权限
-                        "/db/update-description",
-                        "/db/update-bonus",
-                        "/db/update-companies",
+                        "/db/update-item-description",
+                        "/db/update-item-bonus",
+                        "/db/update-item-companies",
+                        "/db/update-item-specs",
+                        "/db/update-item-personnel",
 
                         "/db/album/add",
                         "/db/album/update",
