@@ -125,7 +125,7 @@ public class LoginController {
             String kaptcha = (String) session.getAttribute("kaptcha");
             if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
                 res.setErrorMessage(ApiInfo.INCORRECT_VERIFY_CODE);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             //检查是否记住 => 设置缓存时间
@@ -139,7 +139,7 @@ public class LoginController {
             LoginResult loginResult = userService.login(username, password, expiredSeconds);
             if (loginResult.getTicket() == null) {
                 res.setErrorMessage(loginResult.getError());
-                return JSON.toJSONString(res);
+                return res.toJson();
             } else {
                 Cookie cookie = new Cookie("ticket", loginResult.getTicket());
                 cookie.setPath(contextPath);
@@ -155,7 +155,7 @@ public class LoginController {
         } catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     @RequestMapping(path = "/logout", method = RequestMethod.POST)
@@ -174,7 +174,7 @@ public class LoginController {
         } catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
 

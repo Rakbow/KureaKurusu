@@ -95,7 +95,7 @@ public class MerchController {
             String errorMsg = merchService.checkMerchJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
@@ -105,7 +105,7 @@ public class MerchController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除周边(单个/多个)
@@ -123,7 +123,7 @@ public class MerchController {
 //        } catch (Exception ex) {
 //            res.setErrorMessage(ex.getMessage());
 //        }
-//        return JSON.toJSONString(res);
+//        return res.toJson();
 //    }
 
     //更新周边基础信息
@@ -137,7 +137,7 @@ public class MerchController {
             String errorMsg = merchService.checkMerchJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
@@ -149,7 +149,7 @@ public class MerchController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -196,7 +196,7 @@ public class MerchController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

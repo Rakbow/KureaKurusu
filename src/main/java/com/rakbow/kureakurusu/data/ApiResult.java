@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data;
 
+import com.alibaba.fastjson2.JSON;
+
 /**
  * @Project_name: kureakurusu
  * @Author: Rakbow
@@ -23,6 +25,10 @@ public class ApiResult {
         this.message = message;
     }
 
+    public void setSuccessMessage(String message) {
+        this.message = message;
+    }
+
     public void setErrorMessage(String error) {
         this.state = 0;
         this.message = error;
@@ -31,6 +37,10 @@ public class ApiResult {
     public void setErrorMessage(Exception e) {
         this.state = 0;
         this.message = e.getMessage();
+    }
+
+    public String toJson() {
+        return JSON.toJSONString(this);
     }
 
 }

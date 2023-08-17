@@ -95,7 +95,7 @@ public class GameController {
             String errorMsg = gameService.checkGameJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
@@ -105,7 +105,7 @@ public class GameController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除游戏(单个/多个)
@@ -123,7 +123,7 @@ public class GameController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新游戏基础信息
@@ -137,7 +137,7 @@ public class GameController {
             String errorMsg = gameService.checkGameJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
@@ -149,7 +149,7 @@ public class GameController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -196,7 +196,7 @@ public class GameController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新游戏规格信息
@@ -212,7 +212,7 @@ public class GameController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     @RequestMapping(value = "/get-related-games", method = RequestMethod.POST)
@@ -228,7 +228,7 @@ public class GameController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

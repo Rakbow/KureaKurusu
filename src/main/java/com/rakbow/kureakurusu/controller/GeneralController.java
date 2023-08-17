@@ -41,7 +41,7 @@ public class GeneralController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新专辑基础信息
@@ -60,7 +60,7 @@ public class GeneralController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除专辑(单个/多个)
@@ -84,7 +84,7 @@ public class GeneralController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
 }

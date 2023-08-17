@@ -156,7 +156,7 @@ public class EntityController {
 //        } catch (Exception e) {
 //            res.setErrorMessage(e);
 //        }
-//        return JSON.toJSONString(res);
+//        return res.toJson();
 //    }
 
     //region search
@@ -174,7 +174,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -195,7 +195,7 @@ public class EntityController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //update items status
@@ -212,7 +212,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //update item description
@@ -229,7 +229,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //update item bonus
@@ -246,7 +246,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //update item specs
@@ -263,7 +263,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //update item companies
@@ -280,7 +280,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //update item personnel
@@ -304,7 +304,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -334,7 +334,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新图片，删除或更改信息
@@ -373,7 +373,7 @@ public class EntityController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -406,7 +406,7 @@ public class EntityController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

@@ -123,7 +123,7 @@ public class DiscController {
             String errorMsg = discService.checkDiscJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Disc disc = entityService.json2Entity(discService.handleDiscJson(param), Disc.class);
@@ -134,7 +134,7 @@ public class DiscController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除碟片(单个/多个)
@@ -152,7 +152,7 @@ public class DiscController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新碟片基础信息
@@ -166,7 +166,7 @@ public class DiscController {
             String errorMsg = discService.checkDiscJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Disc disc = entityService.json2Entity(discService.handleDiscJson(param), Disc.class);
@@ -178,7 +178,7 @@ public class DiscController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -198,7 +198,7 @@ public class DiscController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

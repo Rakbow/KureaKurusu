@@ -118,7 +118,7 @@ public class FranchiseController {
             String errorMsg = franchiseService.checkFranchiseJson(param);
             if (!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
@@ -128,7 +128,7 @@ public class FranchiseController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新基础信息
@@ -142,7 +142,7 @@ public class FranchiseController {
             String errorMsg = franchiseService.checkFranchiseJson(param);
             if (!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
@@ -154,7 +154,7 @@ public class FranchiseController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

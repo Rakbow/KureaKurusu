@@ -117,7 +117,7 @@ public class ProductController {
 //            String errorMsg = productService.checkProductJson(param);
 //            if(!StringUtils.isBlank(errorMsg)) {
 //                res.setErrorMessage(errorMsg);
-//                return JSON.toJSONString(res);
+//                return res.toJson();
 //            }
 //
 //            Product product = entityService.json2Entity(param, Product.class);
@@ -127,7 +127,7 @@ public class ProductController {
 //        } catch (Exception ex) {
 //            res.setErrorMessage(ex.getMessage());
 //        }
-//        return JSON.toJSONString(res);
+//        return res.toJson();
 //    }
 
     //更新作品基础信息
@@ -141,7 +141,7 @@ public class ProductController {
 //            String errorMsg = productService.checkProductJson(param);
 //            if(!StringUtils.isBlank(errorMsg)) {
 //                res.setErrorMessage(errorMsg);
-//                return JSON.toJSONString(res);
+//                return res.toJson();
 //            }
 //
 //            Product product = entityService.json2Entity(param, Product.class);
@@ -153,7 +153,7 @@ public class ProductController {
 //        } catch (Exception ex) {
 //            res.setErrorMessage(ex.getMessage());
 //        }
-//        return JSON.toJSONString(res);
+//        return res.toJson();
 //    }
 
     //更新游戏作者信息
@@ -169,7 +169,7 @@ public class ProductController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新staff
@@ -182,14 +182,14 @@ public class ProductController {
             String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
             if (StringUtils.isBlank(staffs)) {
                 res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             res.message = productService.updateProductStaffs(id, staffs);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -210,7 +210,7 @@ public class ProductController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     @SuppressWarnings("unchecked")
@@ -244,7 +244,7 @@ public class ProductController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

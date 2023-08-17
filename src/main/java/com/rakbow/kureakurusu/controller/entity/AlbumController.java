@@ -107,7 +107,7 @@ public class AlbumController {
 
             if (album == null) {
                 res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED_404, Entity.ALBUM.getNameZh()));
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             List<Music> musics = musicService.getMusicsByAlbumId(id);
@@ -131,7 +131,7 @@ public class AlbumController {
         }catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //根据搜索条件获取专辑
@@ -184,7 +184,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除专辑(单个/多个)
@@ -208,7 +208,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新专辑基础信息
@@ -231,7 +231,7 @@ public class AlbumController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -253,7 +253,7 @@ public class AlbumController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     @RequestMapping(value = "/get-related-albums", method = RequestMethod.POST)
@@ -267,7 +267,7 @@ public class AlbumController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

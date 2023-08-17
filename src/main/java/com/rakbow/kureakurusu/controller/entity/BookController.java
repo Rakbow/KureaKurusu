@@ -96,7 +96,7 @@ public class BookController {
             String errorMsg = bookService.checkBookJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
@@ -106,7 +106,7 @@ public class BookController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除图书(单个/多个)
@@ -124,7 +124,7 @@ public class BookController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新图书基础信息
@@ -138,7 +138,7 @@ public class BookController {
             String errorMsg = bookService.checkBookJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
@@ -150,7 +150,7 @@ public class BookController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -194,14 +194,14 @@ public class BookController {
             String authors = JSON.parseObject(json).getJSONArray("authors").toString();
             if (StringUtils.isBlank(authors)) {
                 res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             res.message = bookService.updateBookAuthors(id, authors);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion
@@ -224,7 +224,7 @@ public class BookController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     @RequestMapping(value = "/get-related-books", method = RequestMethod.POST)
@@ -240,7 +240,7 @@ public class BookController {
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //endregion

@@ -103,7 +103,7 @@ public class MusicController {
             String errorMsg= musicService.checkMusicJson(param);
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             //修改编辑时间
@@ -113,7 +113,7 @@ public class MusicController {
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新music创作人员信息
@@ -129,7 +129,7 @@ public class MusicController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //更新歌词文本
@@ -145,7 +145,7 @@ public class MusicController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //新增音频文件
@@ -156,13 +156,13 @@ public class MusicController {
         try {
             if (files == null || files.length == 0) {
                 res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             //检测数据是否合法
             if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
                 res.setErrorMessage(ApiInfo.MUSIC_FILE_NUMBER_EXCEPTION);
-                return JSON.toJSONString(res);
+                return res.toJson();
             }
 
             JSONArray fileInfosJson = JSON.parseArray(fileInfos);
@@ -171,7 +171,7 @@ public class MusicController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
     //删除音频文件
@@ -186,7 +186,7 @@ public class MusicController {
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return JSON.toJSONString(res);
+        return res.toJson();
     }
 
 }
