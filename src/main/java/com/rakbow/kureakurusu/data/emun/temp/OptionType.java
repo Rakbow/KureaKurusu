@@ -12,7 +12,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum  OptionType {
 
-    PERSON_ROLE(1, "", "");
+    PERSON_ROLE(1, "人员职位", "Person Role"),
+    SPEC(2, "规格参数", "Specification");
 
     @Getter
     private final int id;
