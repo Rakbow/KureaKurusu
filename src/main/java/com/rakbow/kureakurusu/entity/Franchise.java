@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.entity;
 
 import com.rakbow.kureakurusu.entity.common.MetaEntity;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -33,8 +33,8 @@ public class Franchise extends MetaEntity {
         this.nameEn = "";
         this.originDate = null;
         this.metaInfo = "{\"isMeta\": 0, \"ids\": []}";
-        this.setAddedTime(DateUtil.NOW_TIMESTAMP);
-        this.setEditedTime(DateUtil.NOW_TIMESTAMP);
+        this.setAddedTime(DateHelper.NOW_TIMESTAMP);
+        this.setEditedTime(DateHelper.NOW_TIMESTAMP);
         this.setDescription("");
         this.setRemark("");
         this.setImages("[]");

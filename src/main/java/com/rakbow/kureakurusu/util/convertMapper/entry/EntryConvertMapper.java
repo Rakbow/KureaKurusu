@@ -13,7 +13,7 @@ import com.rakbow.kureakurusu.entity.common.Company;
 import com.rakbow.kureakurusu.entity.common.Merchandise;
 import com.rakbow.kureakurusu.entity.common.Personnel;
 import com.rakbow.kureakurusu.entity.common.Role;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -114,7 +114,7 @@ public interface EntryConvertMapper {
 
     @Named("getVOTime")
     default String getVOTime(Timestamp timestamp) {
-        return DateUtil.timestampToString(timestamp);
+        return DateHelper.timestampToString(timestamp);
     }
 
     @Named("getRegion")

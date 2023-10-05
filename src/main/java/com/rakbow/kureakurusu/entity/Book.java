@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.entity;
 
 import com.rakbow.kureakurusu.entity.common.MetaEntity;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -67,8 +67,8 @@ public class Book extends MetaEntity {
         this.setDescription("");
         this.setImages("[]");
         this.setRemark("");
-        this.setAddedTime(DateUtil.NOW_TIMESTAMP);;
-        this.setEditedTime(DateUtil.NOW_TIMESTAMP);;
+        this.setAddedTime(DateHelper.NOW_TIMESTAMP);;
+        this.setEditedTime(DateHelper.NOW_TIMESTAMP);;
         this.setStatus(1);
     }
 }

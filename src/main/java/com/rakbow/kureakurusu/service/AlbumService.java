@@ -292,7 +292,7 @@ public class AlbumService {
         if(discList.size() != 0) {
             trackInfo.put("discList", discList);
         }
-        albumMapper.updateAlbumTrackInfo(id, JSON.toJSONString(trackInfo), DateUtil.NOW_TIMESTAMP);
+        albumMapper.updateAlbumTrackInfo(id, JSON.toJSONString(trackInfo), DateHelper.NOW_TIMESTAMP);
 
         //删除对应music
         if (musics.size() != 0) {

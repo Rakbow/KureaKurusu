@@ -17,7 +17,7 @@ import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Disc;
 import com.rakbow.kureakurusu.entity.Game;
 import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
@@ -133,8 +133,8 @@ public class EntityService {
         // 从cookie中获取访问token
         String visitToken = TokenInterceptor.getVisitToken();
 
-        pageInfo.setAddedTime(DateUtil.timestampToString(addedTime));
-        pageInfo.setEditedTime(DateUtil.timestampToString(editedTime));
+        pageInfo.setAddedTime(DateHelper.timestampToString(addedTime));
+        pageInfo.setEditedTime(DateHelper.timestampToString(editedTime));
         pageInfo.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
         pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
 
@@ -347,7 +347,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemDescription(String tableName, int entityId, String description) {
-        entityMapper.updateItemDescription(tableName, entityId, description, DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemDescription(tableName, entityId, description, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -359,7 +359,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemBonus(String tableName, int entityId, String bonus) {
-        entityMapper.updateItemBonus(tableName, entityId, bonus, DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemBonus(tableName, entityId, bonus, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -371,7 +371,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemSpecs(String tableName, int entityId, String specs) {
-        entityMapper.updateItemSpecs(tableName, entityId, specs, DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemSpecs(tableName, entityId, specs, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -383,7 +383,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemCompanies(String tableName, int entityId, String companies) {
-        entityMapper.updateItemCompanies(tableName, entityId, companies, DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemCompanies(tableName, entityId, companies, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -395,7 +395,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemPersonnel(String tableName, String fieldName, int entityId, String personnel) {
-        entityMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateHelper.NOW_TIMESTAMP);
     }
 
     //endregion
@@ -431,7 +431,7 @@ public class EntityService {
             ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
             if(ar.state) {
                 JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
-                entityMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateUtil.NOW_TIMESTAMP);
+                entityMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.NOW_TIMESTAMP);
                 res.message = ApiInfo.INSERT_IMAGES_SUCCESS;
             }else {
                 throw new Exception(ar.message);
@@ -451,7 +451,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemImages(String tableName, int entityId, String images) {
-        entityMapper.updateItemImages(tableName, entityId, images, DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemImages(tableName, entityId, images, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_IMAGES_SUCCESS;
     }
 
@@ -469,7 +469,7 @@ public class EntityService {
 
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
-        entityMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateUtil.NOW_TIMESTAMP);
+        entityMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.NOW_TIMESTAMP);
         return ApiInfo.DELETE_IMAGES_SUCCESS;
     }
 

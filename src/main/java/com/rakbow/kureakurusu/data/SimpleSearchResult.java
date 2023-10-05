@@ -1,11 +1,8 @@
 package com.rakbow.kureakurusu.data;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
-
-import java.sql.Timestamp;
 
 /**
  * @Project_name: kureakurusu
@@ -33,6 +30,6 @@ public class SimpleSearchResult {
         this.entityName = entityName;
         this.offset = offset;
         this.limit = limit;
-        this.searchTime = DateUtil.timestampToString(DateUtil.NOW_TIMESTAMP);
+        this.searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
     }
 }

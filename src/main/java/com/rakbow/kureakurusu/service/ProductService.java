@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.entity.Product;
 import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.ProductVOMapper;
 import com.rakbow.kureakurusu.util.entity.ProductUtil;
@@ -154,7 +154,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductOrganizations(int id, String organizations) {
-        productMapper.updateProductOrganizations(id, organizations, DateUtil.NOW_TIMESTAMP);
+        productMapper.updateProductOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
     }
 
@@ -167,7 +167,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductStaffs(int id, String staffs) {
-        productMapper.updateProductStaffs(id, staffs, DateUtil.NOW_TIMESTAMP);
+        productMapper.updateProductStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
     }
 

@@ -12,7 +12,7 @@ import com.rakbow.kureakurusu.data.vo.book.BookVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
 import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.BookVOMapper;
 import com.rakbow.kureakurusu.util.entity.BookUtil;
@@ -209,7 +209,7 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBookAuthors(int id, String authors) {
-        bookMapper.updateBookAuthors(id, authors, DateUtil.NOW_TIMESTAMP);
+        bookMapper.updateBookAuthors(id, authors, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_BOOK_AUTHOR_SUCCESS;
     }
 

@@ -10,14 +10,13 @@ import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.MusicService;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.MusicUtil;
@@ -225,7 +224,7 @@ public class AlbumController {
             Album album = JSON.to(Album.class, albumService.handleAlbumJson(json));
 
             //修改编辑时间
-            album.setEditedTime(DateUtil.NOW_TIMESTAMP);
+            album.setEditedTime(DateHelper.NOW_TIMESTAMP);
             res.message =  albumService.updateAlbum(album.getId(), album);
 
         } catch (Exception ex) {

@@ -8,7 +8,7 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.vo.RegionVO;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
@@ -29,7 +29,7 @@ import java.util.List;
 public class EntityConverter {
 
     static String getDate(Date date) {
-        return DateUtil.dateToString(date);
+        return DateHelper.dateToString(date);
     }
 
     static List<Attribute> getProducts(String products) {
@@ -45,7 +45,7 @@ public class EntityConverter {
     }
 
     static String getVOTime(Timestamp timestamp) {
-        return DateUtil.timestampToString(timestamp);
+        return DateHelper.timestampToString(timestamp);
     }
 
     static boolean getBool(int bool) {

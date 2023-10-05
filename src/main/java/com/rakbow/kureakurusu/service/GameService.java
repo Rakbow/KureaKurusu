@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.game.GameVOBeta;
 import com.rakbow.kureakurusu.entity.Game;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.GameVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
@@ -183,7 +183,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameOrganizations(int id, String organizations) {
-        gameMapper.updateGameOrganizations(id, organizations, DateUtil.NOW_TIMESTAMP);
+        gameMapper.updateGameOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
     }
 
@@ -196,7 +196,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameStaffs(int id, String staffs) {
-        gameMapper.updateGameStaffs(id, staffs, DateUtil.NOW_TIMESTAMP);
+        gameMapper.updateGameStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
     }
 

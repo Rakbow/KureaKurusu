@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.entity;
 
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -38,8 +38,8 @@ public class Entry {
         this.images = "[]";
         this.detail = "{}";
         this.description = "";
-        this.addedTime = DateUtil.NOW_TIMESTAMP;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;
+        this.addedTime = DateHelper.NOW_TIMESTAMP;
+        this.editedTime = DateHelper.NOW_TIMESTAMP;
         this.remark = "";
         this.status = 1;
     }

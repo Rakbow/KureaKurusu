@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.entity.Game;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.GameVOMapper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
@@ -143,7 +143,7 @@ public class GameController {
             Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
 
             //修改编辑时间
-            game.setEditedTime(DateUtil.NOW_TIMESTAMP);
+            game.setEditedTime(DateHelper.NOW_TIMESTAMP);
 
             res.message = gameService.updateGame(game.getId(), game);
         } catch (Exception ex) {

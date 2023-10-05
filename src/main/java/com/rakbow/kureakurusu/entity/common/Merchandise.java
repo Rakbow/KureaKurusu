@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.entity.common;
 
 import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -28,8 +28,8 @@ public class Merchandise extends MetaEntry {
         this.setAlias(new ArrayList<>());
         this.setDescription("");
         this.setRemark("");
-        this.setAddedTime(DateUtil.getCurrentTime());
-        this.setEditedTime(DateUtil.getCurrentTime());
+        this.setAddedTime(DateHelper.getCurrentTime());
+        this.setEditedTime(DateHelper.getCurrentTime());
     }
 
 }

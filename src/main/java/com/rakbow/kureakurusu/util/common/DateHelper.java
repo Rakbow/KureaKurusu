@@ -15,7 +15,7 @@ import java.util.Date;
  * @Create: 2023-04-23 22:30
  * @Description:
  */
-public class DateUtil {
+public class DateHelper {
     
     public static Timestamp NOW_TIMESTAMP = new Timestamp(System.currentTimeMillis());
 
@@ -50,7 +50,7 @@ public class DateUtil {
 
     public static String getCurrentTime(){
         DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        return sdf.format(DateUtil.NOW_TIMESTAMP);
+        return sdf.format(DateHelper.NOW_TIMESTAMP);
     }
 
     //字符串转为时间(自定义格式)，例如：yyyy/MM/dd

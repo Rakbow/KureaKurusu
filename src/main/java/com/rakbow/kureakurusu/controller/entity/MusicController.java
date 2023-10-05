@@ -14,7 +14,7 @@ import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.MusicService;
 import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MusicVOMapper;
@@ -107,7 +107,7 @@ public class MusicController {
             }
 
             //修改编辑时间
-            music.setEditedTime(DateUtil.NOW_TIMESTAMP);
+            music.setEditedTime(DateHelper.NOW_TIMESTAMP);
 
             res.message = musicService.updateMusic(music.getId(), music);
         } catch (Exception ex) {

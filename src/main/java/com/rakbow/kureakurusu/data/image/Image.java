@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.image;
 
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 
 /**
@@ -25,7 +25,7 @@ public class Image {
         this.nameZh = "";
         this.type = 0;
         this.description = "";
-        this.uploadTime = DateUtil.getCurrentTime();
+        this.uploadTime = DateHelper.getCurrentTime();
     }
 
 }

@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.vo.entry.EntryVOAlpha;
 import com.rakbow.kureakurusu.entity.Entry;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.EntryService;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entry.EntryConvertMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -129,7 +129,7 @@ public class EntryController {
             Entry entry = entityService.json2Entity(param, Entry.class);
 
             //修改编辑时间
-            entry.setEditedTime(DateUtil.NOW_TIMESTAMP);
+            entry.setEditedTime(DateHelper.NOW_TIMESTAMP);
             res.message =  entryService.updateEntry(entry.getId(), entry);
 
         } catch (Exception ex) {

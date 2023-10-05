@@ -1,14 +1,12 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
-import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.franchise.MetaInfo;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.kureakurusu.data.vo.franchise.ParentFranchiseVO;
 import com.rakbow.kureakurusu.entity.Franchise;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.entity.FranchiseUtil;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -42,7 +40,7 @@ public interface FranchiseVOMapper {
         franchiseVO.setName(franchise.getName());
         franchiseVO.setNameZh(franchise.getNameZh());
         franchiseVO.setNameEn(franchise.getNameEn());
-        franchiseVO.setOriginDate(DateUtil.dateToString(franchise.getOriginDate()));
+        franchiseVO.setOriginDate(DateHelper.dateToString(franchise.getOriginDate()));
         franchiseVO.setRemark(franchise.getRemark());
 
         MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
@@ -75,13 +73,13 @@ public interface FranchiseVOMapper {
         franchiseVOAlpha.setName(franchise.getName());
         franchiseVOAlpha.setNameZh(franchise.getNameZh());
         franchiseVOAlpha.setNameEn(franchise.getNameEn());
-        franchiseVOAlpha.setOriginDate(DateUtil.dateToString(franchise.getOriginDate()));
+        franchiseVOAlpha.setOriginDate(DateHelper.dateToString(franchise.getOriginDate()));
         franchiseVOAlpha.setRemark(franchise.getRemark());
 
 //        franchiseVOAlpha.setCover(CommonImageUtil.generateCover(franchise.getImages(), Entity.FRANCHISE));
 
-        franchiseVOAlpha.setAddedTime(DateUtil.timestampToString(franchise.getAddedTime()));
-        franchiseVOAlpha.setEditedTime(DateUtil.timestampToString(franchise.getEditedTime()));
+        franchiseVOAlpha.setAddedTime(DateHelper.timestampToString(franchise.getAddedTime()));
+        franchiseVOAlpha.setEditedTime(DateHelper.timestampToString(franchise.getEditedTime()));
 
         MetaInfo metaInfo = new MetaInfo(franchise.getMetaInfo());
 

@@ -2,24 +2,19 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.vo.merch.MerchVOAlpha;
 import com.rakbow.kureakurusu.entity.Merch;
 import com.rakbow.kureakurusu.service.*;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MerchVOMapper;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -143,7 +138,7 @@ public class MerchController {
             Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
 
             //修改编辑时间
-            merch.setEditedTime(DateUtil.NOW_TIMESTAMP);
+            merch.setEditedTime(DateHelper.NOW_TIMESTAMP);
 
 //            res.message = merchService.updateMerch(merch.getId(), merch);
         } catch (Exception ex) {

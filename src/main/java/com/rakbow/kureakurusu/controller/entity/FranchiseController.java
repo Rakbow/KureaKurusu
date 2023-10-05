@@ -2,27 +2,22 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.kureakurusu.entity.Franchise;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.FranchiseVOMapper;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -148,7 +143,7 @@ public class FranchiseController {
             Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
 
             //修改编辑时间
-            franchise.setEditedTime(DateUtil.NOW_TIMESTAMP);
+            franchise.setEditedTime(DateHelper.NOW_TIMESTAMP);
 
 //            res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
         } catch (Exception ex) {

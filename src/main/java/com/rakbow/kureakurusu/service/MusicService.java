@@ -13,7 +13,7 @@ import com.rakbow.kureakurusu.data.vo.music.MusicVOAlpha;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.entity.User;
 import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MusicVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuBaseUtil;
@@ -151,8 +151,8 @@ public class MusicService {
                 music.setDiscSerial(disc.getInteger("serial"));
                 music.setTrackSerial(track.getString("serial"));
                 music.setAudioLength(track.getString("audioLength"));
-                music.setAddedTime(DateUtil.stringToTimestamp(albumJson.getString("addedTime")));
-                music.setEditedTime(DateUtil.stringToTimestamp(albumJson.getString("editedTime")));
+                music.setAddedTime(DateHelper.stringToTimestamp(albumJson.getString("addedTime")));
+                music.setEditedTime(DateHelper.stringToTimestamp(albumJson.getString("editedTime")));
                 addMusic(music);
             }
         }
@@ -302,7 +302,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicArtists(int id, String artists) {
-        musicMapper.updateMusicArtists(id, artists, DateUtil.NOW_TIMESTAMP);
+        musicMapper.updateMusicArtists(id, artists, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
     }
 
@@ -314,7 +314,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicLyricsText(int id, String lrcText) {
-        musicMapper.updateMusicLyricsText(id, lrcText, DateUtil.NOW_TIMESTAMP);
+        musicMapper.updateMusicLyricsText(id, lrcText, DateHelper.NOW_TIMESTAMP);
         return ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
     }
 
@@ -355,7 +355,7 @@ public class MusicService {
                 jo.put("name", fileInfos.getJSONObject(i).getString("name"));
                 jo.put("size", fileInfos.getJSONObject(i).getIntValue("size"));
                 jo.put("type", fileInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", DateUtil.getCurrentTime());
+                jo.put("uploadTime", DateHelper.getCurrentTime());
                 jo.put("uploadUser", user.getUsername());
                 addFiles.add(jo);
             }
@@ -363,7 +363,7 @@ public class MusicService {
 
         originalFiles.addAll(addFiles);
 
-        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), DateUtil.NOW_TIMESTAMP);
+        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), DateHelper.NOW_TIMESTAMP);
 
     }
 
@@ -381,7 +381,7 @@ public class MusicService {
 
         JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
 
-        musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateUtil.NOW_TIMESTAMP);
+        musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateHelper.NOW_TIMESTAMP);
         return ApiInfo.DELETE_FILES_SUCCESS;
     }
 

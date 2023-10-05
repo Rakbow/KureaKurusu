@@ -10,7 +10,7 @@ import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOBeta;
 import com.rakbow.kureakurusu.entity.Product;
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.entry.EntryUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.mapstruct.Mapper;
@@ -47,7 +47,7 @@ public interface ProductVOMapper {
         productVO.setName(product.getName());
         productVO.setNameEn(product.getNameEn());
         productVO.setNameZh(product.getNameZh());
-        productVO.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
+        productVO.setReleaseDate(DateHelper.dateToString(product.getReleaseDate()));
         productVO.setCategory(EnumUtil.getAttribute(ProductCategory.class, product.getCategory()));
         productVO.setRemark(product.getRemark());
 
@@ -76,7 +76,7 @@ public interface ProductVOMapper {
         productVOAlpha.setName(product.getName());
         productVOAlpha.setNameEn(product.getNameEn());
         productVOAlpha.setNameZh(product.getNameZh());
-        productVOAlpha.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
+        productVOAlpha.setReleaseDate(DateHelper.dateToString(product.getReleaseDate()));
         productVOAlpha.setRemark(product.getRemark());
 
         //关联信息
@@ -100,8 +100,8 @@ public interface ProductVOMapper {
         }
         productVOAlpha.setCover(cover);
 
-        productVOAlpha.setAddedTime(DateUtil.timestampToString(product.getAddedTime()));
-        productVOAlpha.setEditedTime(DateUtil.timestampToString(product.getEditedTime()));
+        productVOAlpha.setAddedTime(DateHelper.timestampToString(product.getAddedTime()));
+        productVOAlpha.setEditedTime(DateHelper.timestampToString(product.getEditedTime()));
         productVOAlpha.setStatus(product.getStatus() == 1);
 
         return productVOAlpha;
@@ -144,7 +144,7 @@ public interface ProductVOMapper {
         productVOBeta.setName(product.getName());
         productVOBeta.setNameEn(product.getNameEn());
         productVOBeta.setNameZh(product.getNameZh());
-        productVOBeta.setReleaseDate(DateUtil.dateToString(product.getReleaseDate()));
+        productVOBeta.setReleaseDate(DateHelper.dateToString(product.getReleaseDate()));
         productVOBeta.setCategory(EnumUtil.getAttribute(ProductCategory.class, product.getCategory()));
 
         //关联信息

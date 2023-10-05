@@ -98,8 +98,8 @@ public interface MusicVOMapper {
 
         musicVOAlpha.setAudioLength(music.getAudioLength());
 
-        musicVOAlpha.setAddedTime(DateUtil.timestampToString(music.getAddedTime()));
-        musicVOAlpha.setEditedTime(DateUtil.timestampToString(music.getEditedTime()));
+        musicVOAlpha.setAddedTime(DateHelper.timestampToString(music.getAddedTime()));
+        musicVOAlpha.setEditedTime(DateHelper.timestampToString(music.getEditedTime()));
 
         return musicVOAlpha;
     }

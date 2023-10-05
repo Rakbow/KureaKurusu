@@ -137,11 +137,11 @@ public class RedisTests {
         // List<String> keys = redisUtil.keys("entity_related_item:*");
         // keys.forEach(key -> redisUtil.delete(key));
 
-        long t1 = DateUtil.NOW_TIMESTAMP.getTime();
+        long t1 = DateHelper.NOW_TIMESTAMP.getTime();
 
 
 
-        long t2 = DateUtil.NOW_TIMESTAMP.getTime();
+        long t2 = DateHelper.NOW_TIMESTAMP.getTime();
 
         System.out.println(t2 - t1);
 

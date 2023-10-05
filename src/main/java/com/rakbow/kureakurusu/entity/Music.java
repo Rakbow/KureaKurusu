@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.entity;
 
-import com.rakbow.kureakurusu.util.common.DateUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -45,8 +45,8 @@ public class Music {
         this.audioLength = "00:00";
         this.description = "";
         this.remark = "";
-        this.addedTime = DateUtil.NOW_TIMESTAMP;
-        this.editedTime = DateUtil.NOW_TIMESTAMP;
+        this.addedTime = DateHelper.NOW_TIMESTAMP;
+        this.editedTime = DateHelper.NOW_TIMESTAMP;
         this.status = 1;
     }
 
