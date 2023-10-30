@@ -44,7 +44,7 @@ public class AlbumController {
 
     //region ------引入实例------
 
-    private static final Logger logger = LoggerFactory.getLogger(AlbumController .class);
+    private static final Logger logger = LoggerFactory.getLogger(AlbumController.class);
 
     @Resource
     private AlbumService albumService;
@@ -137,14 +137,13 @@ public class AlbumController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-albums", method = RequestMethod.POST)
     @ResponseBody
-    public String getAlbumsByFilter(@RequestBody JSONObject param) {
+    public String getAlbums(@RequestBody JSONObject param) {
 
-        QueryParams queryParam = JSON.to(QueryParams.class, param.get("queryParams"));
         String pageLabel = param.getString("pageLabel");
 
         List<AlbumVOAlpha> albums = new ArrayList<>();
 
-        SearchResult searchResult = albumService.getAlbumsByFilter(queryParam);
+        SearchResult searchResult = albumService.getAlbums(new QueryParams(param));
 
         if (StringUtils.equals(pageLabel, "list")) {
             albums = albumVOMapper.toVOAlpha((List<Album>) searchResult.data);
@@ -225,7 +224,7 @@ public class AlbumController {
 
             //修改编辑时间
             album.setEditedTime(DateHelper.NOW_TIMESTAMP);
-            res.message =  albumService.updateAlbum(album.getId(), album);
+            res.message =  albumService.updateAlbum(album);
 
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
@@ -261,7 +260,7 @@ public class AlbumController {
         ApiResult res = new ApiResult();
         try {
             int id = json.getIntValue("id");
-            res.data = albumService.getRelatedAlbums(id);
+            // res.data = albumService.getRelatedAlbums(id);
 
         }catch (Exception e) {
             res.setErrorMessage(e);

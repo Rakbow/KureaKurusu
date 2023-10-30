@@ -8,6 +8,9 @@ package com.rakbow.kureakurusu.data;
  */
 public class ApiInfo {
 
+    public static final String META_DATA_LOAD_SUCCESS = "数据加载成功: MetaData";
+    public static final String COMMON_EXCEPTION = "服务器发生异常: " ;
+
     //region entity common
     public static final String REFRESH_REDIS_DATA_SUCCESS = "Redis缓存数据刷新成功！";
     public static final String NAME_EMPTY = "未填写名称(原)！";
