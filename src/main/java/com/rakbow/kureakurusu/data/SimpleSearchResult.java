@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class SimpleSearchResult {
 
-    public int total;//查询结果数
+    public long total;//查询结果数
     public JSONArray data;//查询结果数据
     public String keyword;//查询关键字
     public int entityType;//查询实体类型
