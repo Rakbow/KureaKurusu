@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;
 import com.rakbow.kureakurusu.entity.Entry;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
@@ -40,8 +41,7 @@ public class EntryService {
     private VisitUtil visitUtil;
     @Resource
     private RedisUtil redisUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     //region CURD
 
@@ -54,7 +54,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addEntry(Entry entry) {
         entryMapper.addEntry(entry);
-        return i18n.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
     }
 
     /**
@@ -105,7 +105,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateEntry(int id, Entry entry) {
         entryMapper.updateEntry(id, entry);
-        return i18n.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
     }
 
     //endregion
@@ -143,16 +143,16 @@ public class EntryService {
      */
     public String checkEntryJson(JSONObject json) {
         if (StringUtils.isBlank(json.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(json.getString("nameZh"))) {
-            return i18n.getMessage("entity.crud.name_zh.required_field");
+            return I18nHelper.getMessage("entity.crud.name_zh.required_field");
         }
         if (StringUtils.isBlank(json.getString("nameEn"))) {
-            return i18n.getMessage("entity.crud.name_en.required_field");
+            return I18nHelper.getMessage("entity.crud.name_en.required_field");
         }
         if (StringUtils.isBlank(json.getString("category"))) {
-            return i18n.getMessage("entity.crud.category.required_field");
+            return I18nHelper.getMessage("entity.crud.category.required_field");
         }
         return "";
     }

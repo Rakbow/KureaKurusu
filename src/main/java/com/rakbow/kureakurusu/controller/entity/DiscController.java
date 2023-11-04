@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.SearchResult;
@@ -10,19 +9,16 @@ import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
 import com.rakbow.kureakurusu.entity.Disc;
 import com.rakbow.kureakurusu.service.DiscService;
 import com.rakbow.kureakurusu.service.EntityService;
-import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.DiscVOMapper;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -52,8 +48,7 @@ public class DiscController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private I18nService i18n;
+    
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -151,7 +146,7 @@ public class DiscController {
                 //从数据库中删除专辑
                 discService.deleteDisc(disc);
             }
-            res.message = i18n.getMessage("entity.curd.delete.success", Entity.DISC.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.DISC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

@@ -1,11 +1,9 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.controller.entity.AlbumController;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.service.GeneralService;
-import com.rakbow.kureakurusu.service.I18nService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -30,8 +28,6 @@ public class TestController {
 
     @Resource
     private GeneralService generalService;
-    @Resource
-    private I18nService i18nService;
 
     @RequestMapping(path = "/search-person", method = RequestMethod.POST)
     @ResponseBody
@@ -39,7 +35,6 @@ public class TestController {
         ApiResult res = new ApiResult();
         try {
             res.data = generalService.searchPersons(new SimpleSearchParam(json));
-            logger.info(i18nService.getMessage("test_key"));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

@@ -13,6 +13,7 @@ import lombok.Data;
 public class PersonMiniVO {
 
     private long id;
+    private String name;
     private String nameZh;
     private String nameEn;
     private String cover;

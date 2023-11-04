@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.*;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
@@ -51,8 +52,7 @@ public class MusicController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private I18nService i18n;
+    
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -154,13 +154,13 @@ public class MusicController {
         ApiResult res = new ApiResult();
         try {
             if (files == null || files.length == 0) {
-                res.setErrorMessage(i18n.getMessage("file.empty"));
+                res.setErrorMessage(I18nHelper.getMessage("file.empty"));
                 return res.toJson();
             }
 
             //检测数据是否合法
             if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
-                res.setErrorMessage(i18n.getMessage("music.crud.file_number.error"));
+                res.setErrorMessage(I18nHelper.getMessage("music.crud.file_number.error"));
                 return res.toJson();
             }
 

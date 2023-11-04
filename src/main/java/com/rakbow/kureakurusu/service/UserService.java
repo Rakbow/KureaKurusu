@@ -8,6 +8,7 @@ import com.rakbow.kureakurusu.data.system.LoginResult;
 import com.rakbow.kureakurusu.data.system.LoginUser;
 import com.rakbow.kureakurusu.entity.LoginTicket;
 import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
 import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.ApiInfo;
@@ -48,8 +49,7 @@ public class UserService{
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    @Resource
-    private I18nService i18n;
+    
 
     @Transactional( readOnly = true )
     public User findUserById(int id) {
@@ -129,31 +129,31 @@ public class UserService{
         LoginResult res = new LoginResult();
         // 空值处理
         if (StringUtils.isBlank(username)) {
-            res.setError(i18n.getMessage("login.username.empty"));
+            res.setError(I18nHelper.getMessage("login.username.empty"));
             return res;
         }
         if (StringUtils.isBlank(password)) {
-            res.setError(i18n.getMessage("login.password.empty"));
+            res.setError(I18nHelper.getMessage("login.password.empty"));
             return res;
         }
 
         // 验证账号
         User user = userMapper.selectUserByUsername(username);
         if (user == null) {
-            res.setError(i18n.getMessage("login.user.not_exist"));
+            res.setError(I18nHelper.getMessage("login.user.not_exist"));
             return res;
         }
 
         // 验证状态
         if (user.getStatus() == 0) {
-            res.setError(i18n.getMessage("login.user.inactivated"));
+            res.setError(I18nHelper.getMessage("login.user.inactivated"));
             return res;
         }
 
         // 验证密码
         password = CommonUtil.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
-            res.setError(i18n.getMessage("login.password.error"));
+            res.setError(I18nHelper.getMessage("login.password.error"));
             return res;
         }
 
@@ -215,13 +215,13 @@ public class UserService{
                 // 根据凭证查询用户
                 User user = findUserById(loginTicket.getUserId());
                 if (user.getType() == 1) {
-                    res.setErrorMessage(i18n.getMessage("auth.not_authority"));
+                    res.setErrorMessage(I18nHelper.getMessage("auth.not_authority"));
                 }
             }else {
-                res.setErrorMessage(i18n.getMessage("auth.not_login"));
+                res.setErrorMessage(I18nHelper.getMessage("auth.not_login"));
             }
         } else {
-            res.setErrorMessage(i18n.getMessage("auth.not_login"));
+            res.setErrorMessage(I18nHelper.getMessage("auth.not_login"));
         }
         return res;
     }

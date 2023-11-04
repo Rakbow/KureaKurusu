@@ -26,6 +26,7 @@ import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOBeta;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.AlbumUtil;
@@ -61,8 +62,7 @@ public class AlbumService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -82,7 +82,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addAlbum(Album album) {
         int id = albumMapper.insert(album);
-        return i18n.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh());
     }
 
     /**
@@ -144,7 +144,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateAlbum(Album album) {
         albumMapper.updateById(album);
-        return i18n.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
     }
 
     //endregion
@@ -177,25 +177,25 @@ public class AlbumService {
      */
     public String checkAlbumJson(JSONObject albumJson) {
         if (StringUtils.isBlank(albumJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(albumJson.getString("releaseDate"))) {
-            return i18n.getMessage("entity.crud.release_date.required_field");
+            return I18nHelper.getMessage("entity.crud.release_date.required_field");
         }
         if (albumJson.getJSONArray("franchises").isEmpty()) {
-            return i18n.getMessage("entity.crud.category.required_field");
+            return I18nHelper.getMessage("entity.crud.category.required_field");
         }
         if (albumJson.getJSONArray("products").isEmpty()) {
-            return i18n.getMessage("entity.crud.product.required_field");
+            return I18nHelper.getMessage("entity.crud.product.required_field");
         }
         if (albumJson.getJSONArray("publishFormat").isEmpty()) {
-            return i18n.getMessage("album.crud.publish_format.required_field");
+            return I18nHelper.getMessage("album.crud.publish_format.required_field");
         }
         if (albumJson.getJSONArray("albumFormat").isEmpty()) {
-            return i18n.getMessage("album.crud.album_format.required_field");
+            return I18nHelper.getMessage("album.crud.album_format.required_field");
         }
         if (albumJson.getJSONArray("mediaFormat").isEmpty()) {
-            return i18n.getMessage("entity.crud.media_format.required_field");
+            return I18nHelper.getMessage("entity.crud.media_format.required_field");
         }
         return "";
     }

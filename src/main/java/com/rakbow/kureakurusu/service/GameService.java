@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.game.GameVOBeta;
 import com.rakbow.kureakurusu.entity.Game;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
@@ -42,8 +43,7 @@ public class GameService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -60,7 +60,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addGame(Game game) {
         int id = gameMapper.addGame(game);
-        return i18n.getMessage("entity.curd.insert.success", Entity.GAME.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.GAME.getNameZh());
     }
 
     /**
@@ -113,7 +113,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGame(int id, Game game) {
         gameMapper.updateGame(id, game);
-        return i18n.getMessage("entity.curd.update.success", Entity.GAME.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.GAME.getNameZh());
     }
 
     //endregion
@@ -129,27 +129,27 @@ public class GameService {
      */
     public String checkGameJson(JSONObject gameJson) {
         if (StringUtils.isBlank(gameJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
 
         if (StringUtils.isBlank(gameJson.getString("releaseDate"))) {
-            return i18n.getMessage("entity.crud.release_date.required_field");
+            return I18nHelper.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("releaseType"))) {
-            return i18n.getMessage("game.crud.release_type.required_field");
+            return I18nHelper.getMessage("game.crud.release_type.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("platform"))) {
-            return i18n.getMessage("game.crud.platform.required_field");
+            return I18nHelper.getMessage("game.crud.platform.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("region"))) {
-            return i18n.getMessage("entity.crud.region.required_field");
+            return I18nHelper.getMessage("entity.crud.region.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("franchises"))) {
-            return i18n.getMessage("entity.crud.franchise.required_field");
+            return I18nHelper.getMessage("entity.crud.franchise.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("products"))
                 || StringUtils.equals(gameJson.getString("products"), "[]")) {
-            return i18n.getMessage("entity.crud.product.required_field");
+            return I18nHelper.getMessage("entity.crud.product.required_field");
         }
         return "";
     }
@@ -186,7 +186,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameOrganizations(int id, String organizations) {
         gameMapper.updateGameOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("entity.crud.companies.update.success");
+        return I18nHelper.getMessage("entity.crud.companies.update.success");
     }
 
     /**
@@ -199,7 +199,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameStaffs(int id, String staffs) {
         gameMapper.updateGameStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("entity.crud.personnel.update.success");
+        return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
     //endregion

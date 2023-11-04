@@ -11,11 +11,13 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,7 @@ public class GeneralService {
     private CommonMapper commonMapper;
     @Resource
     private PersonMapper personMapper;
+    
 
     private final PersonVOMapper personVOMapper = PersonVOMapper.INSTANCES;
 
@@ -73,7 +76,7 @@ public class GeneralService {
 
         List<PersonMiniVO> persons = personVOMapper.toMiniVO(pages.getRecords());
 
-           return new SearchResult(persons, pages.getTotal());
+           return new SearchResult(persons, pages);
     }
 
     //endregion

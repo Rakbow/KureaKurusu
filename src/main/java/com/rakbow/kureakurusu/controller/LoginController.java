@@ -1,19 +1,16 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.system.LoginResult;
 import com.rakbow.kureakurusu.entity.User;
-import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.CommonConstant;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 // import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,8 +45,7 @@ public class LoginController {
     private Producer kaptchaProducer;
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    @Resource
-    private I18nService i18n;
+    
 
     //获取注册页面
     @RequestMapping(path = "/register", method = RequestMethod.GET)
@@ -127,7 +123,7 @@ public class LoginController {
             // 检查验证码
             String kaptcha = (String) session.getAttribute("kaptcha");
             if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
-                res.setErrorMessage(i18n.getMessage("login.verify_code.error"));
+                res.setErrorMessage(I18nHelper.getMessage("login.verify_code.error"));
                 return res.toJson();
             }
 

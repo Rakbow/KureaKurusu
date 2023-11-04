@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
@@ -11,7 +10,7 @@ import com.rakbow.kureakurusu.data.vo.entry.EntryVOAlpha;
 import com.rakbow.kureakurusu.entity.Entry;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.EntryService;
-import com.rakbow.kureakurusu.service.I18nService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entry.EntryConvertMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +39,7 @@ public class EntryController {
     private EntryService entryService;
     @Resource
     private EntityService entityService;
-    @Resource
-    private I18nService i18n;
+    
 
     private final EntryConvertMapper convertMapper = EntryConvertMapper.INSTANCES;
 
@@ -110,7 +108,7 @@ public class EntryController {
                 //从数据库中删除专辑
                 entryService.deleteEntry(entry);
             }
-            res.message = i18n.getMessage("entity.curd.delete.success", Entity.ENTRY.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.ENTRY.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -151,7 +149,7 @@ public class EntryController {
         try {
             int entryCategory = json.getIntValue("entryCategory");
             entryService.refreshRedisEntries(entryCategory);
-            res.message = i18n.getMessage("redis.refresh_data.success");
+            res.message = I18nHelper.getMessage("redis.refresh_data.success");
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

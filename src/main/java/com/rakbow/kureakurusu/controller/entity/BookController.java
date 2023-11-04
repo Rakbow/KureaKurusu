@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.BookVOMapper;
@@ -49,8 +50,7 @@ public class BookController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private I18nService i18n;
+    
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -122,7 +122,7 @@ public class BookController {
                 //从数据库中删除专辑
                 bookService.deleteBook(book);
             }
-            res.message = i18n.getMessage("entity.curd.delete.success", Entity.BOOK.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -195,7 +195,7 @@ public class BookController {
             int id = JSON.parseObject(json).getInteger("id");
             String authors = JSON.parseObject(json).getJSONArray("authors").toString();
             if (StringUtils.isBlank(authors)) {
-                res.setErrorMessage(i18n.getMessage("entity.crud.input.empty"));
+                res.setErrorMessage(I18nHelper.getMessage("entity.crud.input.empty"));
                 return res.toJson();
             }
 

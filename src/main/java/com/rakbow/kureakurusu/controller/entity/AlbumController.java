@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
@@ -15,8 +14,8 @@ import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
-import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.MusicService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
@@ -26,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -55,8 +53,7 @@ public class AlbumController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private I18nService i18n;
+    
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -108,7 +105,7 @@ public class AlbumController {
             Album album = albumService.getAlbumWithAuth(id);
 
             if (album == null) {
-                res.setErrorMessage(i18n.getMessage("entity.url.error", Entity.ALBUM.getNameZh()));
+                res.setErrorMessage(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getNameZh()));
                 return res.toJson();
             }
 
@@ -205,7 +202,7 @@ public class AlbumController {
                 //删除专辑对应的music
                 musicService.deleteMusicsByAlbumIds(ids);
             }
-            res.message = i18n.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -250,7 +247,7 @@ public class AlbumController {
 
             albumService.updateAlbumTrackInfo(id, discList);
 
-            res.message = i18n.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

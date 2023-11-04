@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.franchise.MetaInfo;
 import com.rakbow.kureakurusu.entity.Franchise;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,7 @@ public class FranchiseService {
     private FranchiseMapper franchiseMapper;
     @Resource
     private RedisUtil redisUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     //endregion
 
@@ -133,11 +133,11 @@ public class FranchiseService {
      */
     public String checkFranchiseJson(JSONObject franchiseJson) {
         if (StringUtils.isBlank(franchiseJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
 
         if (StringUtils.isBlank(franchiseJson.getString("originDate"))) {
-            return i18n.getMessage("franchise.crud.origin_date.required_field");
+            return I18nHelper.getMessage("franchise.crud.origin_date.required_field");
         }
         return "";
     }

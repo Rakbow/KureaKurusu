@@ -11,7 +11,7 @@ import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
 import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
-import com.rakbow.kureakurusu.service.I18nService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.FileUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -40,8 +40,7 @@ public class QiniuBaseUtil {
     private String FILE_DOMAIN;
     @Value("${kureakurusu.qiniu.bucketName}")
     private String BUCKET_NAME;
-    @Resource
-    private I18nService i18n;
+    
 
     /**
      * 获取上传文件的token值
@@ -69,14 +68,14 @@ public class QiniuBaseUtil {
 
             // 检测文件是否为空
             if (file.isEmpty()) {
-                ar.setErrorMessage(i18n.getMessage("file.empty"));
+                ar.setErrorMessage(I18nHelper.getMessage("file.empty"));
                 return ar;
             }
 
             // 检测文件格式是否合法
             int dotPos = file.getOriginalFilename().lastIndexOf(".");
             if (dotPos < 0) {
-                ar.setErrorMessage(i18n.getMessage("file.format.error", fileType.getNameZh()));
+                ar.setErrorMessage(I18nHelper.getMessage("file.format.error", fileType.getNameZh()));
                 return ar;
             }
 
@@ -84,7 +83,7 @@ public class QiniuBaseUtil {
             String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
             // 检测格式是否支持
             if (!FileUtil.isFileFormatAllowed(fileExt, fileType)) {
-                ar.setErrorMessage(i18n.getMessage("file.format.unsupported", fileType.getNameZh()));
+                ar.setErrorMessage(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
                 return ar;
             }
 
@@ -102,12 +101,12 @@ public class QiniuBaseUtil {
                 // 返回存储文件的地址
                 ar.data = FILE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key");
             } else {
-                ar.setErrorMessage(i18n.getMessage("qiniu.exception", res.bodyString()));
+                ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
             }
             return ar;
         } catch (QiniuException ex) {
             // 请求失败时打印的异常的信息
-            ar.setErrorMessage(i18n.getMessage("qiniu.exception", ex.getMessage()));
+            ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", ex.getMessage()));
             return ar;
         }
     }
@@ -136,7 +135,7 @@ public class QiniuBaseUtil {
                 // 检测文件格式是否合法
                 int dotPos = file.getOriginalFilename().lastIndexOf(".");
                 if (dotPos < 0) {
-                    ar.setErrorMessage(i18n.getMessage("file.format.error", fileType.getNameZh()));
+                    ar.setErrorMessage(I18nHelper.getMessage("file.format.error", fileType.getNameZh()));
                     return ar;
                 }
 
@@ -144,7 +143,7 @@ public class QiniuBaseUtil {
                 String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
                 // 检测格式是否支持
                 if (!FileUtil.isFileFormatAllowed(fileExt, fileType)) {
-                    ar.setErrorMessage(i18n.getMessage("file.format.unsupported", fileType.getNameZh()));
+                    ar.setErrorMessage(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
                     return ar;
                 }
 
@@ -162,14 +161,14 @@ public class QiniuBaseUtil {
                     // 返回存储文件的地址并存入fullFileNames
                     fullFileNames.add(FILE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key"));
                 } else {
-                    ar.setErrorMessage(i18n.getMessage("qiniu.exception", res.bodyString()));
+                    ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
                 }
             }
             ar.data = fullFileNames;
             return ar;
         } catch (QiniuException ex) {
             // 请求失败时打印的异常的信息
-            ar.setErrorMessage(i18n.getMessage("qiniu.exception", ex.getMessage()));
+            ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", ex.getMessage()));
             return ar;
         }
     }
@@ -195,7 +194,7 @@ public class QiniuBaseUtil {
             bucketManager.delete(BUCKET_NAME, key);
         }catch (QiniuException ex) {
             //如果遇到异常，说明删除失败
-            ar.setErrorMessage(i18n.getMessage("qiniu.exception", ex.response.toString()));
+            ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", ex.response.toString()));
         }
         return ar;
     }
@@ -238,7 +237,7 @@ public class QiniuBaseUtil {
             ar.data = deleteResults;
         }catch (QiniuException ex) {
             //如果遇到异常，说明删除失败
-            ar.setErrorMessage(i18n.getMessage("qiniu.exception", ex.response.toString()));
+            ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", ex.response.toString()));
         }
         return ar;
     }

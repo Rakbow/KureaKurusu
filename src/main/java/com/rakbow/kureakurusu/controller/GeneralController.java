@@ -1,12 +1,10 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.service.I18nService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +25,7 @@ import java.util.List;
 @Controller
 public class GeneralController {
 
-    @Resource
-    private I18nService i18n;
+    
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
@@ -85,7 +82,7 @@ public class GeneralController {
                 // //删除专辑对应的music
                 // musicService.deleteMusicsByAlbumIds(ids);
             }
-            res.message = i18n.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

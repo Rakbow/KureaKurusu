@@ -14,17 +14,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Gender implements IEnum<Integer> {
 
-    UNKNOWN(0, "未知", "Unknown"),
-    MALE(1, "男", "Male"),
-    FEMALE(2, "女", "Female");
+    UNKNOWN(0, "enum.gender.unknown"),
+    MALE(1, "enum.gender.male"),
+    FEMALE(2, "enum.gender.female");
 
     @EnumValue
     @Getter
     private final Integer value;
     @Getter
-    private final String labelZh;
-    @Getter
-    private final String labelEn;
+    private final String labelKey;
 
 
 }

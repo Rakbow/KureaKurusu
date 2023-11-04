@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.entity.Game;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.GameVOMapper;
@@ -50,8 +51,7 @@ public class GameController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
-    @Resource
-    private I18nService i18n;
+    
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -121,7 +121,7 @@ public class GameController {
                 //从数据库中删除专辑
                 gameService.deleteGame(game);
             }
-            res.message = i18n.getMessage("entity.curd.delete.success", Entity.GAME.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.GAME.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

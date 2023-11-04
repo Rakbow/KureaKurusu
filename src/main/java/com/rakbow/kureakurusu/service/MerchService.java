@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.merch.MerchVOBeta;
 import com.rakbow.kureakurusu.entity.Merch;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MerchVOMapper;
@@ -44,8 +45,7 @@ public class MerchService {
     private VisitUtil visitUtil;
 
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
-    @Autowired
-    private I18nService i18n;
+    
 
     //endregion
 
@@ -129,21 +129,21 @@ public class MerchService {
      */
     public String checkMerchJson(JSONObject merchJson) {
         if (StringUtils.isBlank(merchJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("releaseDate"))) {
-            return i18n.getMessage("entity.crud.release_date.required_field");
+            return I18nHelper.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("category"))) {
-            return i18n.getMessage("entity.crud.category.required_field");
+            return I18nHelper.getMessage("entity.crud.category.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("franchises"))
                 || StringUtils.equals(merchJson.getString("franchises"), "[]")) {
-            return i18n.getMessage("entity.crud.franchise.required_field");
+            return I18nHelper.getMessage("entity.crud.franchise.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("products"))
                 || StringUtils.equals(merchJson.getString("products"), "[]")) {
-            return i18n.getMessage("entity.crud.product.required_field");
+            return I18nHelper.getMessage("entity.crud.product.required_field");
         }
         return "";
     }

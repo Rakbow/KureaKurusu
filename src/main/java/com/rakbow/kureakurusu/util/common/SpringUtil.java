@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.util.common;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringUtil implements ApplicationContextAware {
     private static ApplicationContext context;
+    private static MessageSource messageSource;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -54,5 +56,12 @@ public class SpringUtil implements ApplicationContextAware {
      */
     public static <T> T getBean(String name, Class<T> beanClass) {
         return context.getBean(name, beanClass);
+    }
+
+    public static MessageSource getMessageSource() {
+        if (messageSource == null) {
+            messageSource = getBean("messageSource");
+        }
+        return messageSource;
     }
 }

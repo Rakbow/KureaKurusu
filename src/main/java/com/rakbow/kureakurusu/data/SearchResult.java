@@ -25,6 +25,14 @@ public class SearchResult {
         this.searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
     }
 
+    public <T> SearchResult(Object data, IPage<T> page) {
+        this.data = data;
+        this.total = page.getTotal();
+        this.page = page.getCurrent();
+        this.pageSize = page.getSize();
+        this.searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
+    }
+
     public <T> SearchResult(IPage<T> page) {
         this.total = page.getTotal();
         this.data = page.getRecords();

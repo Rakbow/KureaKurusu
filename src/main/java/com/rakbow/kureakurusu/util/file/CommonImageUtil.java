@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.util.file;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.image.ImageProperty;
@@ -11,7 +10,7 @@ import com.rakbow.kureakurusu.data.emun.image.ImageType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
-import com.rakbow.kureakurusu.service.I18nService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 
 import javax.imageio.ImageIO;
@@ -29,8 +28,6 @@ import java.util.Objects;
  * @Description:
  */
 public class CommonImageUtil {
-
-    private final static I18nService i18n = SpringUtil.getBean("i18nService");
 
     //region ------检测------
 
@@ -61,7 +58,7 @@ public class CommonImageUtil {
 
         //检测图片类型为封面的个数是否大于1
         if (coverCount > 1) {
-            throw new Exception(i18n.getMessage("image.error.only_one_cover"));
+            throw new Exception(I18nHelper.getMessage("image.error.only_one_cover"));
         }
     }
 
@@ -81,7 +78,7 @@ public class CommonImageUtil {
             }
         }
         if (coverCount > 1) {
-            return i18n.getMessage("image.error.only_one_cover");
+            return I18nHelper.getMessage("image.error.only_one_cover");
         }
 
         return "";

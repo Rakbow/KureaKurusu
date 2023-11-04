@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.ApiInfo;
-import com.rakbow.kureakurusu.service.I18nService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +32,7 @@ public class HomeController {
     private String imgPath;
     @Value("${kureakurusu.path.audio}")
     private String audioPath;
-    @Resource
-    private I18nService i18n;
+    
 //    @Resource
 //    private MeiliSearchUtils meiliSearchUtils;
 
@@ -69,7 +67,7 @@ public class HomeController {
                 os.write(buffer, 0, b);
             }
         } catch (IOException e) {
-            logger.error(i18n.getMessage("image.load.error") + e.getMessage());
+            logger.error(I18nHelper.getMessage("image.load.error") + e.getMessage());
         }
     }
 
@@ -90,7 +88,7 @@ public class HomeController {
                 os.write(buffer, 0, b);
             }
         } catch (IOException e) {
-            logger.error(i18n.getMessage("file.load.error") + e.getMessage());
+            logger.error(I18nHelper.getMessage("file.load.error") + e.getMessage());
         }
     }
 
@@ -103,7 +101,7 @@ public class HomeController {
     //权限不足时
     @RequestMapping(path = "/denied", method = RequestMethod.GET)
     public String getDeniedPage(Model model) {
-        model.addAttribute("errorMessage", i18n.getMessage("auth.denied"));
+        model.addAttribute("errorMessage", I18nHelper.getMessage("auth.denied"));
         return "/error/404";
     }
 

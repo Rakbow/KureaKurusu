@@ -20,6 +20,7 @@ import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Disc;
 import com.rakbow.kureakurusu.entity.Game;
 import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
@@ -79,8 +80,7 @@ public class EntityService {
     private VisitUtil visitUtil;
     @Resource
     private EntryUtil entryUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
@@ -442,7 +442,7 @@ public class EntityService {
             if(ar.state) {
                 JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
                 entityMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.NOW_TIMESTAMP);
-                res.message = i18n.getMessage("image.insert.success");
+                res.message = I18nHelper.getMessage("image.insert.success");
             }else {
                 throw new Exception(ar.message);
             }
@@ -462,7 +462,7 @@ public class EntityService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemImages(String tableName, int entityId, String images) {
         entityMapper.updateItemImages(tableName, entityId, images, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("image.update.success");
+        return I18nHelper.getMessage("image.update.success");
     }
 
     /**
@@ -480,7 +480,7 @@ public class EntityService {
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         entityMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("image.delete.success");
+        return I18nHelper.getMessage("image.delete.success");
     }
 
     //endregion

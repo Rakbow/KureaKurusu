@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.disc.DiscVOBeta;
 import com.rakbow.kureakurusu.entity.Disc;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.DiscVOMapper;
@@ -41,8 +42,7 @@ public class DiscService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -59,7 +59,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDisc(Disc disc) {
         int id = discMapper.addDisc(disc);
-        return i18n.getMessage("entity.curd.insert.success", Entity.DISC.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.DISC.getNameZh());
     }
 
     /**
@@ -112,7 +112,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateDisc(int id, Disc disc) {
         discMapper.updateDisc(id, disc);
-        return i18n.getMessage("entity.curd.update.success", Entity.DISC.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.DISC.getNameZh());
     }
 
     //endregion
@@ -128,25 +128,25 @@ public class DiscService {
      */
     public String checkDiscJson(JSONObject discJson) {
         if (StringUtils.isBlank(discJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("releaseDate"))) {
-            return i18n.getMessage("entity.crud.release_date.required_field");
+            return I18nHelper.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("franchises"))
                 || StringUtils.equals(discJson.getString("franchises"), "[]")) {
-            return i18n.getMessage("entity.crud.category.required_field");
+            return I18nHelper.getMessage("entity.crud.category.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("products"))
                 || StringUtils.equals(discJson.getString("products"), "[]")) {
-            return i18n.getMessage("entity.crud.product.required_field");
+            return I18nHelper.getMessage("entity.crud.product.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("mediaFormat"))
                 || StringUtils.equals(discJson.getString("mediaFormat"), "[]")) {
-            return i18n.getMessage("entity.crud.media_format.required_field");
+            return I18nHelper.getMessage("entity.crud.media_format.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("region"))) {
-            return i18n.getMessage("entity.crud.region.required_field");
+            return I18nHelper.getMessage("entity.crud.region.required_field");
         }
         return "";
     }

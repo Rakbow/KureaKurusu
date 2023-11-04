@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.data.emun.system.FileType;
 import com.rakbow.kureakurusu.data.vo.music.MusicVOAlpha;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
@@ -47,8 +48,7 @@ public class MusicService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private I18nService i18n;
+    
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -172,7 +172,7 @@ public class MusicService {
         }catch (Exception ex) {
             throw new Exception(ex);
         }
-        return i18n.getMessage("entity.curd.update.success", Entity.MUSIC.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.MUSIC.getNameZh());
     }
 
     /**
@@ -249,13 +249,13 @@ public class MusicService {
      * */
     public String checkMusicJson(JSONObject musicJson) {
         if (StringUtils.isBlank(musicJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(musicJson.getString("audioType"))) {
-            return i18n.getMessage("music.crud.audio_type.required_field");
+            return I18nHelper.getMessage("music.crud.audio_type.required_field");
         }
         if (StringUtils.isBlank(musicJson.getString("audioLength"))) {
-            return i18n.getMessage("music.crud.audio_length.required_field");
+            return I18nHelper.getMessage("music.crud.audio_length.required_field");
         }
         return "";
     }
@@ -305,7 +305,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicArtists(int id, String artists) {
         musicMapper.updateMusicArtists(id, artists, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("entity.crud.personnel.update.success");
+        return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
     /**
@@ -317,7 +317,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicLyricsText(int id, String lrcText) {
         musicMapper.updateMusicLyricsText(id, lrcText, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("music.crud.lyrics.update.success");
+        return I18nHelper.getMessage("music.crud.lyrics.update.success");
     }
 
     /**
@@ -384,7 +384,7 @@ public class MusicService {
         JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
 
         musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("file.delete.success");
+        return I18nHelper.getMessage("file.delete.success");
     }
 
     /**

@@ -1,12 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.entity.LoginTicket;
 import com.rakbow.kureakurusu.entity.User;
-import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -53,8 +52,7 @@ public class UserController {
 
     @Resource
     private UserService userService;
-    @Resource
-    private I18nService i18n;
+    
 
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getUserSettingPage() {
@@ -137,13 +135,13 @@ public class UserController {
                 // 根据凭证查询用户
                 User user = userService.findUserById(loginTicket.getUserId());
                 if (user.getType() == 1) {
-                    res.setErrorMessage(i18n.getMessage("auth.not_authority "));
+                    res.setErrorMessage(I18nHelper.getMessage("auth.not_authority "));
                 }
             }else {
-                res.setErrorMessage(i18n.getMessage("auth.not_login"));
+                res.setErrorMessage(I18nHelper.getMessage("auth.not_login"));
             }
         } else {
-            res.setErrorMessage(i18n.getMessage("auth.not_login"));
+            res.setErrorMessage(I18nHelper.getMessage("auth.not_login"));
         }
 
         return res;

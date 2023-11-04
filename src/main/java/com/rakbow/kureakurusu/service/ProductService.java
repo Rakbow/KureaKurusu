@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.entity.Product;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
@@ -43,8 +44,7 @@ public class ProductService {
     @Resource
     private RedisUtil redisUtil;
 
-    @Resource
-    private I18nService i18n;
+    
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -131,19 +131,19 @@ public class ProductService {
      */
     public String checkProductJson(JSONObject productJson) {
         if (StringUtils.isBlank(productJson.getString("name"))) {
-            return i18n.getMessage("entity.crud.name.required_field");
+            return I18nHelper.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("nameZh"))) {
-            return i18n.getMessage("entity.crud.name_zh.required_field");
+            return I18nHelper.getMessage("entity.crud.name_zh.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("releaseDate"))) {
-            return i18n.getMessage("entity.crud.release_date.required_field");
+            return I18nHelper.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("franchise"))) {
-            return i18n.getMessage("entity.crud.franchise.required_field");
+            return I18nHelper.getMessage("entity.crud.franchise.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("category"))) {
-            return i18n.getMessage("entity.crud.category.required_field");
+            return I18nHelper.getMessage("entity.crud.category.required_field");
         }
         return "";
     }
@@ -158,7 +158,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductOrganizations(int id, String organizations) {
         productMapper.updateProductOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("entity.crud.companies.update.success");
+        return I18nHelper.getMessage("entity.crud.companies.update.success");
     }
 
     /**
@@ -171,7 +171,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductStaffs(int id, String staffs) {
         productMapper.updateProductStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
-        return i18n.getMessage("entity.crud.personnel.update.success");
+        return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
     /**
