@@ -6,6 +6,7 @@ import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.system.LoginResult;
 import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.CommonConstant;
@@ -47,6 +48,8 @@ public class LoginController {
     private Producer kaptchaProducer;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    @Resource
+    private I18nService i18n;
 
     //获取注册页面
     @RequestMapping(path = "/register", method = RequestMethod.GET)
@@ -124,7 +127,7 @@ public class LoginController {
             // 检查验证码
             String kaptcha = (String) session.getAttribute("kaptcha");
             if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !kaptcha.equalsIgnoreCase(verifyCode)) {
-                res.setErrorMessage(ApiInfo.INCORRECT_VERIFY_CODE);
+                res.setErrorMessage(i18n.getMessage("login.verify_code.error"));
                 return res.toJson();
             }
 

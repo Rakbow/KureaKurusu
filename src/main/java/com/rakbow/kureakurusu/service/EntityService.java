@@ -3,6 +3,9 @@ package com.rakbow.kureakurusu.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.*;
@@ -76,6 +79,8 @@ public class EntityService {
     private VisitUtil visitUtil;
     @Resource
     private EntryUtil entryUtil;
+    @Resource
+    private I18nService i18n;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
@@ -181,7 +186,7 @@ public class EntityService {
 
         if(!ids.isEmpty()) {
             if(entityType == Entity.ALBUM.getId()) {
-                List<AlbumVOAlpha> items = albumVOMapper.toVOAlpha(albumMapper.getAlbums(ids));
+                List<AlbumVOAlpha> items = albumVOMapper.toVOAlpha(albumMapper.selectBatchIds(ids));
 
                 for (AlbumVOAlpha item : items) {
                     item.setVisitNum(visits.get(item.getId()));
@@ -235,7 +240,12 @@ public class EntityService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public JSONArray getJustAddedItems(int entityType, int limit) {
         if(entityType == Entity.ALBUM.getId()) {
-            return JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOBeta(albumMapper.getAlbumOrderByAddedTime(limit))));
+            return JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOBeta(
+                    albumMapper.selectList(
+                            new Page<>(1, limit),
+                            new QueryWrapper<Album>().orderByAsc("added_time")
+                    )
+            )));
         }
         if(entityType == Entity.BOOK.getId()) {
             return JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByAddedTime(limit))));
@@ -271,7 +281,7 @@ public class EntityService {
         List<String> gameUrls = new ArrayList<>();
         List<String> merchUrls = new ArrayList<>();
 
-        albumMapper.getAlbums(new ArrayList<>(){{
+        albumMapper.selectBatchIds(new ArrayList<>(){{
             add(11);add(13);add(109);add(10);add(6);
         }}).forEach(album -> albumUrls.add(QiniuImageUtil.getThumbUrl(CommonImageUtil.getCoverUrl(album.getImages()), 500)));
 
@@ -432,7 +442,7 @@ public class EntityService {
             if(ar.state) {
                 JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
                 entityMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.NOW_TIMESTAMP);
-                res.message = ApiInfo.INSERT_IMAGES_SUCCESS;
+                res.message = i18n.getMessage("image.insert.success");
             }else {
                 throw new Exception(ar.message);
             }
@@ -452,7 +462,7 @@ public class EntityService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemImages(String tableName, int entityId, String images) {
         entityMapper.updateItemImages(tableName, entityId, images, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_IMAGES_SUCCESS;
+        return i18n.getMessage("image.update.success");
     }
 
     /**
@@ -470,7 +480,7 @@ public class EntityService {
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
         entityMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.DELETE_IMAGES_SUCCESS;
+        return i18n.getMessage("image.delete.success");
     }
 
     //endregion
@@ -496,11 +506,25 @@ public class EntityService {
             return res;
         }
 
+        QueryWrapper<Album> wrapper;
+        long size = limit;
+        long page = offset/size + 1;
+
         if(entityType == Entity.ALBUM.getId()) {
-            List<Album> albums = albumMapper.simpleSearch(keyword, limit, offset);
-            if(!albums.isEmpty()) {
-                res.setData(JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOGamma(albums))));
-                res.setTotal(albumMapper.simpleSearchCount(keyword));
+
+            wrapper = new QueryWrapper<Album>()
+                    .like("catalog_no", keyword)
+                    .like("catalog_no", keyword)
+                    .like("catalog_no", keyword)
+                    .like("catalog_no", keyword)
+                    .eq("status", 1)
+                    .orderByDesc("added_time");
+
+            IPage<Album> albums = albumMapper.selectPage(new Page<>(page, size), wrapper);
+
+            if(albums.getTotal() != 0) {
+                res.setData(JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOGamma(albums.getRecords()))));
+                res.setTotal(albums.getTotal());
             }
         }
         if(entityType == Entity.BOOK.getId()) {

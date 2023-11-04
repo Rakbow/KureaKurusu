@@ -69,10 +69,10 @@ class JsonSetSortByValue implements Comparator<JSONObject> {
     }
 }
 
-class AttributesSortByValue implements Comparator<Attribute> {
+class AttributesSortByValue implements Comparator<Attribute<Integer>> {
 
     @Override
-    public int compare(Attribute a, Attribute b) {
+    public int compare(Attribute<Integer> a, Attribute<Integer> b) {
         return Integer.compare(a.getValue(), b.getValue());
     }
 }

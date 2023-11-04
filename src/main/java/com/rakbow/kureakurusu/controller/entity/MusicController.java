@@ -10,10 +10,7 @@ import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
-import com.rakbow.kureakurusu.service.AlbumService;
-import com.rakbow.kureakurusu.service.EntityService;
-import com.rakbow.kureakurusu.service.MusicService;
-import com.rakbow.kureakurusu.service.UserService;
+import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
@@ -54,41 +51,43 @@ public class MusicController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private I18nService i18n;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
 
     //获取单个音频详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getMusicDetail(@PathVariable("id") int id, Model model) {
-        Music music = musicService.getMusicWithAuth(id);
-        if (music == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.MUSIC.getNameZh()));
-            return "/error/404";
-        }
-        Album album = albumService.getAlbum(music.getAlbumId());
-        String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
-
-        model.addAttribute("music", musicVOMapper.music2VO(music, coverUrl));
-
-        if(AuthorityInterceptor.isUser()) {
-            model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
-        }
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(Entity.MUSIC.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.MUSIC.getId(), id, music));
-        //实体类通用信息
-        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(music, Entity.MUSIC.getId()));
-        //获取同属一张碟片的音频
-        model.addAttribute("relatedMusics", musicService.getRelatedMusics(music, coverUrl));
-        //获取所属专辑的信息
-        model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.toVOBeta(album));
-
-        return "/database/itemDetail/music-detail";
-
-    }
+    // @UniqueVisitor
+    // @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    // public String getMusicDetail(@PathVariable("id") int id, Model model) {
+    //     Music music = musicService.getMusicWithAuth(id);
+    //     if (music == null) {
+    //         model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.MUSIC.getNameZh()));
+    //         return "/error/404";
+    //     }
+    //     Album album = albumService.getAlbum(music.getAlbumId());
+    //     String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
+    //
+    //     model.addAttribute("music", musicVOMapper.music2VO(music, coverUrl));
+    //
+    //     if(AuthorityInterceptor.isUser()) {
+    //         model.addAttribute("audioInfo", MusicUtil.getMusicAudioInfo(music, coverUrl));
+    //     }
+    //     //前端选项数据
+    //     model.addAttribute("options", entityUtil.getDetailOptions(Entity.MUSIC.getId()));
+    //     //获取页面数据
+    //     model.addAttribute("pageInfo", entityService.getPageInfo(Entity.MUSIC.getId(), id, music));
+    //     //实体类通用信息
+    //     model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(music, Entity.MUSIC.getId()));
+    //     //获取同属一张碟片的音频
+    //     model.addAttribute("relatedMusics", musicService.getRelatedMusics(music, coverUrl));
+    //     //获取所属专辑的信息
+    //     model.addAttribute("relatedAlbum", AlbumVOMapper.INSTANCES.toVOBeta(album));
+    //
+    //     return "/database/itemDetail/music-detail";
+    //
+    // }
 
     //更新Music
     @RequestMapping(path = "/update", method = RequestMethod.POST)
@@ -155,13 +154,13 @@ public class MusicController {
         ApiResult res = new ApiResult();
         try {
             if (files == null || files.length == 0) {
-                res.setErrorMessage(ApiInfo.INPUT_FILE_EMPTY);
+                res.setErrorMessage(i18n.getMessage("file.empty"));
                 return res.toJson();
             }
 
             //检测数据是否合法
             if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
-                res.setErrorMessage(ApiInfo.MUSIC_FILE_NUMBER_EXCEPTION);
+                res.setErrorMessage(i18n.getMessage("music.crud.file_number.error"));
                 return res.toJson();
             }
 

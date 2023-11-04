@@ -32,15 +32,15 @@ public class EntityConverter {
         return DateHelper.dateToString(date);
     }
 
-    static List<Attribute> getProducts(String products) {
+    static List<Attribute<Integer>> getProducts(String products) {
         return EntryUtil.getClassifications(products);
     }
 
-    static List<Attribute> getFranchises(String franchises) {
+    static List<Attribute<Integer>> getFranchises(String franchises) {
         return EntryUtil.getFranchises(franchises);
     }
 
-    static List<Attribute> getMediaFormat(String formats) {
+    static List<Attribute<Integer>> getMediaFormat(String formats) {
         return MediaFormat.getAttributes(formats);
     }
 

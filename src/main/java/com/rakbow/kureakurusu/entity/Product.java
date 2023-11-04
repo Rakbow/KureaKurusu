@@ -19,7 +19,7 @@ import java.util.Date;
 @ToString(callSuper = true)
 public class Product extends MetaEntity {
 
-    private int id;//主键
+    private Integer id;//主键
     private String name;//原名
     private String nameZh;//中文译名
     private String nameEn;//英文译名

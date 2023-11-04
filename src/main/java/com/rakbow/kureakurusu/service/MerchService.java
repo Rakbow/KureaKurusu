@@ -15,6 +15,7 @@ import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MerchVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,8 @@ public class MerchService {
     private VisitUtil visitUtil;
 
     private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
+    @Autowired
+    private I18nService i18n;
 
     //endregion
 
@@ -126,21 +129,21 @@ public class MerchService {
      */
     public String checkMerchJson(JSONObject merchJson) {
         if (StringUtils.isBlank(merchJson.getString("name"))) {
-            return ApiInfo.MERCH_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("releaseDate"))) {
-            return ApiInfo.MERCH_RELEASE_DATE_EMPTY;
+            return i18n.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("category"))) {
-            return ApiInfo.MERCH_CATEGORY_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("franchises"))
                 || StringUtils.equals(merchJson.getString("franchises"), "[]")) {
-            return ApiInfo.FRANCHISES_EMPTY;
+            return i18n.getMessage("entity.crud.franchise.required_field");
         }
         if (StringUtils.isBlank(merchJson.getString("products"))
                 || StringUtils.equals(merchJson.getString("products"), "[]")) {
-            return ApiInfo.PRODUCTS_EMPTY;
+            return i18n.getMessage("entity.crud.product.required_field");
         }
         return "";
     }
@@ -197,12 +200,14 @@ public class MerchService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
-                notForSale, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        List<Merch> merchs  = new ArrayList<>();
+
+        // List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
+        //         notForSale, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, AuthorityInterceptor.isSenior());
 
-        return new SearchResult(total, merchs);
+        return new SearchResult(merchs, total);
     }
 
     /**

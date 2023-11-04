@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Project_name: kureakurusu
@@ -53,13 +52,13 @@ public class EnumUtil {
             Map.entry(EntryCategory.class, RedisKey.ENTRY_CATEGORY_SET)
     );
 
-    public static <T extends Enum<T>> List<Attribute> getAttributes(Class<T> clazz, String idsJson) {
+    public static <T extends Enum<T>> List<Attribute<Integer>> getAttributes(Class<T> clazz, String idsJson) {
         int[] values = JsonUtil.toIds(idsJson);
 
-        List<Attribute> res = new ArrayList<>();
+        List<Attribute<Integer>> res = new ArrayList<>();
 
         for(int value : values) {
-            Attribute attribute = getAttribute(clazz, value);
+            Attribute<Integer> attribute = getAttribute(clazz, value);
             if(attribute != null) {
                 res.add(attribute);
             }
@@ -68,7 +67,7 @@ public class EnumUtil {
         return res;
     }
 
-    public static <T extends Enum<T>> Attribute getAttribute(Class<T> clazz, int value) {
+    public static <T extends Enum<T>> Attribute<Integer> getAttribute(Class<T> clazz, int value) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         return Arrays.stream(clazz.getEnumConstants())
                 .filter(enumValue -> {
@@ -86,7 +85,7 @@ public class EnumUtil {
                         Method nameMethod = clazz.getDeclaredMethod("get" + "Name" + StringUtils.capitalize(lang));
                         String name = (String) nameMethod.invoke(enumValue);
                         int id = (int) clazz.getDeclaredMethod("getId").invoke(enumValue);
-                        return new Attribute(id, name);
+                        return new Attribute<Integer>(name, id);
                     } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                         System.out.println(e.getMessage());
                         return null;
@@ -95,18 +94,18 @@ public class EnumUtil {
                 .orElse(null);
     }
 
-    public static <T extends Enum<T>> List<Attribute> getAttributeOptions(Class<T> clazz) {
+    public static <T extends Enum<T>> List<Attribute<Integer>> getAttributeOptions(Class<T> clazz) {
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        List<Attribute> attributes = new ArrayList<>();
+        List<Attribute<Integer>> attributes = new ArrayList<>();
         for (T enumValue : clazz.getEnumConstants()) {
             try {
                 Field idField = clazz.getDeclaredField("id");
                 idField.setAccessible(true);
                 int id = idField.getInt(enumValue);
                 if(lang.equals(Locale.CHINESE.getLanguage())) {
-                    attributes.add(new Attribute(id, clazz.getDeclaredField("nameZh").get(enumValue).toString()));
+                    attributes.add(new Attribute<>(clazz.getDeclaredField("nameZh").get(enumValue).toString(), id));
                 }else if(lang.equals(Locale.ENGLISH.getLanguage())) {
-                    attributes.add(new Attribute(id, clazz.getDeclaredField("nameEn").get(enumValue).toString()));
+                    attributes.add(new Attribute<>(clazz.getDeclaredField("nameEn").get(enumValue).toString(), id));
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 // handle exception
@@ -115,17 +114,17 @@ public class EnumUtil {
         return attributes;
     }
 
-    public static <T extends Enum<T>> List<Attribute> getAttributeOptions(Class<T> clazz, String lang) {
-        List<Attribute> attributes = new ArrayList<>();
+    public static <T extends Enum<T>> List<Attribute<Integer>> getAttributeOptions(Class<T> clazz, String lang) {
+        List<Attribute<Integer>> attributes = new ArrayList<>();
         for (T enumValue : clazz.getEnumConstants()) {
             try {
                 Field idField = clazz.getDeclaredField("id");
                 idField.setAccessible(true);
                 int id = idField.getInt(enumValue);
                 if(lang.equals(Locale.CHINESE.getLanguage())) {
-                    attributes.add(new Attribute(id, clazz.getDeclaredField("nameZh").get(enumValue).toString()));
+                    attributes.add(new Attribute<Integer>(clazz.getDeclaredField("nameZh").get(enumValue).toString(), id));
                 }else if(lang.equals(Locale.ENGLISH.getLanguage())) {
-                    attributes.add(new Attribute(id, clazz.getDeclaredField("nameEn").get(enumValue).toString()));
+                    attributes.add(new Attribute<Integer>(clazz.getDeclaredField("nameEn").get(enumValue).toString(), id));
                 }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 // handle exception
@@ -135,13 +134,13 @@ public class EnumUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<T>> Map<String, List<Attribute>> getOptionRedisKeyPair() {
-        Map<String, List<Attribute>> res = new HashMap<>();
+    public static <T extends Enum<T>> Map<String, List<Attribute<Integer>>> getOptionRedisKeyPair() {
+        Map<String, List<Attribute<Integer>>> res = new HashMap<>();
 
         Arrays.asList(EnumUtil.SUPPORTED_EMUN).forEach(emunClass -> {
 
-            List<Attribute> attributesZh = getAttributeOptions(emunClass, Locale.CHINESE.getLanguage());
-            List<Attribute> attributesEn = getAttributeOptions(emunClass, Locale.ENGLISH.getLanguage());
+            List<Attribute<Integer>> attributesZh = getAttributeOptions(emunClass, Locale.CHINESE.getLanguage());
+            List<Attribute<Integer>> attributesEn = getAttributeOptions(emunClass, Locale.ENGLISH.getLanguage());
 
             String key = EnumUtil.EMUN_REDIS_KEY_PAIR.get(emunClass);
             String zhKey = String.format(key, Locale.CHINESE.getLanguage());

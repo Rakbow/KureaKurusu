@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
+import com.rakbow.kureakurusu.service.I18nService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,6 +15,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public HttpFirewall httpFirewall() {
         return new DefaultHttpFirewall();
     }
+
+    @Resource
+    private I18nService i18n;
 
     @Override
     public void configure(WebSecurity web) {
@@ -151,7 +156,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     if ("XMLHttpRequest".equals(xRequestedWith)) {//异步请求
                         response.setContentType("application/plain;charset=utf-8");
                         PrintWriter writer = response.getWriter();
-                        writer.write(JSON.toJSONString(new ApiResult(0, ApiInfo.NOT_LOGIN)));
+                        writer.write(JSON.toJSONString(new ApiResult(0, i18n.getMessage("auth.not_login"))));
                     } else {//同步请求
                         response.sendRedirect("/login");
                     }
@@ -165,7 +170,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         if ("XMLHttpRequest".equals(xRequestedWith)) {
                             response.setContentType("application/plain;charset=utf-8");
                             PrintWriter writer = response.getWriter();
-                            writer.write(JSON.toJSONString(new ApiResult(0, ApiInfo.NOT_AUTHORITY)));
+                            writer.write(JSON.toJSONString(new ApiResult(0, i18n.getMessage("auth.not_authority"))));
                         } else {
                             response.sendRedirect("/denied");
                         }

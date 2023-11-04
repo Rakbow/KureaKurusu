@@ -28,8 +28,8 @@ public class DiscVOGamma {
     private boolean hasBonus;//是否包含特典
 
     //关联信息
-    private List<Attribute> franchises;//所属系列id
-    private List<Attribute> products;//所属作品id
+    private List<Attribute<Integer>> franchises;//所属系列id
+    private List<Attribute<Integer>> products;//所属作品id
 
     private JSONArray mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
 

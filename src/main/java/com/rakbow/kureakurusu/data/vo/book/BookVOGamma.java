@@ -34,7 +34,7 @@ public class BookVOGamma {
     private boolean hasBonus;//是否包含特典
 
     //关联信息
-    private List<Attribute> franchises;//所属系列
+    private List<Attribute<Integer>> franchises;//所属系列
     private JSONArray products;//所属产品
 
     private String cover;

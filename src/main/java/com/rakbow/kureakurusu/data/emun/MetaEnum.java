@@ -34,13 +34,13 @@ public interface MetaEnum {
         return "Uncategorized";
     }
 
-    static <T extends Enum<T> & MetaEnum> List<Attribute> getAttributeSet(Class<T> enumClass, String lang) {
-        List<Attribute> set = new ArrayList<>();
+    static <T extends Enum<T> & MetaEnum> List<Attribute<Integer>> getAttributeSet(Class<T> enumClass, String lang) {
+        List<Attribute<Integer>> set = new ArrayList<>();
         for (T e : enumClass.getEnumConstants()) {
             if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
-                set.add(new Attribute(e.getId(), e.getNameZh()));
+                set.add(new Attribute<Integer>(e.getNameZh(), e.getId()));
             }else if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                set.add(new Attribute(e.getId(), e.getNameEn()));
+                set.add(new Attribute<Integer>(e.getNameEn(), e.getId()));
             }
         }
         return set;

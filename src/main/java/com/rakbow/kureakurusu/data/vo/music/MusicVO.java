@@ -20,7 +20,7 @@ public class MusicVO {
     private String name;// 曲名（原文）
     private String nameEn;// 曲名（英语）
     private JSONArray artists;// 创作人员名单 [{"pos":"","name":""}]
-    private Attribute audioType;// 音频类型 0-未分类 1-歌曲 2-歌曲（无伴奏） 3-原声 4-广播剧
+    private Attribute<Integer> audioType;// 音频类型 0-未分类 1-歌曲 2-歌曲（无伴奏） 3-原声 4-广播剧
     private int albumId;// 所属专辑id
     private int discSerial;// 所属碟片的顺序
     private String trackSerial;// 在碟片内的顺序

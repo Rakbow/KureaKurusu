@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
 import com.rakbow.kureakurusu.entity.Disc;
 import com.rakbow.kureakurusu.service.DiscService;
 import com.rakbow.kureakurusu.service.EntityService;
+import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
@@ -51,6 +52,8 @@ public class DiscController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private I18nService i18n;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -59,27 +62,27 @@ public class DiscController {
     //region ------获取页面------
 
     //获取单个专辑详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
-        Disc disc = discService.getDiscWithAuth(id);
-        if (discService.getDisc(id) == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.DISC.getNameZh()));
-            return "/error/404";
-        }
-        model.addAttribute("disc", discVOMapper.disc2VO(disc));
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(Entity.DISC.getId()));
-        //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(disc, Entity.DISC.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.DISC.getId(), id, disc));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, Entity.DISC, false));
-        //获取相关碟片
-        // model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
-        return "/database/itemDetail/disc-detail";
-    }
+    // @UniqueVisitor
+    // @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    // public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+    //     Disc disc = discService.getDiscWithAuth(id);
+    //     if (discService.getDisc(id) == null) {
+    //         model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.DISC.getNameZh()));
+    //         return "/error/404";
+    //     }
+    //     model.addAttribute("disc", discVOMapper.disc2VO(disc));
+    //     //前端选项数据
+    //     model.addAttribute("options", entityUtil.getDetailOptions(Entity.DISC.getId()));
+    //     //实体类通用信息
+    //     model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(disc, Entity.DISC.getId()));
+    //     //获取页面数据
+    //     model.addAttribute("pageInfo", entityService.getPageInfo(Entity.DISC.getId(), id, disc));
+    //     //图片相关
+    //     model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(disc.getImages(), 200, Entity.DISC, false));
+    //     //获取相关碟片
+    //     // model.addAttribute("relatedDiscs", discService.getRelatedDiscs(id));
+    //     return "/database/itemDetail/disc-detail";
+    // }
 
     //endregion
 
@@ -148,7 +151,7 @@ public class DiscController {
                 //从数据库中删除专辑
                 discService.deleteDisc(disc);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.DISC.getNameZh());
+            res.message = i18n.getMessage("entity.curd.delete.success", Entity.DISC.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

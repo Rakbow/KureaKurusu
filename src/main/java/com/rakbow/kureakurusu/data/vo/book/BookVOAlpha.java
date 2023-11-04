@@ -25,7 +25,7 @@ public class BookVOAlpha {
     private String isbn10;//国际标准书号（10位）
     private String isbn13;//国际标准书号（13位）
     private List<String> authors;//作者
-    private Attribute bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
+    private Attribute<Integer> bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
     private RegionVO region;//地区
     private LanguageVO publishLanguage;//语言
@@ -36,8 +36,8 @@ public class BookVOAlpha {
     private String remark;//备注
 
     //关联信息
-    private List<Attribute> franchises;//所属系列
-    private List<Attribute> products;//所属产品
+    private List<Attribute<Integer>> franchises;//所属系列
+    private List<Attribute<Integer>> products;//所属产品
 
     //图片相关
     private JSONObject cover;//图片（json）

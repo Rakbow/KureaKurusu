@@ -18,8 +18,8 @@ public class ItemDetailInfo {
     private int entityType;//实体类型
 
     //关联信息
-    private List<Attribute> franchises;//所属系列
-    private List<Attribute> products;//所属产品id 在mysql中以数组字符串形式存储
+    private List<Attribute<Integer>> franchises;//所属系列
+    private List<Attribute<Integer>> products;//所属产品id 在mysql中以数组字符串形式存储
 
     private String description;//描述信息
 

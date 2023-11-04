@@ -47,6 +47,8 @@ public class MusicService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private I18nService i18n;
 
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
@@ -170,7 +172,7 @@ public class MusicService {
         }catch (Exception ex) {
             throw new Exception(ex);
         }
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.MUSIC.getNameZh());
+        return i18n.getMessage("entity.curd.update.success", Entity.MUSIC.getNameZh());
     }
 
     /**
@@ -247,13 +249,13 @@ public class MusicService {
      * */
     public String checkMusicJson(JSONObject musicJson) {
         if (StringUtils.isBlank(musicJson.getString("name"))) {
-            return ApiInfo.MUSIC_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(musicJson.getString("audioType"))) {
-            return ApiInfo.MUSIC_AUDIO_TYPE_EMPTY;
+            return i18n.getMessage("music.crud.audio_type.required_field");
         }
         if (StringUtils.isBlank(musicJson.getString("audioLength"))) {
-            return ApiInfo.MUSIC_AUDIO_LENGTH_EMPTY;
+            return i18n.getMessage("music.crud.audio_length.required_field");
         }
         return "";
     }
@@ -303,7 +305,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicArtists(int id, String artists) {
         musicMapper.updateMusicArtists(id, artists, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_MUSIC_ARTISTS_SUCCESS;
+        return i18n.getMessage("entity.crud.personnel.update.success");
     }
 
     /**
@@ -315,7 +317,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicLyricsText(int id, String lrcText) {
         musicMapper.updateMusicLyricsText(id, lrcText, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_MUSIC_LYRICS_SUCCESS;
+        return i18n.getMessage("music.crud.lyrics.update.success");
     }
 
     /**
@@ -382,7 +384,7 @@ public class MusicService {
         JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
 
         musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.DELETE_FILES_SUCCESS;
+        return i18n.getMessage("file.delete.success");
     }
 
     /**

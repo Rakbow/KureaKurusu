@@ -202,7 +202,7 @@ class KureaKurusuApplicationTests {
 //         String idsJson = "[2, 4, 5, 7]";
 // //
 //         long t1 = System.currentTimeMillis();
-// //        List<Attribute> res1 = BookRelatedType.getAttributes(idsJson);
+// //        List<Attribute<Integer>> res1 = BookRelatedType.getAttributes(idsJson);
 // //            System.out.println(BookRelatedType.getAttribute(5));
 //         long t2 = System.currentTimeMillis();
 //         System.out.println(t2 - t1);

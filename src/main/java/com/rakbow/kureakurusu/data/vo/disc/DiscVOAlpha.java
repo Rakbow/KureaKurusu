@@ -33,7 +33,7 @@ public class DiscVOAlpha {
     private String remark;//备注
 
     //关联信息
-    private List<Attribute> franchises;//所属系列id
+    private List<Attribute<Integer>> franchises;//所属系列id
     private JSONArray products;//所属作品id
 
     //复杂字段

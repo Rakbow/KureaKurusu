@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class LoginTicket {
 
-    private int id;
+    private Integer id;
     private int userId;
     private String ticket;
     private int status;

@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.service.EntityService;
+import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
@@ -52,6 +53,8 @@ public class EntityController {
     private EntityService entityService;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private I18nService i18n;
 
     //endregion
 
@@ -191,7 +194,7 @@ public class EntityController {
             int entityId = json.getIntValue("entityId");
             boolean status = json.getBoolean("status");
             entityService.updateItemStatus(tableName, entityId, status?1:0);
-            res.message = ApiInfo.UPDATE_ITEM_STATUS_URL;
+            res.message = i18n.getMessage("entity.crud.status.update.success");
         }catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -208,7 +211,7 @@ public class EntityController {
             List<Integer> ids = json.getList("ids", Integer.class);
             boolean status = json.getBoolean("status");
             entityService.updateItemsStatus(tableName, ids, status?1:0);
-            res.message = ApiInfo.UPDATE_ITEM_STATUS_URL;
+            res.message = i18n.getMessage("entity.crud.status.update.success");
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -225,7 +228,7 @@ public class EntityController {
             String entityName = Entity.getTableName(json.getIntValue("entityType"));
             String description = json.get("text").toString();
             entityService.updateItemDescription(entityName, entityId, description);
-            res.message = ApiInfo.UPDATE_DESCRIPTION_SUCCESS;
+            res.message = i18n.getMessage("entity.crud.description.update.success");
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -242,7 +245,7 @@ public class EntityController {
             String tableName = Entity.getTableName(json.getIntValue("entityType"));
             String bonus = json.getString("text");
             entityService.updateItemBonus(tableName, entityId, bonus);
-            res.message = ApiInfo.UPDATE_BONUS_SUCCESS;
+            res.message = i18n.getMessage("entity.crud.bonus.update.success");
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -259,7 +262,7 @@ public class EntityController {
             String tableName = Entity.getTableName(json.getIntValue("entityType"));
             String spec = json.getString("spec");
             entityService.updateItemSpecs(tableName, entityId, spec);
-            res.message = ApiInfo.UPDATE_SPEC_SUCCESS;
+            res.message = i18n.getMessage("entity.crud.spec.update.success");
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -276,7 +279,7 @@ public class EntityController {
             String entityName = Entity.getTableName(json.getIntValue("entityType"));
             String companies = json.getString("companies");
             entityService.updateItemCompanies(entityName, entityId, companies);
-            res.message = ApiInfo.UPDATE_COMPANIES_SUCCESS;
+            res.message = i18n.getMessage("entity.crud.companies.update.success");
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -300,7 +303,7 @@ public class EntityController {
             }
             String personnel = json.getString("personnel");
             entityService.updateItemPersonnel(tableName, fieldName, entityId, personnel);
-            res.message = ApiInfo.UPDATE_PERSONNEL_SUCCESS;
+            res.message = i18n.getMessage("entity.crud.personnel.update.success");
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -317,7 +320,8 @@ public class EntityController {
     public String addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
-            if (images == null || images.length == 0) throw new Exception(ApiInfo.INPUT_FILE_EMPTY);
+            if (images == null || images.length == 0)
+                throw new Exception(i18n.getMessage("file.empty"));
 
             String entityName = Entity.getTableName(entityType);
 
@@ -368,7 +372,7 @@ public class EntityController {
             else if (action == DataActionType.REAL_DELETE.getId()) {
                 res.message = entityService.deleteItemImages(tableName, entityId, images);
             }else {
-                throw new Exception(ApiInfo.NOT_ACTION);
+                throw new Exception(i18n.getMessage("entity.error.not_action"));
             }
         } catch (Exception e) {
             res.setErrorMessage(e);
@@ -399,9 +403,9 @@ public class EntityController {
                 response.addCookie(cookie);
             }
             if(entityService.entityLike(entityType, entityId, likeToken)) {
-                res.message = ApiInfo.LIKE_SUCCESS;
+                res.message = i18n.getMessage("entity.like.success");
             }else {
-                throw new Exception(ApiInfo.LIKE_FAILED);
+                throw new Exception(i18n.getMessage("entity.like.failed"));
             }
         }catch (Exception e) {
             res.setErrorMessage(e);

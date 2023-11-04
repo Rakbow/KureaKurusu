@@ -16,7 +16,7 @@ import java.util.List;
 public class MetaEntry {
 
     private int id;
-    private Attribute category;//分类
+    private Attribute<Integer> category;//分类
     private String name;//原名
     private String nameZh;//中文名
     private String nameEn;//英文名

@@ -10,6 +10,9 @@ public class CommonConstant {
 
     //region ------通用常量------
 
+    public static final String STATUS = "status";
+    public static final String JSON_ARRAY_SEARCH_FORMAT = "JSON_CONTAINS(%s, ?)";
+
     //404图url
     public static final String EMPTY_IMAGE_URL = "https://img.rakbow.com/common/error/404.jpg";
     public static final String EMPTY_IMAGE_WIDTH_URL = "https://img.rakbow.com/common/error/404_width.jpg";

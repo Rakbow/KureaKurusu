@@ -50,6 +50,8 @@ public class GameController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private I18nService i18n;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -58,27 +60,27 @@ public class GameController {
     //region ------获取页面------
 
     //获取单个游戏详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getGameDetail(@PathVariable("id") Integer id, Model model) {
-        Game game = gameService.getGameWithAuth(id);
-        if (game == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.GAME.getNameZh()));
-            return "/error/404";
-        }
-        model.addAttribute("game", gameVOMapper.game2VO(game));
-        //前端选项数据
-        model.addAttribute("options", entityUtil.getDetailOptions(Entity.GAME.getId()));
-        //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(game, Entity.GAME.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.GAME.getId(), id, game));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, Entity.GAME, false));
-        //获取相关游戏
-        // model.addAttribute("relatedGames", gameService.getRelatedGames(id));
-        return "/database/itemDetail/game-detail";
-    }
+    // @UniqueVisitor
+    // @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    // public String getGameDetail(@PathVariable("id") Integer id, Model model) {
+    //     Game game = gameService.getGameWithAuth(id);
+    //     if (game == null) {
+    //         model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.GAME.getNameZh()));
+    //         return "/error/404";
+    //     }
+    //     model.addAttribute("game", gameVOMapper.game2VO(game));
+    //     //前端选项数据
+    //     model.addAttribute("options", entityUtil.getDetailOptions(Entity.GAME.getId()));
+    //     //实体类通用信息
+    //     model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(game, Entity.GAME.getId()));
+    //     //获取页面数据
+    //     model.addAttribute("pageInfo", entityService.getPageInfo(Entity.GAME.getId(), id, game));
+    //     //图片相关
+    //     model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(game.getImages(), 140, Entity.GAME, false));
+    //     //获取相关游戏
+    //     // model.addAttribute("relatedGames", gameService.getRelatedGames(id));
+    //     return "/database/itemDetail/game-detail";
+    // }
 
     //endregion
 
@@ -119,7 +121,7 @@ public class GameController {
                 //从数据库中删除专辑
                 gameService.deleteGame(game);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.GAME.getNameZh());
+            res.message = i18n.getMessage("entity.curd.delete.success", Entity.GAME.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

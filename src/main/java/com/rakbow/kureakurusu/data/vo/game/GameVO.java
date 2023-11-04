@@ -25,8 +25,8 @@ public class GameVO {
     private String remark;//备注
 
     //复杂字段
-    private Attribute releaseType;//发售类型
-    private Attribute platform;//平台
+    private Attribute<Integer> releaseType;//发售类型
+    private Attribute<Integer> platform;//平台
     private RegionVO region;//地区
     private JSONArray organizations;//相关组织
     private JSONArray staffs;//开发制作人员

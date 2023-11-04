@@ -43,6 +43,9 @@ public class ProductService {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private I18nService i18n;
+
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
 
@@ -128,19 +131,19 @@ public class ProductService {
      */
     public String checkProductJson(JSONObject productJson) {
         if (StringUtils.isBlank(productJson.getString("name"))) {
-            return ApiInfo.PRODUCT_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("nameZh"))) {
-            return ApiInfo.PRODUCT_NAME_ZH_EMPTY;
+            return i18n.getMessage("entity.crud.name_zh.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("releaseDate"))) {
-            return ApiInfo.PRODUCT_RELEASE_DATE_EMPTY;
+            return i18n.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("franchise"))) {
-            return ApiInfo.PRODUCT_FRANCHISE_EMPTY;
+            return i18n.getMessage("entity.crud.franchise.required_field");
         }
         if (StringUtils.isBlank(productJson.getString("category"))) {
-            return ApiInfo.PRODUCT_CATEGORY_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         return "";
     }
@@ -155,7 +158,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductOrganizations(int id, String organizations) {
         productMapper.updateProductOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_PRODUCT_ORGANIZATIONS_SUCCESS;
+        return i18n.getMessage("entity.crud.companies.update.success");
     }
 
     /**
@@ -168,7 +171,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductStaffs(int id, String staffs) {
         productMapper.updateProductStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_PRODUCT_STAFFS_SUCCESS;
+        return i18n.getMessage("entity.crud.personnel.update.success");
     }
 
     /**
@@ -232,11 +235,12 @@ public class ProductService {
         List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
         List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
 
-        List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior(),
-                param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        List<Product> products  = new ArrayList<>();
+        // List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior(),
+        //         param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
         int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior());
 
-        return new SearchResult(total, products);
+        return new SearchResult(products, total);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)

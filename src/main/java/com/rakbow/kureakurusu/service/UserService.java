@@ -48,6 +48,8 @@ public class UserService{
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    @Resource
+    private I18nService i18n;
 
     @Transactional( readOnly = true )
     public User findUserById(int id) {
@@ -127,31 +129,31 @@ public class UserService{
         LoginResult res = new LoginResult();
         // 空值处理
         if (StringUtils.isBlank(username)) {
-            res.setError(ApiInfo.USERNAME_ARE_EMPTY);
+            res.setError(i18n.getMessage("login.username.empty"));
             return res;
         }
         if (StringUtils.isBlank(password)) {
-            res.setError(ApiInfo.PASSWORD_ARE_EMPTY);
+            res.setError(i18n.getMessage("login.password.empty"));
             return res;
         }
 
         // 验证账号
         User user = userMapper.selectUserByUsername(username);
         if (user == null) {
-            res.setError(ApiInfo.USER_NOT_EXIST);
+            res.setError(i18n.getMessage("login.user.not_exist"));
             return res;
         }
 
         // 验证状态
         if (user.getStatus() == 0) {
-            res.setError(ApiInfo.USER_ARE_INACTIVATED);
+            res.setError(i18n.getMessage("login.user.inactivated"));
             return res;
         }
 
         // 验证密码
         password = CommonUtil.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
-            res.setError(ApiInfo.INCORRECT_PASSWORD);
+            res.setError(i18n.getMessage("login.password.error"));
             return res;
         }
 
@@ -213,13 +215,13 @@ public class UserService{
                 // 根据凭证查询用户
                 User user = findUserById(loginTicket.getUserId());
                 if (user.getType() == 1) {
-                    res.setErrorMessage(ApiInfo.NOT_AUTHORITY);
+                    res.setErrorMessage(i18n.getMessage("auth.not_authority"));
                 }
             }else {
-                res.setErrorMessage(ApiInfo.NOT_LOGIN);
+                res.setErrorMessage(i18n.getMessage("auth.not_login"));
             }
         } else {
-            res.setErrorMessage(ApiInfo.NOT_LOGIN);
+            res.setErrorMessage(i18n.getMessage("auth.not_login"));
         }
         return res;
     }

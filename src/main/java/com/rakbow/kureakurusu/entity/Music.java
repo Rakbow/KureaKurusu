@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Data
 public class Music {
 
-    private int id;
+    private Integer id;
     private String name;// 曲名（原文）
     private String nameEn;// 曲名（英语）
     private String artists;// 创作人员名单 [{"pos":"","name":""}]

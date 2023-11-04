@@ -19,11 +19,11 @@ public class ProductVO {
     private String nameZh;//中文译名
     private String nameEn;//英文译名
     private String releaseDate;//发售日期
-    private Attribute category;//作品分类
+    private Attribute<Integer> category;//作品分类
     private String remark;//备注
 
     //关联信息
-    private Attribute franchise;//所属系列
+    private Attribute<Integer> franchise;//所属系列
 
     //其他
     private JSONArray organizations;//相关组织

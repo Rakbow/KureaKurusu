@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Data
 public class Entry {
 
-    private int id;
+    private Integer id;
     private String name;//名称(原)
     private String nameZh;//名称(中文)
     private String nameEn;//名称(英语)

@@ -27,7 +27,7 @@ public class MerchVO {
     private String remark;//备注
 
     //复杂字段
-    private Attribute category;//商品分类
+    private Attribute<Integer> category;//商品分类
     private RegionVO region;//地区
     private JSONArray spec;//规格
 

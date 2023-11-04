@@ -19,7 +19,7 @@ import java.util.Date;
 @ToString(callSuper = true)
 public class Merch extends MetaEntity {
 
-    private int id;//主键编号
+    private Integer id;//主键编号
     private String name;//商品名（原文）
     private String nameZh;//商品名（中文）
     private String nameEn;//商品名（英文）

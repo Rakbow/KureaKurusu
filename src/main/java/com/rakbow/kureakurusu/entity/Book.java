@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
@@ -17,8 +18,9 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@TableName("book")
 public class Book extends MetaEntity {
-    private int id;//主键编号
+    private Integer id;//主键编号
     private String title;//标题（原文）
     private String titleEn;//标题（英文）
     private String titleZh;//标题（中文）

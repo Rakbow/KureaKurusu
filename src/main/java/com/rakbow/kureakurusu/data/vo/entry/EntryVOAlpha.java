@@ -20,7 +20,7 @@ public class EntryVOAlpha {
     private String name;//名称
     private String nameZh;//名称(中文)
     private String nameEn;//名称(英语)
-    private Attribute category;//分类
+    private Attribute<Integer> category;//分类
     private List<String> alias;//别名
     private JSONObject detail;
     private String addedTime;//收录时间

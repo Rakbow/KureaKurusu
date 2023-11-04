@@ -61,6 +61,8 @@ public class AlbumService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private I18nService i18n;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -80,7 +82,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addAlbum(Album album) {
         int id = albumMapper.insert(album);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.ALBUM.getNameZh());
+        return i18n.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh());
     }
 
     /**
@@ -142,7 +144,7 @@ public class AlbumService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateAlbum(Album album) {
         albumMapper.updateById(album);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.ALBUM.getNameZh());
+        return i18n.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
     }
 
     //endregion
@@ -175,25 +177,25 @@ public class AlbumService {
      */
     public String checkAlbumJson(JSONObject albumJson) {
         if (StringUtils.isBlank(albumJson.getString("name"))) {
-            return ApiInfo.ALBUM_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(albumJson.getString("releaseDate"))) {
-            return ApiInfo.ALBUM_RELEASE_DATE_EMPTY;
+            return i18n.getMessage("entity.crud.release_date.required_field");
         }
         if (albumJson.getJSONArray("franchises").isEmpty()) {
-            return ApiInfo.FRANCHISES_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         if (albumJson.getJSONArray("products").isEmpty()) {
-            return ApiInfo.PRODUCTS_EMPTY;
+            return i18n.getMessage("entity.crud.product.required_field");
         }
         if (albumJson.getJSONArray("publishFormat").isEmpty()) {
-            return ApiInfo.ALBUM_PUBLISH_FORMAT_EMPTY;
+            return i18n.getMessage("album.crud.publish_format.required_field");
         }
         if (albumJson.getJSONArray("albumFormat").isEmpty()) {
-            return ApiInfo.ALBUM_ALBUM_FORMAT_EMPTY;
+            return i18n.getMessage("album.crud.album_format.required_field");
         }
         if (albumJson.getJSONArray("mediaFormat").isEmpty()) {
-            return ApiInfo.ALBUM_MEDIA_FORMAT_EMPTY;
+            return i18n.getMessage("entity.crud.media_format.required_field");
         }
         return "";
     }

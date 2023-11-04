@@ -24,13 +24,13 @@ public class BookVO {
     private String titleZh;//标题（中文）
     private String isbn10;//国际标准书号（10位）
     private String isbn13;//国际标准书号（13位）
-    private Attribute bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
+    private Attribute<Integer> bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
     private RegionVO region;//地区
     private LanguageVO lang;//语言
     private int price;//出版价格
     private String currencyUnit;//货币单位
-    private List<Attribute> serials;//连载信息
+    private List<Attribute<Integer>> serials;//连载信息
     private String summary;//简介
     private boolean hasBonus;//是否包含特典
     private String remark;//备注

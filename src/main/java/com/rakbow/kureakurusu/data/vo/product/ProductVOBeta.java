@@ -18,10 +18,10 @@ public class ProductVOBeta {
     private String nameZh;//中文译名
     private String nameEn;//英文译名
     private String releaseDate;//发售日期
-    private Attribute category;//作品分类
+    private Attribute<Integer> category;//作品分类
 
     //关联信息
-    private Attribute franchise;//所属系列
+    private Attribute<Integer> franchise;//所属系列
 
     private String cover;
 

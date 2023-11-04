@@ -5,6 +5,7 @@ import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.entity.LoginTicket;
 import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
@@ -52,6 +53,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private I18nService i18n;
 
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
     public String getUserSettingPage() {
@@ -134,13 +137,13 @@ public class UserController {
                 // 根据凭证查询用户
                 User user = userService.findUserById(loginTicket.getUserId());
                 if (user.getType() == 1) {
-                    res.setErrorMessage(ApiInfo.NOT_AUTHORITY);
+                    res.setErrorMessage(i18n.getMessage("auth.not_authority "));
                 }
             }else {
-                res.setErrorMessage(ApiInfo.NOT_LOGIN);
+                res.setErrorMessage(i18n.getMessage("auth.not_login"));
             }
         } else {
-            res.setErrorMessage(ApiInfo.NOT_LOGIN);
+            res.setErrorMessage(i18n.getMessage("auth.not_login"));
         }
 
         return res;

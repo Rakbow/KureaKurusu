@@ -82,14 +82,14 @@ public enum AlbumFormat {
         return 0;
     }
 
-    public static List<Attribute> getAttributes(String json) {
+    public static List<Attribute<Integer>> getAttributes(String json) {
 
-        List<Attribute> res = new ArrayList<>();
+        List<Attribute<Integer>> res = new ArrayList<>();
 
         int[] ids = JSON.parseObject(json, int[].class);
 
         for(int id : ids) {
-            res.add(new Attribute(id, getNameById(id)));
+            res.add(new Attribute<Integer>(getNameById(id), id));
         }
 
         return res;

@@ -42,6 +42,8 @@ public class GameService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private I18nService i18n;
 
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
@@ -58,7 +60,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addGame(Game game) {
         int id = gameMapper.addGame(game);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.GAME.getNameZh());
+        return i18n.getMessage("entity.curd.insert.success", Entity.GAME.getNameZh());
     }
 
     /**
@@ -111,7 +113,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGame(int id, Game game) {
         gameMapper.updateGame(id, game);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.GAME.getNameZh());
+        return i18n.getMessage("entity.curd.update.success", Entity.GAME.getNameZh());
     }
 
     //endregion
@@ -127,27 +129,27 @@ public class GameService {
      */
     public String checkGameJson(JSONObject gameJson) {
         if (StringUtils.isBlank(gameJson.getString("name"))) {
-            return ApiInfo.GAME_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
 
         if (StringUtils.isBlank(gameJson.getString("releaseDate"))) {
-            return ApiInfo.GAME_RELEASE_DATE_EMPTY;
+            return i18n.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("releaseType"))) {
-            return ApiInfo.GAME_RELEASE_TYPE_EMPTY;
+            return i18n.getMessage("game.crud.release_type.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("platform"))) {
-            return ApiInfo.GAME_PLATFORM_EMPTY;
+            return i18n.getMessage("game.crud.platform.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("region"))) {
-            return ApiInfo.GAME_REGION_EMPTY;
+            return i18n.getMessage("entity.crud.region.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("franchises"))) {
-            return ApiInfo.FRANCHISES_EMPTY;
+            return i18n.getMessage("entity.crud.franchise.required_field");
         }
         if (StringUtils.isBlank(gameJson.getString("products"))
                 || StringUtils.equals(gameJson.getString("products"), "[]")) {
-            return ApiInfo.PRODUCTS_EMPTY;
+            return i18n.getMessage("entity.crud.product.required_field");
         }
         return "";
     }
@@ -184,7 +186,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameOrganizations(int id, String organizations) {
         gameMapper.updateGameOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_GAME_ORGANIZATIONS_SUCCESS;
+        return i18n.getMessage("entity.crud.companies.update.success");
     }
 
     /**
@@ -197,7 +199,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameStaffs(int id, String staffs) {
         gameMapper.updateGameStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_GAME_STAFFS_SUCCESS;
+        return i18n.getMessage("entity.crud.personnel.update.success");
     }
 
     //endregion
@@ -230,12 +232,13 @@ public class GameService {
         List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
 
 
-        List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
-                AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        List<Game> games  = new ArrayList<>();
+        // List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
+        //         AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, AuthorityInterceptor.isSenior());
 
-        return new SearchResult(total, games);
+        return new SearchResult(games, total);
     }
 
     /**

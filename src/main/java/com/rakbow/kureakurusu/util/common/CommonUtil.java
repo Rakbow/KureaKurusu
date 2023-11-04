@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.emun.image.ImageType;
 import com.rakbow.kureakurusu.data.ApiInfo;
+import com.rakbow.kureakurusu.service.I18nService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
  * @Description:
  */
 public class CommonUtil {
+
+    private static final I18nService i18n = SpringUtil.getBean("i18nService");
 
     //删除服务器上的文件
     //dir: 文件夹路径，fileName: 文件名（不包含后缀）
@@ -276,7 +279,7 @@ public class CommonUtil {
             }
         }
         if (coverCount > 1) {
-            return ApiInfo.COVER_COUNT_EXCEPTION;
+            return i18n.getMessage("image.error.only_one_cover");
         }
 
         //检测是否存在重复英文名
@@ -287,7 +290,7 @@ public class CommonUtil {
                     imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf(".")));
         }
         if (originImageUrlNameEns.stream().distinct().count() != images.size()) {
-            return ApiInfo.IMAGE_NAME_EN_REPEAT_EXCEPTION;
+            return i18n.getMessage("image.error.name_en.not_repeat");
         }
 
         return "";
@@ -346,12 +349,12 @@ public class CommonUtil {
         //检测是否存在重复英文名
         int originNameUrlCount = imageUrlNameEns.size();
         if (imageUrlNameEns.stream().distinct().count() != originNameUrlCount) {
-            return ApiInfo.IMAGE_NAME_EN_REPEAT_EXCEPTION;
+            return i18n.getMessage("image.error.name_en.not_repeat");
         }
 
         //检测图片类型为封面的个数是否大于1
         if (coverCount > 1) {
-            return ApiInfo.COVER_COUNT_EXCEPTION;
+            return i18n.getMessage("image.error.only_one_cover");
         }
 
         return "";
@@ -418,5 +421,9 @@ public class CommonUtil {
     }
 
     //endregion
+
+    public static boolean isJsonArrayLegal(String json) {
+        return !StringUtils.isBlank(json) && !json.equals("[]");
+    }
 
 }

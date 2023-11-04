@@ -43,6 +43,8 @@ public class BookService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private I18nService i18n;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -59,7 +61,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addBook(Book book) {
         int id = bookMapper.addBook(book);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.BOOK.getNameZh());
+        return i18n.getMessage("entity.curd.insert.success", Entity.BOOK.getNameZh());
     }
 
     /**
@@ -112,7 +114,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBook(int id, Book book) {
         bookMapper.updateBook(id, book);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.BOOK.getNameZh());
+        return i18n.getMessage("entity.curd.update.success", Entity.BOOK.getNameZh());
     }
 
     //endregion
@@ -141,36 +143,36 @@ public class BookService {
      */
     public String checkBookJson(JSONObject bookJson) {
         if (StringUtils.isBlank(bookJson.getString("title"))) {
-            return ApiInfo.BOOK_TITLE_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
 
         if (!StringUtils.isBlank(bookJson.getString("isbn10"))) {
             if (bookJson.getString("isbn10").replaceAll("-", "").length() != 10) {
-                return ApiInfo.BOOK_ISBN10_LENGTH_EXCEPTION;
+                return i18n.getMessage("book.crud.isbn10.invalid");
             }
         } else {
-            return ApiInfo.BOOK_ISBN10_LENGTH_EXCEPTION;
+            return i18n.getMessage("book.crud.isbn10.invalid");
         }
         if (!StringUtils.isBlank(bookJson.getString("isbn13"))) {
             if (bookJson.getString("isbn13").replaceAll("-", "").length() != 13) {
-                return ApiInfo.BOOK_ISBN13_LENGTH_EXCEPTION;
+                return i18n.getMessage("book.crud.isbn13.invalid");
             }
         } else {
-            return ApiInfo.BOOK_ISBN13_LENGTH_EXCEPTION;
+            return i18n.getMessage("book.crud.isbn13.invalid");
         }
         if (StringUtils.isBlank(bookJson.getString("publishDate"))) {
-            return ApiInfo.BOOK_PUBLISH_DATE_EMPTY;
+            return i18n.getMessage("entity.crud.publish_date.required_field");
         }
         if (StringUtils.isBlank(bookJson.getString("bookType"))) {
-            return ApiInfo.BOOK_TYPE_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         if (StringUtils.isBlank(bookJson.getString("franchises"))
                 || StringUtils.equals(bookJson.getString("franchises"), "[]")) {
-            return ApiInfo.FRANCHISES_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         if (StringUtils.isBlank(bookJson.getString("products"))
                 || StringUtils.equals(bookJson.getString("products"), "[]")) {
-            return ApiInfo.PRODUCTS_EMPTY;
+            return i18n.getMessage("entity.crud.product.required_field");
         }
         return "";
     }
@@ -210,7 +212,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBookAuthors(int id, String authors) {
         bookMapper.updateBookAuthors(id, authors, DateHelper.NOW_TIMESTAMP);
-        return ApiInfo.UPDATE_BOOK_AUTHOR_SUCCESS;
+        return i18n.getMessage("entity.crud.personnel.update.success");
     }
 
     //endregion
@@ -245,13 +247,14 @@ public class BookService {
                     ? Integer.toString(1) : Integer.toString(0);
         }
 
-        List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
-                bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        List<Book> books  = new ArrayList<>();
+        // List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
+        //         bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
                 bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior());
 
-        return new SearchResult(total, books);
+        return new SearchResult(books, total);
     }
 
     /**
@@ -354,13 +357,13 @@ public class BookService {
 
         if(StringUtils.equals(label, "isbn13")) {
             if(isbn.length() != 10) {
-                throw new Exception(ApiInfo.BOOK_ISBN10_LENGTH_EXCEPTION);
+                throw new Exception(i18n.getMessage("book.crud.isbn10.invalid"));
             }
             return BookUtil.getISBN13(isbn);
         }
         if(StringUtils.equals(label, "isbn10")) {
             if(isbn.length() != 13) {
-                throw new Exception(ApiInfo.BOOK_ISBN13_LENGTH_EXCEPTION);
+                throw new Exception(i18n.getMessage("book.crud.isbn13.invalid"));
             }
             return BookUtil.getISBN10(isbn);
         }

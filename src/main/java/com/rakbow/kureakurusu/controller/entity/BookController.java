@@ -49,6 +49,8 @@ public class BookController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private I18nService i18n;
 
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
 
@@ -57,29 +59,29 @@ public class BookController {
     //region ------获取页面------
 
     //获取单个图书详细信息页面
-    @UniqueVisitor
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public String getBookDetail(@PathVariable("id") Integer id, Model model) {
-        Book book = bookService.getBookWithAuth(id);
-        if (book == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.BOOK.getNameZh()));
-            return "/error/404";
-        }
-        model.addAttribute("book", bookService.buildVO(book));
-        if(AuthorityInterceptor.isJunior()) {
-            //前端选项数据
-            model.addAttribute("options", entityUtil.getDetailOptions(Entity.BOOK.getId()));
-        }
-        //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, Entity.BOOK.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.BOOK.getId(), id, book));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 200, Entity.BOOK, false));
-        //获取相关图书
-        // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
-        return "/database/itemDetail/book-detail";
-    }
+    // @UniqueVisitor
+    // @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    // public String getBookDetail(@PathVariable("id") Integer id, Model model) {
+    //     Book book = bookService.getBookWithAuth(id);
+    //     if (book == null) {
+    //         model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.BOOK.getNameZh()));
+    //         return "/error/404";
+    //     }
+    //     model.addAttribute("book", bookService.buildVO(book));
+    //     if(AuthorityInterceptor.isJunior()) {
+    //         //前端选项数据
+    //         model.addAttribute("options", entityUtil.getDetailOptions(Entity.BOOK.getId()));
+    //     }
+    //     //实体类通用信息
+    //     model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(book, Entity.BOOK.getId()));
+    //     //获取页面数据
+    //     model.addAttribute("pageInfo", entityService.getPageInfo(Entity.BOOK.getId(), id, book));
+    //     //图片相关
+    //     model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(book.getImages(), 200, Entity.BOOK, false));
+    //     //获取相关图书
+    //     // model.addAttribute("relatedBooks", bookService.getRelatedBooks(id));
+    //     return "/database/itemDetail/book-detail";
+    // }
 
     //endregion
 
@@ -120,7 +122,7 @@ public class BookController {
                 //从数据库中删除专辑
                 bookService.deleteBook(book);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.BOOK.getNameZh());
+            res.message = i18n.getMessage("entity.curd.delete.success", Entity.BOOK.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -193,7 +195,7 @@ public class BookController {
             int id = JSON.parseObject(json).getInteger("id");
             String authors = JSON.parseObject(json).getJSONArray("authors").toString();
             if (StringUtils.isBlank(authors)) {
-                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+                res.setErrorMessage(i18n.getMessage("entity.crud.input.empty"));
                 return res.toJson();
             }
 

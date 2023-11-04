@@ -41,6 +41,8 @@ public class DiscService {
     private QiniuFileUtil qiniuFileUtil;
     @Resource
     private VisitUtil visitUtil;
+    @Resource
+    private I18nService i18n;
 
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
 
@@ -57,7 +59,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDisc(Disc disc) {
         int id = discMapper.addDisc(disc);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.DISC.getNameZh());
+        return i18n.getMessage("entity.curd.insert.success", Entity.DISC.getNameZh());
     }
 
     /**
@@ -110,7 +112,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateDisc(int id, Disc disc) {
         discMapper.updateDisc(id, disc);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.DISC.getNameZh());
+        return i18n.getMessage("entity.curd.update.success", Entity.DISC.getNameZh());
     }
 
     //endregion
@@ -126,25 +128,25 @@ public class DiscService {
      */
     public String checkDiscJson(JSONObject discJson) {
         if (StringUtils.isBlank(discJson.getString("name"))) {
-            return ApiInfo.DISC_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("releaseDate"))) {
-            return ApiInfo.DISC_RELEASE_DATE_EMPTY;
+            return i18n.getMessage("entity.crud.release_date.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("franchises"))
                 || StringUtils.equals(discJson.getString("franchises"), "[]")) {
-            return ApiInfo.FRANCHISES_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("products"))
                 || StringUtils.equals(discJson.getString("products"), "[]")) {
-            return ApiInfo.PRODUCTS_EMPTY;
+            return i18n.getMessage("entity.crud.product.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("mediaFormat"))
                 || StringUtils.equals(discJson.getString("mediaFormat"), "[]")) {
-            return ApiInfo.DISC_MEDIA_FORMAT_EMPTY;
+            return i18n.getMessage("entity.crud.media_format.required_field");
         }
         if (StringUtils.isBlank(discJson.getString("region"))) {
-            return ApiInfo.DISC_REGION_EMPTY;
+            return i18n.getMessage("entity.crud.region.required_field");
         }
         return "";
     }
@@ -207,13 +209,15 @@ public class DiscService {
                     ?Integer.toString(1):Integer.toString(0);
         }
 
-        List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+        List<Disc> discs = new ArrayList<>();
+
+        // List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
+        //         mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
                 mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior());
 
-        return new SearchResult(total, discs);
+        return new SearchResult(discs, total);
     }
 
     /**

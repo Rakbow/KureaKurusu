@@ -19,7 +19,7 @@ import java.util.Date;
 @ToString(callSuper = true)
 public class Franchise extends MetaEntity {
 
-    private int id;//主键
+    private Integer id;//主键
     private String name;//系列名
     private String nameZh;//系列名（中文）
     private String nameEn;//系列名（英语）

@@ -26,10 +26,10 @@ public class AlbumVOGamma {
     private boolean hasBonus;//是否包含特典内容
 
     //关联信息
-    private List<Attribute> franchises;//所属系列
-    private List<Attribute> products;//所属产品id 在mysql中以数组字符串形式存储
+    private List<Attribute<Integer>> franchises;//所属系列
+    private List<Attribute<Integer>> products;//所属产品id 在mysql中以数组字符串形式存储
 
-    private List<Attribute> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    private List<Attribute<Integer>> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
 
     //图片相关
     private String cover;

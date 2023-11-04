@@ -9,18 +9,19 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class Attribute {
+public class Attribute<T> {
 
-    private int value;
     private String label;
+    private T value;
 
     public Attribute() {
-
+        this.label = "";
+        this.value = null;
     }
 
-    public Attribute(int value, String label) {
-        this.value = value;
+    public Attribute(String label, T value) {
         this.label = label;
+        this.value = value;
     }
 
 }

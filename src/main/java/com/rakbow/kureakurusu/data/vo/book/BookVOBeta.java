@@ -20,7 +20,7 @@ public class BookVOBeta {
     private String titleZh;//标题（中文）
     private String isbn13;//国际标准书号（13位）.
     private String publishDate;//出版日期
-    private Attribute bookType;//书籍类型
+    private Attribute<Integer> bookType;//书籍类型
     private RegionVO region;//地区
     private LanguageVO publishLanguage;//语言
 

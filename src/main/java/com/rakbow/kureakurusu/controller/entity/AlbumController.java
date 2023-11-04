@@ -15,6 +15,7 @@ import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
+import com.rakbow.kureakurusu.service.I18nService;
 import com.rakbow.kureakurusu.service.MusicService;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
@@ -54,6 +55,8 @@ public class AlbumController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private I18nService i18n;
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
     //endregion
@@ -61,35 +64,35 @@ public class AlbumController {
     //region ------获取页面------
 
     //获取单个专辑详细信息页面
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    @UniqueVisitor
-    public String getAlbumDetail(@PathVariable("id") int id, Model model) {
-        Album album = albumService.getAlbumWithAuth(id);
-        if (album == null) {
-            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.ALBUM.getNameZh()));
-            return "/error/404";
-        }
-
-        List<Music> musics = musicService.getMusicsByAlbumId(id);
-
-        String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
-        model.addAttribute("album", albumService.buildVO(album, musics));
-        if(AuthorityInterceptor.isUser()) {
-            model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
-        }
-        if(AuthorityInterceptor.isJunior()) {
-            //前端选项数据
-            model.addAttribute("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
-        }
-        //实体类通用信息
-        model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
-        //获取页面数据
-        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.ALBUM.getId(), id, album));
-        //图片相关
-        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
-
-        return "/database/itemDetail/album-detail";
-    }
+    // @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    // @UniqueVisitor
+    // public String getAlbumDetail(@PathVariable("id") int id, Model model) {
+    //     Album album = albumService.getAlbumWithAuth(id);
+    //     if (album == null) {
+    //         model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.ALBUM.getNameZh()));
+    //         return "/error/404";
+    //     }
+    //
+    //     List<Music> musics = musicService.getMusicsByAlbumId(id);
+    //
+    //     String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
+    //     model.addAttribute("album", albumService.buildVO(album, musics));
+    //     if(AuthorityInterceptor.isUser()) {
+    //         model.addAttribute("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(id), coverUrl));
+    //     }
+    //     if(AuthorityInterceptor.isJunior()) {
+    //         //前端选项数据
+    //         model.addAttribute("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
+    //     }
+    //     //实体类通用信息
+    //     model.addAttribute("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
+    //     //获取页面数据
+    //     model.addAttribute("pageInfo", entityService.getPageInfo(Entity.ALBUM.getId(), id, album));
+    //     //图片相关
+    //     model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
+    //
+    //     return "/database/itemDetail/album-detail";
+    // }
 
     //endregion
 
@@ -105,7 +108,7 @@ public class AlbumController {
             Album album = albumService.getAlbumWithAuth(id);
 
             if (album == null) {
-                res.setErrorMessage(String.format(ApiInfo.GET_DATA_FAILED_404, Entity.ALBUM.getNameZh()));
+                res.setErrorMessage(i18n.getMessage("entity.url.error", Entity.ALBUM.getNameZh()));
                 return res.toJson();
             }
 
@@ -202,7 +205,7 @@ public class AlbumController {
                 //删除专辑对应的music
                 musicService.deleteMusicsByAlbumIds(ids);
             }
-            res.message = String.format(ApiInfo.DELETE_DATA_SUCCESS, Entity.ALBUM.getNameZh());
+            res.message = i18n.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -247,7 +250,7 @@ public class AlbumController {
 
             albumService.updateAlbumTrackInfo(id, discList);
 
-            res.message = ApiInfo.UPDATE_ALBUM_TRACK_INFO_SUCCESS;
+            res.message = i18n.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

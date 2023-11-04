@@ -25,7 +25,7 @@ public class AlbumVOBeta {
 
     private JSONObject cover;//封面
 
-    private List<Attribute> albumFormat;//专辑分类
+    private List<Attribute<Integer>> albumFormat;//专辑分类
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
 

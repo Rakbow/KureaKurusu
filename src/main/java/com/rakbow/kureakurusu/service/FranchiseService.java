@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +35,8 @@ public class FranchiseService {
     private FranchiseMapper franchiseMapper;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private I18nService i18n;
 
     //endregion
 
@@ -130,11 +133,11 @@ public class FranchiseService {
      */
     public String checkFranchiseJson(JSONObject franchiseJson) {
         if (StringUtils.isBlank(franchiseJson.getString("name"))) {
-            return ApiInfo.FRANCHISE_NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
 
         if (StringUtils.isBlank(franchiseJson.getString("originDate"))) {
-            return ApiInfo.FRANCHISE_ORIGIN_DATE_EMPTY;
+            return i18n.getMessage("franchise.crud.origin_date.required_field");
         }
         return "";
     }
@@ -186,12 +189,13 @@ public class FranchiseService {
                     ?Integer.toString(1):Integer.toString(0);
         }
 
-        List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
-                AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        List<Franchise> franchises  = new ArrayList<>();
+        // List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
+        //         AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
 
         int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, AuthorityInterceptor.isSenior());
 
-        return new SearchResult(total, franchises);
+        return new SearchResult(franchises, total);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)

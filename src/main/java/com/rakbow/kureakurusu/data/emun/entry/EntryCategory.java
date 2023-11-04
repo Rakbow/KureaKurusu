@@ -38,12 +38,12 @@ public enum EntryCategory {
     @Getter
     private final String redisKey;
 
-    public Attribute getAttribute() {
+    public Attribute<Integer> getAttribute() {
         String lang = LocaleContextHolder.getLocale().getLanguage();
         if(lang.equals(Locale.CHINESE.getLanguage())) {
-            return new Attribute(this.id, this.nameZh);
+            return new Attribute<Integer>(this.nameZh, this.id);
         }else if(lang.equals(Locale.ENGLISH.getLanguage())) {
-            return new Attribute(this.id, this.nameEn);
+            return new Attribute<Integer>(this.nameEn, this.id);
         }
         return null;
     }

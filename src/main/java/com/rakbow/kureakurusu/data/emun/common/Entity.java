@@ -21,7 +21,8 @@ public enum Entity {
     GAME(4,"游戏", "Game"),
     MUSIC(5,"音乐", "Music"),
     GOODS(6,"周边", "Goods"),
-    FIGURE(7,"手办", "Figure");
+    FIGURE(7,"手办", "Figure"),
+    PERSON(8,"人物","Person");
 
     @Getter
     private final int id;

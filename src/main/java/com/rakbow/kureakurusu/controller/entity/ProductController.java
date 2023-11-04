@@ -55,6 +55,8 @@ public class ProductController {
     private EntityUtil entityUtil;
     @Resource
     private EntityService entityService;
+    @Resource
+    private I18nService i18n;
 
     private final ProductVOMapper productVOMapper = ProductVOMapper.INSTANCES;
     //endregion
@@ -181,7 +183,7 @@ public class ProductController {
             int id = JSON.parseObject(json).getInteger("id");
             String staffs = JSON.parseObject(json).getJSONArray("staffs").toString();
             if (StringUtils.isBlank(staffs)) {
-                res.setErrorMessage(ApiInfo.INPUT_TEXT_EMPTY);
+                res.setErrorMessage(i18n.getMessage("entity.crud.input.empty"));
                 return res.toJson();
             }
 

@@ -126,20 +126,20 @@ public class DataFinder {
      * @return json
      * @author rakbow
      */
-    public static Attribute findAttributeByValue(int value, List<Attribute> attributes) {
-        Attribute finder = new Attribute();
+    public static Attribute<Integer> findAttributeByValue(int value, List<Attribute<Integer>> attributes) {
+        Attribute<Integer> finder = new Attribute<>();
         finder.setValue(value);
         int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);
         return idx >= 0 ? attributes.get(idx) : null;
     }
 
-    public static List<Attribute> findAttributesByValues(int[] values, List<Attribute> attributes) {
+    public static List<Attribute<Integer>> findAttributesByValues(int[] values, List<Attribute<Integer>> attributes) {
 
-        List<Attribute> res = new ArrayList<>();
+        List<Attribute<Integer>> res = new ArrayList<>();
 
         if(values.length == 0) return res;
 
-        Attribute finder = new Attribute();
+        Attribute<Integer> finder = new Attribute<>();
         for(int value : values) {
             finder.setValue(value);
             int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);

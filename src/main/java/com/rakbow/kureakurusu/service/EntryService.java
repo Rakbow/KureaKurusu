@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +40,8 @@ public class EntryService {
     private VisitUtil visitUtil;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private I18nService i18n;
 
     //region CURD
 
@@ -51,7 +54,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addEntry(Entry entry) {
         entryMapper.addEntry(entry);
-        return String.format(ApiInfo.INSERT_DATA_SUCCESS, Entity.ENTRY.getNameZh());
+        return i18n.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
     }
 
     /**
@@ -102,7 +105,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateEntry(int id, Entry entry) {
         entryMapper.updateEntry(id, entry);
-        return String.format(ApiInfo.UPDATE_DATA_SUCCESS, Entity.ENTRY.getNameZh());
+        return i18n.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
     }
 
     //endregion
@@ -122,12 +125,13 @@ public class EntryService {
             category = filter.getJSONObject("category").getIntValue("value");
         }
 
-        List<Entry> entries = entryMapper.getEntriesByFilter(name, nameZh, nameEn, category,
-                param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+        List<Entry> entries  = new ArrayList<>();
+        // List<Entry> entries = entryMapper.getEntriesByFilter(name, nameZh, nameEn, category,
+        //         param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
 
         int total = entryMapper.getEntriesRowsByFilter(name, nameZh, nameEn, category);
 
-        return new SearchResult(total, entries);
+        return new SearchResult(entries, total);
     }
 
     /**
@@ -139,16 +143,16 @@ public class EntryService {
      */
     public String checkEntryJson(JSONObject json) {
         if (StringUtils.isBlank(json.getString("name"))) {
-            return ApiInfo.NAME_EMPTY;
+            return i18n.getMessage("entity.crud.name.required_field");
         }
         if (StringUtils.isBlank(json.getString("nameZh"))) {
-            return ApiInfo.NAME_ZH_EMPTY;
+            return i18n.getMessage("entity.crud.name_zh.required_field");
         }
         if (StringUtils.isBlank(json.getString("nameEn"))) {
-            return ApiInfo.NAME_EN_EMPTY;
+            return i18n.getMessage("entity.crud.name_en.required_field");
         }
         if (StringUtils.isBlank(json.getString("category"))) {
-            return ApiInfo.ENTRY_CATEGORY_EMPTY;
+            return i18n.getMessage("entity.crud.category.required_field");
         }
         return "";
     }
@@ -166,9 +170,9 @@ public class EntryService {
         List<Entry> entries = entryMapper.getEntryByCategory(category);
 
         JSONArray entriesZh = new JSONArray();
-        entries.forEach(entry -> entriesZh.add(new Attribute(entry.getId(), entry.getNameZh())));
+        entries.forEach(entry -> entriesZh.add(new Attribute<Integer>(entry.getNameZh(), entry.getId())));
         JSONArray entriesEn = new JSONArray();
-        entries.forEach(entry -> entriesEn.add(new Attribute(entry.getId(), entry.getNameEn())));
+        entries.forEach(entry -> entriesEn.add(new Attribute<Integer>(entry.getNameEn(), entry.getId())));
 
         redisUtil.set(EntryCategory.getZhRedisKeyById(category), entriesZh);
         redisUtil.set(EntryCategory.getEnRedisKeyById(category), entriesEn);

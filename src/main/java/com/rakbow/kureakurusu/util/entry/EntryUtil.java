@@ -28,7 +28,7 @@ public class EntryUtil {
         JSONArray orgCompanies = JSON.parseArray(json);
         if(orgCompanies.isEmpty()) return new JSONArray();
 
-        List<Attribute> allCompanies = getAttributesForRedis(EntryCategory.COMPANY);
+        List<Attribute<Integer>> allCompanies = getAttributesForRedis(EntryCategory.COMPANY);
 
         JSONArray companies = new JSONArray();
         for (int i = 0; i < orgCompanies.size(); i++) {
@@ -37,10 +37,10 @@ public class EntryUtil {
 
             company.put("role", EnumUtil.getAttribute(CompanyRole.class, orgCompany.getIntValue("role")));
 
-            List<Attribute> members = new ArrayList<>();
+            List<Attribute<Integer>> members = new ArrayList<>();
             List<Integer> memberIds = orgCompany.getList("members", Integer.class);
             memberIds.forEach(id -> {
-                Attribute attribute = DataFinder.findAttributeByValue(id, allCompanies);
+                Attribute<Integer> attribute = DataFinder.findAttributeByValue(id, allCompanies);
                 if (attribute != null) {
                     members.add(attribute);
                 }
@@ -56,8 +56,8 @@ public class EntryUtil {
     public static JSONArray getPersonnel(String json) {
         JSONArray orgPersonnel = JSON.parseArray(json);
         if(orgPersonnel.isEmpty()) return new JSONArray();
-        List<Attribute> allPersonnel = getAttributesForRedis(EntryCategory.PERSONNEL);
-        List<Attribute> allRole = getAttributesForRedis(EntryCategory.ROLE);
+        List<Attribute<Integer>> allPersonnel = getAttributesForRedis(EntryCategory.PERSONNEL);
+        List<Attribute<Integer>> allRole = getAttributesForRedis(EntryCategory.ROLE);
 
         JSONArray personnel = new JSONArray();
         for (int i = 0; i < orgPersonnel.size(); i++) {
@@ -68,13 +68,13 @@ public class EntryUtil {
                 newItem.put("main", 1);
             }
 
-            Attribute role = DataFinder.findAttributeByValue(orgItem.getIntValue("role"), allRole);
-            newItem.put("role", role != null ? role : new Attribute(0, "default"));
+            Attribute<Integer> role = DataFinder.findAttributeByValue(orgItem.getIntValue("role"), allRole);
+            newItem.put("role", role != null ? role : new Attribute<>("default", 0));
 
-            List<Attribute> members = new ArrayList<>();
+            List<Attribute<Integer>> members = new ArrayList<>();
             List<Integer> memberIds = orgItem.getList("members", Integer.class);
             memberIds.forEach(id -> {
-                Attribute attribute = DataFinder.findAttributeByValue(id, allPersonnel);
+                Attribute<Integer> attribute = DataFinder.findAttributeByValue(id, allPersonnel);
                 if (attribute != null) {
                     members.add(attribute);
                 }
@@ -90,7 +90,7 @@ public class EntryUtil {
     public static JSONArray getSpecs(String json) {
         JSONArray specs = JSON.parseArray(json);
         if(specs.isEmpty()) return new JSONArray();
-        List<Attribute> allSpecParameter = getAttributesForRedis(EntryCategory.SPEC_PARAM);
+        List<Attribute<Integer>> allSpecParameter = getAttributesForRedis(EntryCategory.SPEC_PARAM);
         for (int i = 0; i < specs.size(); i++) {
             JSONObject item = specs.getJSONObject(i);
 
@@ -100,27 +100,27 @@ public class EntryUtil {
         return specs;
     }
 
-    public static List<Attribute> getSerials(String json) {
+    public static List<Attribute<Integer>> getSerials(String json) {
 
-        List<Attribute> serials = new ArrayList<>();
+        List<Attribute<Integer>> serials = new ArrayList<>();
 
         int[] ids = JSON.parseObject(json, int[].class);
 
         if(ids.length == 0) return serials;
 
-        List<Attribute> allPublications = getAttributesForRedis(EntryCategory.PUBLICATION);
+        List<Attribute<Integer>> allPublications = getAttributesForRedis(EntryCategory.PUBLICATION);
 
         serials.addAll(DataFinder.findAttributesByValues(ids, allPublications));
 
         return serials;
     }
 
-    public static List<Attribute> getClassifications(String json) {
+    public static List<Attribute<Integer>> getClassifications(String json) {
 
-        List<Attribute> classifications = new ArrayList<>();
+        List<Attribute<Integer>> classifications = new ArrayList<>();
 
         int[] ids = JSON.parseObject(json, int[].class);
-        List<Attribute> allClassifications = getAttributesForRedis(EntryCategory.CLASSIFICATION);
+        List<Attribute<Integer>> allClassifications = getAttributesForRedis(EntryCategory.CLASSIFICATION);
 
         for(int id : ids) {
             classifications.add(DataFinder.findAttributeByValue(id, allClassifications));
@@ -129,12 +129,12 @@ public class EntryUtil {
         return classifications;
     }
 
-    public static List<Attribute> getFranchises(String json) {
+    public static List<Attribute<Integer>> getFranchises(String json) {
 
-        List<Attribute> franchises = new ArrayList<>();
+        List<Attribute<Integer>> franchises = new ArrayList<>();
 
         int[] ids = JSON.parseObject(json, int[].class);
-        List<Attribute> allFranchises = getAttributesForRedis(EntryCategory.FRANCHISE);
+        List<Attribute<Integer>> allFranchises = getAttributesForRedis(EntryCategory.FRANCHISE);
 
         for(int id : ids) {
             franchises.add(DataFinder.findAttributeByValue(id, allFranchises));
@@ -143,24 +143,24 @@ public class EntryUtil {
         return franchises;
     }
 
-    public static Attribute getFranchise(int id) {
+    public static Attribute<Integer> getFranchise(int id) {
 
-        List<Attribute> allFranchises = getAttributesForRedis(EntryCategory.FRANCHISE);
+        List<Attribute<Integer>> allFranchises = getAttributesForRedis(EntryCategory.FRANCHISE);
 
         return DataFinder.findAttributeByValue(id, allFranchises);
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Attribute> getAttributesForRedis(EntryCategory category) {
+    public static List<Attribute<Integer>> getAttributesForRedis(EntryCategory category) {
         RedisUtil redisUtil = SpringUtil.getBean("redisUtil");
 
-        List<Attribute> attributes = new ArrayList<>();
+        List<Attribute<Integer>> attributes = new ArrayList<>();
 
         String key = category.getLocaleKey();
 
         Object res = redisUtil.get(key);
         if(res != null) {
-            attributes.addAll((List<Attribute>) redisUtil.get(key));
+            attributes.addAll((List<Attribute<Integer>>) redisUtil.get(key));
         }
 
         return attributes;
