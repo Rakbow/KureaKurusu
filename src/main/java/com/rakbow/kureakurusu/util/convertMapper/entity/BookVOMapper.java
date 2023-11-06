@@ -91,7 +91,7 @@ public interface BookVOMapper {
     //region get property method
 
     @Named("getBookType")
-    default Attribute getBookType(int bookType) {
+    default Attribute<Integer> getBookType(int bookType) {
         return EnumUtil.getAttribute(BookType.class, bookType);
     }
 
@@ -101,7 +101,7 @@ public interface BookVOMapper {
     }
 
     @Named("getSerials")
-    default List<Attribute> getSerials(String serial) {
+    default List<Attribute<Integer>> getSerials(String serial) {
         return EntryUtil.getSerials(serial);
     }
     //endregion

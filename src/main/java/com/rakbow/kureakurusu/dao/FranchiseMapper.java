@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Franchise;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,7 +15,7 @@ import java.util.List;
  * @Description: 系列CRUD
  */
 @Mapper
-public interface FranchiseMapper {
+public interface FranchiseMapper extends BaseMapper<Franchise> {
 
     //新增系列
     int addFranchise(Franchise franchise);

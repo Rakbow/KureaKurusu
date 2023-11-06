@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Game;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,7 @@ import java.util.List;
  * @Description:
  */
 @Mapper
-public interface GameMapper {
+public interface GameMapper extends BaseMapper<Game> {
 
     //通过id查询Game
     Game getGame(int id, boolean status);

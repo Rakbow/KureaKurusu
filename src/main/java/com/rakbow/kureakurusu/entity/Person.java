@@ -1,14 +1,14 @@
 package com.rakbow.kureakurusu.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import org.apache.ibatis.type.EnumTypeHandler;
 
+import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 /**
@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 public class Person {
 
     private Long id; //主键
+    @NotBlank(message = "{entity.crud.name.required_field}")
     private String name; //原名
     private String nameZh; //简体中文名
     private String nameEn; //英文名

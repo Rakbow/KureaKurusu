@@ -97,7 +97,7 @@ public interface EntryConvertMapper {
     }
 
     @Named("getCategory")
-    default Attribute getVOCategory(int category) {
+    default Attribute<Integer> getVOCategory(int category) {
         return EnumUtil.getAttribute(EntryCategory.class, category);
     }
 

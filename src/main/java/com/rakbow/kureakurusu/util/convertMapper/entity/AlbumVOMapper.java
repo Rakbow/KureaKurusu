@@ -146,12 +146,12 @@ public interface AlbumVOMapper {
     //region get property method
 
     @Named("getAlbumFormat")
-    default List<Attribute> getAlbumFormat(String formats) {
+    default List<Attribute<Integer>> getAlbumFormat(String formats) {
         return AlbumFormat.getAttributes(formats);
     }
 
     @Named("getPublishFormat")
-    default List<Attribute> getPublishFormat(String formats) {
+    default List<Attribute<Integer>> getPublishFormat(String formats) {
         return EnumUtil.getAttributes(PublishFormat.class, formats);
     }
 

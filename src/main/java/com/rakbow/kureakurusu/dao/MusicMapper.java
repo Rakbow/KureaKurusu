@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
 import com.rakbow.kureakurusu.entity.Music;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +16,7 @@ import java.util.List;
  * @Description:
  */
 @Mapper
-public interface MusicMapper {
+public interface MusicMapper extends BaseMapper<Music> {
 
     Music getMusic(int id, boolean status);
 

@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Product;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,7 +15,7 @@ import java.util.List;
  * @Description:
  */
 @Mapper
-public interface ProductMapper {
+public interface ProductMapper extends BaseMapper<Product> {
 
     //通过id查找作品
     Product getProduct(int id, boolean status);

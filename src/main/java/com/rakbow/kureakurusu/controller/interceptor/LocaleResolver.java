@@ -15,9 +15,9 @@ import java.util.Locale;
  */
 public class LocaleResolver extends CookieLocaleResolver {
 
-    private static final Locale DEFAULT_LOCALE = Locale.CHINA;
+    public static final Locale DEFAULT_LOCALE = Locale.CHINA;
 
-    private static final String[] SUPPORTED_LOCALES = {"en", "zh"};
+    public static final String[] SUPPORTED_LOCALES = {"en", "zh"};
 
     @NotNull
     @Override

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.CommonMapper">
+
+    <sql id="personFields">
+        id, name, name_zh, name_en, aliases, cover, gender, birth_date,
+        detail, links, images, remark, info, added_time, edited_time, status
+    </sql>
+
+    <select id="searchPersonByKeyword" resultType="Person">
+        select
+        <include refid="personFields"/>
+        from person
+        <where>
+            JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', #{keyword}, '%')
+            OR name LIKE concat('%', #{keyword}, '%') OR name_zh LIKE concat('%', #{keyword}, '%')
+            OR name_en LIKE concat('%', #{keyword}, '%')
+            AND status = 1
+            ORDER BY id DESC
+            LIMIT #{first}, #{row}
+        </where>
+    </select>
+
+    <select id="searchPersonByKeywordCount" resultType="int">
+        select count(id)
+        from person
+        <where>
+            JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', #{keyword}, '%')
+            OR name LIKE concat('%', #{keyword}, '%') OR name_zh LIKE concat('%', #{keyword}, '%')
+            OR name_en LIKE concat('%', #{keyword}, '%')
+            AND status = 1
+        </where>
+    </select>
+
+</mapper>

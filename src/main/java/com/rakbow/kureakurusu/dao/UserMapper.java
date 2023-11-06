@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @Description:
  */
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
 
     //通过id查找用户
     User selectUserById(int id);

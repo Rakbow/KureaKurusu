@@ -1,6 +1,10 @@
 package com.rakbow.kureakurusu.data;
 
 import com.alibaba.fastjson2.JSON;
+import org.springframework.validation.FieldError;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: kureakurusu
@@ -37,6 +41,13 @@ public class ApiResult {
     public void setErrorMessage(Exception e) {
         this.state = 0;
         this.message = e.getMessage();
+    }
+
+    public void setErrorMessage(List<FieldError> errors) {
+        this.state = 0;
+        this.message = errors.stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining());
     }
 
     public String toJson() {

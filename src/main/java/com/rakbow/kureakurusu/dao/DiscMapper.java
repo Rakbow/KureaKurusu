@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Disc;
@@ -15,7 +16,7 @@ import java.util.List;
  * @Description:
  */
 @Mapper
-public interface DiscMapper {
+public interface DiscMapper extends BaseMapper<Disc> {
 
     //通过id查询disc
     Disc getDisc(int id, boolean status);
