@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.task;
 
-import com.rakbow.kureakurusu.dao.EntityMapper;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
@@ -21,7 +20,7 @@ public class EntityAmountTask extends QuartzJobBean {
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
-    private EntityMapper entityMapper;
+    private CommonMapper commonMapper;
 
     @Override
     protected void executeInternal(@NotNull JobExecutionContext context) {

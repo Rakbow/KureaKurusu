@@ -22,10 +22,6 @@ public class EntityUtil {
 
     @Resource
     private RedisUtil redisUtil;
-    @Resource
-    private VisitUtil visitUtil;
-    @Resource
-    private LikeUtil likeUtil;
 
     public ItemDetailInfo getItemDetailInfo(Object o, int entityType) {
         ItemDetailInfo detailInfo = new ItemDetailInfo();

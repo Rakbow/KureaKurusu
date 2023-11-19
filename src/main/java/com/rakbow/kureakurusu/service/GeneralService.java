@@ -1,30 +1,43 @@
 package com.rakbow.kureakurusu.service;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
+import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
+import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -37,12 +50,24 @@ import java.util.Map;
 @Service
 public class GeneralService {
 
+    //region util resource
     @Resource
     private RedisUtil redisUtil;
     @Resource
-    private CommonMapper commonMapper;
+    private VisitUtil visitUtil;
     @Resource
-    private PersonMapper personMapper;
+    private LikeUtil likeUtil;
+    @Resource
+    private QiniuFileUtil qiniuFileUtil;
+    @Resource
+    private QiniuImageUtil qiniuImageUtil;
+    //endregion
+
+    //region mapper
+    @Resource
+    private CommonMapper commonMapper;
+
+    //endregion
 
     private static final Logger logger = LoggerFactory.getLogger(GeneralService.class);
 
@@ -62,6 +87,8 @@ public class GeneralService {
 
     }
 
+    //region common
+
     public void loadMetaData() {
 
         MetaData.optionsZh = new MetaOption();
@@ -78,89 +105,152 @@ public class GeneralService {
 
     }
 
-    //region person
+    /**
+     * 获取页面数据
+     *
+     * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
+     * @Author Rakbow
+     */
+    public pageInfo getPageInfo(int entityType, int entityId, Object entity) {
 
-    public void addPerson(Person person) {
-        personMapper.insert(person);
-    }
+        JSONObject json = JSON.parseObject(JSON.toJSONString(entity));
 
-    public void updatePerson(PersonVOBeta person) {
+        Timestamp addedTime = new Timestamp(json.getDate("addedTime").getTime());
+        Timestamp editedTime = new Timestamp(json.getDate("editedTime").getTime());
 
-        LambdaUpdateWrapper<Person> wrapper = new LambdaUpdateWrapper<Person>()
-                .eq(Person::getId, person.getId())
-                .set(Person::getName, person.getName())
-                .set(Person::getNameZh, person.getNameZh())
-                .set(Person::getNameEn, person.getNameEn())
-                .set(Person::getGender, person.getGender().getValue())
-                .set(Person::getBirthDate, person.getBirthDate())
-                .set(Person::getAliases, JSON.toJSONString(person.getAliases()))
-                .set(Person::getRemark, person.getRemark());
+        pageInfo pageInfo = new pageInfo();
 
-        personMapper.update(null, wrapper);
-    }
-
-    public void deletePerson(Person person) {
-        personMapper.deleteById(person);
-    }
-
-    public SearchResult getPersons(QueryParams param) {
-
-        String name = param.getString("name");
-        String nameZh = param.getString("nameZh");
-        String nameEn = param.getString("nameEn");
-        String aliases = param.getString("aliases");
-
-        LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
-                .apply(!StringUtils.isBlank(aliases), "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", aliases)
-                .like(!StringUtils.isBlank(name), Person::getName, name)
-                .like(!StringUtils.isBlank(nameZh), Person::getNameZh, nameZh)
-                .like(!StringUtils.isBlank(nameEn), Person::getNameEn, nameEn);
-
-        List<Integer> gender = param.getArray("gender", Integer.class);
-        if (gender != null && !gender.isEmpty()) {
-            wrapper.in(Person::getGender, gender);
+        // 从cookie中获取点赞token
+        String likeToken = TokenInterceptor.getLikeToken();
+        if (likeToken == null) {
+            pageInfo.setLiked(false);
+        } else {
+            pageInfo.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
         }
 
-        if (!StringUtils.isBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getNameEn);
-                case "birthDate" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getBirthDate);
-                case "gender" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getGender);
-            }
-        }
+        // 从cookie中获取访问token
+        String visitToken = TokenInterceptor.getVisitToken();
 
-        IPage<Person> pages = personMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        pageInfo.setAddedTime(DateHelper.timestampToString(addedTime));
+        pageInfo.setEditedTime(DateHelper.timestampToString(editedTime));
+        pageInfo.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
+        pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
 
-        List<PersonVOBeta> persons = personVOMapper.toBetaVO(pages.getRecords());
-
-        return new SearchResult(persons, pages);
+        return pageInfo;
     }
 
     /**
-     * 搜索person
-     *
+     * 批量更新数据库实体激活状态
+     * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow
-     * @param param 参数
      */
-    public SearchResult searchPersons(SimpleSearchParam param) {
+    public void updateItemStatus(String tableName, List<Integer> ids, int status) {
+        commonMapper.updateItemStatus(tableName, ids, status);
+    }
 
-        LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
-                .and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
-                .or().like(Person::getName, param.getKeyword())
-                .or().like(Person::getNameZh, param.getKeyword())
-                .or().like(Person::getNameEn, param.getKeyword())
-                .eq(Person::getStatus, 1)
-                .orderByDesc(Person::getId);
+    /**
+     * 点赞实体
+     * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
+     * @author rakbow
+     */
+    public boolean entityLike(int entityType, int entityId, String likeToken) {
+        //点过赞
+        if(likeUtil.isLike(entityType, entityId, likeToken)) {
+            return false;
+        }else {//没点过赞,自增
+            likeUtil.incLike(entityType, entityId, likeToken);
+            return true;
+        }
+    }
 
-        IPage<Person> pages = personMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
-        List<PersonMiniVO> persons = personVOMapper.toMiniVO(pages.getRecords());
-
-           return new SearchResult(persons, pages);
+    /**
+     * 更新描述
+     *
+     * @param tableName,id 实体表名,实体id
+     * @param text 描述json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void updateItemDetail(String tableName, int id, String text) {
+        commonMapper.updateItemDetail(tableName, id, text, DateHelper.NOW_TIMESTAMP);
     }
 
     //endregion
+
+    //region image operation
+
+    /**
+     * 根据实体类型和实体Id获取图片
+     *
+     * @param tableName,entityId 实体表名 实体id
+     * @return JSONArray
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public List<Image> getItemImages(String tableName, int entityId) {
+        return JSON.parseArray(commonMapper.getItemImages(tableName, entityId)).toJavaList(Image.class);
+    }
+
+    /**
+     * 新增图片
+     *
+     * @param entityId           实体id
+     * @param images             新增图片文件数组
+     * @param originalImagesJson 数据库中现存的图片json数据
+     * @param newImageInfos         新增图片json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public ActionResult addItemImages(String tableName, int entityId, MultipartFile[] images, List<Image> originalImagesJson,
+                                      List<Image> newImageInfos) {
+        ActionResult res = new ActionResult();
+        try{
+            ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
+            if(ar.state) {
+                JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
+                commonMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.NOW_TIMESTAMP);
+                res.message = I18nHelper.getMessage("image.insert.success");
+            }else {
+                throw new Exception(ar.message);
+            }
+        }catch(Exception ex) {
+            res.setErrorMessage(ex.getMessage());
+        }
+        return res;
+    }
+
+    /**
+     * 更新图片
+     *
+     * @param entityId     图书id
+     * @param images 需要更新的图片json数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String updateItemImages(String tableName, int entityId, String images) {
+        commonMapper.updateItemImages(tableName, entityId, images, DateHelper.NOW_TIMESTAMP);
+        return I18nHelper.getMessage("image.update.success");
+    }
+
+    /**
+     * 删除图片
+     *
+     * @param tableName,entityId,images,deleteImages 实体表名,实体id,原图片信息,删除图片
+     * @param deleteImages 需要删除的图片jsonArray
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public String deleteItemImages(String tableName, int entityId, JSONArray deleteImages) throws Exception {
+
+        JSONArray images = JSON.parseArray(JSON.toJSONString(getItemImages(tableName, entityId)));
+
+        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
+
+        commonMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.NOW_TIMESTAMP);
+        return I18nHelper.getMessage("image.delete.success");
+    }
+
+    //endregion
+
 
 }

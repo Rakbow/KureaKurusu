@@ -6,11 +6,9 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
 import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
@@ -20,7 +18,6 @@ import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.Disc;
 import com.rakbow.kureakurusu.entity.Game;
 import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
-import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
@@ -33,10 +30,8 @@ import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -71,7 +66,7 @@ public class EntityService {
     @Resource
     private LikeUtil likeUtil;
     @Resource
-    private EntityMapper entityMapper;
+    private CommonMapper commonMapper;
     @Resource
     private QiniuImageUtil qiniuImageUtil;
     @Resource
@@ -112,39 +107,6 @@ public class EntityService {
     }
 
     //region common get data
-
-    /**
-     * 获取页面数据
-     * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
-     * @Author Rakbow
-     */
-    public pageInfo getPageInfo(int entityType, int entityId, Object entity) {
-
-        JSONObject json = JSON.parseObject(JSON.toJSONString(entity));
-
-        Timestamp addedTime = new Timestamp(json.getDate("addedTime").getTime());
-        Timestamp editedTime = new Timestamp(json.getDate("editedTime").getTime());
-
-        pageInfo pageInfo = new pageInfo();
-
-        // 从cookie中获取点赞token
-        String likeToken = TokenInterceptor.getLikeToken();
-        if(likeToken == null) {
-            pageInfo.setLiked(false);
-        }else {
-            pageInfo.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
-        }
-
-        // 从cookie中获取访问token
-        String visitToken = TokenInterceptor.getVisitToken();
-
-        pageInfo.setAddedTime(DateHelper.timestampToString(addedTime));
-        pageInfo.setEditedTime(DateHelper.timestampToString(editedTime));
-        pageInfo.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
-        pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
-
-        return pageInfo;
-    }
 
 //    /**
 //     * 获取实体表数据
@@ -316,21 +278,12 @@ public class EntityService {
     //region common CRUD
 
     /**
-     * 更新数据库实体激活状态
-     * @param tableName,entityId,status 实体表名,实体id,状态
-     * @author rakbow
-     */
-    public void updateItemStatus(String tableName, int entityId, int status) {
-        entityMapper.updateItemStatus(tableName, entityId, status);
-    }
-
-    /**
      * 批量更新数据库实体激活状态
      * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow
      */
     public void updateItemsStatus(String tableName, List<Integer> ids, int status) {
-        entityMapper.updateItemsStatus(tableName, ids, status);
+        commonMapper.updateItemStatus(tableName, ids, status);
     }
 
     /**
@@ -357,7 +310,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemDescription(String tableName, int entityId, String description) {
-        entityMapper.updateItemDescription(tableName, entityId, description, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemDetail(tableName, entityId, description, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -369,7 +322,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemBonus(String tableName, int entityId, String bonus) {
-        entityMapper.updateItemBonus(tableName, entityId, bonus, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemBonus(tableName, entityId, bonus, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -381,7 +334,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemSpecs(String tableName, int entityId, String specs) {
-        entityMapper.updateItemSpecs(tableName, entityId, specs, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemSpecs(tableName, entityId, specs, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -393,7 +346,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemCompanies(String tableName, int entityId, String companies) {
-        entityMapper.updateItemCompanies(tableName, entityId, companies, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemCompanies(tableName, entityId, companies, DateHelper.NOW_TIMESTAMP);
     }
 
     /**
@@ -405,82 +358,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemPersonnel(String tableName, String fieldName, int entityId, String personnel) {
-        entityMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateHelper.NOW_TIMESTAMP);
-    }
-
-    //endregion
-
-    //region image operation
-
-    /**
-     * 根据实体类型和实体Id获取图片
-     *
-     * @param tableName,entityId 实体表名 实体id
-     * @return JSONArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Image> getItemImages(String tableName, int entityId) {
-        return JSON.parseArray(entityMapper.getItemImages(tableName, entityId)).toJavaList(Image.class);
-    }
-
-    /**
-     * 新增图片
-     *
-     * @param entityId           实体id
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param newImageInfos         新增图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult addItemImages(String tableName, int entityId, MultipartFile[] images, List<Image> originalImagesJson,
-                                      List<Image> newImageInfos) {
-        ActionResult res = new ActionResult();
-        try{
-            ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
-            if(ar.state) {
-                JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
-                entityMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.NOW_TIMESTAMP);
-                res.message = I18nHelper.getMessage("image.insert.success");
-            }else {
-                throw new Exception(ar.message);
-            }
-        }catch(Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return res;
-    }
-
-    /**
-     * 更新图片
-     *
-     * @param entityId     图书id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemImages(String tableName, int entityId, String images) {
-        entityMapper.updateItemImages(tableName, entityId, images, DateHelper.NOW_TIMESTAMP);
-        return I18nHelper.getMessage("image.update.success");
-    }
-
-    /**
-     * 删除图片
-     *
-     * @param tableName,entityId,images,deleteImages 实体表名,实体id,原图片信息,删除图片
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteItemImages(String tableName, int entityId, JSONArray deleteImages) throws Exception {
-
-        JSONArray images = JSON.parseArray(JSON.toJSONString(getItemImages(tableName, entityId)));
-
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
-
-        entityMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.NOW_TIMESTAMP);
-        return I18nHelper.getMessage("image.delete.success");
+        commonMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateHelper.NOW_TIMESTAMP);
     }
 
     //endregion

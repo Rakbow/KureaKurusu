@@ -1,21 +1,9 @@
 package com.rakbow.kureakurusu;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.dao.*;
-import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;
-import com.rakbow.kureakurusu.data.emun.temp.BookRelatedType;
-import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
-import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
-import com.rakbow.kureakurusu.entity.Album;
-import com.rakbow.kureakurusu.entity.Book;
-import com.rakbow.kureakurusu.entity.Entry;
-import com.rakbow.kureakurusu.entity.Product;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
+import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.service.MusicService;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
@@ -23,12 +11,8 @@ import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.convertMapper.entry.EntryConvertMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 //import com.rakbow.kureakurusu.util.convertMapper.GameVoMapper;
 
@@ -41,6 +25,8 @@ class KureaKurusuApplicationTests {
     private EntityService entityService;
     @Resource
     private MusicService musicService;
+    @Resource
+    private GeneralService generalService;
     @Resource
     private MusicMapper musicMapper;
 
@@ -60,7 +46,7 @@ class KureaKurusuApplicationTests {
     @Resource
     private FranchiseMapper franchiseMapper;
     @Resource
-    private EntityMapper entityMapper;
+    private CommonMapper commonMapper;
 
     @Resource
     private LikeUtil likeUtil;

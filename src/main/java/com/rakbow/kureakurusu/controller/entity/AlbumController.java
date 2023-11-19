@@ -14,6 +14,7 @@ import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
+import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.service.MusicService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -52,7 +53,7 @@ public class AlbumController {
     @Resource
     private EntityUtil entityUtil;
     @Resource
-    private EntityService entityService;
+    private GeneralService generalService;
     
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
@@ -123,7 +124,7 @@ public class AlbumController {
 
             detailResult.put("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
             detailResult.put("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
-            detailResult.put("pageInfo", entityService.getPageInfo(Entity.ALBUM.getId(), id, album));
+            detailResult.put("pageInfo", generalService.getPageInfo(Entity.ALBUM.getId(), id, album));
             detailResult.put("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
 
             res.data = detailResult;

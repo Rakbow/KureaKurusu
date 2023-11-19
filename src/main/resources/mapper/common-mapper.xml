@@ -4,34 +4,73 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.CommonMapper">
 
-    <sql id="personFields">
-        id, name, name_zh, name_en, aliases, cover, gender, birth_date,
-        detail, links, images, remark, info, added_time, edited_time, status
-    </sql>
-
-    <select id="searchPersonByKeyword" resultType="Person">
-        select
-        <include refid="personFields"/>
-        from person
+    <update id="updateItemStatus" keyProperty="id">
+        update ${param1}
+        set
+        status = #{status}
         <where>
-            JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', #{keyword}, '%')
-            OR name LIKE concat('%', #{keyword}, '%') OR name_zh LIKE concat('%', #{keyword}, '%')
-            OR name_en LIKE concat('%', #{keyword}, '%')
-            AND status = 1
-            ORDER BY id DESC
-            LIMIT #{first}, #{row}
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach item="item" index="index" collection="ids" open="("
+                         close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
         </where>
+    </update>
+
+    <update id="updateItemDetail" keyProperty="id">
+        update ${param1}
+        set
+        detail = #{text}, edited_time = #{editedTime}
+        where id = #{id}
+    </update>
+
+    <update id="updateItemBonus" keyProperty="id">
+        update ${param1}
+        set
+        bonus = #{bonus}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <update id="updateItemSpecs" keyProperty="id">
+        update ${param1}
+        set
+        specs = #{specs}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <update id="updateItemCompanies" keyProperty="id">
+        update ${param1}
+        set
+        companies = #{companies}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <update id="updateItemPersonnel" keyProperty="id">
+        update ${param1}
+        set
+        ${param2} = #{personnel}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <select id="getItemImages" resultType="string">
+        select
+        images
+        from ${param1}
+        where id = #{entityId}
     </select>
 
-    <select id="searchPersonByKeywordCount" resultType="int">
+    <update id="updateItemImages" keyProperty="id">
+        update ${param1}
+        set
+        images = #{images}, edited_time = #{editedTime}
+        where id = #{entityId}
+    </update>
+
+    <select id="getItemAmount" resultType="int">
         select count(id)
-        from person
-        <where>
-            JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', #{keyword}, '%')
-            OR name LIKE concat('%', #{keyword}, '%') OR name_zh LIKE concat('%', #{keyword}, '%')
-            OR name_en LIKE concat('%', #{keyword}, '%')
-            AND status = 1
-        </where>
+        from ${param1}
     </select>
 
 </mapper>
