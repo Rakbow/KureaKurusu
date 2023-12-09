@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller;
+package com.rakbow.kureakurusu.service;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

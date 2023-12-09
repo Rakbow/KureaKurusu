@@ -24,5 +24,6 @@ public class PersonVO {
     private List<String> aliases;
     private String detail;
     private String remark;
+    private Boolean status;
 
 }
