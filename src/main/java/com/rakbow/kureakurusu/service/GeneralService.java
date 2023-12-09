@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
+import com.rakbow.kureakurusu.dao.GeneralMapper;
 import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
@@ -66,6 +67,8 @@ public class GeneralService {
     //region mapper
     @Resource
     private CommonMapper commonMapper;
+    @Resource
+    private GeneralMapper mapper;
 
     //endregion
 
@@ -252,5 +255,10 @@ public class GeneralService {
 
     //endregion
 
+    //region person role
+
+
+
+    //endregion
 
 }

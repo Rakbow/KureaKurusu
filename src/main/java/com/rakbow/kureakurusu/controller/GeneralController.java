@@ -75,7 +75,7 @@ public class GeneralController {
     public String updateItemsStatus(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
-            String tableName = Entity.getTableName(json.getIntValue("entityType"));
+            String tableName = Entity.getTableName(json.getIntValue("entity"));
             List<Integer> ids = json.getList("ids", Integer.class);
             boolean status = json.getBoolean("status");
             service.updateItemStatus(tableName, ids, status?1:0);
@@ -179,10 +179,10 @@ public class GeneralController {
     //like
     @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public String likeEntity(@RequestBody JSONObject json, HttpServletRequest request, HttpServletResponse response) {
+    public String likeEntity(@RequestBody JSONObject json, HttpServletResponse response) {
         ApiResult res = new ApiResult();
         try {
-            int entityType = json.getIntValue("entityType");
+            int entityType = json.getIntValue("entity");
             int entityId = json.getIntValue("entityId");
 
             // 从cookie中获取点赞token

@@ -33,4 +33,9 @@ public interface CommonVOMapper {
         return DateHelper.timestampToString(timestamp);
     }
 
+    @Named("getStatus")
+    default Boolean getStatus(int status) {
+        return status == 1;
+    }
+
 }
