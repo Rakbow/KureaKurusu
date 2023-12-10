@@ -7,9 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * @Project_name: kureakurusu
  * @Author: Rakbow
- * @Create: 2023-12-04 20:26
+ * @Create: 2023-12-10 6:33
  * @Description:
  */
 @Mapper
-public interface GeneralMapper<T> extends BaseMapper<T> {
+public interface PersonRoleMapper extends BaseMapper<PersonRole> {
 }

@@ -47,7 +47,7 @@ public class ApiResult {
         this.state = 0;
         this.message = errors.stream()
                 .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining());
+                .collect(Collectors.joining("\n"));
     }
 
     public String toJson() {

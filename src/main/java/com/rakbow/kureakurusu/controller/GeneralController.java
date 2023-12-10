@@ -15,6 +15,7 @@ import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
@@ -166,6 +167,58 @@ public class GeneralController {
             }else {
                 throw new Exception(I18nHelper.getMessage("entity.error.not_action"));
             }
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    //endregion
+
+    //region person role
+
+    @RequestMapping(path = "/get-person-roles", method = RequestMethod.POST)
+    @ResponseBody
+    public String getPersonRoles(@RequestBody JSONObject json) {
+        ApiResult res = new ApiResult();
+        try {
+            res.data = service.getPersonRoles(new QueryParams(json));
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    @RequestMapping(path = "/add-person-role", method = RequestMethod.POST)
+    @ResponseBody
+    public String addPerson(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+        ApiResult res = new ApiResult();
+        try {
+            if (bindingResult.hasErrors()) {
+                List<FieldError> errors = bindingResult.getFieldErrors();
+                res.setErrorMessage(errors);
+                return res.toJson();
+            }
+            service.addPersonRole(role);
+            res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    @RequestMapping(path = "/update-person-role", method = RequestMethod.POST)
+    @ResponseBody
+    public String updatePerson(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+        ApiResult res = new ApiResult();
+        try {
+            if (bindingResult.hasErrors()) {
+                List<FieldError> errors = bindingResult.getFieldErrors();
+                res.setErrorMessage(errors);
+                return res.toJson();
+            }
+            service.updatePersonRole(role);
+            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

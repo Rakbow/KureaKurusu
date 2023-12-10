@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.entity.Album;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.sql.Timestamp;
-import java.util.List;
-
 /**
  * @Project_name: kureakurusu
  * @Author: Rakbow

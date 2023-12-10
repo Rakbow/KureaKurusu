@@ -4,41 +4,36 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.GeneralMapper;
-import com.rakbow.kureakurusu.dao.PersonMapper;
+import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
-import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
-import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -68,13 +63,11 @@ public class GeneralService {
     @Resource
     private CommonMapper commonMapper;
     @Resource
-    private GeneralMapper mapper;
+    private PersonRoleMapper roleMapper;
 
     //endregion
 
     private static final Logger logger = LoggerFactory.getLogger(GeneralService.class);
-
-    private final PersonVOMapper personVOMapper = PersonVOMapper.INSTANCES;
 
     /**
      * 刷新redis中的选项缓存
@@ -84,9 +77,7 @@ public class GeneralService {
     public void refreshRedisEnumData() {
 
         Map<String, List<Attribute<Integer>>> enumOptionsRedisKeyPair = EnumUtil.getOptionRedisKeyPair();
-        enumOptionsRedisKeyPair.forEach((k, v) -> {
-            redisUtil.set(k, v);
-        });
+        enumOptionsRedisKeyPair.forEach((k, v) -> redisUtil.set(k, v));
 
     }
 
@@ -257,7 +248,37 @@ public class GeneralService {
 
     //region person role
 
+    public void addPersonRole(PersonRole role) {
+        roleMapper.insert(role);
+    }
 
+    public void updatePersonRole(PersonRole role) {
+        roleMapper.updateById(role);
+    }
+
+    public SearchResult getPersonRoles(QueryParams param) {
+        String name = param.getString("name");
+        String nameZh = param.getString("nameZh");
+        String nameEn = param.getString("nameEn");
+
+        LambdaQueryWrapper<PersonRole> wrapper = new LambdaQueryWrapper<PersonRole>()
+                .like(!StringUtils.isBlank(name), PersonRole::getName, name)
+                .like(!StringUtils.isBlank(nameZh), PersonRole::getNameZh, nameZh)
+                .like(!StringUtils.isBlank(nameEn), PersonRole::getNameEn, nameEn);
+        if (!StringUtils.isBlank(param.sortField)) {
+            switch (param.sortField) {
+                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getName);
+                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameZh);
+                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameEn);
+            }
+        }else {
+            wrapper.orderByDesc(PersonRole::getId);
+        }
+
+        IPage<PersonRole> pages = roleMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+
+        return new SearchResult(pages);
+    }
 
     //endregion
 
