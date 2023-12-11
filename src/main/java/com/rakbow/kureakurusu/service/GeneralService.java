@@ -8,13 +8,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
-import com.rakbow.kureakurusu.dao.GeneralMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -34,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -91,12 +90,10 @@ public class GeneralService {
         MetaData.optionsEn.genderSet = EnumHelper.getAttributeOptions(Gender.class, "en");
         MetaData.optionsZh.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "zh");
         MetaData.optionsEn.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "en");
+        MetaData.optionsZh.roleSet = getPersonRoleSet();
+        MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
 
         logger.info(I18nHelper.getMessage("system.load_data.meta_data"));
-
-        logger.info(JSON.toJSONString(MetaData.optionsZh));
-        logger.info(JSON.toJSONString(MetaData.optionsEn));
-
     }
 
     /**
@@ -278,6 +275,23 @@ public class GeneralService {
         IPage<PersonRole> pages = roleMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
 
         return new SearchResult(pages);
+    }
+
+    public void refreshPersonRoleSet() {
+        MetaData.optionsZh.roleSet.clear();
+        MetaData.optionsEn.roleSet.clear();
+        MetaData.optionsZh.roleSet = getPersonRoleSet();
+        MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
+    }
+
+    private List<Attribute<Long>> getPersonRoleSet() {
+        List<Attribute<Long>> roleSet = new ArrayList<>();
+        //获取所有role数据
+        List<PersonRole> allRoleSet = roleMapper.selectList(null);
+        allRoleSet.forEach(role -> {
+            roleSet.add(new Attribute<Long>(role.getNameZh() + " / " + role.getName(), role.getId()));
+        });
+        return roleSet;
     }
 
     //endregion

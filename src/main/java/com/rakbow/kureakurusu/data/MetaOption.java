@@ -14,10 +14,12 @@ public class MetaOption {
     //性别
     public List<Attribute<Integer>> genderSet;
     public List<Attribute<Integer>> linkTypeSet;
+    public List<Attribute<Long>> roleSet;
 
     public MetaOption() {
         genderSet = new ArrayList<>();
         linkTypeSet = new ArrayList<>();
+        roleSet = new ArrayList<>();
     }
 
 }

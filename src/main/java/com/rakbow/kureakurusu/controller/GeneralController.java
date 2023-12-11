@@ -191,7 +191,7 @@ public class GeneralController {
 
     @RequestMapping(path = "/add-person-role", method = RequestMethod.POST)
     @ResponseBody
-    public String addPerson(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+    public String addPersonRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
@@ -209,7 +209,7 @@ public class GeneralController {
 
     @RequestMapping(path = "/update-person-role", method = RequestMethod.POST)
     @ResponseBody
-    public String updatePerson(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+    public String updatePersonRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
@@ -219,6 +219,19 @@ public class GeneralController {
             }
             service.updatePersonRole(role);
             res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    @RequestMapping(path = "/refresh-person-role", method = RequestMethod.POST)
+    @ResponseBody
+    public String refreshPersonRole() {
+        ApiResult res = new ApiResult();
+        try {
+            service.refreshPersonRoleSet();
+            res.message = I18nHelper.getMessage("entity.curd.refresh.success", Entity.ENTRY.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
