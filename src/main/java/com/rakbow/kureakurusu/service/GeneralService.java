@@ -62,7 +62,7 @@ public class GeneralService {
     @Resource
     private CommonMapper commonMapper;
     @Resource
-    private PersonRoleMapper roleMapper;
+    private PersonRoleMapper personRoleMapper;
 
     //endregion
 
@@ -244,39 +244,6 @@ public class GeneralService {
     //endregion
 
     //region person role
-
-    public void addPersonRole(PersonRole role) {
-        roleMapper.insert(role);
-    }
-
-    public void updatePersonRole(PersonRole role) {
-        roleMapper.updateById(role);
-    }
-
-    public SearchResult getPersonRoles(QueryParams param) {
-        String name = param.getString("name");
-        String nameZh = param.getString("nameZh");
-        String nameEn = param.getString("nameEn");
-
-        LambdaQueryWrapper<PersonRole> wrapper = new LambdaQueryWrapper<PersonRole>()
-                .like(!StringUtils.isBlank(name), PersonRole::getName, name)
-                .like(!StringUtils.isBlank(nameZh), PersonRole::getNameZh, nameZh)
-                .like(!StringUtils.isBlank(nameEn), PersonRole::getNameEn, nameEn);
-        if (!StringUtils.isBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameEn);
-            }
-        }else {
-            wrapper.orderByDesc(PersonRole::getId);
-        }
-
-        IPage<PersonRole> pages = roleMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
-        return new SearchResult(pages);
-    }
-
     public void refreshPersonRoleSet() {
         MetaData.optionsZh.roleSet.clear();
         MetaData.optionsEn.roleSet.clear();
@@ -287,13 +254,12 @@ public class GeneralService {
     private List<Attribute<Long>> getPersonRoleSet() {
         List<Attribute<Long>> roleSet = new ArrayList<>();
         //获取所有role数据
-        List<PersonRole> allRoleSet = roleMapper.selectList(null);
+        List<PersonRole> allRoleSet = personRoleMapper.selectList(null);
         allRoleSet.forEach(role -> {
             roleSet.add(new Attribute<Long>(role.getNameZh() + " / " + role.getName(), role.getId()));
         });
         return roleSet;
     }
-
     //endregion
 
 }

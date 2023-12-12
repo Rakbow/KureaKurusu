@@ -2,12 +2,14 @@ package com.rakbow.kureakurusu.controller;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -33,7 +35,7 @@ import java.util.List;
  * @Description:
  */
 @Controller
-@RequestMapping("/db")
+@RequestMapping("/db/person")
 public class PersonController {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
@@ -47,7 +49,7 @@ public class PersonController {
 
     //region person
 
-    @RequestMapping(path = "/get-person-detail", method = RequestMethod.POST)
+    @RequestMapping(path = "/detail", method = RequestMethod.POST)
     @ResponseBody
     @UniqueVisitor
     public String getPersonDetailData(@RequestBody JSONObject param) {
@@ -74,7 +76,7 @@ public class PersonController {
         return res.toJson();
     }
 
-    @RequestMapping(path = "/search-person", method = RequestMethod.POST)
+    @RequestMapping(path = "/search", method = RequestMethod.POST)
     @ResponseBody
     public String searchPerson(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
@@ -86,7 +88,7 @@ public class PersonController {
         return res.toJson();
     }
 
-    @RequestMapping(path = "/get-persons", method = RequestMethod.POST)
+    @RequestMapping(path = "/list", method = RequestMethod.POST)
     @ResponseBody
     public String getPersons(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
@@ -98,7 +100,7 @@ public class PersonController {
         return res.toJson();
     }
 
-    @RequestMapping(path = "/add-person", method = RequestMethod.POST)
+    @RequestMapping(path = "/add", method = RequestMethod.POST)
     @ResponseBody
     public String addPerson(@Valid @RequestBody Person person, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
@@ -116,7 +118,7 @@ public class PersonController {
         return res.toJson();
     }
 
-    @RequestMapping(path = "/update-person", method = RequestMethod.POST)
+    @RequestMapping(path = "/update", method = RequestMethod.POST)
     @ResponseBody
     public String updatePerson(@Valid @RequestBody PersonVOBeta person, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
@@ -133,6 +135,58 @@ public class PersonController {
         }
         return res.toJson();
     }
+    //endregion
+
+    //region role
+
+    @RequestMapping(path = "/get-roles", method = RequestMethod.POST)
+    @ResponseBody
+    public String getPersonRoles(@RequestBody JSONObject json) {
+        ApiResult res = new ApiResult();
+        try {
+            res.data = service.getRoles(new QueryParams(json));
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    @RequestMapping(path = "/add-role", method = RequestMethod.POST)
+    @ResponseBody
+    public String addPersonRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+        ApiResult res = new ApiResult();
+        try {
+            if (bindingResult.hasErrors()) {
+                List<FieldError> errors = bindingResult.getFieldErrors();
+                res.setErrorMessage(errors);
+                return res.toJson();
+            }
+            service.addRole(role);
+            res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    @RequestMapping(path = "/update-role", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+        ApiResult res = new ApiResult();
+        try {
+            if (bindingResult.hasErrors()) {
+                List<FieldError> errors = bindingResult.getFieldErrors();
+                res.setErrorMessage(errors);
+                return res.toJson();
+            }
+            service.updateRole(role);
+            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
     //endregion
 
 }

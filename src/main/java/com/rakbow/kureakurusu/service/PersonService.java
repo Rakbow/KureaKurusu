@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.PersonMapper;
+import com.rakbow.kureakurusu.dao.PersonRoleMapper;
+import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.MetaData;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +42,10 @@ public class PersonService {
 
     @Resource
     private PersonMapper mapper;
+    @Resource
+    private PersonRoleMapper roleMapper;
 
+    //region person
     public Person getPerson(long id) {
         return mapper.selectById(id);
     }
@@ -123,5 +131,47 @@ public class PersonService {
 
         return new SearchResult(persons, pages);
     }
+    //endregion
 
+    //region person role
+
+    public void addRole(PersonRole role) {
+        roleMapper.insert(role);
+    }
+
+    public void updateRole(PersonRole role) {
+        roleMapper.updateById(role);
+    }
+
+    public SearchResult getRoles(QueryParams param) {
+        String name = param.getString("name");
+        String nameZh = param.getString("nameZh");
+        String nameEn = param.getString("nameEn");
+
+        LambdaQueryWrapper<PersonRole> wrapper = new LambdaQueryWrapper<PersonRole>()
+                .like(!StringUtils.isBlank(name), PersonRole::getName, name)
+                .like(!StringUtils.isBlank(nameZh), PersonRole::getNameZh, nameZh)
+                .like(!StringUtils.isBlank(nameEn), PersonRole::getNameEn, nameEn);
+        if (!StringUtils.isBlank(param.sortField)) {
+            switch (param.sortField) {
+                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getName);
+                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameZh);
+                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameEn);
+            }
+        }else {
+            wrapper.orderByDesc(PersonRole::getId);
+        }
+
+        IPage<PersonRole> pages = roleMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+
+        return new SearchResult(pages);
+    }
+
+    //endregion
+
+    //region relation
+
+
+
+    //endregion
 }
