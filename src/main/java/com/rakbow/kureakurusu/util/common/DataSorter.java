@@ -2,13 +2,9 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
-import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
-import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
-import com.rakbow.kureakurusu.data.vo.game.GameVOAlpha;
-import com.rakbow.kureakurusu.data.vo.merch.MerchVOAlpha;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
+import com.rakbow.kureakurusu.entity.Person;
 
 import java.util.Comparator;
 
@@ -20,12 +16,15 @@ import java.util.Comparator;
  */
 public class DataSorter {
 
-    public static AlbumSortById albumSortById = new AlbumSortById();
-    public static MusicSortById musicSortById = new MusicSortById();
-    public static MusicSortByTrackSerial musicSortByTrackSerial = new MusicSortByTrackSerial();
-    public static JsonSortById jsonSortById = new JsonSortById();
-    public static JsonSetSortByValue jsonSetSortByValue = new JsonSetSortByValue();
-    public static AttributesSortByValue attributesSortByValue = new AttributesSortByValue();
+    public static AlbumSortById albumIdSorter = new AlbumSortById();
+    public static MusicSortById musicIdSorter = new MusicSortById();
+    public static MusicSortByTrackSerial musicTrackSerialSorter = new MusicSortByTrackSerial();
+    public static JsonSortById jsonIdSorter = new JsonSortById();
+    public static JsonSetSortByValue jsonSetValueSorter = new JsonSetSortByValue();
+    public static AttributesSortByIntValue attributesIntValueSorter = new AttributesSortByIntValue();
+    public static AttributesSortByLongValue attributesLongValueSorter = new AttributesSortByLongValue();
+    public static AttributesSortByStringValue attributesStringValueSorter = new AttributesSortByStringValue();
+    public static PersonSortById personIdSorter = new PersonSortById();
 
 }
 
@@ -69,11 +68,35 @@ class JsonSetSortByValue implements Comparator<JSONObject> {
     }
 }
 
-class AttributesSortByValue implements Comparator<Attribute<Integer>> {
+class AttributesSortByIntValue implements Comparator<Attribute<Integer>> {
 
     @Override
     public int compare(Attribute<Integer> a, Attribute<Integer> b) {
         return Integer.compare(a.getValue(), b.getValue());
+    }
+}
+
+class AttributesSortByLongValue implements Comparator<Attribute<Long>> {
+
+    @Override
+    public int compare(Attribute<Long> a, Attribute<Long> b) {
+        return Long.compare(a.getValue(), b.getValue());
+    }
+}
+
+class AttributesSortByStringValue implements Comparator<Attribute<String>> {
+
+    @Override
+    public int compare(Attribute<String> a, Attribute<String> b) {
+        return a.getValue().compareTo(b.getValue());
+    }
+}
+
+class PersonSortById implements Comparator<Person> {
+
+    @Override
+    public int compare(Person a, Person b) {
+        return Long.compare(a.getId(), b.getId());
     }
 }
 

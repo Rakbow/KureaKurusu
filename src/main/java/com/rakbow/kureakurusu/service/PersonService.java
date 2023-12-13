@@ -6,16 +6,17 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.PersonMapper;
+import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
-import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.MetaData;
-import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
+import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.entity.PersonRelation;
 import com.rakbow.kureakurusu.entity.PersonRole;
+import com.rakbow.kureakurusu.util.common.DataFinder;
+import com.rakbow.kureakurusu.util.common.DataSorter;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * @Project_name: kureakurusu
@@ -44,6 +49,8 @@ public class PersonService {
     private PersonMapper mapper;
     @Resource
     private PersonRoleMapper roleMapper;
+    @Resource
+    private PersonRelationMapper relationMapper;
 
     //region person
     public Person getPerson(long id) {
@@ -158,7 +165,7 @@ public class PersonService {
                 case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameZh);
                 case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameEn);
             }
-        }else {
+        } else {
             wrapper.orderByDesc(PersonRole::getId);
         }
 
@@ -171,7 +178,37 @@ public class PersonService {
 
     //region relation
 
-
+    public List<Personnel> getPersonnel(int entityType, long entityId) {
+        List<Personnel> res = new ArrayList<>();
+        if (MetaData.optionsZh.roleSet.isEmpty())
+            return res;
+        List<PersonRelation> relations = relationMapper.selectList(
+                new LambdaQueryWrapper<PersonRelation>()
+                        .eq(PersonRelation::getEntityType, entityType)
+                        .eq(PersonRelation::getEntityId, entityId)
+        );
+        if (relations.isEmpty())
+            return res;
+        List<Long> personIds = relations.stream().map(PersonRelation::getPersonId).distinct().toList();
+        List<Person> persons = mapper.selectBatchIds(personIds);
+        Map<Long, List<PersonRelation>> relationGroup = relations.stream()
+                .collect(Collectors.groupingBy(PersonRelation::getRoleId));
+        for(Long roleId : relationGroup.keySet()) {
+            Personnel personnel = new Personnel();
+            Attribute<Long> role = DataFinder.findAttributeByValue(roleId, MetaData.optionsZh.roleSet);
+            if(role == null) continue;
+            personnel.setRole(role);
+            List<PersonRelation> relationSet = relationGroup.get(roleId);
+            for(PersonRelation r : relationSet) {
+                Person person = DataFinder.findPersonById(r.getPersonId(), persons);
+                if(person == null) continue;
+                Attribute<Long> p = new Attribute<>(person.getName(), person.getId());
+                personnel.getPersons().add(p);
+            }
+            res.add(personnel);
+        }
+        return res;
+    }
 
     //endregion
 }

@@ -189,4 +189,22 @@ public class PersonController {
 
     //endregion
 
+    //region relation
+
+    @RequestMapping(path = "/get-personnel", method = RequestMethod.POST)
+    @ResponseBody
+    public String getPersonnel(@RequestBody JSONObject json) {
+        ApiResult res = new ApiResult();
+        try {
+            long entityId = json.getLongValue("entityId");
+            int entityType = json.getIntValue("entityType");
+            res.data = service.getPersonnel(entityType, entityId);
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res.toJson();
+    }
+
+    //endregion
+
 }

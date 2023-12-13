@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
+import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.entity.Product;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,7 +26,7 @@ public class DataFinder {
     public static Album findAlbumById(int id, List<Album> albums) {
         Album finder = new Album();
         finder.setId(id);
-        int idx = Collections.binarySearch(albums, finder, DataSorter.albumSortById);
+        int idx = Collections.binarySearch(albums, finder, DataSorter.albumIdSorter);
         if (idx >= 0) {
             return albums.get(idx);
         }else {
@@ -47,14 +48,14 @@ public class DataFinder {
     public static Music findMusicById(int id, List<Music> musics) {
         Music musicFinder = new Music();
         musicFinder.setId(id);
-        int idx = Collections.binarySearch(musics, musicFinder, DataSorter.musicSortById);
+        int idx = Collections.binarySearch(musics, musicFinder, DataSorter.musicIdSorter);
         return idx >= 0 ? musics.get(idx) : null;
     }
 
     public static List<Music> findMusicByDiscSerial(int discSerial, List<Music> musics) {
 
         return musics.stream().filter(music -> music.getDiscSerial() == discSerial)
-                .sorted(DataSorter.musicSortByTrackSerial).collect(Collectors.toList());
+                .sorted(DataSorter.musicTrackSerialSorter).collect(Collectors.toList());
     }
 
     public static Music findMusicByNameAndAlbumId(String name, String nameType, int albumId, List<Music> musics) {
@@ -101,7 +102,7 @@ public class DataFinder {
     public static JSONObject findJsonById(int id, List<JSONObject> jsons) {
         JSONObject json = new JSONObject();
         json.put("id", id);
-        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSortById);
+        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonIdSorter);
         return idx >= 0 ? jsons.get(idx) : null;
     }
 
@@ -115,7 +116,7 @@ public class DataFinder {
     public static JSONObject findJsonByIdInSet(int id, List<JSONObject> jsons) {
         JSONObject json = new JSONObject();
         json.put("value", id);
-        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSetSortByValue);
+        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSetValueSorter);
         return idx >= 0 ? jsons.get(idx) : null;
     }
 
@@ -129,7 +130,21 @@ public class DataFinder {
     public static Attribute<Integer> findAttributeByValue(int value, List<Attribute<Integer>> attributes) {
         Attribute<Integer> finder = new Attribute<>();
         finder.setValue(value);
-        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);
+        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesIntValueSorter);
+        return idx >= 0 ? attributes.get(idx) : null;
+    }
+
+    public static Attribute<Long> findAttributeByValue(long value, List<Attribute<Long>> attributes) {
+        Attribute<Long> finder = new Attribute<>();
+        finder.setValue(value);
+        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesLongValueSorter);
+        return idx >= 0 ? attributes.get(idx) : null;
+    }
+
+    public static Attribute<String> findAttributeByValue(String value, List<Attribute<String>> attributes) {
+        Attribute<String> finder = new Attribute<>();
+        finder.setValue(value);
+        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesStringValueSorter);
         return idx >= 0 ? attributes.get(idx) : null;
     }
 
@@ -142,12 +157,19 @@ public class DataFinder {
         Attribute<Integer> finder = new Attribute<>();
         for(int value : values) {
             finder.setValue(value);
-            int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesSortByValue);
+            int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesIntValueSorter);
             if(idx >= 0) {
                 res.add(attributes.get(idx));
             }
         }
         return res;
+    }
+
+    public static Person findPersonById(long id, List<Person> persons) {
+        Person finder = new Person();
+        finder.setId(id);
+        int idx = Collections.binarySearch(persons, finder, DataSorter.personIdSorter);
+        return idx >= 0 ? persons.get(idx) : null;
     }
 
     //endregion
