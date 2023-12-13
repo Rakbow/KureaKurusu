@@ -5,13 +5,13 @@
 <mapper namespace="com.rakbow.kureakurusu.dao.BookMapper">
 
     <sql id="selectFields">
-        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, personnel, authors,
+        id, title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, tmpPersonnel, authors,
         companies, serials, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
 
     <sql id="insertFields">
-        title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, personnel, authors,
+        title, title_en, title_zh, isbn_10, isbn_13, book_type, franchises, products, region, lang, tmpPersonnel, authors,
         companies, serials, publish_date, price, summary, specs, spec, has_bonus, bonus, description, images, remark, added_time,
         edited_time, status
     </sql>
@@ -60,7 +60,7 @@
         </selectKey>
         insert into book (<include refid="insertFields"></include>)
         values (#{title}, #{titleEn}, #{titleZh}, #{isbn10}, #{isbn13}, #{bookType}, #{franchises}, #{products}, #{region},
-        #{lang}, #{personnel}, #{authors}, #{companies}, #{serials}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
+        #{lang}, #{tmpPersonnel}, #{authors}, #{companies}, #{serials}, #{publishDate}, #{price}, #{summary}, #{specs}, #{spec}, #{hasBonus},
         #{bonus}, #{description},#{images}, #{remark}, #{addedTime}, #{editedTime}, #{status})
     </insert>
 

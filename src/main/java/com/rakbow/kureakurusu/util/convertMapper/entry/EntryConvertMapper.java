@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.vo.entry.EntryVOAlpha;
 import com.rakbow.kureakurusu.entity.Entry;
 import com.rakbow.kureakurusu.entity.common.Company;
 import com.rakbow.kureakurusu.entity.common.Merchandise;
-import com.rakbow.kureakurusu.entity.common.Personnel;
+import com.rakbow.kureakurusu.entity.common.TmpPersonnel;
 import com.rakbow.kureakurusu.entity.common.Role;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +58,7 @@ public interface EntryConvertMapper {
     @Mapping(target = "addedTime", source = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "editedTime", source = "editedTime", qualifiedByName = "getVOTime")
     @Named("toPersonnel")
-    Personnel toPersonnel(Entry entry);
+    TmpPersonnel toPersonnel(Entry entry);
 
     @Mapping(target = "category", source = "category", qualifiedByName = "getCategory")
     @Mapping(target = "alias", source = "alias", qualifiedByName = "getAlias")
@@ -81,7 +81,7 @@ public interface EntryConvertMapper {
     List<Company> toCompany(List<Entry> entries);
 
     @IterableMapping(qualifiedByName = "toPersonnel")
-    List<Personnel> toPersonnel(List<Entry> entries);
+    List<TmpPersonnel> toPersonnel(List<Entry> entries);
 
     @IterableMapping(qualifiedByName = "toRole")
     List<Role> toRole(List<Entry> entries);

@@ -18,11 +18,11 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Personnel extends MetaEntry {
+public class TmpPersonnel extends MetaEntry {
 
     private List<String> links;//链接 json数组
 
-    public Personnel() {
+    public TmpPersonnel() {
         this.setId(0);
         this.setCategory(EntryCategory.PERSONNEL.getAttribute());
         this.setName("");
