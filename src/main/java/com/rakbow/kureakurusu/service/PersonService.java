@@ -26,9 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
@@ -193,7 +191,19 @@ public class PersonService {
         List<Person> persons = mapper.selectBatchIds(personIds);
         Map<Long, List<PersonRelation>> relationGroup = relations.stream()
                 .collect(Collectors.groupingBy(PersonRelation::getRoleId));
-        for(Long roleId : relationGroup.keySet()) {
+
+        Map<Long, List<PersonRelation>> sortedRelationGroup = relationGroup.entrySet().stream()
+                .sorted(Comparator.comparingInt(entry ->
+                        entry.getValue().isEmpty() ? Integer.MAX_VALUE :
+                                entry.getValue().get(0).getDisplayOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> b, // 如果有重复的键，保留后者
+                        LinkedHashMap::new // 保持插入顺序
+                ));
+
+        for(Long roleId : sortedRelationGroup.keySet()) {
             Personnel personnel = new Personnel();
             Attribute<Long> role = DataFinder.findAttributeByValue(roleId, MetaData.optionsZh.roleSet);
             if(role == null) continue;

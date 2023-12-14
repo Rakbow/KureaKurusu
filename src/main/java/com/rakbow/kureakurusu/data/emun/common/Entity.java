@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.emun.common;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.annotation.IEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -25,7 +27,7 @@ public enum Entity {
     PERSON(8,"人物","Person");
 
     @Getter
-    private final int id;
+    private final Integer id;
     @Getter
     private final String nameZh;
     @Getter
@@ -40,5 +42,4 @@ public enum Entity {
         assert nameEn != null;
         return nameEn.toLowerCase();
     }
-
 }

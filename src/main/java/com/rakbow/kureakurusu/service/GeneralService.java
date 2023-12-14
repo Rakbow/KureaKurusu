@@ -256,7 +256,7 @@ public class GeneralService {
         //获取所有role数据
         List<PersonRole> allRoleSet = personRoleMapper.selectList(null);
         allRoleSet.forEach(role -> {
-            roleSet.add(new Attribute<Long>(role.getNameZh() + " / " + role.getName(), role.getId()));
+            roleSet.add(new Attribute<>(role.getNameZh(), role.getId()));
         });
         return roleSet;
     }
