@@ -1,6 +1,5 @@
-package com.rakbow.kureakurusu.data;
+package com.rakbow.kureakurusu.data.meta;
 
-import com.alibaba.fastjson2.JSONObject;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 /**

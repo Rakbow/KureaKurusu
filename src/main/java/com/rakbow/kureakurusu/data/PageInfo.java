@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description: 页面信息实体类
  */
 @Data
-public class pageInfo {
+public class PageInfo {
 
     private String addedTime;//收录时间
     private String editedTime;//编辑时间

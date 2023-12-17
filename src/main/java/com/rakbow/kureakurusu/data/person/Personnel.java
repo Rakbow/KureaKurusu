@@ -1,5 +1,6 @@
-package com.rakbow.kureakurusu.data;
+package com.rakbow.kureakurusu.data.person;
 
+import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 import java.util.ArrayList;

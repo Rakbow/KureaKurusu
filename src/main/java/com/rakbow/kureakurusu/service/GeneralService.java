@@ -3,16 +3,14 @@ package com.rakbow.kureakurusu.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -22,7 +20,6 @@ import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -102,14 +99,14 @@ public class GeneralService {
      * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
      * @Author Rakbow
      */
-    public pageInfo getPageInfo(int entityType, int entityId, Object entity) {
+    public PageInfo getPageInfo(int entityType, int entityId, Object entity) {
 
         JSONObject json = JSON.parseObject(JSON.toJSONString(entity));
 
         Timestamp addedTime = new Timestamp(json.getDate("addedTime").getTime());
         Timestamp editedTime = new Timestamp(json.getDate("editedTime").getTime());
 
-        pageInfo pageInfo = new pageInfo();
+        PageInfo pageInfo = new PageInfo();
 
         // 从cookie中获取点赞token
         String likeToken = TokenInterceptor.getLikeToken();

@@ -1,4 +1,6 @@
-package com.rakbow.kureakurusu.data;
+package com.rakbow.kureakurusu.data.meta;
+
+import com.rakbow.kureakurusu.data.Attribute;
 
 import java.util.ArrayList;
 import java.util.List;

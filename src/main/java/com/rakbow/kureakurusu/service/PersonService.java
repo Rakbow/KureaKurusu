@@ -10,13 +10,16 @@ import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.person.Personnel;
+import com.rakbow.kureakurusu.data.person.PersonnelPair;
+import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.entity.PersonRelation;
 import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.DataSorter;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -25,9 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -176,8 +177,8 @@ public class PersonService {
 
     //region relation
 
-    public List<Personnel> getPersonnel(int entityType, long entityId) {
-        List<Personnel> res = new ArrayList<>();
+    public PersonnelStruct getPersonnel(int entityType, long entityId) {
+        PersonnelStruct res = new PersonnelStruct();
         if (MetaData.optionsZh.roleSet.isEmpty())
             return res;
         List<PersonRelation> relations = relationMapper.selectList(
@@ -195,7 +196,7 @@ public class PersonService {
         Map<Long, List<PersonRelation>> sortedRelationGroup = relationGroup.entrySet().stream()
                 .sorted(Comparator.comparingInt(entry ->
                         entry.getValue().isEmpty() ? Integer.MAX_VALUE :
-                                entry.getValue().get(0).getDisplayOrder()))
+                                entry.getValue().get(0).getId().intValue()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
@@ -212,10 +213,16 @@ public class PersonService {
             for(PersonRelation r : relationSet) {
                 Person person = DataFinder.findPersonById(r.getPersonId(), persons);
                 if(person == null) continue;
-                Attribute<Long> p = new Attribute<>(person.getName(), person.getId());
+
+                PersonnelPair pair = new PersonnelPair();
+                pair.setRole(role);
+                pair.setPerson(new Attribute<>(person.getNameZh(), person.getId()));
+                res.addEditPersonnel(pair);
+
+                Attribute<Long> p = new Attribute<>(person.getNameZh(), person.getId());
                 personnel.getPersons().add(p);
             }
-            res.add(personnel);
+            res.addPersonnel(personnel);
         }
         return res;
     }

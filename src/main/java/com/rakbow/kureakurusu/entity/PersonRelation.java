@@ -1,11 +1,8 @@
 package com.rakbow.kureakurusu.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
 import lombok.Data;
-import org.apache.ibatis.type.EnumTypeHandler;
 
 /**
  * @Project_name: kureakurusu
@@ -25,7 +22,7 @@ public class PersonRelation {
     // private Entity entityType;
     private int entityType;
     private long entityId;
-    private int displayOrder;
+    private int main;
 
     public PersonRelation() {
         id = 0L;
@@ -33,6 +30,6 @@ public class PersonRelation {
         roleId = 0;
         entityType = 0;
         entityId = 0;
-        displayOrder = 0;
+        main = 0;
     }
 }
