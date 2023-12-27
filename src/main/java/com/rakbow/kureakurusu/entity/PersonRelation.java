@@ -32,4 +32,8 @@ public class PersonRelation {
         entityId = 0;
         main = 0;
     }
+
+    public boolean isMain() {
+        return this.main == 1;
+    }
 }

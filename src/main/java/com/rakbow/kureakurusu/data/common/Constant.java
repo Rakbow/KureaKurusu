@@ -12,6 +12,7 @@ public interface Constant {
      * 分割参数
      */
     String SLASH = "/";
+    String SLASH_WITH_SPACE = " / ";
 
     /**
      * 分割参数

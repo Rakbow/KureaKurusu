@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
+import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.person.Personnel;
@@ -30,6 +31,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @Project_name: kureakurusu
@@ -177,14 +180,14 @@ public class PersonService {
 
     //region relation
 
-    public PersonnelStruct getPersonnel(int entityType, long entityId) {
+    public PersonnelStruct getPersonnel(EntityQuery qry) {
         PersonnelStruct res = new PersonnelStruct();
         if (MetaData.optionsZh.roleSet.isEmpty())
             return res;
         List<PersonRelation> relations = relationMapper.selectList(
                 new LambdaQueryWrapper<PersonRelation>()
-                        .eq(PersonRelation::getEntityType, entityType)
-                        .eq(PersonRelation::getEntityId, entityId)
+                        .eq(PersonRelation::getEntityType, qry.getEntityType())
+                        .eq(PersonRelation::getEntityId, qry.getEntityId())
         );
         if (relations.isEmpty())
             return res;
@@ -215,8 +218,10 @@ public class PersonService {
                 if(person == null) continue;
 
                 PersonnelPair pair = new PersonnelPair();
+                pair.setId(r.getId());
+                pair.setMain(r.isMain());
                 pair.setRole(role);
-                pair.setPerson(new Attribute<>(person.getNameZh(), person.getId()));
+                pair.setPerson(new Attribute<>(person.getName() + SLASH_WITH_SPACE + person.getNameZh(), person.getId()));
                 res.addEditPersonnel(pair);
 
                 Attribute<Long> p = new Attribute<>(person.getNameZh(), person.getId());

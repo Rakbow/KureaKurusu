@@ -5,7 +5,9 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
+import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.person.PersonDetailQuery;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
@@ -14,15 +16,13 @@ import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -34,175 +34,161 @@ import java.util.List;
  * @Create: 2023-11-14 20:53
  * @Description:
  */
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/db/person")
 public class PersonController {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonController.class);
-
-    @Resource
-    private PersonService service;
-    @Resource
-    private GeneralService generalService;
-
+    private final PersonService service;
+    private final GeneralService generalService;
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
 
     //region person
 
-    @RequestMapping(path = "/detail", method = RequestMethod.POST)
-    @ResponseBody
+    @PostMapping("detail")
     @UniqueVisitor
-    public String getPersonDetailData(@RequestBody JSONObject param) {
+    public ApiResult getPersonDetailData(@RequestBody PersonDetailQuery qry) {
         ApiResult res = new ApiResult();
         try {
-            int id = param.getIntValue("id");
+            long id = qry.getId();
             Person person = service.getPerson(id);
 
             if (person == null) {
                 res.setErrorMessage(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getNameZh()));
-                return res.toJson();
+                return res;
             }
 
             JSONObject detailResult = new JSONObject();
 
             detailResult.put("item", voMapper.toVO(person));
 
-            detailResult.put("pageInfo", generalService.getPageInfo(Entity.PERSON.getId(), id, person));
+            detailResult.put("pageInfo", generalService.getPageInfo(Entity.PERSON.getId(), (int)id, person));
 
             res.data = detailResult;
         }catch (Exception e) {
             res.setErrorMessage(e.getMessage());
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(path = "/search", method = RequestMethod.POST)
-    @ResponseBody
-    public String searchPerson(@RequestBody JSONObject json) {
+    @PostMapping("search")
+    public ApiResult searchPerson(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
             res.data = service.searchPersons(new SimpleSearchParam(json));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(path = "/list", method = RequestMethod.POST)
-    @ResponseBody
-    public String getPersons(@RequestBody JSONObject json) {
+    @PostMapping("list")
+    public ApiResult getPersons(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
             res.data = service.getPersons(new QueryParams(json));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
-    @ResponseBody
-    public String addPerson(@Valid @RequestBody Person person, BindingResult bindingResult) {
+    @PostMapping("add")
+    public ApiResult addPerson(@Valid @RequestBody Person person, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
                 List<FieldError> errors = bindingResult.getFieldErrors();
                 res.setErrorMessage(errors);
-                return res.toJson();
+                return res;
             }
             service.addPerson(person);
             res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(path = "/update", method = RequestMethod.POST)
-    @ResponseBody
-    public String updatePerson(@Valid @RequestBody PersonVOBeta person, BindingResult bindingResult) {
+    @PostMapping("update")
+    public ApiResult updatePerson(@Valid @RequestBody PersonVOBeta person, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
                 List<FieldError> errors = bindingResult.getFieldErrors();
                 res.setErrorMessage(errors);
-                return res.toJson();
+                return res;
             }
             service.updatePerson(person);
             res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
     //endregion
 
     //region role
 
-    @RequestMapping(path = "/get-roles", method = RequestMethod.POST)
-    @ResponseBody
-    public String getPersonRoles(@RequestBody JSONObject json) {
+    @PostMapping("get-roles")
+    public ApiResult getPersonRoles(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
             res.data = service.getRoles(new QueryParams(json));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(path = "/add-role", method = RequestMethod.POST)
-    @ResponseBody
-    public String addPersonRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+    @PostMapping("add-role")
+    public ApiResult addPersonRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
                 List<FieldError> errors = bindingResult.getFieldErrors();
                 res.setErrorMessage(errors);
-                return res.toJson();
+                return res;
             }
             service.addRole(role);
             res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(path = "/update-role", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
+    @PostMapping("update-role")
+    public ApiResult updateRole(@Valid @RequestBody PersonRole role, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
                 List<FieldError> errors = bindingResult.getFieldErrors();
                 res.setErrorMessage(errors);
-                return res.toJson();
+                return res;
             }
             service.updateRole(role);
             res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
     //endregion
 
     //region relation
 
-    @RequestMapping(path = "/get-personnel", method = RequestMethod.POST)
-    @ResponseBody
-    public String getPersonnel(@RequestBody JSONObject json) {
+    @PostMapping("get-personnel")
+    public ApiResult getPersonnel(@RequestBody EntityQuery qry) {
         ApiResult res = new ApiResult();
         try {
-            long entityId = json.getLongValue("entityId");
-            int entityType = json.getIntValue("entityType");
-            res.data = service.getPersonnel(entityType, entityId);
+            res.data = service.getPersonnel(qry);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
-        return res.toJson();
+        return res;
     }
 
     //endregion

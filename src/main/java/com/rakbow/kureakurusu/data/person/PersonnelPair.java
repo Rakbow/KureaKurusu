@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class PersonnelPair {
 
+    private Long id;
+    private Boolean main;
     private Attribute<Long> role;
     private Attribute<Long> person;
 
