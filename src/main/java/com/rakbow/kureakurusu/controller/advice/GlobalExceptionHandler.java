@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -22,11 +21,9 @@ import java.io.PrintWriter;
  * @Description: 记录异常到日志中
  */
 @ControllerAdvice(annotations = Controller.class)
-public class ExceptionAdvice {
+public class GlobalExceptionHandler {
 
-    
-
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionAdvice.class);
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler({Exception.class})
     public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -34,17 +31,21 @@ public class ExceptionAdvice {
         for (StackTraceElement element : e.getStackTrace()) {
             logger.error(element.toString());
         }
-
         String xRequestedWith = request.getHeader("x-requested-with");
         //为异步请求
         if ("XMLHttpRequest".equals(xRequestedWith)) {
             response.setContentType("application/plain;charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.write(JSON.toJSONString(new ApiResult(0, e.getMessage())));
+            writer.write(JSON.toJSONString(new ApiResult(e)));
         //为普通请求
         } else {
             response.sendRedirect(request.getContextPath() + "/error");
         }
+    }
+
+    @ExceptionHandler({Exception.class})
+    public ApiResult handleException(Exception e) {
+        return new ApiResult(e);
     }
 
 }

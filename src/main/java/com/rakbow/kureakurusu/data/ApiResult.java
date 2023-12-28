@@ -29,6 +29,11 @@ public class ApiResult {
         this.message = message;
     }
 
+    public ApiResult(Exception e) {
+        this.state = 0;
+        this.message = e.getMessage();
+    }
+
     public void setSuccessMessage(String message) {
         this.message = message;
     }
