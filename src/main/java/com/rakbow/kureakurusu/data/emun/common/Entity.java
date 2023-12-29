@@ -13,25 +13,24 @@ import java.util.Arrays;
  * @Create: 2022-08-13 22:16
  * @Description:
  */
+@Getter
 @AllArgsConstructor
 public enum Entity {
 
-    ENTRY(0,"Entry", "Entry"),
-    ALBUM(1,"专辑", "Album"),
-    BOOK(2,"书籍", "Book"),
-    DISC(3,"碟片", "Disc"),
-    GAME(4,"游戏", "Game"),
-    MUSIC(5,"音乐", "Music"),
-    GOODS(6,"周边", "Goods"),
-    FIGURE(7,"手办", "Figure"),
-    PERSON(8,"人物","Person");
+    ENTRY(0,"Entry", "Entry", "entry"),
+    ALBUM(1,"专辑", "Album", "album"),
+    BOOK(2,"书籍", "Book", "book"),
+    DISC(3,"碟片", "Disc", "disc"),
+    GAME(4,"游戏", "Game", "game"),
+    MUSIC(5,"音乐", "Music", "music"),
+    GOODS(6,"周边", "Goods", "goods"),
+    FIGURE(7,"手办", "Figure", "figure"),
+    PERSON(8,"人物","Person", "person");
 
-    @Getter
     private final Integer id;
-    @Getter
     private final String nameZh;
-    @Getter
     private final String nameEn;
+    private final String tableName;
 
     public static String getTableName(int id) {
         String nameEn = Arrays.stream(Entity.values())
