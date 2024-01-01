@@ -28,7 +28,7 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public void addVisit(int entityType, int entityId) {
+    public void addVisit(int entityType, long entityId) {
         String key = getSingleVisitKey(entityType, entityId);
         redisUtil.set(key, 1);
     }
@@ -38,7 +38,7 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public long getVisit(int entityType, int entityId) {
+    public long getVisit(int entityType, long entityId) {
         String key = getSingleVisitKey(entityType, entityId);
         if(!redisUtil.hasKey(key)) {
             addVisit(entityType, entityId);
@@ -51,7 +51,7 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型,实体id
      * @Author Rakbow
      */
-    public long incVisit(int entityType, int entityId, String visitToken) {
+    public long incVisit(int entityType, long entityId, String visitToken) {
         String key = getSingleVisitKey(entityType, entityId);
         String tokenKey = getEntityVisitTokenKey(entityType, entityId, visitToken);
         if(redisUtil.hasKey(tokenKey)) {
@@ -68,7 +68,7 @@ public class VisitUtil {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public void deleteVisit(int entityType, int entityId) {
+    public void deleteVisit(int entityType, long entityId) {
         String key = getSingleVisitKey(entityType, entityId);
         redisUtil.delete(key);
     }
@@ -76,14 +76,14 @@ public class VisitUtil {
     /**
      * 获取实体访问token key,用于判断是否第一次访问
      * */
-    public String getEntityVisitTokenKey(int entityType, int entityId, String visitToken) {
+    public String getEntityVisitTokenKey(int entityType, long entityId, String visitToken) {
         return PREFIX_VISIT_TOKEN + SPLIT + entityType + SPLIT + entityId + SPLIT + visitToken;
     }
 
     /**
      * 获取实体浏览数key,用于记录浏览数
      * */
-    public String getSingleVisitKey(int entityType, int entityId) {
+    public String getSingleVisitKey(int entityType, long entityId) {
         return PREFIX_VISIT + SPLIT + entityType + SPLIT + entityId;
     }
 

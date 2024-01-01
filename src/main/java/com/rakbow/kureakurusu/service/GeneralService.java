@@ -97,7 +97,7 @@ public class GeneralService {
      * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public PageTraffic getPageTraffic(int entityType, int entityId) {
+    public PageTraffic getPageTraffic(int entityType, long entityId) {
 
         PageTraffic pt = new PageTraffic();
 
