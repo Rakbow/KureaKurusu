@@ -43,9 +43,9 @@ public class GlobalExceptionHandler {
         }
     }
 
-    @ExceptionHandler({Exception.class})
-    public ApiResult handleException(Exception e) {
-        return new ApiResult(e);
-    }
+    // @ExceptionHandler({Exception.class})
+    // public ApiResult handleException(Exception e) {
+    //     return new ApiResult(e);
+    // }
 
 }

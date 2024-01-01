@@ -28,6 +28,8 @@ public interface PersonVOMapper extends CommonVOMapper {
     @Mapping(source = "gender.value", target = "gender.value")
     @Mapping(source = "aliases", target = "aliases", qualifiedByName = "getStrList")
     @Mapping(source = "status", target = "status", qualifiedByName = "getStatus")
+    @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
     @Named("toVO")
     PersonVO toVO(Person person);
 

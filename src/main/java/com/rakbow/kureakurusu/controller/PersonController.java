@@ -2,13 +2,13 @@ package com.rakbow.kureakurusu.controller;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.person.PersonDetailQuery;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.entity.PersonRole;
@@ -19,12 +19,10 @@ import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -43,6 +41,7 @@ public class PersonController {
     private final PersonService service;
     private final GeneralService generalService;
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
+    private final int PERSON_ENTITY = Entity.PERSON.getId();
 
     //region person
 
@@ -51,23 +50,16 @@ public class PersonController {
     public ApiResult getPersonDetailData(@RequestBody PersonDetailQuery qry) {
         ApiResult res = new ApiResult();
         try {
-            long id = qry.getId();
-            Person person = service.getPerson(id);
-
+            Person person = service.getPerson(qry.getId());
             if (person == null) {
                 res.setErrorMessage(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getNameZh()));
                 return res;
             }
-
-            JSONObject detailResult = new JSONObject();
-
-            detailResult.put("item", voMapper.toVO(person));
-
-            detailResult.put("pageInfo", generalService.getPageInfo(Entity.PERSON.getId(), (int)id, person));
-
-            res.data = detailResult;
-        }catch (Exception e) {
-            res.setErrorMessage(e.getMessage());
+            res.data = new PersonDetailVO()
+                    .buildVO(voMapper.toVO(person))
+                    .buildTraffic(generalService.getPageTraffic(PERSON_ENTITY, qry.getId()));
+        } catch (Exception e) {
+            res.setErrorMessage(e);
         }
         return res;
     }
@@ -184,7 +176,7 @@ public class PersonController {
     public ApiResult getPersonnel(@RequestBody EntityQuery qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.getPersonnel(qry);
+            res.data = service.getPersonnel(qry.getEntityType(), qry.getEntityId());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

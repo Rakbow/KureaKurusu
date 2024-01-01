@@ -7,7 +7,6 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
@@ -124,9 +123,9 @@ public class AlbumController {
 
             detailResult.put("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
             detailResult.put("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
-            detailResult.put("pageInfo", generalService.getPageInfo(Entity.ALBUM.getId(), id, album));
+            detailResult.put("pageInfo", generalService.getPageTraffic(Entity.ALBUM.getId(), id));
             detailResult.put("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
-            detailResult.put("personnel", personService.getPersonnel(new EntityQuery(Entity.ALBUM.getId(), (long)id)));
+            detailResult.put("personnel", personService.getPersonnel(Entity.ALBUM.getId(), id));
 
             res.data = detailResult;
         }catch (Exception e) {
