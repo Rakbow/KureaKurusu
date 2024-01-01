@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.service;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -96,35 +94,22 @@ public class GeneralService {
     /**
      * 获取页面数据
      *
-     * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
+     * @param entityType,entityId 实体类型，实体id
      * @Author Rakbow
      */
-    public PageInfo getPageInfo(int entityType, int entityId, Object entity) {
+    public PageTraffic getPageTraffic(int entityType, int entityId) {
 
-        JSONObject json = JSON.parseObject(JSON.toJSONString(entity));
+        PageTraffic pt = new PageTraffic();
 
-        Timestamp addedTime = new Timestamp(json.getDate("addedTime").getTime());
-        Timestamp editedTime = new Timestamp(json.getDate("editedTime").getTime());
-
-        PageInfo pageInfo = new PageInfo();
-
-        // 从cookie中获取点赞token
+        // 从cookie中获取点赞token和访问token
         String likeToken = TokenInterceptor.getLikeToken();
-        if (likeToken == null) {
-            pageInfo.setLiked(false);
-        } else {
-            pageInfo.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
-        }
-
-        // 从cookie中获取访问token
         String visitToken = TokenInterceptor.getVisitToken();
 
-        pageInfo.setAddedTime(DateHelper.timestampToString(addedTime));
-        pageInfo.setEditedTime(DateHelper.timestampToString(editedTime));
-        pageInfo.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
-        pageInfo.setLikeCount(likeUtil.getLike(entityType, entityId));
+        pt.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
+        pt.setLikeCount(likeUtil.getLike(entityType, entityId));
+        pt.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
 
-        return pageInfo;
+        return pt;
     }
 
     /**

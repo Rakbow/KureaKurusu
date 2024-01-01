@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.util.common;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -83,6 +84,8 @@ public class LikeUtil {
      * 判断是否点过赞
      * */
     public boolean isLike(int entityType, int entityId, String likeToken) {
+        if(StringUtils.isBlank(likeToken))
+            return false;
         return redisUtil.hasKey(getEntityLikeTmpTokenKey(entityType, entityId, likeToken));
     }
 
