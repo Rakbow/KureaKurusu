@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.service;
 
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,8 +10,10 @@ import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
-import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.person.PersonUpdateCmd;
+import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
+import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.person.Personnel;
 import com.rakbow.kureakurusu.data.person.PersonnelPair;
@@ -22,8 +25,10 @@ import com.rakbow.kureakurusu.entity.PersonRelation;
 import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,6 +51,7 @@ public class PersonService {
     private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
 
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
+    private final SqlSessionFactory sqlSessionFactory = SpringUtil.getBean("sqlSessionFactory");
 
     @Resource
     private PersonMapper mapper;
@@ -63,17 +69,17 @@ public class PersonService {
         mapper.insert(person);
     }
 
-    public void updatePerson(PersonVOBeta person) {
+    public void updatePerson(PersonUpdateCmd cmd) {
 
         LambdaUpdateWrapper<Person> wrapper = new LambdaUpdateWrapper<Person>()
-                .eq(Person::getId, person.getId())
-                .set(Person::getName, person.getName())
-                .set(Person::getNameZh, person.getNameZh())
-                .set(Person::getNameEn, person.getNameEn())
-                .set(Person::getGender, person.getGender().getValue())
-                .set(Person::getBirthDate, person.getBirthDate())
-                .set(Person::getAliases, JSON.toJSONString(person.getAliases()))
-                .set(Person::getRemark, person.getRemark())
+                .eq(Person::getId, cmd.getId())
+                .set(Person::getName, cmd.getName())
+                .set(Person::getNameZh, cmd.getNameZh())
+                .set(Person::getNameEn, cmd.getNameEn())
+                .set(Person::getGender, cmd.getGender().getValue())
+                .set(Person::getBirthDate, cmd.getBirthDate())
+                .set(Person::getAliases, JSON.toJSONString(cmd.getAliases()))
+                .set(Person::getRemark, cmd.getRemark())
                 .set(Person::getEditedTime, DateHelper.NOW_TIMESTAMP);
 
         mapper.update(null, wrapper);
@@ -230,6 +236,31 @@ public class PersonService {
             res.addPersonnel(personnel);
         }
         return res;
+    }
+
+    public void managePersonnel(PersonnelManageCmd cmd) {
+
+        List<PersonRelation> addRelationSet = new ArrayList<>();
+        List<PersonRelation> updateRelationSet = new ArrayList<>();
+        List<PersonRelation> deleteRelationSet = new ArrayList<>();
+
+        cmd.getPersonnel().forEach(pair -> {
+            if(pair.getAction() == DataActionType.INSERT.getValue())
+                addRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
+            if(pair.getAction() == DataActionType.UPDATE.getValue())
+                updateRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
+            if(pair.getAction() == DataActionType.REAL_DELETE.getValue())
+                deleteRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
+        });
+
+        MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
+        MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);
+        MybatisBatch<PersonRelation> batchUpdate = new MybatisBatch<>(sqlSessionFactory, updateRelationSet);
+        MybatisBatch<PersonRelation> batchDelete = new MybatisBatch<>(sqlSessionFactory, deleteRelationSet);
+        batchInsert.execute(method.insert());
+        batchUpdate.execute(method.updateById());
+        batchDelete.execute(method.deleteById());
+
     }
 
     //endregion
