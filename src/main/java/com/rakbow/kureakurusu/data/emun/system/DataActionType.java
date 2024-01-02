@@ -9,6 +9,7 @@ import lombok.Getter;
  * @Create: 2022-10-07 4:02
  * @Description:
  */
+@Getter
 @AllArgsConstructor
 public enum DataActionType {
     INSERT(0,"新增"),
@@ -17,8 +18,6 @@ public enum DataActionType {
     FAKE_DELETE(3,"假删"),
     ALL_DELETE(4,"全删");
 
-    @Getter
-    private final int id;
-    @Getter
+    private final int value;
     private final String name;
 }
