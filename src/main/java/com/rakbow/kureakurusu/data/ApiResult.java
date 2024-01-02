@@ -19,8 +19,11 @@ public class ApiResult {
     public Object data;//响应数据
     public String message;//错误信息
 
+    private final int SUCCESS_CODE = 1;
+    private final int FAIL_CODE = 0;
+
     public ApiResult() {
-        this.state = 1;
+        this.state = SUCCESS_CODE;
         this.message = "";
     }
 
@@ -30,7 +33,7 @@ public class ApiResult {
     }
 
     public ApiResult(Exception e) {
-        this.state = 0;
+        this.state = FAIL_CODE;
         this.message = e.getMessage();
     }
 
@@ -39,17 +42,17 @@ public class ApiResult {
     }
 
     public void setErrorMessage(String error) {
-        this.state = 0;
+        this.state = FAIL_CODE;
         this.message = error;
     }
 
     public void setErrorMessage(Exception e) {
-        this.state = 0;
+        this.state = FAIL_CODE;
         this.message = e.getMessage();
     }
 
     public void setErrorMessage(List<FieldError> errors) {
-        this.state = 0;
+        this.state = FAIL_CODE;
         this.message = errors.stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("\n"));

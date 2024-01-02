@@ -180,14 +180,14 @@ public class PersonService {
 
     //region relation
 
-    public PersonnelStruct getPersonnel(EntityQuery qry) {
+    public PersonnelStruct getPersonnel(int entityType, long entityId) {
         PersonnelStruct res = new PersonnelStruct();
         if (MetaData.optionsZh.roleSet.isEmpty())
             return res;
         List<PersonRelation> relations = relationMapper.selectList(
                 new LambdaQueryWrapper<PersonRelation>()
-                        .eq(PersonRelation::getEntityType, qry.getEntityType())
-                        .eq(PersonRelation::getEntityId, qry.getEntityId())
+                        .eq(PersonRelation::getEntityType, entityType)
+                        .eq(PersonRelation::getEntityId, entityId)
         );
         if (relations.isEmpty())
             return res;

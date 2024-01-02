@@ -25,5 +25,7 @@ public class PersonVO {
     private String detail;
     private String remark;
     private Boolean status;
+    private String addedTime;
+    private String editedTime;
 
 }
