@@ -1,20 +1,21 @@
-package com.rakbow.kureakurusu.data.vo.person;
+package com.rakbow.kureakurusu.data.dto.person;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.dto.CommonCommand;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-/**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-05 23:23
- * @Description:
- */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class PersonVOBeta {
+@TableName("person")
+public class PersonUpdateCmd extends CommonCommand {
 
     private long id;
+    @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;
     private String nameZh;
     private String nameEn;

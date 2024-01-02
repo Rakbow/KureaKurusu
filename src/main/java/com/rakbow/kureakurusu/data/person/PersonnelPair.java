@@ -16,5 +16,10 @@ public class PersonnelPair {
     private Boolean main;
     private Attribute<Long> role;
     private Attribute<Long> person;
+    private int action;
+
+    public int isMain() {
+        return main ? 1 : 0;
+    }
 
 }

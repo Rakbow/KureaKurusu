@@ -8,7 +8,7 @@ import java.io.Serial;
  * @Create: 2023-12-23 11:27
  * @Description:
  */
-public abstract class DetailQuery extends Query {
+public abstract class DetailQry extends Query {
 
     @Serial
     private static final long serialVersionUID = 1L;

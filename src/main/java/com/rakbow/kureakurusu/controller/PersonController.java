@@ -6,7 +6,10 @@ import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.person.PersonDetailQuery;
+import com.rakbow.kureakurusu.data.dto.SearchQry;
+import com.rakbow.kureakurusu.data.dto.person.PersonDetailQry;
+import com.rakbow.kureakurusu.data.dto.person.PersonUpdateCmd;
+import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
@@ -47,7 +50,7 @@ public class PersonController {
 
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getPersonDetailData(@RequestBody PersonDetailQuery qry) {
+    public ApiResult getPersonDetailData(@RequestBody PersonDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
             Person person = service.getPerson(qry.getId());
@@ -55,9 +58,10 @@ public class PersonController {
                 res.setErrorMessage(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getNameZh()));
                 return res;
             }
-            res.data = new PersonDetailVO()
-                    .buildVO(voMapper.toVO(person))
-                    .buildTraffic(generalService.getPageTraffic(PERSON_ENTITY, qry.getId()));
+            res.data = PersonDetailVO.builder()
+                    .item(voMapper.toVO(person))
+                    .traffic(generalService.getPageTraffic(PERSON_ENTITY, qry.getId()))
+                    .build();
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -65,10 +69,10 @@ public class PersonController {
     }
 
     @PostMapping("search")
-    public ApiResult searchPerson(@RequestBody JSONObject json) {
+    public ApiResult searchPerson(@RequestBody SearchQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.searchPersons(new SimpleSearchParam(json));
+            res.data = service.searchPersons(new SimpleSearchParam(qry));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -96,7 +100,7 @@ public class PersonController {
                 return res;
             }
             service.addPerson(person);
-            res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -104,7 +108,7 @@ public class PersonController {
     }
 
     @PostMapping("update")
-    public ApiResult updatePerson(@Valid @RequestBody PersonVOBeta person, BindingResult bindingResult) {
+    public ApiResult updatePerson(@Valid @RequestBody PersonUpdateCmd cmd, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {
@@ -112,8 +116,8 @@ public class PersonController {
                 res.setErrorMessage(errors);
                 return res;
             }
-            service.updatePerson(person);
-            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
+            service.updatePerson(cmd);
+            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -177,6 +181,18 @@ public class PersonController {
         ApiResult res = new ApiResult();
         try {
             res.data = service.getPersonnel(qry.getEntityType(), qry.getEntityId());
+        } catch (Exception e) {
+            res.setErrorMessage(e);
+        }
+        return res;
+    }
+
+    @PostMapping("manage-personnel")
+    public ApiResult managePersonnel(@RequestBody PersonnelManageCmd cmd) {
+        ApiResult res = new ApiResult();
+        try {
+            service.managePersonnel(cmd);
+            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

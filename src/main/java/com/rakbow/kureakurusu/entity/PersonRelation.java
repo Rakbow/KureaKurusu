@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.person.PersonnelPair;
 import lombok.Data;
 
 /**
@@ -31,6 +32,14 @@ public class PersonRelation {
         entityType = 0;
         entityId = 0;
         main = 0;
+    }
+
+    public PersonRelation(PersonnelPair pair, int entityType, long entityId) {
+        this.personId = pair.getPerson().getValue();
+        this.roleId = pair.getRole().getValue();
+        this.entityType = entityType;
+        this.entityId = entityId;
+        this.main = pair.isMain();
     }
 
     public boolean isMain() {

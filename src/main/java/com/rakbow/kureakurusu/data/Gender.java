@@ -11,6 +11,7 @@ import lombok.Getter;
  * @Create: 2023-10-30 17:51
  * @Description:
  */
+@Getter
 @AllArgsConstructor
 public enum Gender implements IEnum<Integer> {
 
@@ -19,10 +20,7 @@ public enum Gender implements IEnum<Integer> {
     FEMALE(2, "enum.gender.female");
 
     @EnumValue
-    @Getter
     private final Integer value;
-    @Getter
     private final String labelKey;
-
 
 }

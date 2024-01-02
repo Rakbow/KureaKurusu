@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto.person;
 
-import com.rakbow.kureakurusu.data.dto.DetailQuery;
+import com.rakbow.kureakurusu.data.dto.DetailQry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonDetailQuery extends DetailQuery {
+public class PersonDetailQry extends DetailQry {
 
     private Long id;
 

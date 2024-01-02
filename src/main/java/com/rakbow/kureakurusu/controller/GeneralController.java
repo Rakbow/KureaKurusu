@@ -142,7 +142,7 @@ public class GeneralController {
             }
 
             //更新图片信息
-            if (action == DataActionType.UPDATE.getId()) {
+            if (action == DataActionType.UPDATE.getValue()) {
 
                 //检测是否存在多张封面
                 String errorMsg = CommonImageUtil.checkUpdateImages(images);
@@ -152,7 +152,7 @@ public class GeneralController {
 
                 res.message = service.updateItemImages(tableName, entityId, images.toJSONString());
             }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getId()) {
+            else if (action == DataActionType.REAL_DELETE.getValue()) {
                 res.message = service.deleteItemImages(tableName, entityId, images);
             }else {
                 throw new Exception(I18nHelper.getMessage("entity.error.not_action"));

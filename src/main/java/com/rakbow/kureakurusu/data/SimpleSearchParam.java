@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.kureakurusu.data.dto.SearchQry;
 import lombok.Data;
 
 /**
@@ -28,9 +28,9 @@ public class SimpleSearchParam {
         this.size = row;
     }
 
-    public SimpleSearchParam(JSONObject json) {
-        this.keyword = json.getString("keyword");
-        this.size = json.getIntValue("row");
-        this.page = json.getIntValue("first")/size + 1;
+    public SimpleSearchParam(SearchQry qry) {
+        this.keyword = qry.getKeyword();
+        this.size = qry.getRow();
+        this.page = qry.getFirst()/size + 1;
     }
 }
