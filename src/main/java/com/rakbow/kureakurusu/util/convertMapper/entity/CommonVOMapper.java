@@ -4,10 +4,13 @@ import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import org.mapstruct.Named;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,5 +38,11 @@ public interface CommonVOMapper {
     default Boolean getStatus(int status) {
         return status == 1;
     }
+
+    @Named("getDate")
+    default Date getDate(String date) throws ParseException { return DateHelper.stringToDate(date); }
+
+    @Named("getIdsStr")
+    default String getIdsStr(String ids) { return "{\"ids\":" + ids + "}"; }
 
 }

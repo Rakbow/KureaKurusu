@@ -30,7 +30,7 @@ class AlbumSortById implements Comparator<Album> {
 
     @Override
     public int compare(Album a, Album b) {
-        return Integer.compare(a.getId(), b.getId());
+        return Long.compare(a.getId(), b.getId());
     }
 }
 

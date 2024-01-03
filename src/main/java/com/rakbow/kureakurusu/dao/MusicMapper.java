@@ -22,9 +22,9 @@ public interface MusicMapper extends BaseMapper<Music> {
 
     List<Music> getAll();
 
-    List<Music> getMusicsByAlbumId(int albumId);
+    List<Music> getMusicsByAlbumId(long albumId);
 
-    List<Music> getMusicsByAlbumIds(List<Integer> ids);
+    List<Music> getMusicsByAlbumIds(List<Long> ids);
 
     int getMusicRows();
 

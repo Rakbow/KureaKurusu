@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.dto.album.AlbumAddDTO;
+import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
@@ -23,13 +25,31 @@ import java.util.List;
  * @since 2023-01-11 16:13 album VO转换接口
  */
 @Mapper(componentModel = "spring")
-public interface AlbumVOMapper {
+public interface AlbumVOMapper extends CommonVOMapper {
 
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
     Entity ENTITY = Entity.ALBUM;
     int entityTypeId = Entity.ALBUM.getId();
 
     //region single convert interface
+
+    @Mapping(source = "releaseDate", target = "releaseDate", qualifiedByName = "getDate")
+    @Mapping(source = "franchises", target = "franchises", qualifiedByName = "getIdsStr")
+    @Mapping(source = "products", target = "products", qualifiedByName = "getIdsStr")
+    @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
+    @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
+    @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
+    @Named("build")
+    Album build(AlbumAddDTO dto);
+
+    @Mapping(source = "releaseDate", target = "releaseDate", qualifiedByName = "getDate")
+    @Mapping(source = "franchises", target = "franchises", qualifiedByName = "getIdsStr")
+    @Mapping(source = "products", target = "products", qualifiedByName = "getIdsStr")
+    @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
+    @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
+    @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
+    @Named("build")
+    Album build(AlbumUpdateDTO dto);
 
     /**
      * Album转VO对象，用于详情页面，转换量最大的

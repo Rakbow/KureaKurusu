@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.person.PersonUpdateCmd;
+import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -67,17 +67,17 @@ public class PersonService {
         mapper.insert(person);
     }
 
-    public void updatePerson(PersonUpdateCmd cmd) {
+    public void updatePerson(PersonUpdateDTO dto) {
 
         LambdaUpdateWrapper<Person> wrapper = new LambdaUpdateWrapper<Person>()
-                .eq(Person::getId, cmd.getId())
-                .set(Person::getName, cmd.getName())
-                .set(Person::getNameZh, cmd.getNameZh())
-                .set(Person::getNameEn, cmd.getNameEn())
-                .set(Person::getGender, cmd.getGender().getValue())
-                .set(Person::getBirthDate, cmd.getBirthDate())
-                .set(Person::getAliases, JSON.toJSONString(cmd.getAliases()))
-                .set(Person::getRemark, cmd.getRemark())
+                .eq(Person::getId, dto.getId())
+                .set(Person::getName, dto.getName())
+                .set(Person::getNameZh, dto.getNameZh())
+                .set(Person::getNameEn, dto.getNameEn())
+                .set(Person::getGender, dto.getGender().getValue())
+                .set(Person::getBirthDate, dto.getBirthDate())
+                .set(Person::getAliases, JSON.toJSONString(dto.getAliases()))
+                .set(Person::getRemark, dto.getRemark())
                 .set(Person::getEditedTime, DateHelper.NOW_TIMESTAMP);
 
         mapper.update(null, wrapper);

@@ -8,11 +8,10 @@ import com.rakbow.kureakurusu.data.dto.EntityQuery;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.dto.person.PersonDetailQry;
-import com.rakbow.kureakurusu.data.dto.person.PersonUpdateCmd;
+import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
-import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.entity.PersonRole;
 import com.rakbow.kureakurusu.service.GeneralService;
@@ -89,14 +88,11 @@ public class PersonController {
     }
 
     @PostMapping("add")
-    public ApiResult addPerson(@Valid @RequestBody Person person, BindingResult bindingResult) {
+    public ApiResult addPerson(@Valid @RequestBody Person person, BindingResult errors) {
         ApiResult res = new ApiResult();
         try {
-            if (bindingResult.hasErrors()) {
-                List<FieldError> errors = bindingResult.getFieldErrors();
-                res.setErrorMessage(errors);
-                return res;
-            }
+            if (errors.hasErrors())
+                return res.fail(errors);
             service.addPerson(person);
             res.message = I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getNameZh());
         } catch (Exception e) {
@@ -106,7 +102,7 @@ public class PersonController {
     }
 
     @PostMapping("update")
-    public ApiResult updatePerson(@Valid @RequestBody PersonUpdateCmd cmd, BindingResult bindingResult) {
+    public ApiResult updatePerson(@Valid @RequestBody PersonUpdateDTO cmd, BindingResult bindingResult) {
         ApiResult res = new ApiResult();
         try {
             if (bindingResult.hasErrors()) {

@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.dto.person;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.CommonCommand;
+import com.rakbow.kureakurusu.data.dto.DTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("person")
-public class PersonUpdateCmd extends CommonCommand {
+public class PersonUpdateDTO extends DTO {
 
     private long id;
     @NotBlank(message = "{entity.crud.name.required_field}")

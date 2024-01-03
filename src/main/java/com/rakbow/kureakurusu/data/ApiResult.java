@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data;
 
 import com.alibaba.fastjson2.JSON;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.List;
@@ -60,4 +61,28 @@ public class ApiResult {
         return JSON.toJSONString(this);
     }
 
+    public ApiResult ok(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public ApiResult fail(Exception e) {
+        this.state = FAIL_CODE;
+        this.message = e.getMessage();
+        return this;
+    }
+
+    public ApiResult fail(String error) {
+        this.state = FAIL_CODE;
+        this.message = error;
+        return this;
+    }
+
+    public ApiResult fail(BindingResult errors) {
+        this.state = FAIL_CODE;
+        this.message = errors.getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining("\n"));
+        return this;
+    }
 }

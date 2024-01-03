@@ -96,7 +96,7 @@ public class MusicService {
      * @return list
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Music> getMusicsByAlbumId(int albumId) {
+    public List<Music> getMusicsByAlbumId(long albumId) {
         return musicMapper.getMusicsByAlbumId(albumId);
     }
 
@@ -214,7 +214,7 @@ public class MusicService {
      * @param ids 专辑ids
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteMusicsByAlbumIds(List<Integer> ids) throws Exception {
+    public void deleteMusicsByAlbumIds(List<Long> ids) throws Exception {
         try {
             List<Music> musics = musicMapper.getMusicsByAlbumIds(ids);
 

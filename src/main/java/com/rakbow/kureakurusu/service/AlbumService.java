@@ -4,15 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.bo.AlbumDiscBO;
@@ -37,12 +33,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -53,7 +45,7 @@ public class AlbumService {
 
     //region ------依赖注入------
     @Resource
-    private AlbumMapper albumMapper;
+    private AlbumMapper mapper;
     @Resource
     private MusicService musicService;
     @Resource
@@ -78,9 +70,8 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String addAlbum(Album album) {
-        int id = albumMapper.insert(album);
-        return I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh());
+    public void addAlbum(Album album) {
+        mapper.insert(album);
     }
 
     /**
@@ -92,7 +83,7 @@ public class AlbumService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Album getAlbum(int id) {
-        return albumMapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
+        return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
     }
 
     /**
@@ -103,11 +94,11 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Album getAlbumWithAuth(int id) {
+    public Album getAlbumWithAuth(long id) {
         if (AuthorityInterceptor.isSenior()) {
-            return albumMapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
+            return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
         }
-        return albumMapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getStatus, 1).eq(Album::getId, id));
+        return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getStatus, 1).eq(Album::getId, id));
     }
 
     /**
@@ -117,15 +108,15 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteAlbums(List<Integer> ids) {
+    public void deleteAlbums(List<Long> ids) {
         try {
 
-            List<Album> albums = albumMapper.selectBatchIds(ids);
+            List<Album> albums = mapper.selectBatchIds(ids);
             for (Album album : albums) {
                 //删除前先把服务器上对应图片全部删除
                 qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
                 //删除专辑
-                albumMapper.deleteById(album.getId());
+                mapper.deleteById(album.getId());
                 visitUtil.deleteVisit(Entity.ALBUM.getId(), album.getId());
             }
         } catch (Exception e) {
@@ -140,9 +131,9 @@ public class AlbumService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateAlbum(Album album) {
-        albumMapper.updateById(album);
-        return I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
+    public void updateAlbum(Album album) {
+        album.setEditedTime(DateHelper.NOW_TIMESTAMP);
+        mapper.updateById(album);
     }
 
     //endregion
@@ -308,7 +299,7 @@ public class AlbumService {
                 .set(Album::getTrackInfo, JSON.toJSONString(trackInfo))
                 .set(Album::getEditedTime, DateHelper.NOW_TIMESTAMP);
 
-        albumMapper.update(null, updateWrapper);
+        mapper.update(null, updateWrapper);
 
         //删除对应music
         if (musics.size() != 0) {
@@ -378,7 +369,7 @@ public class AlbumService {
 
         //endregion
 
-        IPage<Album> albums = albumMapper.selectPage(new Page<>(param.page, param.size), wrapper);
+        IPage<Album> albums = mapper.selectPage(new Page<>(param.page, param.size), wrapper);
 
         return new SearchResult(albums);
     }
