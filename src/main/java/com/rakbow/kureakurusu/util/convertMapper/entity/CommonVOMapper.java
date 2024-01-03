@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -43,6 +44,10 @@ public interface CommonVOMapper {
     default Date getDate(String date) throws ParseException { return DateHelper.stringToDate(date); }
 
     @Named("getIdsStr")
-    default String getIdsStr(String ids) { return "{\"ids\":" + ids + "}"; }
+    default String getIdsStr(List<Integer> ids) {
+        return "{\"ids\":[" + ids.stream()
+            .map(Object::toString)
+            .collect(Collectors.joining(",")) + "]}";
+    }
 
 }

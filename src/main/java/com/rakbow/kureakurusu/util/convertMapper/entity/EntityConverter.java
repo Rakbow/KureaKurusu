@@ -74,12 +74,12 @@ public class EntityConverter {
         return CommonImageUtil.generateThumbCover(images, entity, size);
     }
 
-    static long getVisitCount(int entityTypeId, int id) {
+    static long getVisitCount(int entityTypeId, long id) {
         VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
         return visitUtil.getVisit(entityTypeId, id);
     }
 
-    static long getLikeCount(int entityTypeId, int id) {
+    static long getLikeCount(int entityTypeId, long id) {
         LikeUtil likeUtil = SpringUtil.getBean("likeUtil");
         return likeUtil.getLike(entityTypeId, id);
     }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
@@ -27,12 +28,12 @@ import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.AlbumUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,23 +42,18 @@ import java.util.List;
  * @since 2022-07-25 1:42 album业务层
  */
 @Service
-public class AlbumService {
+@RequiredArgsConstructor
+public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
-    //region ------依赖注入------
-    @Resource
-    private AlbumMapper mapper;
-    @Resource
-    private MusicService musicService;
-    @Resource
-    private QiniuFileUtil qiniuFileUtil;
-    @Resource
-    private VisitUtil visitUtil;
-    
-
-    private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
+    //region ------inject------
+    private final AlbumMapper mapper;
+    private final MusicService musicService;
+    private final QiniuFileUtil qiniuFileUtil;
+    private final VisitUtil visitUtil;
+    private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
     //endregion
 
-    //region ------更删改查------
+    //region ------crud------
 
     // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
     // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
@@ -141,7 +137,7 @@ public class AlbumService {
     //region ------数据处理------
 
     public AlbumVO buildVO(Album album, List<Music> musics) {
-        AlbumVO VO = albumVOMapper.toVO(album);
+        AlbumVO VO = VOMapper.toVO(album);
 
         if (AuthorityInterceptor.isJunior()) {
             //可供编辑的editDiscList
@@ -433,7 +429,7 @@ public class AlbumService {
         //     }
         // }
 
-        return albumVOMapper.toVOBeta(CommonUtil.removeDuplicateList(result));
+        return VOMapper.toVOBeta(CommonUtil.removeDuplicateList(result));
     }
 
     // /**

@@ -43,18 +43,17 @@ import java.util.List;
 @RequestMapping("/db/album")
 public class AlbumController {
 
-    //region ------引入实例------
-
+    //region ------inject------
     private static final Logger logger = LoggerFactory.getLogger(AlbumController.class);
-
     private final AlbumService service;
     private final MusicService musicService;
     private final EntityUtil entityUtil;
     private final GeneralService generalService;
     private final PersonService personService;
     private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
-    //endregion//region ------基础增删改------
+    //endregion
 
+    // region ------basic crud------
     @PostMapping("detail")
     @UniqueVisitor
     public ApiResult getAlbumDetailData(@RequestBody AlbumDetailQry qry) {
@@ -130,24 +129,8 @@ public class AlbumController {
             //build
             Album album = VOMapper.build(dto);
             //save
-            service.addAlbum(album);
+            service.save(album);
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh()));
-        } catch (Exception e) {
-            res.fail(e);
-        }
-        return res;
-    }
-
-    //删除专辑(单个/多个)
-    @DeleteMapping("delete")
-    public ApiResult deleteAlbum(@RequestBody AlbumDeleteCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            //delete album
-            service.deleteAlbums(cmd.getIds());
-            //delete music
-            musicService.deleteMusicsByAlbumIds(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh()));
         } catch (Exception e) {
             res.fail(e);
         }
@@ -173,9 +156,25 @@ public class AlbumController {
         return res;
     }
 
+    //删除专辑(单个/多个)
+    @DeleteMapping("delete")
+    public ApiResult deleteAlbum(@RequestBody AlbumDeleteCmd cmd) {
+        ApiResult res = new ApiResult();
+        try {
+            //delete album
+            service.deleteAlbums(cmd.getIds());
+            //delete music
+            musicService.deleteMusicsByAlbumIds(cmd.getIds());
+            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh()));
+        } catch (Exception e) {
+            res.fail(e);
+        }
+        return res;
+    }
+
     //endregion
 
-    //region ------进阶增删改------
+    //region ------advanced crud------
 
     //更新专辑音轨信息TrackInfo
     @RequestMapping(path = "/update-trackInfo", method = RequestMethod.POST)
