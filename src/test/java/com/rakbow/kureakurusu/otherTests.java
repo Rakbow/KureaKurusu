@@ -14,10 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-01 23:56
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-01 23:56
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest

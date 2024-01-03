@@ -15,10 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-12 10:45
- * @Description: Disc VO转换接口
+ * @author Rakbow
+ * @since 2023-01-12 10:45 Disc VO转换接口
  */
 @Mapper(componentModel = "spring")
 public interface DiscVOMapper {

@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.entity.view;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-14 15:14
- * @Description: 视图
+ * @author Rakbow
+ * @since 2023-04-14 15:14 视图
  * select music.id, music.name, album.id as album_id, album.name as album_name,
  *  music.audio_type, music.audio_length, music.artists, album.images as album_images,
  *  (json_length(music.files) != 0) as has_file, (music.lrc_text is not null) as has_lrc

@@ -5,10 +5,10 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-12 16:53
- * @Description: VO 存储到搜索引擎数据库
+ * VO 存储到搜索引擎数据库
+ *
+ * @author Rakbow
+ * @since 2023-04-12 16:53
  */
 @Data
 public class MusicVOBeta {

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-03-28 16:11
- * @Description: 专辑-音轨增删改-中间对象
+ * 专辑-音轨增删改-中间对象
+ *
+ * @author Rakbow
+ * @since 2023-03-28 16:11
  */
 @Data
 public class AlbumDiscDTO {

@@ -6,10 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-22 18:58
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-22 18:58
  */
 @Mapper
 public interface StatisticMapper {

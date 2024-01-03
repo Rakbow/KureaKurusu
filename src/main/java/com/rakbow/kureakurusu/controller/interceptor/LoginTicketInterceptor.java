@@ -19,10 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-17 23:25
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-17 23:25
  */
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {

@@ -8,10 +8,10 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-14 15:56
- * @Description: 转换量最大的VO，一般用于详情页面
+ * 转换量最大的VO，一般用于详情页面
+ *
+ * @author Rakbow
+ * @since 2023-01-14 15:56
  */
 @Data
 public class MusicVO {

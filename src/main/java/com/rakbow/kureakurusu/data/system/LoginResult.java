@@ -7,10 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-08-04 16:14
- * @Description:
+ * @author Rakbow
+ * @since 2023-08-04 16:14
  */
 @Data
 public class LoginResult {

@@ -9,10 +9,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 1:06
- * @Description: 系列CRUD
+ * 系列CRUD
+ *
+ * @author Rakbow
+ * @since 2022-08-20 1:06
  */
 @Mapper
 public interface FranchiseMapper extends BaseMapper<Franchise> {

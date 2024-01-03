@@ -7,10 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-29 16:18
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-29 16:18
  */
 @Mapper
 public interface PersonMapper extends BaseMapper<Person> {

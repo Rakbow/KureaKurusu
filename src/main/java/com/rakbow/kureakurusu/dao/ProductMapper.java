@@ -9,10 +9,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 1:49
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-20 1:49
  */
 @Mapper
 public interface ProductMapper extends BaseMapper<Product> {

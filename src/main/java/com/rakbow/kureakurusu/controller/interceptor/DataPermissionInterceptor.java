@@ -10,10 +10,8 @@ import java.sql.Connection;
 import java.util.Properties;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-12 5:01
- * @Description: 权限拦截器
+ * @author Rakbow
+ * @since 2023-11-12 5:01 权限拦截器
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class DataPermissionInterceptor implements InnerInterceptor {

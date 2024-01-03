@@ -13,10 +13,10 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-19 22:57
- * @Description: 专辑分类
+ * 专辑分类
+ *
+ * @author Rakbow
+ * @since 2022-08-19 22:57
  */
 @AllArgsConstructor
 public enum AlbumFormat {

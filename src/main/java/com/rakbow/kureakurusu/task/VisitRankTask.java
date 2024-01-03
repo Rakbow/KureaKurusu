@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-23 10:36
- * @Description: 每1小时更新一次，将浏览数排名前十更新
+ * 每1小时更新一次，将浏览数排名前十更新
+ *
+ * @author Rakbow
+ * @since 2023-02-23 10:36
  */
 @Component
 public class VisitRankTask extends QuartzJobBean {

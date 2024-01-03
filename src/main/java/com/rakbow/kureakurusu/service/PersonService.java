@@ -40,10 +40,8 @@ import java.util.stream.Collectors;
 import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-14 20:47
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-14 20:47
  */
 @Service
 public class PersonService {
@@ -241,24 +239,20 @@ public class PersonService {
     public void managePersonnel(PersonnelManageCmd cmd) {
 
         List<PersonRelation> addRelationSet = new ArrayList<>();
-        List<PersonRelation> updateRelationSet = new ArrayList<>();
         List<PersonRelation> deleteRelationSet = new ArrayList<>();
 
         cmd.getPersonnel().forEach(pair -> {
             if(pair.getAction() == DataActionType.INSERT.getValue())
                 addRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
-            if(pair.getAction() == DataActionType.UPDATE.getValue())
-                updateRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
             if(pair.getAction() == DataActionType.REAL_DELETE.getValue())
                 deleteRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
         });
 
+        //批量删除和批量新增
         MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
         MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);
-        MybatisBatch<PersonRelation> batchUpdate = new MybatisBatch<>(sqlSessionFactory, updateRelationSet);
         MybatisBatch<PersonRelation> batchDelete = new MybatisBatch<>(sqlSessionFactory, deleteRelationSet);
         batchInsert.execute(method.insert());
-        batchUpdate.execute(method.updateById());
         batchDelete.execute(method.deleteById());
 
     }

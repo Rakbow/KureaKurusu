@@ -12,10 +12,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-06 16:38
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-06 16:38
  */
 @Component
 public class EntityUtil {
@@ -60,7 +58,7 @@ public class EntityUtil {
     /**
      * 获取页面选项数据
      * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
-     * @Author Rakbow
+     * @author Rakbow
      */
     public JSONObject getDetailOptions(int entityType) {
         JSONObject options = new JSONObject();

@@ -6,10 +6,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-10-07 8:13
- * @Description:
+ * @author Rakbow
+ * @since 2022-10-07 8:13
  */
 @Mapper
 public interface CommonMapper {

@@ -6,10 +6,8 @@ import com.rakbow.kureakurusu.data.person.PersonnelPair;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-12 23:40
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-12 23:40
  */
 @Data
 @TableName("person_relation")

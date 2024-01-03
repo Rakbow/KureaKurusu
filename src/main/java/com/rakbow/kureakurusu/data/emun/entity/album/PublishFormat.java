@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-19 22:34
- * @Description: 出版形式
+ * 出版形式
+ *
+ * @author Rakbow
+ * @since 2022-08-19 22:34
  */
 @AllArgsConstructor
 public enum PublishFormat {

@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-19 19:02
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-19 19:02
  */
 public interface MetaEnum {
 

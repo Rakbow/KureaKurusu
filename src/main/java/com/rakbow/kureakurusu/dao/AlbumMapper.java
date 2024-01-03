@@ -5,10 +5,8 @@ import com.rakbow.kureakurusu.entity.Album;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-07-19 1:01
- * @Description:
+ * @author Rakbow
+ * @since 2022-07-19 1:01
  */
 @Mapper
 public interface AlbumMapper extends BaseMapper<Album> {

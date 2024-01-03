@@ -3,10 +3,10 @@ package com.rakbow.kureakurusu.data.vo.music;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-14 15:58
- * @Description: 转换量较少的VO，一般用于list index页面
+ * 转换量较少的VO，一般用于list index页面
+ *
+ * @author Rakbow
+ * @since 2023-01-14 15:58
  */
 @Data
 public class MusicVOAlpha {

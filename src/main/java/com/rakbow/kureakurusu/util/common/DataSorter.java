@@ -9,10 +9,8 @@ import com.rakbow.kureakurusu.entity.Person;
 import java.util.Comparator;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 3:39
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-06 3:39
  */
 public class DataSorter {
 

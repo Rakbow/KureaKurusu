@@ -30,10 +30,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 19:50
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-06 19:50
  */
 @Controller
 @RequestMapping("/db/music")

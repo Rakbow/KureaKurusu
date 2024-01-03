@@ -15,10 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-12 17:31
- * @Description: 记录异常到日志中
+ * @author Rakbow
+ * @since 2022-09-12 17:31 记录异常到日志中
  */
 @ControllerAdvice(annotations = Controller.class)
 public class GlobalExceptionHandler {

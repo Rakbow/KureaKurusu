@@ -6,10 +6,10 @@ import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-11 16:13
- * @Description: VO 信息量最少
+ * VO 信息量最少
+ *
+ * @author Rakbow
+ * @since 2023-01-11 16:13
  */
 @Data
 public class GameVOBeta {

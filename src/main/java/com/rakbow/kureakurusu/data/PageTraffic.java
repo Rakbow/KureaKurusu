@@ -3,10 +3,10 @@ package com.rakbow.kureakurusu.data;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-17 23:22
- * @Description: 页面流量实体类
+ * 页面流量实体类
+ *
+ * @author Rakbow
+ * @since 2023-01-17 23:22
  */
 @Data
 public class PageTraffic {

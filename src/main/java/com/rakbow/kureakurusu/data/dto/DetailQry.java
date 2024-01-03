@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.data.dto;
 import java.io.Serial;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-23 11:27
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-23 11:27
  */
 public abstract class DetailQry extends Query {
 

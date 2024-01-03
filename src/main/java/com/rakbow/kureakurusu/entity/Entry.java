@@ -6,10 +6,8 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-01 23:36
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-01 23:36
  */
 @Data
 public class Entry {

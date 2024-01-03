@@ -17,10 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-01 21:25
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-01 21:25
  */
 @Component
 public class QiniuImageUtil {

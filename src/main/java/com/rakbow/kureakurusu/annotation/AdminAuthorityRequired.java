@@ -6,10 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-30 9:49
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-30 9:49
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -6,10 +6,8 @@ import com.rakbow.kureakurusu.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-02 0:46
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-02 0:46
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {

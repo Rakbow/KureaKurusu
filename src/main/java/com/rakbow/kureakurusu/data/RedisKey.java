@@ -1,10 +1,10 @@
 package com.rakbow.kureakurusu.data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-17 18:53
- * @Description: redis缓存常量
+ * redis缓存常量
+ *
+ * @author Rakbow
+ * @since 2023-02-17 18:53
  */
 public class RedisKey {
 

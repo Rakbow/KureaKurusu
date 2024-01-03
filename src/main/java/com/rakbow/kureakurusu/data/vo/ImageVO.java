@@ -3,10 +3,10 @@ package com.rakbow.kureakurusu.data.vo;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-09 10:42
- * @Description: 图片
+ * 图片
+ *
+ * @author Rakbow
+ * @since 2023-02-09 10:42
  */
 @Data
 public class ImageVO {

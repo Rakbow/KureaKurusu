@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-26 14:28
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-26 14:28
  */
 
 public class ProductUtil {

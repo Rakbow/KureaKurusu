@@ -12,10 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-30 9:51
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-30 9:51
  */
 public class AuthorityInterceptor implements HandlerInterceptor {
 

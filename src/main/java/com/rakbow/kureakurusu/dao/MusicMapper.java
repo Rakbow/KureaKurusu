@@ -10,10 +10,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 0:32
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-06 0:32
  */
 @Mapper
 public interface MusicMapper extends BaseMapper<Music> {

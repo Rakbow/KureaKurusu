@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-13 21:26
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-13 21:26
  */
 // @Component
 public class EventProducer {

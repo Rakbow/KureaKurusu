@@ -3,10 +3,11 @@ package com.rakbow.kureakurusu.data;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-04 9:45
- * @Description: 记录实体类信息
+ *
+ * 记录实体类信息
+ *
+ * @author Rakbow
+ * @since 2023-04-04 9:45
  */
 
 @Data

@@ -14,16 +14,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 5:54
- * @Description: 数据查找
+ * 数据查找
+ *
+ * @author Rakbow
+ * @since 2022-11-06 5:54
  */
 public class DataFinder {
 
     //region album
 
-    public static Album findAlbumById(int id, List<Album> albums) {
+    public static Album findAlbumById(Long id, List<Album> albums) {
         Album finder = new Album();
         finder.setId(id);
         int idx = Collections.binarySearch(albums, finder, DataSorter.albumIdSorter);

@@ -25,10 +25,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-02 1:12
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-02 1:12
  */
 @Mapper(componentModel = "spring")
 public interface EntryConvertMapper {

@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.data.vo.franchise;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-09 0:57
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-09 0:57
  */
 @Data
 public class ParentFranchiseVO {

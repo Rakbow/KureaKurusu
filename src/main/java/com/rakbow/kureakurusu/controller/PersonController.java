@@ -30,10 +30,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-14 20:53
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-14 20:53
  */
 @RestController
 @RequiredArgsConstructor

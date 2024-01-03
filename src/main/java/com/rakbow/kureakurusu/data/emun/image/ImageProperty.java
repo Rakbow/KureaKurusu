@@ -6,10 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-08 23:35
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-08 23:35
  */
 @Data
 @AllArgsConstructor

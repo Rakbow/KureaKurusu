@@ -18,9 +18,9 @@
 //
 ///**
 // * @Project_name: kureakurusu
-// * @Author: Rakbow
-// * @Create: 2023-02-03 13:13
-// * @Description: MeiliSearch工具类
+// * @author Rakbow
+// * @since 2023-02-03 13:13
+// * @description MeiliSearch工具类
 // */
 //@Component
 //public class MeiliSearchUtils {

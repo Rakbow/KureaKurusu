@@ -19,10 +19,8 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-11 16:13
- * @Description: album VO转换接口
+ * @author Rakbow
+ * @since 2023-01-11 16:13 album VO转换接口
  */
 @Mapper(componentModel = "spring")
 public interface AlbumVOMapper {

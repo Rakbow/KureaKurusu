@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-12 10:45
- * @Description: Product VO转换接口
+ * @author Rakbow
+ * @since 2023-01-12 10:45 Product VO转换接口
  */
 @Mapper(componentModel = "spring")
 public interface ProductVOMapper {

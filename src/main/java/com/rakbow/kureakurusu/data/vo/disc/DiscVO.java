@@ -5,10 +5,10 @@ import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-11 10:42
- * @Description: 转换量最大的VO，一般用于详情页面
+ * 转换量最大的VO，一般用于详情页面
+ *
+ * @author Rakbow
+ * @since 2023-01-11 10:42
  */
 @Data
 public class DiscVO {

@@ -21,10 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-08 9:42
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-08 9:42
  */
 public class EntityConverter {
 

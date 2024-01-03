@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-07-25 2:10
- * @Description:
+ * @author Rakbow
+ * @since 2022-07-25 2:10
  */
 @Controller
 public class HomeController {

@@ -15,10 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-12 20:04
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-12 20:04
  */
 @Component
 @Aspect

@@ -4,10 +4,8 @@ import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-06 5:51
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-06 5:51
  */
 @Data
 public class PersonMiniVO {

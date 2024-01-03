@@ -9,10 +9,10 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-03-21 1:15
- * @Description: 每24小时更新一次数据总数到redis缓存中
+ * 每24小时更新一次数据总数到redis缓存中
+ *
+ * @author Rakbow
+ * @since 2023-03-21 1:15
  */
 @Component
 public class EntityAmountTask extends QuartzJobBean {

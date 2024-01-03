@@ -10,10 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-06 17:25
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-06 17:25
  */
 @Component
 public class TokenInterceptor implements HandlerInterceptor {

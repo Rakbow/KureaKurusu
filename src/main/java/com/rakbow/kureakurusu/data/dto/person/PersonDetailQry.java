@@ -7,10 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-23 11:40
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-23 11:40
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

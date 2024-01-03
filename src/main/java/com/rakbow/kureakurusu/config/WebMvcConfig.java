@@ -12,10 +12,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import javax.annotation.Resource;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-17 23:53
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-17 23:53
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {

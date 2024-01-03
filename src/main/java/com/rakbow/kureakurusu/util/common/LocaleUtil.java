@@ -7,10 +7,8 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-18 20:40
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-18 20:40
  */
 public class LocaleUtil {
 

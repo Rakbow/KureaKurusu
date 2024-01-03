@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-05 2:37
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-05 2:37
  */
 public class EnumHelper {
 

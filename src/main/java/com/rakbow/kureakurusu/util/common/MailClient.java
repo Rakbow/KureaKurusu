@@ -12,10 +12,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-02 0:56
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-02 0:56
  */
 @Component
 public class MailClient {

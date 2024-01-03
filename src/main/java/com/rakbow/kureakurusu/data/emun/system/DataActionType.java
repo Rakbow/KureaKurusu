@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-10-07 4:02
- * @Description:
+ * @author Rakbow
+ * @since 2022-10-07 4:02
  */
 @Getter
 @AllArgsConstructor

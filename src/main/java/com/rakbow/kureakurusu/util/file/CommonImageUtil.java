@@ -22,10 +22,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-31 1:18
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-31 1:18
  */
 public class CommonImageUtil {
 

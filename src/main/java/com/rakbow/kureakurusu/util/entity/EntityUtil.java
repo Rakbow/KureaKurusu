@@ -1,10 +1,8 @@
 package com.rakbow.kureakurusu.util.entity;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-29 21:15
- * @Description:
+ * @author Rakbow
+ * @since 2023-04-29 21:15
  */
 public class EntityUtil {
 

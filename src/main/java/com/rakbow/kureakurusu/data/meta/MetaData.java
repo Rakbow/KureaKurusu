@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.data.meta;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-05 5:17
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-05 5:17
  */
 public class MetaData {
 

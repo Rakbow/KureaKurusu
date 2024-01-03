@@ -7,10 +7,8 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-03 1:53
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-03 1:53
  */
 @Data
 public class EntryVOAlpha {

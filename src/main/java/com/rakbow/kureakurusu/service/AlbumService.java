@@ -45,10 +45,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-07-25 1:42
- * @Description: album业务层
+ * @author Rakbow
+ * @since 2022-07-25 1:42 album业务层
  */
 @Service
 public class AlbumService {

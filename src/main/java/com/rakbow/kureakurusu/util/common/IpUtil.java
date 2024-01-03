@@ -4,10 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-17 2:53
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-17 2:53
  */
 public class IpUtil {
 

@@ -26,10 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-03 1:49
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-03 1:49
  */
 @Controller
 @RequestMapping("/db/entry")

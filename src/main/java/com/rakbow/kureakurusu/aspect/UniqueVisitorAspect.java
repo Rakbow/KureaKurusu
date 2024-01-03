@@ -15,10 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-21 22:23
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-21 22:23
  */
 @Component
 @Aspect

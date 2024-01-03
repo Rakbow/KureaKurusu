@@ -13,10 +13,8 @@ import lombok.ToString;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-07-19 0:55
- * @Description: 专辑实体类
+ * @author Rakbow
+ * @since 2022-07-19 0:55 专辑实体类
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -24,7 +22,7 @@ import java.util.Date;
 @TableName("album")
 public class Album extends MetaEntity {
 
-    private Integer id;//表主键
+    private Long id;//表主键
     private String catalogNo;//专辑编号
     private String name;//专辑名称（日语）
     private String nameZh;//专辑名称（中文）
@@ -47,7 +45,7 @@ public class Album extends MetaEntity {
 
     public Album() {
 
-        this.id = 0;
+        this.id = 0L;
         this.catalogNo = "";
         this.name = "";
         this.nameZh = "";

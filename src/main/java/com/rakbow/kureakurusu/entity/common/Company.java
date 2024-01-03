@@ -12,10 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-29 17:29
- * @Description:
+ * @author Rakbow
+ * @since 2023-04-29 17:29
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

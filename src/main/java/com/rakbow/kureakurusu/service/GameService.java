@@ -27,10 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-06 14:43
- * @Description: game业务层
+ * @author Rakbow
+ * @since 2023-01-06 14:43 game业务层
  */
 @Service
 public class GameService {

@@ -8,10 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-22 0:37
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-22 0:37
  */
 @Configuration
 public class QuartzConfig {

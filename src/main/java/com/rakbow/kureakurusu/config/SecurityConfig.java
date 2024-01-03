@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-27 0:12
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-27 0:12
  */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {

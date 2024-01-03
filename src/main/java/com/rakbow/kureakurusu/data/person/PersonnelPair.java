@@ -4,10 +4,8 @@ import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-17 22:25
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-17 22:25
  */
 @Data
 public class PersonnelPair {

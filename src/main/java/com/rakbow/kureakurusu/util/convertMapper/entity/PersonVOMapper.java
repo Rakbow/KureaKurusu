@@ -14,10 +14,8 @@ import org.springframework.context.MessageSource;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-06 5:55
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-06 5:55
  */
 @Mapper(componentModel = "spring")
 public interface PersonVOMapper extends CommonVOMapper {

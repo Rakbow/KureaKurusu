@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.PushBuilder;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-18 19:41
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-18 19:41
  */
 @Component
 public class LikeUtil {

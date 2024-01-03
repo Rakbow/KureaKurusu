@@ -30,10 +30,8 @@ import java.io.OutputStream;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 18:36
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-20 18:36
  */
 @Controller
 @RequestMapping("/user")

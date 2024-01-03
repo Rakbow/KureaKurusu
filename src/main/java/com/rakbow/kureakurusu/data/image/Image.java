@@ -4,10 +4,10 @@ import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-08 18:04
- * @Description: 通用图片信息
+ * 通用图片信息
+ *
+ * @author Rakbow
+ * @since 2023-02-08 18:04
  */
 @Data
 public class Image {

@@ -17,10 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 21:06
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-06 21:06
  */
 public class MusicUtil {
 

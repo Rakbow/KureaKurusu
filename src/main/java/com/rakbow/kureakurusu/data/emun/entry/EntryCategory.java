@@ -9,10 +9,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-02 4:23
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-02 4:23
  */
 @AllArgsConstructor
 public enum EntryCategory {

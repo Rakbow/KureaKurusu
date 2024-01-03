@@ -7,10 +7,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-10 11:17
- * @Description: Spring工具类
+ * Spring工具类
+ *
+ * @author Rakbow
+ * @since 2023-01-10 11:17
  */
 
 @Component

@@ -1,10 +1,8 @@
 package com.rakbow.kureakurusu.data.common;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-26 16:22
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-26 16:22
  */
 public interface Constant {
 

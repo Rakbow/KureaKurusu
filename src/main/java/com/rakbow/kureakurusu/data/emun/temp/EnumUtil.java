@@ -22,10 +22,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-19 18:56
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-19 18:56
  */
 public class EnumUtil {
 

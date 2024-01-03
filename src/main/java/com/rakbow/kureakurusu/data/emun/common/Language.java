@@ -11,10 +11,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-29 21:30
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-29 21:30
  */
 @AllArgsConstructor
 public enum Language {

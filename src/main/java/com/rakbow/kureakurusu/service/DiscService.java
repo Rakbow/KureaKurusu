@@ -26,10 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-14 23:24
- * @Description: disc业务层
+ * @author Rakbow
+ * @since 2022-12-14 23:24 disc业务层
  */
 @Service
 public class DiscService {

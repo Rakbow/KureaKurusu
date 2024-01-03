@@ -28,10 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 2:02
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-20 2:02
  */
 @Service
 public class ProductService {

@@ -8,10 +8,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-05 2:59
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-05 2:59
  */
 public class I18nHelper {
 

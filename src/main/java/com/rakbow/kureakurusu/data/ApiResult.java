@@ -7,10 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-04 3:45
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-04 3:45
  */
 public class ApiResult {
 

@@ -4,10 +4,8 @@ import com.rakbow.kureakurusu.entity.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-17 0:24
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-17 0:24
  */
 @Mapper
 public interface LoginTicketMapper {

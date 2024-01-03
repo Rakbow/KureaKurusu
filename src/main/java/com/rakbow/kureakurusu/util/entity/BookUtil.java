@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-29 20:47
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-29 20:47
  */
 public class BookUtil {
 

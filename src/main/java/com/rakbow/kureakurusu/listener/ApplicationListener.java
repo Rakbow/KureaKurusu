@@ -8,10 +8,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-05 5:33
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-05 5:33
  */
 @Component
 public class ApplicationListener {

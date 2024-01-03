@@ -9,10 +9,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-28 22:19
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-28 22:19
  */
 @Mapper
 public interface BookMapper extends BaseMapper<Book> {
