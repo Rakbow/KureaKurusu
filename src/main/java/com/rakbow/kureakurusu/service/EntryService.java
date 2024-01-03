@@ -113,23 +113,24 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getEntriesByFilter(QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String name = filter.getJSONObject("name").getString("value");
-        String nameZh = filter.getJSONObject("nameZh").getString("value");
-        String nameEn = filter.getJSONObject("nameEn").getString("value");
-        int category = 100;
-        if (filter.getJSONObject("category").get("value") != null) {
-            category = filter.getJSONObject("category").getIntValue("value");
-        }
-
-        List<Entry> entries  = new ArrayList<>();
-        // List<Entry> entries = entryMapper.getEntriesByFilter(name, nameZh, nameEn, category,
-        //         param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
-
-        int total = entryMapper.getEntriesRowsByFilter(name, nameZh, nameEn, category);
-
-        return new SearchResult(entries, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String name = filter.getJSONObject("name").getString("value");
+        // String nameZh = filter.getJSONObject("nameZh").getString("value");
+        // String nameEn = filter.getJSONObject("nameEn").getString("value");
+        // int category = 100;
+        // if (filter.getJSONObject("category").get("value") != null) {
+        //     category = filter.getJSONObject("category").getIntValue("value");
+        // }
+        //
+        // List<Entry> entries  = new ArrayList<>();
+        // // List<Entry> entries = entryMapper.getEntriesByFilter(name, nameZh, nameEn, category,
+        // //         param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+        //
+        // int total = entryMapper.getEntriesRowsByFilter(name, nameZh, nameEn, category);
+        //
+        // return new SearchResult(entries, total);
+        return null;
     }
 
     /**

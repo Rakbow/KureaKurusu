@@ -144,7 +144,7 @@ public class BookController {
             Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
 
             //修改编辑时间
-            book.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            book.setEditedTime(DateHelper.now());
 
             res.message = bookService.updateBook(book.getId(), book);
         } catch (Exception ex) {

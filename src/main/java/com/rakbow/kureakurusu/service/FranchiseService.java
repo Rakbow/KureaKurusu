@@ -175,25 +175,26 @@ public class FranchiseService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getFranchisesByFilter(QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String name = filter.getJSONObject("name").getString("value");
-        String nameZh = filter.getJSONObject("nameZh").getString("value");
-        String isMeta;
-        if (filter.getJSONObject("metaLabel").getBoolean("value") == null) {
-            isMeta = null;
-        }else {
-            isMeta = filter.getJSONObject("metaLabel").getBoolean("value")
-                    ?Integer.toString(1):Integer.toString(0);
-        }
-
-        List<Franchise> franchises  = new ArrayList<>();
-        // List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
-        //         AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-
-        int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, AuthorityInterceptor.isSenior());
-
-        return new SearchResult(franchises, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String name = filter.getJSONObject("name").getString("value");
+        // String nameZh = filter.getJSONObject("nameZh").getString("value");
+        // String isMeta;
+        // if (filter.getJSONObject("metaLabel").getBoolean("value") == null) {
+        //     isMeta = null;
+        // }else {
+        //     isMeta = filter.getJSONObject("metaLabel").getBoolean("value")
+        //             ?Integer.toString(1):Integer.toString(0);
+        // }
+        //
+        // List<Franchise> franchises  = new ArrayList<>();
+        // // List<Franchise> franchises = franchiseMapper.getFranchisesByFilter(name, nameZh, isMeta,
+        // //         AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        //
+        // int total = franchiseMapper.getFranchisesRowsByFilter(name, nameZh, isMeta, AuthorityInterceptor.isSenior());
+        //
+        // return new SearchResult(franchises, total);
+        return null;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)

@@ -36,8 +36,8 @@ public class Entry {
         this.images = "[]";
         this.detail = "{}";
         this.description = "";
-        this.addedTime = DateHelper.NOW_TIMESTAMP;
-        this.editedTime = DateHelper.NOW_TIMESTAMP;
+        this.addedTime = DateHelper.now();
+        this.editedTime = DateHelper.now();
         this.remark = "";
         this.status = 1;
     }

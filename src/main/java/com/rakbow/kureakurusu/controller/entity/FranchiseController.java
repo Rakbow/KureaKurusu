@@ -141,7 +141,7 @@ public class FranchiseController {
             Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
 
             //修改编辑时间
-            franchise.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            franchise.setEditedTime(DateHelper.now());
 
 //            res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
         } catch (Exception ex) {

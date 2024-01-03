@@ -43,8 +43,8 @@ public class Music {
         this.audioLength = "00:00";
         this.description = "";
         this.remark = "";
-        this.addedTime = DateHelper.NOW_TIMESTAMP;
-        this.editedTime = DateHelper.NOW_TIMESTAMP;
+        this.addedTime = DateHelper.now();
+        this.editedTime = DateHelper.now();
         this.status = 1;
     }
 

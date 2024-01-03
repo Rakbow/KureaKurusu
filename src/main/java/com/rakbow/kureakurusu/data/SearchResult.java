@@ -20,7 +20,7 @@ public class SearchResult {
     public SearchResult(Object data, long total) {
         this.total = total;
         this.data = data;
-        this.searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
+        this.searchTime = DateHelper.timestampToString(DateHelper.now());
     }
 
     public <T> SearchResult(Object data, IPage<T> page) {
@@ -28,7 +28,7 @@ public class SearchResult {
         this.total = page.getTotal();
         this.page = page.getCurrent();
         this.pageSize = page.getSize();
-        this.searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
+        this.searchTime = DateHelper.timestampToString(DateHelper.now());
     }
 
     public <T> SearchResult(IPage<T> page) {
@@ -36,7 +36,7 @@ public class SearchResult {
         this.data = page.getRecords();
         this.page = page.getCurrent();
         this.pageSize = page.getSize();
-        this.searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
+        this.searchTime = DateHelper.timestampToString(DateHelper.now());
     }
 
     public SearchResult() {
@@ -44,6 +44,6 @@ public class SearchResult {
         data = null;
         page = 0;
         pageSize = 10;
-        searchTime = DateHelper.timestampToString(DateHelper.NOW_TIMESTAMP);
+        searchTime = DateHelper.timestampToString(DateHelper.now());
     }
 }

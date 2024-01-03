@@ -176,36 +176,37 @@ public class MerchService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getMerchsByFilterList(QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String name = filter.getJSONObject("name").getString("value");
-        String barcode = filter.getJSONObject("barcode").getString("value");
-        String region = filter.getJSONObject("region").getString("value");
-
-        int category = 100;
-        if (filter.getJSONObject("category").get("value") != null) {
-            category = filter.getJSONObject("category").getIntValue("value");
-        }
-
-        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
-        
-        String notForSale;
-        if (filter.getJSONObject("notForSale").get("value") == null) {
-            notForSale = null;
-        } else {
-            notForSale = filter.getJSONObject("notForSale").getBoolean("value")
-                    ? Integer.toString(1) : Integer.toString(0);
-        }
-
-        List<Merch> merchs  = new ArrayList<>();
-
-        // List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
-        //         notForSale, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-
-        int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, AuthorityInterceptor.isSenior());
-
-        return new SearchResult(merchs, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String name = filter.getJSONObject("name").getString("value");
+        // String barcode = filter.getJSONObject("barcode").getString("value");
+        // String region = filter.getJSONObject("region").getString("value");
+        //
+        // int category = 100;
+        // if (filter.getJSONObject("category").get("value") != null) {
+        //     category = filter.getJSONObject("category").getIntValue("value");
+        // }
+        //
+        // List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        // List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        //
+        // String notForSale;
+        // if (filter.getJSONObject("notForSale").get("value") == null) {
+        //     notForSale = null;
+        // } else {
+        //     notForSale = filter.getJSONObject("notForSale").getBoolean("value")
+        //             ? Integer.toString(1) : Integer.toString(0);
+        // }
+        //
+        // List<Merch> merchs  = new ArrayList<>();
+        //
+        // // List<Merch> merchs = merchMapper.getMerchsByFilter(name, barcode, franchises, products, category, region,
+        // //         notForSale, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        //
+        // int total = merchMapper.getMerchsRowsByFilter(name, barcode, franchises, products, category, region, notForSale, AuthorityInterceptor.isSenior());
+        //
+        // return new SearchResult(merchs, total);
+        return null;
     }
 
     /**

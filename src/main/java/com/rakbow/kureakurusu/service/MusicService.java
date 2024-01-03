@@ -302,7 +302,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicArtists(int id, String artists) {
-        musicMapper.updateMusicArtists(id, artists, DateHelper.NOW_TIMESTAMP);
+        musicMapper.updateMusicArtists(id, artists, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
@@ -314,7 +314,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicLyricsText(int id, String lrcText) {
-        musicMapper.updateMusicLyricsText(id, lrcText, DateHelper.NOW_TIMESTAMP);
+        musicMapper.updateMusicLyricsText(id, lrcText, DateHelper.now());
         return I18nHelper.getMessage("music.crud.lyrics.update.success");
     }
 
@@ -363,7 +363,7 @@ public class MusicService {
 
         originalFiles.addAll(addFiles);
 
-        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), DateHelper.NOW_TIMESTAMP);
+        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), DateHelper.now());
 
     }
 
@@ -381,7 +381,7 @@ public class MusicService {
 
         JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
 
-        musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateHelper.NOW_TIMESTAMP);
+        musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateHelper.now());
         return I18nHelper.getMessage("file.delete.success");
     }
 

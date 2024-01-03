@@ -50,8 +50,8 @@ public class Merch extends MetaEntity {
         this.setDescription("");
         this.setImages("[]");
         this.setRemark("");
-        this.setAddedTime(DateHelper.NOW_TIMESTAMP);;
-        this.setEditedTime(DateHelper.NOW_TIMESTAMP);;
+        this.setAddedTime(DateHelper.now());;
+        this.setEditedTime(DateHelper.now());;
         this.setStatus(1);
     }
 

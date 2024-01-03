@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum Gender implements IEnum<Integer> {
+public enum Gender {
 
     UNKNOWN(0, "enum.gender.unknown"),
     MALE(1, "enum.gender.male"),
@@ -20,5 +20,13 @@ public enum Gender implements IEnum<Integer> {
     @EnumValue
     private final Integer value;
     private final String labelKey;
+
+    public static Gender get(int value) {
+        for (Gender gender : Gender.values()) {
+            if(gender.value == value)
+                return gender;
+        }
+        return UNKNOWN;
+    }
 
 }

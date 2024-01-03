@@ -136,7 +136,7 @@ public class MerchController {
             Merch merch = entityService.json2Entity(merchService.handleMerchJson(param), Merch.class);
 
             //修改编辑时间
-            merch.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            merch.setEditedTime(DateHelper.now());
 
 //            res.message = merchService.updateMerch(merch.getId(), merch);
         } catch (Exception ex) {

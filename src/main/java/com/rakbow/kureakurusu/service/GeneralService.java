@@ -143,7 +143,7 @@ public class GeneralService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemDetail(String tableName, int id, String text) {
-        commonMapper.updateItemDetail(tableName, id, text, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemDetail(tableName, id, text, DateHelper.now());
     }
 
     //endregion
@@ -179,7 +179,7 @@ public class GeneralService {
             ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
             if(ar.state) {
                 JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
-                commonMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.NOW_TIMESTAMP);
+                commonMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.now());
                 res.message = I18nHelper.getMessage("image.insert.success");
             }else {
                 throw new Exception(ar.message);
@@ -199,7 +199,7 @@ public class GeneralService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateItemImages(String tableName, int entityId, String images) {
-        commonMapper.updateItemImages(tableName, entityId, images, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemImages(tableName, entityId, images, DateHelper.now());
         return I18nHelper.getMessage("image.update.success");
     }
 
@@ -217,7 +217,7 @@ public class GeneralService {
 
         JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
 
-        commonMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.now());
         return I18nHelper.getMessage("image.delete.success");
     }
 

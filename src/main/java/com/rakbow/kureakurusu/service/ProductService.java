@@ -155,7 +155,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductOrganizations(int id, String organizations) {
-        productMapper.updateProductOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
+        productMapper.updateProductOrganizations(id, organizations, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.companies.update.success");
     }
 
@@ -168,7 +168,7 @@ public class ProductService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateProductStaffs(int id, String staffs) {
-        productMapper.updateProductStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
+        productMapper.updateProductStaffs(id, staffs, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
@@ -226,19 +226,20 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getProductsByFilter(QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String name = filter.getJSONObject("name").getString("value");
-        String nameZh = filter.getJSONObject("nameZh").getString("value");
-        List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
-        List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
-
-        List<Product> products  = new ArrayList<>();
-        // List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior(),
-        //         param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-        int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior());
-
-        return new SearchResult(products, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String name = filter.getJSONObject("name").getString("value");
+        // String nameZh = filter.getJSONObject("nameZh").getString("value");
+        // List<Integer> franchises = filter.getJSONObject("franchise").getList("value", Integer.class);
+        // List<Integer> categories = filter.getJSONObject("category").getList("value", Integer.class);
+        //
+        // List<Product> products  = new ArrayList<>();
+        // // List<Product> products = productMapper.getProductsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior(),
+        // //         param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        // int total = productMapper.getProductsRowsByFilter(name, nameZh, franchises, categories, AuthorityInterceptor.isSenior());
+        //
+        // return new SearchResult(products, total);
+        return null;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)

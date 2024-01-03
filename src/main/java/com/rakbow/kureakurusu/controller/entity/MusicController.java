@@ -104,7 +104,7 @@ public class MusicController {
             }
 
             //修改编辑时间
-            music.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            music.setEditedTime(DateHelper.now());
 
             res.message = musicService.updateMusic(music.getId(), music);
         } catch (Exception ex) {

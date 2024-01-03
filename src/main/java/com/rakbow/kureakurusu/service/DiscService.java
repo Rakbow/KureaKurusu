@@ -181,41 +181,42 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getDiscsByFilterList (QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String catalogNo = filter.getJSONObject("catalogNo").getString("value");
-        String name = filter.getJSONObject("name").getString("value");
-        String region = filter.getJSONObject("region").getString("value");
-
-        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
-        List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
-
-        String limited;
-        if (filter.getJSONObject("limited").get("value") == null) {
-            limited = null;
-        }else {
-            limited = filter.getJSONObject("limited").getBoolean("value")
-                    ?Integer.toString(1):Integer.toString(0);
-        }
-
-        String hasBonus;
-        if (filter.getJSONObject("hasBonus").get("value") == null) {
-            hasBonus = null;
-        }else {
-            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
-                    ?Integer.toString(1):Integer.toString(0);
-        }
-
-        List<Disc> discs = new ArrayList<>();
-
-        // List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
-        //         mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
-
-        int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
-                mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior());
-
-        return new SearchResult(discs, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String catalogNo = filter.getJSONObject("catalogNo").getString("value");
+        // String name = filter.getJSONObject("name").getString("value");
+        // String region = filter.getJSONObject("region").getString("value");
+        //
+        // List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        // List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        // List<Integer> mediaFormat = filter.getJSONObject("mediaFormat").getList("value", Integer.class);
+        //
+        // String limited;
+        // if (filter.getJSONObject("limited").get("value") == null) {
+        //     limited = null;
+        // }else {
+        //     limited = filter.getJSONObject("limited").getBoolean("value")
+        //             ?Integer.toString(1):Integer.toString(0);
+        // }
+        //
+        // String hasBonus;
+        // if (filter.getJSONObject("hasBonus").get("value") == null) {
+        //     hasBonus = null;
+        // }else {
+        //     hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
+        //             ?Integer.toString(1):Integer.toString(0);
+        // }
+        //
+        // List<Disc> discs = new ArrayList<>();
+        //
+        // // List<Disc> discs = discMapper.getDiscsByFilter(catalogNo, name, region, franchises, products,
+        // //         mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(),  param.getFirst(), param.getRows());
+        //
+        // int total = discMapper.getDiscsRowsByFilter(catalogNo, name, region, franchises, products,
+        //         mediaFormat, limited, hasBonus, AuthorityInterceptor.isSenior());
+        //
+        // return new SearchResult(discs, total);
+        return null;
     }
 
     /**

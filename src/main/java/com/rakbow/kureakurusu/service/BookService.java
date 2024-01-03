@@ -209,7 +209,7 @@ public class BookService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBookAuthors(int id, String authors) {
-        bookMapper.updateBookAuthors(id, authors, DateHelper.NOW_TIMESTAMP);
+        bookMapper.updateBookAuthors(id, authors, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
@@ -220,39 +220,40 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getBooksByFilter(QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String title = filter.getJSONObject("title").getString("value");
-        String isbn10 = filter.getJSONObject("isbn10").getString("value");
-        String isbn13 = filter.getJSONObject("isbn13").getString("value");
-        String region = filter.getJSONObject("region").getString("value");
-        String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
-
-        int bookType = 100;
-        if (filter.getJSONObject("bookType").get("value") != null) {
-            bookType = filter.getJSONObject("bookType").getIntValue("value");
-        }
-
-        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
-        List<Integer> serials = filter.getJSONObject("serials").getList("value", Integer.class);
-
-        String hasBonus;
-        if (filter.getJSONObject("hasBonus").get("value") == null) {
-            hasBonus = null;
-        } else {
-            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
-                    ? Integer.toString(1) : Integer.toString(0);
-        }
-
-        List<Book> books  = new ArrayList<>();
-        // List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
-        //         bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-
-        int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
-                bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior());
-
-        return new SearchResult(books, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String title = filter.getJSONObject("title").getString("value");
+        // String isbn10 = filter.getJSONObject("isbn10").getString("value");
+        // String isbn13 = filter.getJSONObject("isbn13").getString("value");
+        // String region = filter.getJSONObject("region").getString("value");
+        // String publishLanguage = filter.getJSONObject("publishLanguage").getString("value");
+        //
+        // int bookType = 100;
+        // if (filter.getJSONObject("bookType").get("value") != null) {
+        //     bookType = filter.getJSONObject("bookType").getIntValue("value");
+        // }
+        //
+        // List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        // List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        // List<Integer> serials = filter.getJSONObject("serials").getList("value", Integer.class);
+        //
+        // String hasBonus;
+        // if (filter.getJSONObject("hasBonus").get("value") == null) {
+        //     hasBonus = null;
+        // } else {
+        //     hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
+        //             ? Integer.toString(1) : Integer.toString(0);
+        // }
+        //
+        // List<Book> books  = new ArrayList<>();
+        // // List<Book> books = bookMapper.getBooksByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
+        // //         bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        //
+        // int total = bookMapper.getBooksRowsByFilter(title, isbn10, isbn13, serials, region, publishLanguage,
+        //         bookType, franchises, products, hasBonus, AuthorityInterceptor.isSenior());
+        //
+        // return new SearchResult(books, total);
+        return null;
     }
 
     /**

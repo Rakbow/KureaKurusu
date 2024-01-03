@@ -128,7 +128,7 @@ public class EntryController {
             Entry entry = entityService.json2Entity(param, Entry.class);
 
             //修改编辑时间
-            entry.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            entry.setEditedTime(DateHelper.now());
             res.message =  entryService.updateEntry(entry.getId(), entry);
 
         } catch (Exception ex) {

@@ -143,7 +143,7 @@ public class GameController {
             Game game = entityService.json2Entity(gameService.handleGameJson(param), Game.class);
 
             //修改编辑时间
-            game.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            game.setEditedTime(DateHelper.now());
 
             res.message = gameService.updateGame(game.getId(), game);
         } catch (Exception ex) {

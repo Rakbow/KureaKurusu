@@ -168,7 +168,7 @@ public class DiscController {
             Disc disc = entityService.json2Entity(discService.handleDiscJson(param), Disc.class);
 
             //修改编辑时间
-            disc.setEditedTime(DateHelper.NOW_TIMESTAMP);
+            disc.setEditedTime(DateHelper.now());
 
             res.message = discService.updateDisc(disc.getId(), disc);
         } catch (Exception ex) {

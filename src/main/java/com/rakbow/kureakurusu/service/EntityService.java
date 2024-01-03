@@ -308,7 +308,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemDescription(String tableName, int entityId, String description) {
-        commonMapper.updateItemDetail(tableName, entityId, description, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemDetail(tableName, entityId, description, DateHelper.now());
     }
 
     /**
@@ -320,7 +320,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemBonus(String tableName, int entityId, String bonus) {
-        commonMapper.updateItemBonus(tableName, entityId, bonus, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemBonus(tableName, entityId, bonus, DateHelper.now());
     }
 
     /**
@@ -332,7 +332,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemSpecs(String tableName, int entityId, String specs) {
-        commonMapper.updateItemSpecs(tableName, entityId, specs, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemSpecs(tableName, entityId, specs, DateHelper.now());
     }
 
     /**
@@ -344,7 +344,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemCompanies(String tableName, int entityId, String companies) {
-        commonMapper.updateItemCompanies(tableName, entityId, companies, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemCompanies(tableName, entityId, companies, DateHelper.now());
     }
 
     /**
@@ -356,7 +356,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemPersonnel(String tableName, String fieldName, int entityId, String personnel) {
-        commonMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateHelper.NOW_TIMESTAMP);
+        commonMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateHelper.now());
     }
 
     //endregion

@@ -183,7 +183,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameOrganizations(int id, String organizations) {
-        gameMapper.updateGameOrganizations(id, organizations, DateHelper.NOW_TIMESTAMP);
+        gameMapper.updateGameOrganizations(id, organizations, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.companies.update.success");
     }
 
@@ -196,7 +196,7 @@ public class GameService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGameStaffs(int id, String staffs) {
-        gameMapper.updateGameStaffs(id, staffs, DateHelper.NOW_TIMESTAMP);
+        gameMapper.updateGameStaffs(id, staffs, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
@@ -207,36 +207,37 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult getGamesByFilter(QueryParams param) {
 
-        JSONObject filter = param.getFilters();
-
-        String name = filter.getJSONObject("name").getString("value");
-        String region = filter.getJSONObject("region").getString("value");
-
-        String hasBonus;
-        if (filter.getJSONObject("hasBonus").get("value") == null) {
-            hasBonus = null;
-        } else {
-            hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
-                    ? Integer.toString(1) : Integer.toString(0);
-        }
-
-
-        int platform = 100;
-        if (filter.getJSONObject("platform").get("value") != null) {
-            platform = filter.getJSONObject("platform").getIntValue("value");
-        }
-
-        List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
-        List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
-
-
-        List<Game> games  = new ArrayList<>();
-        // List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
-        //         AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
-
-        int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, AuthorityInterceptor.isSenior());
-
-        return new SearchResult(games, total);
+        // JSONObject filter = param.getFilters();
+        //
+        // String name = filter.getJSONObject("name").getString("value");
+        // String region = filter.getJSONObject("region").getString("value");
+        //
+        // String hasBonus;
+        // if (filter.getJSONObject("hasBonus").get("value") == null) {
+        //     hasBonus = null;
+        // } else {
+        //     hasBonus = filter.getJSONObject("hasBonus").getBoolean("value")
+        //             ? Integer.toString(1) : Integer.toString(0);
+        // }
+        //
+        //
+        // int platform = 100;
+        // if (filter.getJSONObject("platform").get("value") != null) {
+        //     platform = filter.getJSONObject("platform").getIntValue("value");
+        // }
+        //
+        // List<Integer> franchises = filter.getJSONObject("franchises").getList("value", Integer.class);
+        // List<Integer> products = filter.getJSONObject("products").getList("value", Integer.class);
+        //
+        //
+        // List<Game> games  = new ArrayList<>();
+        // // List<Game> games = gameMapper.getGamesByFilter(name, hasBonus, franchises, products, platform, region,
+        // //         AuthorityInterceptor.isSenior(), param.getSortField(), param.getSortOrder(), param.getFirst(), param.getRows());
+        //
+        // int total = gameMapper.getGamesRowsByFilter(name, hasBonus, franchises, products, platform, region, AuthorityInterceptor.isSenior());
+        //
+        // return new SearchResult(games, total);
+        return null;
     }
 
     /**
