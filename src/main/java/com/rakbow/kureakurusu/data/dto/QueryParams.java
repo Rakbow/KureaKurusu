@@ -1,10 +1,10 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @author Rakbow
@@ -17,39 +17,46 @@ public class QueryParams {
     public int size;
     public String sortField;
     public int sortOrder;
-    public JSONObject filters;
+    public LinkedHashMap<String, LinkedHashMap<String, Object>> filters;
+
+    private static String VALUE_KEY = "value";
 
     public QueryParams() {
         page = 0;
         size = 0;
         sortField = "";
         sortOrder = 0;
-        filters = new JSONObject();
+        filters = new LinkedHashMap<>();
     }
 
-    public QueryParams(JSONObject param) {
-        JSONObject json = param.getJSONObject("queryParams");
-        size = json.getIntValue("rows");
-        page = json.getIntValue("first")/size + 1;
-        sortField = json.getString("sortField");
-        sortOrder = json.getIntValue("sortOrder");
-        filters = json.getJSONObject("filters");
+    public QueryParams(ListQry qty) {
+        size = qty.getRows();
+        page = qty.getFirst()/size + 1;
+        sortField = qty.getSortField();
+        sortOrder = qty.getSortOrder();
+        filters = qty.getFilters();
     }
 
     public String getString(String key) {
-        return this.filters.getJSONObject(key).getString("value");
+        Object value = this.filters.get(key).get(VALUE_KEY);
+        if(value == null)
+            return EMPTY;
+        return value.toString();
     }
 
     public Boolean getBoolean(String key) {
-        return this.filters.getJSONObject(key).getBoolean("value");
+        Object value = this.filters.get(key).get(VALUE_KEY);
+        if(value == null)
+            return null;
+        return (Boolean) value;
     }
 
-    public <T> List<T> getArray(String key, Class<T> clazz) {
-        return this.filters.getJSONObject(key).getList("value", clazz);
-    }
-
-    public JSONArray getJSONArray(String key) {
-        return this.filters.getJSONObject(key).getJSONArray("value");
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getArray(String key) {
+        Object value = this.filters.get(key).get(VALUE_KEY);
+        if(value == null)
+            return null;
+        return (List<T>) value;
     }
 
 }

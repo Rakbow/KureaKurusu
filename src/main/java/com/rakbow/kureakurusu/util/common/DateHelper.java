@@ -18,7 +18,9 @@ public class DateHelper {
     private static final String DATE_FORMAT = "yyyy/MM/dd";
     private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
-    public static Timestamp NOW_TIMESTAMP = new Timestamp(System.currentTimeMillis());
+    public static Timestamp now() {
+        return new Timestamp(System.currentTimeMillis());
+    }
 
     //日期转为字符串(自定义格式)，例如：yyyy/MM/dd
     public static String dateToString(Date date) {
@@ -31,27 +33,27 @@ public class DateHelper {
     }
 
     //时间转为字符串(自定义格式)，例如：yyyy/MM/dd
-    public static String timestampToString(Timestamp ts){
+    public static String timestampToString(Timestamp ts) {
         if (ts != null) {
             LocalDateTime localDateTime = LocalDateTime.ofInstant(ts.toInstant(), ZoneId.systemDefault());
             return localDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
-        }else {
+        } else {
             return null;
         }
     }
 
     //时间转为字符串(自定义格式)，例如：yyyy/MM/dd
-    public static Timestamp stringToTimestamp(String ts){
+    public static Timestamp stringToTimestamp(String ts) {
         if (ts != null) {
             return Timestamp.valueOf(ts.replaceAll("/", "-"));
-        }else {
+        } else {
             return null;
         }
     }
 
-    public static String getCurrentTime(){
+    public static String getCurrentTime() {
         DateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
-        return sdf.format(DateHelper.NOW_TIMESTAMP);
+        return sdf.format(DateHelper.now());
     }
 
     //字符串转为时间(自定义格式)，例如：yyyy/MM/dd
@@ -64,5 +66,5 @@ public class DateHelper {
         SimpleDateFormat ft = new SimpleDateFormat(DATE_FORMAT);
         return ft.parse(dateString);
     }
-    
+
 }

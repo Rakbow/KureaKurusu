@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
 import com.alibaba.fastjson2.JSON;
+import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -45,9 +46,17 @@ public interface CommonVOMapper {
 
     @Named("getIdsStr")
     default String getIdsStr(List<Integer> ids) {
-        return "{\"ids\":[" + ids.stream()
-            .map(Object::toString)
-            .collect(Collectors.joining(",")) + "]}";
+        return CommonUtil.getIdsStr(ids);
+    }
+
+    @Named("list2Str")
+    default String list2Str(List<String> list) {
+        return CommonUtil.getListStr(list);
+    }
+
+    @Named("getGender")
+    default Gender getGender(int value) {
+        return Gender.get(value);
     }
 
 }

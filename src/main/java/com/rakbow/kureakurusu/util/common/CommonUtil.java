@@ -417,8 +417,16 @@ public class CommonUtil {
 
     //endregion
 
-    public static boolean isJsonArrayLegal(String json) {
-        return !StringUtils.isBlank(json) && !json.equals("[]");
+    public static String getIdsStr(List<Integer> ids) {
+        return "{\"ids\":[" + ids.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(",")) + "]}";
+    }
+
+    public static String getListStr(List<String> list) {
+        return list.stream()
+                .map(s -> "\"" + s + "\"")
+                .collect(Collectors.joining(", ", "[", "]"));
     }
 
 }
