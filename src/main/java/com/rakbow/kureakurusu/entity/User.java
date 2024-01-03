@@ -5,10 +5,8 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-01 18:14
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-01 18:14
  */
 @Data
 public class User {

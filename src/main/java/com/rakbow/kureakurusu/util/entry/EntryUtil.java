@@ -16,10 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-02 1:04
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-02 1:04
  */
 @Component
 public class EntryUtil {

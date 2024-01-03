@@ -8,10 +8,8 @@ import lombok.Getter;
 import java.util.Arrays;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-13 22:16
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-13 22:16
  */
 @Getter
 @AllArgsConstructor

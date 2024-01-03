@@ -6,10 +6,10 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-06 16:22
- * @Description: 页面信息实体类通用属性
+ * 页面信息实体类通用属性
+ *
+ * @author Rakbow
+ * @since 2023-02-06 16:22
  */
 @Data
 public class ItemDetailInfo {

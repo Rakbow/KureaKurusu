@@ -1,10 +1,8 @@
 package com.rakbow.kureakurusu.data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-02 0:53
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-02 0:53
  */
 public class CommonConstant {
 

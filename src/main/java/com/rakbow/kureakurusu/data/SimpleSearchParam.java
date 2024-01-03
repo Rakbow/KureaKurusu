@@ -4,10 +4,8 @@ import com.rakbow.kureakurusu.data.dto.SearchQry;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-30 17:24
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-30 17:24
  */
 @Data
 public class SimpleSearchParam {

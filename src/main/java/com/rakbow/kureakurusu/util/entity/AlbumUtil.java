@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-19 23:44
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-19 23:44
  */
 public class AlbumUtil {
 

@@ -8,10 +8,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-04 14:12
- * @Description:
+ * @author Rakbow
+ * @since 2023-01-04 14:12
  */
 
 @Mapper

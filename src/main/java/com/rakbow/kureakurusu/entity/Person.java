@@ -12,10 +12,8 @@ import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-06 3:59
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-06 3:59
  */
 @Data
 @TableName("person")

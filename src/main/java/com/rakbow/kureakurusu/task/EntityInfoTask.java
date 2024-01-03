@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-22 0:36
- * @Description: 每24小时更新一次浏览,点赞和收藏数据到数据库中
+ * 每24小时更新一次浏览,点赞和收藏数据到数据库中
+ *
+ * @author Rakbow
+ * @since 2023-02-22 0:36
  */
 @Component
 public class EntityInfoTask extends QuartzJobBean {

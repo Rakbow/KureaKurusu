@@ -11,10 +11,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-13 21:31
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-13 21:31
  */
 @Service
 public class MessageService {

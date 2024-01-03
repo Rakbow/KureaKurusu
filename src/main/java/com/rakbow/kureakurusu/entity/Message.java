@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.entity;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-13 21:30
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-13 21:30
  */
 public class Message {
 

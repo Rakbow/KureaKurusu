@@ -5,10 +5,8 @@ import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.AllArgsConstructor;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-07 18:26
- * @Description:
+ * @author Rakbow
+ * @since 2023-01-07 18:26
  */
 @AllArgsConstructor
 public class SearchResult {

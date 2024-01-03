@@ -8,10 +8,8 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-17 2:11
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-17 2:11
  */
 @Component
 public class VisitUtil {
@@ -26,7 +24,7 @@ public class VisitUtil {
     /**
      * 新增浏览数存入redis缓存
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public void addVisit(int entityType, long entityId) {
         String key = getSingleVisitKey(entityType, entityId);
@@ -36,7 +34,7 @@ public class VisitUtil {
     /**
      * 获取浏览数
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public long getVisit(int entityType, long entityId) {
         String key = getSingleVisitKey(entityType, entityId);
@@ -49,7 +47,7 @@ public class VisitUtil {
     /**
      * 自增并返回浏览数
      * @param entityType,entityId 实体类型,实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public long incVisit(int entityType, long entityId, String visitToken) {
         String key = getSingleVisitKey(entityType, entityId);
@@ -66,7 +64,7 @@ public class VisitUtil {
     /**
      * 删除浏览数
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public void deleteVisit(int entityType, long entityId) {
         String key = getSingleVisitKey(entityType, entityId);
@@ -93,7 +91,7 @@ public class VisitUtil {
     /**
      * 获取浏览数排名,并返回指定数量的排名数据
      * @param entityType 实体类型
-     * @Author Rakbow
+     * @author Rakbow
      */
     public LinkedHashMap<Integer, Long> getEntityVisitRanking(int entityType, int limit) {
         LinkedHashMap<Integer, Long> res = new LinkedHashMap<>();
@@ -111,7 +109,7 @@ public class VisitUtil {
 
     /**
      * 清空所有浏览数据
-     * @Author Rakbow
+     * @author Rakbow
      */
     public void clearAllVisitRank() {
 
@@ -145,7 +143,7 @@ public class VisitUtil {
     /**
      * 更新浏览数排名的set
      * @param entityType,entityId,visitCount 实体类型,实体id,浏览数
-     * @Author Rakbow
+     * @author Rakbow
      */
     public void setEntityVisitRanking(int entityType, int entityId, long visitCount) {
         String key = String.valueOf(entityId);

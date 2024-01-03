@@ -11,10 +11,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-11-05 4:03
- * @Description:
+ * @author Rakbow
+ * @since 2023-11-05 4:03
  */
 public interface CommonVOMapper {
 

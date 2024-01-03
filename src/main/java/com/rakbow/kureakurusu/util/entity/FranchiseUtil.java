@@ -11,10 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-07 20:38
- * @Description:
+ * @author Rakbow
+ * @since 2023-01-07 20:38
  */
 public class FranchiseUtil {
 

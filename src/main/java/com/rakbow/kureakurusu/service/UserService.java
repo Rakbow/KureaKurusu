@@ -27,10 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-02 0:43
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-02 0:43
  */
 @Service
 public class UserService{

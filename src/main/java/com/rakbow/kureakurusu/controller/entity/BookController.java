@@ -30,10 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-30 10:18
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-30 10:18
  */
 
 @Controller

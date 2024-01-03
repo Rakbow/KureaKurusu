@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.annotation;
 import java.lang.annotation.*;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-21 22:18
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-21 22:18
  */
 @Documented   //该注解表示支持javaDoc文档导出
 @Retention(RetentionPolicy.RUNTIME) //该注解表示生命周期

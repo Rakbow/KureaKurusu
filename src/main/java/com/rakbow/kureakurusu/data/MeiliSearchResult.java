@@ -5,10 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-03 18:26
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-03 18:26
  */
 @Data
 public class MeiliSearchResult {

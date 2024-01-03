@@ -6,10 +6,8 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-05 22:18
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-05 22:18
  */
 @Data
 public class Music {

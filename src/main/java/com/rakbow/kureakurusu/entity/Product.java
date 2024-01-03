@@ -9,10 +9,8 @@ import lombok.ToString;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 1:43
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-20 1:43
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

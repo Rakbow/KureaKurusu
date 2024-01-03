@@ -10,10 +10,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-27 19:43
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-27 19:43
  */
 @Mapper
 public interface DiscMapper extends BaseMapper<Disc> {

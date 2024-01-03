@@ -7,10 +7,8 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-06 10:34
- * @Description:
+ * @author Rakbow
+ * @since 2023-04-06 10:34
  */
 @Data
 public class QueryParams {

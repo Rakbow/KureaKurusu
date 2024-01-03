@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 20:31
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-06 20:31
  */
 @AllArgsConstructor
 public enum AudioType {

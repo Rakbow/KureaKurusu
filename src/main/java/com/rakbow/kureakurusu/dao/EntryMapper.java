@@ -7,10 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-29 17:38
- * @Description:
+ * @author Rakbow
+ * @since 2023-04-29 17:38
  */
 @Mapper
 public interface EntryMapper {

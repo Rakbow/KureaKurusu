@@ -37,10 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-18 17:30
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-18 17:30
  */
 @Service
 public class EntityService {

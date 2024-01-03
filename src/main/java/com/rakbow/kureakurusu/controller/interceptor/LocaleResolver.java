@@ -8,10 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-29 21:54
- * @Description: get locate from cookie
+ * @author Rakbow
+ * @since 2023-04-29 21:54 get locate from cookie
  */
 public class LocaleResolver extends CookieLocaleResolver {
 

@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.util.common;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-30 22:14
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-30 22:14
  */
 public class FileUtil {
 

@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-22 11:02
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-22 11:02
  */
 @AllArgsConstructor
 public enum  OptionType {

@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-13 22:59
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-13 22:59
  */
 @Data
 public class Personnel {

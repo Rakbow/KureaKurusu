@@ -13,10 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-03 0:14
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-03 0:14
  */
 @Component
 public class QiniuFileUtil {

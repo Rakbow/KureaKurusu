@@ -6,10 +6,8 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-10 3:24
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-10 3:24
  */
 @Data
 @TableName("person_role")

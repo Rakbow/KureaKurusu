@@ -28,10 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-28 23:45
- * @Description: book业务层
+ * @author Rakbow
+ * @since 2022-12-28 23:45 book业务层
  */
 @Service
 public class BookService {

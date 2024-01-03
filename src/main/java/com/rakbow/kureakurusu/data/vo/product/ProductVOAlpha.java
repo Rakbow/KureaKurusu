@@ -5,10 +5,10 @@ import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-13 9:42
- * @Description: 转换量较少的VO，一般用于list index页面
+ * 转换量较少的VO，一般用于list index页面
+ *
+ * @author Rakbow
+ * @since 2023-01-13 9:42
  */
 @Data
 public class ProductVOAlpha {

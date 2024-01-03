@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-18 23:01
- * @Description:
+ * @author Rakbow
+ * @since 2022-11-18 23:01
  */
 @AllArgsConstructor
 public enum ImageType {

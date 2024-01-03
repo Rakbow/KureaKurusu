@@ -9,10 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-16 23:24
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-16 23:24
  */
 @Configuration
 public class KaptchaConfig {

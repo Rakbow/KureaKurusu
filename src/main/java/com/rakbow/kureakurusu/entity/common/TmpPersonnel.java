@@ -10,10 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-02 4:19
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-02 4:19
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

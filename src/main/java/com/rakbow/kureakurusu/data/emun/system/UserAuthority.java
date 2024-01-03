@@ -5,10 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-10 21:01
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-10 21:01
  */
 @AllArgsConstructor
 public enum UserAuthority {

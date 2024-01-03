@@ -32,10 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-19 18:56
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-19 18:56
  */
 @Service
 public class GeneralService {
@@ -95,7 +93,7 @@ public class GeneralService {
      * 获取页面数据
      *
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public PageTraffic getPageTraffic(int entityType, long entityId) {
 

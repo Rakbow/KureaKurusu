@@ -13,10 +13,10 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-19 23:04
- * @Description: 媒体类型
+ * 媒体类型
+ *
+ * @author Rakbow
+ * @since 2022-08-19 23:04
  */
 @AllArgsConstructor
 public enum MediaFormat {

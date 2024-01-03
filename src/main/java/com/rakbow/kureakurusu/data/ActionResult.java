@@ -1,10 +1,8 @@
 package com.rakbow.kureakurusu.data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-30 11:14
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-30 11:14
  */
 public class ActionResult {
 

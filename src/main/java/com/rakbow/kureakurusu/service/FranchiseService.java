@@ -22,10 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 1:17
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-20 1:17
  */
 @Service
 public class FranchiseService {

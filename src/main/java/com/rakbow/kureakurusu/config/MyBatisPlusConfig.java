@@ -22,10 +22,8 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-29 16:11
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-29 16:11
  */
 @Configuration
 public class MyBatisPlusConfig {

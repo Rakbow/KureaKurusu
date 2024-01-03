@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-31 1:18
- * @Description:
+ * @author Rakbow
+ * @since 2022-12-31 1:18
  */
 public class segmentImagesResult {
 

@@ -16,10 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-09-13 19:53
- * @Description:
+ * @author Rakbow
+ * @since 2022-09-13 19:53
  */
 // @Component
 public class EventConsumer{

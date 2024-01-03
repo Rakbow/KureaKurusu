@@ -20,10 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-02 0:38
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-02 0:38
  */
 public class CommonUtil {
 

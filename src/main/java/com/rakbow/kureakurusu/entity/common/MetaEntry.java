@@ -7,10 +7,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-02 7:48
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-02 7:48
  */
 @Data
 public class MetaEntry {

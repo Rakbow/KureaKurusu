@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-12-01 1:44
- * @Description: 通过七牛云api实现文件的增删改查
+ * 通过七牛云api实现文件的增删改查
+ *
+ * @author Rakbow
+ * @since 2022-12-01 1:44
  */
 @Component
 public class QiniuBaseUtil {

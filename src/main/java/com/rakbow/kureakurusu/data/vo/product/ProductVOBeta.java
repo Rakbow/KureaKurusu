@@ -4,10 +4,10 @@ import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-03 16:13
- * @Description: VO 存储到搜索引擎数据库
+ * VO 存储到搜索引擎数据库
+ *
+ * @author Rakbow
+ * @since 2023-02-03 16:13
  */
 @Data
 public class ProductVOBeta {

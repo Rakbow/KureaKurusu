@@ -18,10 +18,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-09 13:13
- * @Description: Redis工具类
+ * Redis工具类
+ *
+ * @author Rakbow
+ * @since 2023-01-09 13:13
  */
 @Component
 public class RedisUtil {

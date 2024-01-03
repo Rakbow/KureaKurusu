@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-12-23 11:12
- * @Description:
+ * @author Rakbow
+ * @since 2023-12-23 11:12
  */
 public abstract class Query extends DTO {
 

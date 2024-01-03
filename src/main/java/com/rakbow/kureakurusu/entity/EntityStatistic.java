@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.entity;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-10-07 8:00
- * @Description:
+ * @author Rakbow
+ * @since 2022-10-07 8:00
  */
 @Data
 public class EntityStatistic {

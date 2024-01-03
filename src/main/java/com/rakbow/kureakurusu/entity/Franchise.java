@@ -9,10 +9,8 @@ import lombok.ToString;
 import java.util.Date;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-20 0:50
- * @Description: 系列实体类
+ * @author Rakbow
+ * @since 2022-08-20 0:50 系列实体类
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

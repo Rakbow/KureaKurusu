@@ -29,10 +29,8 @@ import java.io.OutputStream;
 import java.util.Map;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-08-02 0:20
- * @Description:
+ * @author Rakbow
+ * @since 2022-08-02 0:20
  */
 @Controller
 public class LoginController {

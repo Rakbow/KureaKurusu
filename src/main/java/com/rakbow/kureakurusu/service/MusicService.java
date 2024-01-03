@@ -31,10 +31,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-11-06 2:04
- * @Description: music业务层
+ * @author Rakbow
+ * @since 2022-11-06 2:04 music业务层
  */
 @Service
 public class MusicService {

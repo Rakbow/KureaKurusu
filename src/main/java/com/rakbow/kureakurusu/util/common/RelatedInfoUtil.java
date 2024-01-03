@@ -9,10 +9,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-04-03 2:11
- * @Description:
+ * @author Rakbow
+ * @since 2023-04-03 2:11
  */
 @Component
 public class RelatedInfoUtil {
@@ -23,7 +21,7 @@ public class RelatedInfoUtil {
     /**
      * 新增关联信息存入redis缓存
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public void addRelatedInfo(int entityType, int entityId, List<Integer> relatedItems) {
         String key = getRelatedKey(entityType, entityId);
@@ -33,7 +31,7 @@ public class RelatedInfoUtil {
     /**
      * 获取关联信息
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public List<Integer> getRelatedInfo(int entityType, int entityId) {
         String key = getRelatedKey(entityType, entityId);
@@ -46,7 +44,7 @@ public class RelatedInfoUtil {
     /**
      * 获取关联信息
      * @param key key
-     * @Author Rakbow
+     * @author Rakbow
      */
     public List<Integer> getRelatedInfo(String key) {
         if(!redisUtil.hasKey(key)) {
@@ -58,7 +56,7 @@ public class RelatedInfoUtil {
     /**
      * 删除关联信息
      * @param entityType,entityId 实体类型，实体id
-     * @Author Rakbow
+     * @author Rakbow
      */
     public void deleteRelatedInfo(int entityType, int entityId) {
         String key = getRelatedKey(entityType, entityId);
@@ -69,7 +67,7 @@ public class RelatedInfoUtil {
      * 通过key获取实体信息
      * @param key key
      * @return entityInfo
-     * @Author Rakbow
+     * @author Rakbow
      */
     public EntityInfo getEntityInfo(String key) {
         EntityInfo info = new EntityInfo();

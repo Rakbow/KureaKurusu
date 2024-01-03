@@ -7,10 +7,10 @@ import org.springframework.data.redis.core.RedisHash;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-03 16:13
- * @Description: VO 存储到搜索引擎数据库
+ * VO 存储到搜索引擎数据库
+ *
+ * @author Rakbow
+ * @since 2023-02-03 16:13
  */
 @Data
 @RedisHash("album")

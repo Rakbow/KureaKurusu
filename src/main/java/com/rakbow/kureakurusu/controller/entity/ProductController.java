@@ -27,10 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2022-10-15 19:18
- * @Description:
+ * @author Rakbow
+ * @since 2022-10-15 19:18
  */
 @Controller
 @RequestMapping(path = "/db/product")

@@ -32,10 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-10-06 4:40
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-06 4:40
  */
 @Controller
 @RequestMapping("/db")

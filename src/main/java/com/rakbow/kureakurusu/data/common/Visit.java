@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.data.common;
 import lombok.Data;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-22 20:06
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-22 20:06
  */
 @Data
 public class Visit {

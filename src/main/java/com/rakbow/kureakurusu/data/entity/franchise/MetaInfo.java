@@ -8,10 +8,10 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-08 18:04
- * @Description: 系列的元系列相关信息
+ * 系列的元系列相关信息
+ *
+ * @author Rakbow
+ * @since 2023-02-08 18:04
  */
 public class MetaInfo {
     public String isMeta;//是否为元系列

@@ -12,10 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-10 16:42
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-10 16:42
  */
 @Service
 public class SearchService {

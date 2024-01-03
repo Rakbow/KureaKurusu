@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-02-22 20:08
- * @Description:
+ * @author Rakbow
+ * @since 2023-02-22 20:08
  */
 @Mapper(componentModel = "spring")
 public interface StatisticPOMapper {

@@ -28,10 +28,8 @@ import redis.clients.jedis.UnifiedJedis;
 import java.time.Duration;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-01-09 13:13
- * @Description: 对Redis进行配置
+ * @author Rakbow
+ * @since 2023-01-09 13:13 对Redis进行配置
  */
 
 @RequiredArgsConstructor

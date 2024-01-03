@@ -9,10 +9,8 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2023-05-02 3:55
- * @Description:
+ * @author Rakbow
+ * @since 2023-05-02 3:55
  */
 @Data
 public class MetaEntity {
