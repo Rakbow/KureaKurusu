@@ -128,7 +128,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbum(Album album) {
-        album.setEditedTime(DateHelper.NOW_TIMESTAMP);
+        album.setEditedTime(DateHelper.now());
         mapper.updateById(album);
     }
 
@@ -293,7 +293,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         LambdaUpdateWrapper<Album> updateWrapper = new LambdaUpdateWrapper<Album>()
                 .eq(Album::getId, id)
                 .set(Album::getTrackInfo, JSON.toJSONString(trackInfo))
-                .set(Album::getEditedTime, DateHelper.NOW_TIMESTAMP);
+                .set(Album::getEditedTime, DateHelper.now());
 
         mapper.update(null, updateWrapper);
 
@@ -314,60 +314,61 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
         //region wrapper
 
-        JSONArray products = param.getJSONArray("products");
-        JSONArray franchises = param.getJSONArray("franchises");
-        JSONArray publishFormat = param.getJSONArray("publishFormat");
-        JSONArray albumFormat = param.getJSONArray("albumFormat");
-        JSONArray mediaFormat = param.getJSONArray("mediaFormat");
-
-        LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
-                .like(Album::getCatalogNo, param.getString("catalogNo"))
-                .like(Album::getName, param.getString("name"))
-                .like(Album::getNameZh, param.getString("nameZh"))
-                .like(Album::getNameEn, param.getString("nameEn"));
-        if (products != null && products.isEmpty()) {
-            wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "products"), products.toJSONString());
-        }
-        if (franchises != null && franchises.isEmpty()) {
-            wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "franchises"), franchises.toJSONString());
-        }
-        if (publishFormat != null && publishFormat.isEmpty()) {
-            wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "publish_format"), publishFormat.toJSONString());
-        }
-        if (albumFormat != null && albumFormat.isEmpty()) {
-            wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "album_format"), albumFormat.toJSONString());
-        }
-        if (mediaFormat != null && mediaFormat.isEmpty()) {
-            wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "media_format"), mediaFormat.toJSONString());
-        }
-
-        if (param.getBoolean("hasBonus") != null) {
-            wrapper.eq(Album::getHasBonus, param.getBoolean("hasBonus") ? 1 : 0);
-        }
-        if (!AuthorityInterceptor.isSenior()) {
-            wrapper.eq(Album::getStatus, 1);
-        }
-
-        if (!StringUtils.isBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "addedTime" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getAddedTime);
-                case "editedTime" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getEditedTime);
-                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getNameEn);
-                case "catalogNo" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getCatalogNo);
-                case "barcode" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getBarcode);
-                case "releaseDate" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getReleaseDate);
-                case "price" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getPrice);
-                case "hasBonus" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getHasBonus);
-            }
-        }
-
-        //endregion
-
-        IPage<Album> albums = mapper.selectPage(new Page<>(param.page, param.size), wrapper);
-
-        return new SearchResult(albums);
+        // JSONArray products = param.getJSONArray("products");
+        // JSONArray franchises = param.getJSONArray("franchises");
+        // JSONArray publishFormat = param.getJSONArray("publishFormat");
+        // JSONArray albumFormat = param.getJSONArray("albumFormat");
+        // JSONArray mediaFormat = param.getJSONArray("mediaFormat");
+        //
+        // LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
+        //         .like(Album::getCatalogNo, param.getString("catalogNo"))
+        //         .like(Album::getName, param.getString("name"))
+        //         .like(Album::getNameZh, param.getString("nameZh"))
+        //         .like(Album::getNameEn, param.getString("nameEn"));
+        // if (products != null && products.isEmpty()) {
+        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "products"), products.toJSONString());
+        // }
+        // if (franchises != null && franchises.isEmpty()) {
+        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "franchises"), franchises.toJSONString());
+        // }
+        // if (publishFormat != null && publishFormat.isEmpty()) {
+        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "publish_format"), publishFormat.toJSONString());
+        // }
+        // if (albumFormat != null && albumFormat.isEmpty()) {
+        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "album_format"), albumFormat.toJSONString());
+        // }
+        // if (mediaFormat != null && mediaFormat.isEmpty()) {
+        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "media_format"), mediaFormat.toJSONString());
+        // }
+        //
+        // if (param.getBoolean("hasBonus") != null) {
+        //     wrapper.eq(Album::getHasBonus, param.getBoolean("hasBonus") ? 1 : 0);
+        // }
+        // if (!AuthorityInterceptor.isSenior()) {
+        //     wrapper.eq(Album::getStatus, 1);
+        // }
+        //
+        // if (!StringUtils.isBlank(param.sortField)) {
+        //     switch (param.sortField) {
+        //         case "addedTime" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getAddedTime);
+        //         case "editedTime" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getEditedTime);
+        //         case "name" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getName);
+        //         case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getNameZh);
+        //         case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getNameEn);
+        //         case "catalogNo" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getCatalogNo);
+        //         case "barcode" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getBarcode);
+        //         case "releaseDate" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getReleaseDate);
+        //         case "price" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getPrice);
+        //         case "hasBonus" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getHasBonus);
+        //     }
+        // }
+        //
+        // //endregion
+        //
+        // IPage<Album> albums = mapper.selectPage(new Page<>(param.page, param.size), wrapper);
+        //
+        // return new SearchResult(albums);
+        return null;
     }
 
     /**

@@ -95,23 +95,23 @@ public class AlbumController {
     public ApiResult getAlbums(@RequestBody JSONObject param) {
         ApiResult res = new ApiResult();
         try{
-            String pageLabel = param.getString("pageLabel");
-
-            List<AlbumVOAlpha> albums = new ArrayList<>();
-
-            SearchResult searchResult = service.getAlbums(new QueryParams(param));
-
-            if (StringUtils.equals(pageLabel, "list")) {
-                albums = VOMapper.toVOAlpha((List<Album>) searchResult.data);
-            }
-            if (StringUtils.equals(pageLabel, "index")) {
-                albums = VOMapper.toVOAlpha((List<Album>) searchResult.data);
-            }
-
-            JSONObject result = new JSONObject();
-            result.put("data", albums);
-            result.put("total", searchResult.total);
-            res.data = result;
+            // String pageLabel = param.getString("pageLabel");
+            //
+            // List<AlbumVOAlpha> albums = new ArrayList<>();
+            //
+            // SearchResult searchResult = service.getAlbums(new QueryParams(param));
+            //
+            // if (StringUtils.equals(pageLabel, "list")) {
+            //     albums = VOMapper.toVOAlpha((List<Album>) searchResult.data);
+            // }
+            // if (StringUtils.equals(pageLabel, "index")) {
+            //     albums = VOMapper.toVOAlpha((List<Album>) searchResult.data);
+            // }
+            //
+            // JSONObject result = new JSONObject();
+            // result.put("data", albums);
+            // result.put("total", searchResult.total);
+            // res.data = result;
         }catch (Exception e) {
         res.fail(e);
     }
