@@ -1,15 +1,17 @@
 package com.rakbow.kureakurusu.service;
 
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
-import com.rakbow.kureakurusu.data.*;
+import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
@@ -23,49 +25,36 @@ import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.entity.Person;
 import com.rakbow.kureakurusu.entity.PersonRelation;
 import com.rakbow.kureakurusu.entity.PersonRole;
+import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.rakbow.kureakurusu.data.common.Constant.*;
+import static com.rakbow.kureakurusu.data.common.Constant.SLASH_WITH_SPACE;
 
 /**
  * @author Rakbow
  * @since 2023-11-14 20:47
  */
 @Service
-public class PersonService {
+@RequiredArgsConstructor
+public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
-
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
-    private final SqlSessionFactory sqlSessionFactory = SpringUtil.getBean("sqlSessionFactory");
-
-    @Resource
-    private PersonMapper mapper;
-    @Resource
-    private PersonRoleMapper roleMapper;
-    @Resource
-    private PersonRelationMapper relationMapper;
-
-    //region person
-    public Person getPerson(long id) {
-        return mapper.selectById(id);
-    }
-
-    public void addPerson(Person person) {
-        mapper.insert(person);
-    }
+    private final PersonMapper mapper;
+    private final PersonRoleMapper roleMapper;
+    private final PersonRelationMapper relationMapper;
 
     public void updatePerson(PersonUpdateDTO dto) {
 
@@ -76,15 +65,12 @@ public class PersonService {
                 .set(Person::getNameEn, dto.getNameEn())
                 .set(Person::getGender, dto.getGender().getValue())
                 .set(Person::getBirthDate, dto.getBirthDate())
-                .set(Person::getAliases, JSON.toJSONString(dto.getAliases()))
+                .set(Person::getAliases, CommonUtil.getListStr(dto.getAliases()))
                 .set(Person::getRemark, dto.getRemark())
-                .set(Person::getEditedTime, DateHelper.NOW_TIMESTAMP);
+                .set(Person::getAddedTime, dto.getAddedTime())
+                .set(Person::getEditedTime, DateHelper.now());
 
         mapper.update(null, wrapper);
-    }
-
-    public void deletePerson(Person person) {
-        mapper.deleteById(person);
     }
 
     public SearchResult getPersons(QueryParams param) {
@@ -100,7 +86,7 @@ public class PersonService {
                 .like(!StringUtils.isBlank(nameZh), Person::getNameZh, nameZh)
                 .like(!StringUtils.isBlank(nameEn), Person::getNameEn, nameEn);
 
-        List<Integer> gender = param.getArray("gender", Integer.class);
+        List<Integer> gender = param.getArray("gender");
         if (gender != null && !gender.isEmpty()) {
             wrapper.in(Person::getGender, gender);
         }
@@ -247,7 +233,7 @@ public class PersonService {
             if(pair.getAction() == DataActionType.REAL_DELETE.getValue())
                 deleteRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
         });
-
+        SqlSessionFactory sqlSessionFactory = SpringUtil.getBean("sqlSessionFactory");
         //批量删除和批量新增
         MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
         MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);

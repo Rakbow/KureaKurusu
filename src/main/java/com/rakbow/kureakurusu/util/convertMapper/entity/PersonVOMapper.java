@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
+import com.rakbow.kureakurusu.data.dto.person.PersonAddDTO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
@@ -21,6 +22,11 @@ import java.util.List;
 public interface PersonVOMapper extends CommonVOMapper {
 
     PersonVOMapper INSTANCES = Mappers.getMapper(PersonVOMapper.class);
+
+    @Mapping(source = "aliases", target = "aliases", qualifiedByName = "list2Str")
+    @Mapping(source = "gender", target = "gender", qualifiedByName = "getGender")
+    @Named("build")
+    Person build(PersonAddDTO dto);
 
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")

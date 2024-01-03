@@ -26,7 +26,6 @@ public class Person {
     private String nameEn; //英文名
     private String aliases; //别名 json数组
     private String cover; //头像url
-    @TableField(typeHandler = EnumTypeHandler.class)
     private Gender gender; //性别 0-未知 1-男 2-女
     private String birthDate; //生日
     private String detail; //简介
@@ -43,17 +42,17 @@ public class Person {
         name = "";
         nameZh = "";
         nameEn = "";
-        aliases = "";
+        aliases = "[]";
         cover = "";
         gender = Gender.UNKNOWN;
         birthDate = "";
         detail = "";
-        links = "";
-        images = "";
+        links = "[]";
+        images = "[]";
         remark = "";
-        info = "";
-        addedTime = DateHelper.NOW_TIMESTAMP;
-        editedTime = DateHelper.NOW_TIMESTAMP;
+        info = "{}";
+        addedTime = DateHelper.now();
+        editedTime = DateHelper.now();
         status = 1;
     }
 
