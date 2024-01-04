@@ -50,7 +50,7 @@ import static com.rakbow.kureakurusu.data.common.Constant.SLASH_WITH_SPACE;
 @RequiredArgsConstructor
 public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
-    private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
+    private static final Logger log = LoggerFactory.getLogger(PersonService.class);
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
     private final PersonMapper mapper;
     private final PersonRoleMapper roleMapper;
@@ -75,10 +75,10 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
     public SearchResult getPersons(QueryParams param) {
 
-        String name = param.getString("name");
-        String nameZh = param.getString("nameZh");
-        String nameEn = param.getString("nameEn");
-        String aliases = param.getString("aliases");
+        String name = param.getStr("name");
+        String nameZh = param.getStr("nameZh");
+        String nameEn = param.getStr("nameEn");
+        String aliases = param.getStr("aliases");
 
         LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
                 .apply(!StringUtils.isBlank(aliases), "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", aliases)
@@ -93,11 +93,11 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         if (!StringUtils.isBlank(param.sortField)) {
             switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getNameEn);
-                case "birthDate" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getBirthDate);
-                case "gender" -> wrapper.orderBy(true, param.sortOrder == 1, Person::getGender);
+                case "name" -> wrapper.orderBy(true, param.asc(), Person::getName);
+                case "nameZh" -> wrapper.orderBy(true, param.asc(), Person::getNameZh);
+                case "nameEn" -> wrapper.orderBy(true, param.asc(), Person::getNameEn);
+                case "birthDate" -> wrapper.orderBy(true, param.asc(), Person::getBirthDate);
+                case "gender" -> wrapper.orderBy(true, param.asc(), Person::getGender);
             }
         }
 
@@ -143,9 +143,9 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     }
 
     public SearchResult getRoles(QueryParams param) {
-        String name = param.getString("name");
-        String nameZh = param.getString("nameZh");
-        String nameEn = param.getString("nameEn");
+        String name = param.getStr("name");
+        String nameZh = param.getStr("nameZh");
+        String nameEn = param.getStr("nameEn");
 
         LambdaQueryWrapper<PersonRole> wrapper = new LambdaQueryWrapper<PersonRole>()
                 .like(!StringUtils.isBlank(name), PersonRole::getName, name)
@@ -153,9 +153,9 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
                 .like(!StringUtils.isBlank(nameEn), PersonRole::getNameEn, nameEn);
         if (!StringUtils.isBlank(param.sortField)) {
             switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, PersonRole::getNameEn);
+                case "name" -> wrapper.orderBy(true, param.asc(), PersonRole::getName);
+                case "nameZh" -> wrapper.orderBy(true, param.asc(), PersonRole::getNameZh);
+                case "nameEn" -> wrapper.orderBy(true, param.asc(), PersonRole::getNameEn);
             }
         } else {
             wrapper.orderByDesc(PersonRole::getId);

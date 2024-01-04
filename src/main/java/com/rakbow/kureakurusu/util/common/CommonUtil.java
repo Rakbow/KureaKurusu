@@ -429,4 +429,14 @@ public class CommonUtil {
                 .collect(Collectors.joining(", ", "[", "]"));
     }
 
+    /*
+    * 将字符串首字母转为小写
+    * */
+    public static String capitalizeFirstLetter(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        return Character.toLowerCase(input.charAt(0)) + input.substring(1);
+    }
+
 }

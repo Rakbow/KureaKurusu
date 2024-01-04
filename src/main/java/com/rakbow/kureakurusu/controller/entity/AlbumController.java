@@ -44,7 +44,7 @@ import java.util.List;
 public class AlbumController {
 
     //region ------inject------
-    private static final Logger logger = LoggerFactory.getLogger(AlbumController.class);
+    private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
     private final AlbumService service;
     private final MusicService musicService;
     private final EntityUtil entityUtil;

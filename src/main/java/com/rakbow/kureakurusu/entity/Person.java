@@ -1,12 +1,9 @@
 package com.rakbow.kureakurusu.entity;
 
-import com.alibaba.fastjson2.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
-import org.apache.ibatis.type.EnumTypeHandler;
 
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;

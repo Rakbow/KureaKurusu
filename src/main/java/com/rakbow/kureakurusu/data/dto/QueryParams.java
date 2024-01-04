@@ -29,6 +29,10 @@ public class QueryParams {
         filters = new LinkedHashMap<>();
     }
 
+    public boolean asc() {
+        return this.sortOrder == 1;
+    }
+
     public QueryParams(ListQry qty) {
         size = qty.getRows();
         page = qty.getFirst()/size + 1;
@@ -37,14 +41,14 @@ public class QueryParams {
         filters = qty.getFilters();
     }
 
-    public String getString(String key) {
+    public String getStr(String key) {
         Object value = this.filters.get(key).get(VALUE_KEY);
         if(value == null)
             return EMPTY;
         return value.toString();
     }
 
-    public Boolean getBoolean(String key) {
+    public Boolean getBool(String key) {
         Object value = this.filters.get(key).get(VALUE_KEY);
         if(value == null)
             return null;
