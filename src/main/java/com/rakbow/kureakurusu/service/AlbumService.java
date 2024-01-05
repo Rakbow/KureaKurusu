@@ -20,13 +20,14 @@ import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOBeta;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
-import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.DataFinder;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.AlbumUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -185,7 +186,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                         music.setAudioLength(_time);
                     }
 
-                    musicService.addMusic(music);
+                    musicService.save(music);
                     trackList.add(music.getId());
                 } else {
                     //若musicId不为0则代表之前已经添加进music表中，需要进一步更新

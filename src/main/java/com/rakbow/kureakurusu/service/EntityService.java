@@ -432,11 +432,11 @@ public class EntityService {
 //            }
 //        }
        if(entityType == Entity.MUSIC.getValue()) {
-           List<MusicAlbumView> musics = musicMapper.simpleSearch(keyword, limit, offset);
-           if(!musics.isEmpty()) {
-               res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));
-               res.setTotal(musicMapper.simpleSearchCount(keyword));
-           }
+           // List<MusicAlbumView> musics = musicMapper.simpleSearch(keyword, limit, offset);
+           // if(!musics.isEmpty()) {
+           //     res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));
+           //     res.setTotal(musicMapper.simpleSearchCount(keyword));
+           // }
        }
         return res;
     }

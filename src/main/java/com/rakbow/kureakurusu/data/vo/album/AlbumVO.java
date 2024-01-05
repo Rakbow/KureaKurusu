@@ -49,4 +49,7 @@ public class AlbumVO {
     private JSONArray editDiscList;
     private JSONObject trackInfo;
 
+    private String addedTime;
+    private String editedTime;
+
 }

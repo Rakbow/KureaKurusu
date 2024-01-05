@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,5 +24,9 @@ public class PersonAddDTO extends DTO {
     private String birthDate;
     private int gender;
     private String remark;
+
+    public PersonAddDTO() {
+        aliases = new ArrayList<>();
+    }
 
 }

@@ -17,35 +17,11 @@ import java.util.List;
 @Mapper
 public interface MusicMapper extends BaseMapper<Music> {
 
-    Music getMusic(int id, boolean status);
-
-    List<Music> getMusics(List<Integer> ids);
-
-    List<Music> getAll();
-
-    List<Music> getMusicsByAlbumId(long albumId);
-
-    List<Music> getMusicsByAlbumIds(List<Long> ids);
-
-    int getMusicRows();
-
-    int addMusic(Music music);
-
-    void updateMusic(int id, Music music);
-
-    void deleteMusicById(int id);
-
-    void deleteMusicByAlbumId(int albumId);
-
-    void updateMusicArtists(int id, String artists, Timestamp editedTime);
-
-    void updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
-
-    void updateMusicFiles(int id, List<File> files, Timestamp editedTime);
+    // void updateMusicFiles(int id, List<File> files, Timestamp editedTime);
 
     //简单搜索
-    List<MusicAlbumView> simpleSearch(String keyWorld, int limit, int offset);
+    // List<MusicAlbumView> simpleSearch(String keyWorld, int limit, int offset);
 
-    int simpleSearchCount(String keyWorld);
+    // int simpleSearchCount(String keyWorld);
 
 }

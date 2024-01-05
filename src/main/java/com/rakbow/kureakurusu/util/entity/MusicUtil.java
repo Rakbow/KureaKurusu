@@ -149,8 +149,8 @@ public class MusicUtil {
      * @author rakbow
      * @param musics 音乐
      * */
-    public static List<Integer> getAlbumIds(List<Music> musics) {
-        Set<Integer> tmpIds = new HashSet<>();
+    public static List<Long> getAlbumIds(List<Music> musics) {
+        Set<Long> tmpIds = new HashSet<>();
 
         musics.forEach(music -> tmpIds.add(music.getAlbumId()));
 

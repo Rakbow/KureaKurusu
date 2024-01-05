@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.person;
 
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import lombok.Data;
 
 /**
@@ -15,6 +16,14 @@ public class PersonnelPair {
     private Attribute<Long> role;
     private Attribute<Long> person;
     private int action;
+
+    public PersonnelPair() {
+        id = 0L;
+        main = false;
+        role = new Attribute<>();
+        person = new Attribute<>();
+        action = DataActionType.NO_ACTION.getValue();
+    }
 
     public int isMain() {
         return main ? 1 : 0;

@@ -210,12 +210,12 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
                 PersonnelPair pair = new PersonnelPair();
                 pair.setId(r.getId());
-                pair.setMain(r.isMain());
+                pair.setMain(r.mainFlag());
                 pair.setRole(role);
                 pair.setPerson(new Attribute<>(person.getName() + SLASH_WITH_SPACE + person.getNameZh(), person.getId()));
                 res.addEditPersonnel(pair);
 
-                Attribute<Long> p = new Attribute<>(person.getNameZh(), person.getId());
+                Attribute<Long> p = new Attribute<>(person.getName(), person.getId());
                 personnel.getPersons().add(p);
             }
             res.addPersonnel(personnel);
@@ -239,8 +239,10 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
         MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);
         MybatisBatch<PersonRelation> batchDelete = new MybatisBatch<>(sqlSessionFactory, deleteRelationSet);
-        batchInsert.execute(method.insert());
-        batchDelete.execute(method.deleteById());
+        if(!addRelationSet.isEmpty())
+            batchInsert.execute(method.insert());
+        if(!deleteRelationSet.isEmpty())
+            batchDelete.execute(method.deleteById());
 
     }
 

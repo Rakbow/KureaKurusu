@@ -65,6 +65,8 @@ public interface AlbumVOMapper extends CommonVOMapper {
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "mediaFormat", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getMediaFormat(album.getMediaFormat()))")
+    @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
+    @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "trackInfo", ignore = true)
     @Mapping(target = "editDiscList", ignore = true)
     @Mapping(target = "editCompanies", ignore = true)

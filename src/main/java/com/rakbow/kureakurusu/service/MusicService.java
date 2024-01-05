@@ -1,15 +1,18 @@
 package com.rakbow.kureakurusu.service;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.MusicMapper;
 import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
 import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.data.vo.music.MusicVOAlpha;
+import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.entity.User;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -19,13 +22,13 @@ import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MusicVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuBaseUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,60 +38,19 @@ import java.util.Objects;
  * @author Rakbow
  * @since 2022-11-06 2:04 music业务层
  */
+@RequiredArgsConstructor
 @Service
-public class MusicService {
+public class MusicService extends ServiceImpl<MusicMapper, Music> {
 
     //region ------引入实例------
-    @Resource
-    private MusicMapper musicMapper;
-    @Resource
-    private QiniuBaseUtil qiniuBaseUtil;
-    @Resource
-    private QiniuFileUtil qiniuFileUtil;
-    @Resource
-    private VisitUtil visitUtil;
-    
-
+    private final MusicMapper mapper;
+    private final QiniuBaseUtil qiniuBaseUtil;
+    private final QiniuFileUtil qiniuFileUtil;
+    private final VisitUtil visitUtil;
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
     //endregion
 
     //region -----曾删改查------
-
-    /**
-     * 根据音乐id获取音乐
-     * @author rakbow
-     * @param id 音乐id
-     * @return music
-     * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Music getMusic(int id) {
-        return musicMapper.getMusic(id, true);
-    }
-
-    /**
-     * 根据Id获取Music,需要判断权限
-     *
-     * @param id id
-     * @return Music
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Music getMusicWithAuth(int id) {
-        if(AuthorityInterceptor.isSenior()) {
-            return musicMapper.getMusic(id, true);
-        }
-        return musicMapper.getMusic(id, false);
-    }
-
-    /**
-     * 获取所有音乐数据
-     * @author rakbow
-     * @return list
-     * */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Music> getAll() {
-        return musicMapper.getAll();
-    }
 
     /**
      * 根据专辑id获取该专辑所有音乐
@@ -98,27 +60,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<Music> getMusicsByAlbumId(long albumId) {
-        return musicMapper.getMusicsByAlbumId(albumId);
-    }
-
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public int getMusicRows() {
-        return musicMapper.getMusicRows();
-    }
-
-    /**
-     * 新增music
-     * @param music music
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addMusic(Music music) throws Exception {
-        try {
-            int id = musicMapper.addMusic(music);
-
-        }catch (Exception ex) {
-            throw new Exception(ex);
-        }
+        return mapper.selectList(new LambdaQueryWrapper<Music>().eq(Music::getAlbumId, albumId));
     }
 
     /**
@@ -154,7 +96,7 @@ public class MusicService {
                 music.setAudioLength(track.getString("audioLength"));
                 music.setAddedTime(DateHelper.stringToTimestamp(albumJson.getString("addedTime")));
                 music.setEditedTime(DateHelper.stringToTimestamp(albumJson.getString("editedTime")));
-                addMusic(music);
+                save(music);
             }
         }
 
@@ -167,7 +109,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusic(int id, Music music) throws Exception {
         try {
-            musicMapper.updateMusic(id, music);
+            mapper.updateById(music);
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -184,7 +126,7 @@ public class MusicService {
         try {
             //删除对应music的音频文件
             deleteMusicAllFiles(music);
-            musicMapper.deleteMusicById(music.getId());
+            mapper.deleteById(music.getId());
             visitUtil.deleteVisit(Entity.MUSIC.getValue(), music.getId());
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -203,7 +145,7 @@ public class MusicService {
             //删除对应music的音频文件
             musics.forEach(this::deleteMusicAllFiles);
             musics.forEach(music -> visitUtil.deleteVisit(Entity.MUSIC.getValue(), music.getId()));
-            musicMapper.deleteMusicByAlbumId(albumId);
+            mapper.delete(new LambdaQueryWrapper<Music>().eq(Music::getAlbumId, albumId));
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -217,7 +159,7 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteMusicsByAlbumIds(List<Long> ids) throws Exception {
         try {
-            List<Music> musics = musicMapper.getMusicsByAlbumIds(ids);
+            List<Music> musics = mapper.selectList(new LambdaQueryWrapper<Music>().in(Music::getAlbumId, ids));
 
             if(musics.isEmpty()) {
                 return;
@@ -229,7 +171,7 @@ public class MusicService {
                 //删除浏览量数据
                 visitUtil.deleteVisit(Entity.MUSIC.getValue(), music.getId());
                 //删除对应music
-                musicMapper.deleteMusicById(music.getId());
+                mapper.deleteById(music.getId());
             });
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -272,22 +214,23 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<MusicVOAlpha> getRelatedMusics(Music music, String coverUrl) {
 
-        //获取同属一张专辑的音频
-        List<Music> sameAlbumMusics = getMusicsByAlbumId(music.getAlbumId());
-
-        if (sameAlbumMusics.size() >= 5) {
-            sameAlbumMusics = sameAlbumMusics.subList(0, 5);
-        }
-
-        List<Music> tmpList = DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics);
-        for (int i = 0; i < tmpList.size(); i++) {
-            if (tmpList.get(i).getId() == music.getId()) {
-                tmpList.remove(tmpList.get(i));
-            }
-        }
-
-        //筛选出同一张碟片的音频，并按照序号排序
-        return musicVOMapper.music2VOAlpha(tmpList, coverUrl);
+        // //获取同属一张专辑的音频
+        // List<Music> sameAlbumMusics = getMusicsByAlbumId(music.getAlbumId());
+        //
+        // if (sameAlbumMusics.size() >= 5) {
+        //     sameAlbumMusics = sameAlbumMusics.subList(0, 5);
+        // }
+        //
+        // List<Music> tmpList = DataFinder.findMusicByDiscSerial(music.getDiscSerial(), sameAlbumMusics);
+        // for (int i = 0; i < tmpList.size(); i++) {
+        //     if (tmpList.get(i).getId() == music.getId()) {
+        //         tmpList.remove(tmpList.get(i));
+        //     }
+        // }
+        //
+        // //筛选出同一张碟片的音频，并按照序号排序
+        // return musicVOMapper.music2VOAlpha(tmpList, coverUrl);
+        return null;
     }
 
     //endregion
@@ -303,7 +246,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicArtists(int id, String artists) {
-        musicMapper.updateMusicArtists(id, artists, DateHelper.now());
+        // mapper.updateMusicArtists(id, artists, DateHelper.now());
         return I18nHelper.getMessage("entity.crud.personnel.update.success");
     }
 
@@ -315,7 +258,7 @@ public class MusicService {
      * */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateMusicLyricsText(int id, String lrcText) {
-        musicMapper.updateMusicLyricsText(id, lrcText, DateHelper.now());
+        // mapper.updateMusicLyricsText(id, lrcText, DateHelper.now());
         return I18nHelper.getMessage("music.crud.lyrics.update.success");
     }
 
@@ -331,7 +274,7 @@ public class MusicService {
     public void updateMusicFile(int id, MultipartFile[] files, List<File> fileInfos, User user) throws IOException {
 
         //原数据库里的文件信息
-        List<File> originalFiles = getMusic(id).getFiles();
+        List<File> originalFiles = mapper.selectById(id).getFiles();
 
         //最终保存到数据库的json信息
         List<File> addFiles = new ArrayList<>();
@@ -363,7 +306,7 @@ public class MusicService {
             }
         }
         originalFiles.addAll(addFiles);
-        musicMapper.updateMusicFiles(id, originalFiles, DateHelper.now());
+        // mapper.updateMusicFiles(id, originalFiles, DateHelper.now());
     }
 
     /**
@@ -376,11 +319,11 @@ public class MusicService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String deleteMusicFiles(int id, List<File> deleteFiles) throws Exception {
         //获取原始文件json数组
-        List<File> orgFiles = getMusic(id).getFiles();
+        List<File> orgFiles = mapper.selectById(id).getFiles();
 
         List<File> finalFileJson = qiniuFileUtil.deleteFile(orgFiles, deleteFiles);
 
-        musicMapper.updateMusicFiles(id, finalFileJson, DateHelper.now());
+        // mapper.updateMusicFiles(id, finalFileJson, DateHelper.now());
         return I18nHelper.getMessage("file.delete.success");
     }
 
@@ -410,7 +353,7 @@ public class MusicService {
         }
 
         //数据库中的文件信息
-        List<File> files = getMusic(id).getFiles();
+        List<File> files = mapper.selectById(id).getFiles();
         if(files.size() + fileList.size() > 2) {
             return false;
         }

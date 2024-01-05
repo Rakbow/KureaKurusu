@@ -2,9 +2,9 @@ package com.rakbow.kureakurusu.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.handler.FileHandler;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -24,10 +24,10 @@ public class Music {
     private String nameEn;// 曲名（英语）
     private String artists;// 创作人员名单 [{"pos":"","name":""}]
     private int audioType;// 音频类型 0-未分类 1-歌曲 2-歌曲（无伴奏） 3-原声 4-广播剧
-    private int albumId;// 所属专辑id
+    private long albumId;// 所属专辑id
     private int discSerial;// 所属碟片的顺序
     private String trackSerial;// 在碟片内的顺序
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = FileHandler.class)
     private List<File> files;//文件信息
     private String lrcText;// 歌词文本 markdown格式
     private String audioLength;// 音频长度
@@ -43,7 +43,7 @@ public class Music {
         this.nameEn = "";
         this.artists = "[]";
         this.audioType = 0;
-        this.albumId = 0;
+        this.albumId = 0L;
         this.discSerial = 1;
         this.trackSerial = "01";
         this.files = new ArrayList<>();

@@ -425,7 +425,7 @@ public class CommonUtil {
 
     public static String getListStr(List<String> list) {
         return list.stream()
-                .map(s -> "\"" + s + "\"")
+                .map(s -> "\"" + s.replace("\n", "") + "\"")
                 .collect(Collectors.joining(", ", "[", "]"));
     }
 

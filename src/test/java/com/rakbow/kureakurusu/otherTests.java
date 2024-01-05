@@ -35,9 +35,4 @@ public class otherTests {
         System.out.println(QiniuImageUtil.getImageKeyByFullUrl(url));
     }
 
-    @Test
-    public void tmpTest1() {
-        MusicUtil.getAlbumIds(musicMapper.getAll()).forEach(System.out::println);
-    }
-
 }

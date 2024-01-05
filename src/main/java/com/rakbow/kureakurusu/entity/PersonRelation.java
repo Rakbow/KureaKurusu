@@ -33,14 +33,15 @@ public class PersonRelation {
     }
 
     public PersonRelation(PersonnelPair pair, int entityType, long entityId) {
-        this.personId = pair.getPerson().getValue();
-        this.roleId = pair.getRole().getValue();
+        id = pair.getId();
+        this.personId = pair.getPerson().getValue() != null ? pair.getPerson().getValue() : 0;
+        this.roleId = pair.getRole().getValue() != null ? pair.getRole().getValue() : 0;
         this.entityType = entityType;
         this.entityId = entityId;
         this.main = pair.isMain();
     }
 
-    public boolean isMain() {
+    public boolean mainFlag() {
         return this.main == 1;
     }
 }

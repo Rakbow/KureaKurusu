@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.rakbow.kureakurusu.data.common.Constant.*;
+
 /**
  * @author Rakbow
  * @since 2023-05-19 18:56
@@ -236,7 +238,7 @@ public class GeneralService {
         //获取所有role数据
         List<PersonRole> allRoleSet = personRoleMapper.selectList(null);
         allRoleSet.forEach(role -> {
-            roleSet.add(new Attribute<>(role.getNameZh(), role.getId()));
+            roleSet.add(new Attribute<>(role.getNameZh() + SLASH + role.getNameEn(), role.getId()));
         });
         return roleSet;
     }
