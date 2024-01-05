@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.rakbow.kureakurusu.entity.EntityStatistic;
+import com.rakbow.kureakurusu.data.entity.EntityStatistic;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

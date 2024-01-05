@@ -4,7 +4,7 @@ import com.rakbow.kureakurusu.data.vo.game.GameVO;
 import com.rakbow.kureakurusu.data.vo.game.GameVOAlpha;
 import com.rakbow.kureakurusu.data.vo.game.GameVOBeta;
 import com.rakbow.kureakurusu.data.vo.game.GameVOGamma;
-import com.rakbow.kureakurusu.entity.Game;
+import com.rakbow.kureakurusu.data.entity.Game;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;

@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.rakbow.kureakurusu.entity.LoginTicket;
+import com.rakbow.kureakurusu.data.entity.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 /**

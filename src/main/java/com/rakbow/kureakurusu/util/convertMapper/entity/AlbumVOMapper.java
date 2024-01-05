@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOBeta;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOGamma;
-import com.rakbow.kureakurusu.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Album;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

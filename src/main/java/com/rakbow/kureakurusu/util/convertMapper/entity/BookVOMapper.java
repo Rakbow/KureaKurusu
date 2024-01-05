@@ -10,7 +10,7 @@ import com.rakbow.kureakurusu.data.vo.book.BookVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVOAlpha;
 import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
 import com.rakbow.kureakurusu.data.vo.book.BookVOGamma;
-import com.rakbow.kureakurusu.entity.Book;
+import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;

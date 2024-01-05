@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.entity.common;
+package com.rakbow.kureakurusu.data.entity.common;
 
 import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;

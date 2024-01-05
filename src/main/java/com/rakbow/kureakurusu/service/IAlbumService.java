@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.rakbow.kureakurusu.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Album;
 
 /**
  * @author Rakbow

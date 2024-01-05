@@ -7,7 +7,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVOAlpha;
-import com.rakbow.kureakurusu.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.EntryService;
 import com.rakbow.kureakurusu.util.I18nHelper;

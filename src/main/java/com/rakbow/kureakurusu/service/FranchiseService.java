@@ -7,7 +7,7 @@ import com.rakbow.kureakurusu.dao.FranchiseMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.entity.MetaInfo;
-import com.rakbow.kureakurusu.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import org.apache.commons.lang3.StringUtils;

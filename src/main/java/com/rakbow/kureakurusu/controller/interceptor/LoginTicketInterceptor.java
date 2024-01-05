@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller.interceptor;
 
-import com.rakbow.kureakurusu.entity.LoginTicket;
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.LoginTicket;
+import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
 import org.jetbrains.annotations.NotNull;

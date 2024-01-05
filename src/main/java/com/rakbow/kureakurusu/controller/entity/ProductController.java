@@ -2,12 +2,11 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
-import com.rakbow.kureakurusu.entity.Product;
+import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;

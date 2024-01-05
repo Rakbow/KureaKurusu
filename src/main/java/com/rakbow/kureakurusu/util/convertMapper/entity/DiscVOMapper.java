@@ -4,7 +4,7 @@ import com.rakbow.kureakurusu.data.vo.disc.DiscVO;
 import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
 import com.rakbow.kureakurusu.data.vo.disc.DiscVOBeta;
 import com.rakbow.kureakurusu.data.vo.disc.DiscVOGamma;
-import com.rakbow.kureakurusu.entity.Disc;
+import com.rakbow.kureakurusu.data.entity.Disc;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;

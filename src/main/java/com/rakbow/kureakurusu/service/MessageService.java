@@ -1,9 +1,8 @@
 package com.rakbow.kureakurusu.service;
 
 import com.rakbow.kureakurusu.dao.MessageMapper;
-import com.rakbow.kureakurusu.entity.Message;
+import com.rakbow.kureakurusu.data.entity.Message;
 import com.rakbow.kureakurusu.util.common.SensitiveFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 

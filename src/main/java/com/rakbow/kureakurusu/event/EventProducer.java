@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.event;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.entity.Event;
+import com.rakbow.kureakurusu.data.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 

@@ -4,13 +4,12 @@ import com.rakbow.kureakurusu.data.dto.person.PersonAddDTO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
-import com.rakbow.kureakurusu.entity.Person;
+import com.rakbow.kureakurusu.data.entity.Person;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import org.springframework.context.MessageSource;
 
 import java.util.List;
 

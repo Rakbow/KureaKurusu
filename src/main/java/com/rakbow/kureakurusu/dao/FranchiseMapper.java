@@ -1,11 +1,9 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rakbow.kureakurusu.entity.Book;
-import com.rakbow.kureakurusu.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.Franchise;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**

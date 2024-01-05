@@ -1,14 +1,8 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rakbow.kureakurusu.data.system.File;
-import com.rakbow.kureakurusu.entity.Book;
-import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
-import com.rakbow.kureakurusu.entity.Music;
+import com.rakbow.kureakurusu.data.entity.Music;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * @author Rakbow

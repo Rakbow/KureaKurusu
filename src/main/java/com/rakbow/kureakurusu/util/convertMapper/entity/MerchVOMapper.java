@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.data.vo.merch.MerchVO;
 import com.rakbow.kureakurusu.data.vo.merch.MerchVOAlpha;
 import com.rakbow.kureakurusu.data.vo.merch.MerchVOBeta;
 import com.rakbow.kureakurusu.data.vo.merch.MerchVOGamma;
-import com.rakbow.kureakurusu.entity.Merch;
+import com.rakbow.kureakurusu.data.entity.Merch;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.SpringUtil;

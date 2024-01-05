@@ -2,10 +2,10 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.entity.Album;
-import com.rakbow.kureakurusu.entity.Music;
-import com.rakbow.kureakurusu.entity.Person;
-import com.rakbow.kureakurusu.entity.Product;
+import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Music;
+import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.Product;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;

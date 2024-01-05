@@ -9,7 +9,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.vo.book.BookVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
-import com.rakbow.kureakurusu.entity.Book;
+import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;

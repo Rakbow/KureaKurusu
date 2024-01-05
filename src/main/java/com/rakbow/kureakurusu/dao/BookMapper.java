@@ -1,8 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rakbow.kureakurusu.entity.Album;
-import com.rakbow.kureakurusu.entity.Book;
+import com.rakbow.kureakurusu.data.entity.Book;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Timestamp;

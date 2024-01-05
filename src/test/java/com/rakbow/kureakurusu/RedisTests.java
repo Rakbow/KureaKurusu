@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.common.Region;
-import com.rakbow.kureakurusu.entity.EntityStatistic;
+import com.rakbow.kureakurusu.data.entity.EntityStatistic;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.util.common.*;
 import org.junit.Test;

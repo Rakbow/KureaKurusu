@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.data.ApiResult;
-import com.rakbow.kureakurusu.entity.LoginTicket;
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.LoginTicket;
+import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;

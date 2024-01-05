@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVOAlpha;
-import com.rakbow.kureakurusu.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.service.ProductService;

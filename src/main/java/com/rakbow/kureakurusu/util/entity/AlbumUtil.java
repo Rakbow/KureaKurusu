@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
-import com.rakbow.kureakurusu.entity.Music;
+import com.rakbow.kureakurusu.data.entity.Music;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import org.apache.commons.lang3.StringUtils;

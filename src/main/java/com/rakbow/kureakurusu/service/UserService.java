@@ -1,17 +1,15 @@
 package com.rakbow.kureakurusu.service;
 
-import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
 import com.rakbow.kureakurusu.data.system.LoginResult;
 import com.rakbow.kureakurusu.data.system.LoginUser;
-import com.rakbow.kureakurusu.entity.LoginTicket;
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.LoginTicket;
+import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
 import com.rakbow.kureakurusu.data.ActionResult;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.MailClient;

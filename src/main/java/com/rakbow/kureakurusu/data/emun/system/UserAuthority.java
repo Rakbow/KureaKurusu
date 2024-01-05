@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.system;
 
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

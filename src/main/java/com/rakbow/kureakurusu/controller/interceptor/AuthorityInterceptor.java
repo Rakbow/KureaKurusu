@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.controller.interceptor;
 
 import com.rakbow.kureakurusu.annotation.AdminAuthorityRequired;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

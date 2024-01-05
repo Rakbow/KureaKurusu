@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.entity.common;
+package com.rakbow.kureakurusu.data.entity.common;
 
 import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -10,16 +10,16 @@ import java.util.ArrayList;
 
 /**
  * @author Rakbow
- * @since 2023-05-02 16:39
+ * @since 2023-05-02 16:36
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Role extends MetaEntry {
+public class Merchandise extends MetaEntry {
 
-    public Role() {
+    public Merchandise() {
         this.setId(0);
-        this.setCategory(EntryCategory.ROLE.getAttribute());
+        this.setCategory(EntryCategory.MERCH_TYPE.getAttribute());
         this.setName("");
         this.setNameEn("");
         this.setNameZh("");

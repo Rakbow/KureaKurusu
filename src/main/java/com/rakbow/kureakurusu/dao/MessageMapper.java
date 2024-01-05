@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.rakbow.kureakurusu.entity.Message;
+import com.rakbow.kureakurusu.data.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

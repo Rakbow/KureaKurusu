@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.event;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.entity.Event;
-import com.rakbow.kureakurusu.entity.Message;
+import com.rakbow.kureakurusu.data.entity.Event;
+import com.rakbow.kureakurusu.data.entity.Message;
 import com.rakbow.kureakurusu.service.MessageService;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

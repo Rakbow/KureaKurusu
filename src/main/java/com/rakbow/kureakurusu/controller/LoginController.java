@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.system.LoginResult;
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.util.I18nHelper;

@@ -9,7 +9,7 @@ import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOBeta;
-import com.rakbow.kureakurusu.entity.Product;
+import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.entry.EntryUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;

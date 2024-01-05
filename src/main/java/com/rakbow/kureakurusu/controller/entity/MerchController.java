@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.vo.merch.MerchVOAlpha;
-import com.rakbow.kureakurusu.entity.Merch;
+import com.rakbow.kureakurusu.data.entity.Merch;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.util.common.DateHelper;

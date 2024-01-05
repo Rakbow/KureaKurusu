@@ -1,7 +1,7 @@
-package com.rakbow.kureakurusu.entity;
+package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

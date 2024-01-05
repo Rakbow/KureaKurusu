@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.entity.view;
+package com.rakbow.kureakurusu.data.entity.view;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

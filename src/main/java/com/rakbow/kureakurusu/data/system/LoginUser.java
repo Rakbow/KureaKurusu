@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.system;
 
-import com.rakbow.kureakurusu.entity.User;
+import com.rakbow.kureakurusu.data.entity.User;
 import lombok.Data;
 
 /**

@@ -2,8 +2,6 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.entity.Franchise;
-import lombok.Data;
 
 import java.util.List;
 

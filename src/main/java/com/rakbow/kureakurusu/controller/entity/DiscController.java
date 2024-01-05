@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
-import com.rakbow.kureakurusu.entity.Disc;
+import com.rakbow.kureakurusu.data.entity.Disc;
 import com.rakbow.kureakurusu.service.DiscService;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.UserService;

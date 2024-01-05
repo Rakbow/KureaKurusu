@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.entity;
+package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;

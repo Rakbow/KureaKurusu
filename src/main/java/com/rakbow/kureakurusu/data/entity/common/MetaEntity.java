@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.entity.common;
+package com.rakbow.kureakurusu.data.entity.common;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;

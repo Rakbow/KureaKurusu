@@ -4,7 +4,7 @@ import com.rakbow.kureakurusu.data.entity.MetaInfo;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.kureakurusu.data.vo.franchise.ParentFranchiseVO;
-import com.rakbow.kureakurusu.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.entity.FranchiseUtil;
 import org.apache.commons.lang3.StringUtils;
