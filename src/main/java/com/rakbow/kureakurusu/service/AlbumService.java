@@ -119,10 +119,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         if (AuthorityInterceptor.isJunior()) {
             //可供编辑的editDiscList
             VO.setEditDiscList(AlbumUtil.getEditDiscList(album.getTrackInfo(), musics));
-            //可供编辑的editCompanies
-            VO.setEditCompanies(JSON.parseArray(album.getCompanies()));
-            //可供编辑的editPersonnel
-            VO.setEditArtists(JSON.parseArray(album.getArtists()));
         }
         //音轨信息
         VO.setTrackInfo(AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics));

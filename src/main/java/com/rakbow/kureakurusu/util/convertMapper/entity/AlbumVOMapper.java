@@ -60,8 +60,6 @@ public interface AlbumVOMapper extends CommonVOMapper {
      */
     @Mapping(target = "releaseDate", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getDate(album.getReleaseDate()))")
     @Mapping(target = "hasBonus", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getBool(album.getHasBonus()))")
-    @Mapping(target = "companies", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getCompanies(album.getCompanies()))")
-    @Mapping(target = "artists", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getPersonnel(album.getArtists()))")
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "mediaFormat", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getMediaFormat(album.getMediaFormat()))")
@@ -69,8 +67,6 @@ public interface AlbumVOMapper extends CommonVOMapper {
     @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "trackInfo", ignore = true)
     @Mapping(target = "editDiscList", ignore = true)
-    @Mapping(target = "editCompanies", ignore = true)
-    @Mapping(target = "editArtists", ignore = true)
     AlbumVO toVO(Album album);
 
     /**

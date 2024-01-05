@@ -29,14 +29,6 @@ public class AlbumVO {
     private boolean hasBonus;//是否包含特典内容
     private String remark;//备注
 
-    //厂商信息
-    private JSONArray companies;
-    //可供编辑的企业信息
-    private JSONArray editCompanies;
-
-    private JSONArray artists;
-    private JSONArray editArtists;
-
     //规格信息
     private List<Attribute<Integer>> publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private List<Attribute<Integer>> albumFormat;//专辑分类 在mysql中以数组字符串形式存储

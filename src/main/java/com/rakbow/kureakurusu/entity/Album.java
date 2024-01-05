@@ -43,12 +43,10 @@ public class Album extends MetaEntity {
     private String mediaFormat;//媒体类型
     private int price;//发行价格（含税）
     private String currencyUnit;
-    private String companies;//相关企业
     private int hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
     private String franchises;//所属系列
     private String products;//所属产品id 在mysql中以数组字符串形式存储
-    private String artists;//staff
     private String trackInfo;//曲目列表（JSON字符串）
 
     public Album() {
@@ -65,14 +63,12 @@ public class Album extends MetaEntity {
         this.mediaFormat = "[]";
         this.price = 0;
         this.currencyUnit = "";
-        this.companies = "[]";
         this.hasBonus = 0;
         this.bonus = "";
         this.franchises = "[]";
         this.products = "[]";
         this.setDescription("");
         this.setRemark("");
-        this.artists = "[]";
         this.setImages(new ArrayList<>());
         this.trackInfo = "{}";
         this.setAddedTime(DateHelper.now());
