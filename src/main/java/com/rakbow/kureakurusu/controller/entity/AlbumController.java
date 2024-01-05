@@ -1,37 +1,33 @@
 package com.rakbow.kureakurusu.controller.entity;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.dto.ListQry;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.AlbumAddDTO;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDeleteCmd;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
 import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.MusicUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,10 +55,10 @@ public class AlbumController {
     public ApiResult getAlbumDetailData(@RequestBody AlbumDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            Album album = service.getAlbumWithAuth(qry.getId());
+            Album album = service.getAlbum(qry.getId());
 
             if (album == null)
-                return res.fail(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getNameZh()));
+                return res.fail(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
 
             List<Music> musics = musicService.getMusicsByAlbumId(qry.getId());
 
@@ -76,11 +72,11 @@ public class AlbumController {
                 detailResult.put("audioInfos", MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(qry.getId()), coverUrl));
             }
 
-            detailResult.put("options", entityUtil.getDetailOptions(Entity.ALBUM.getId()));
-            detailResult.put("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getId()));
-            detailResult.put("pageInfo", generalService.getPageTraffic(Entity.ALBUM.getId(), qry.getId()));
-            detailResult.put("itemImageInfo", CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false));
-            detailResult.put("personnel", personService.getPersonnel(Entity.ALBUM.getId(), qry.getId()));
+            detailResult.put("options", entityUtil.getDetailOptions(Entity.ALBUM.getValue()));
+            detailResult.put("detailInfo", entityUtil.getItemDetailInfo(album, Entity.ALBUM.getValue()));
+            detailResult.put("pageInfo", generalService.getPageTraffic(Entity.ALBUM.getValue(), qry.getId()));
+            detailResult.put("itemImageInfo", CommonImageUtil.segmentImages(JSON.toJSONString(album.getImages()), 185, Entity.ALBUM, false));
+            detailResult.put("personnel", personService.getPersonnel(Entity.ALBUM.getValue(), qry.getId()));
 
             res.data = detailResult;
         }catch (Exception e) {
@@ -92,26 +88,12 @@ public class AlbumController {
     //根据搜索条件获取专辑
     @SuppressWarnings("unchecked")
     @PostMapping("list")
-    public ApiResult getAlbums(@RequestBody JSONObject param) {
+    public ApiResult getAlbums(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try{
-            // String pageLabel = param.getString("pageLabel");
-            //
-            // List<AlbumVOAlpha> albums = new ArrayList<>();
-            //
-            // SearchResult searchResult = service.getAlbums(new QueryParams(param));
-            //
-            // if (StringUtils.equals(pageLabel, "list")) {
-            //     albums = VOMapper.toVOAlpha((List<Album>) searchResult.data);
-            // }
-            // if (StringUtils.equals(pageLabel, "index")) {
-            //     albums = VOMapper.toVOAlpha((List<Album>) searchResult.data);
-            // }
-            //
-            // JSONObject result = new JSONObject();
-            // result.put("data", albums);
-            // result.put("total", searchResult.total);
-            // res.data = result;
+            SearchResult<Album> result = service.getAlbums(new QueryParams(qry));
+             res.data = VOMapper.toVOAlpha(result.data);
+             res.total = result.total;
         }catch (Exception e) {
         res.fail(e);
     }
@@ -130,7 +112,7 @@ public class AlbumController {
             Album album = VOMapper.build(dto);
             //save
             service.save(album);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
         }
@@ -149,7 +131,7 @@ public class AlbumController {
             Album album = VOMapper.build(dto);
             //save
             service.updateAlbum(album);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
         }
@@ -165,7 +147,7 @@ public class AlbumController {
             service.deleteAlbums(cmd.getIds());
             //delete music
             musicService.deleteMusicsByAlbumIds(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
         }
@@ -177,9 +159,8 @@ public class AlbumController {
     //region ------advanced crud------
 
     //更新专辑音轨信息TrackInfo
-    @RequestMapping(path = "/update-trackInfo", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateAlbumTrackInfo(@RequestBody JSONObject json) {
+    @PostMapping("update-trackInfo")
+    public ApiResult updateAlbumTrackInfo(@RequestBody JSONObject json) {
         ApiResult res = new ApiResult();
         try {
             int id = json.getIntValue("id");
@@ -187,19 +168,18 @@ public class AlbumController {
 
             service.updateAlbumTrackInfo(id, discList);
 
-            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName());
         } catch (Exception e) {
-            res.setErrorMessage(e);
+            res.fail(e);
         }
-        return res.toJson();
+        return res;
     }
 
-    @RequestMapping(value = "/get-related-albums", method = RequestMethod.POST)
-    @ResponseBody
-    public String getRelatedAlbums(@RequestBody JSONObject json) {
+    @PostMapping("get-related-albums")
+    public String getRelatedAlbums(@RequestBody AlbumDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            int id = json.getIntValue("id");
+            long id = qry.getId();
             // res.data = albumService.getRelatedAlbums(id);
 
         }catch (Exception e) {

@@ -1,15 +1,22 @@
 package com.rakbow.kureakurusu.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rakbow
  * @since 2022-11-05 22:18
  */
 @Data
+@TableName(value = "music", autoResultMap = true)
 public class Music {
 
     private Integer id;
@@ -20,7 +27,8 @@ public class Music {
     private int albumId;// 所属专辑id
     private int discSerial;// 所属碟片的顺序
     private String trackSerial;// 在碟片内的顺序
-    private String files;//文件信息
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<File> files;//文件信息
     private String lrcText;// 歌词文本 markdown格式
     private String audioLength;// 音频长度
     private String description;// 描述
@@ -38,7 +46,7 @@ public class Music {
         this.albumId = 0;
         this.discSerial = 1;
         this.trackSerial = "01";
-        this.files = "[]";
+        this.files = new ArrayList<>();
         this.lrcText = "";
         this.audioLength = "00:00";
         this.description = "";

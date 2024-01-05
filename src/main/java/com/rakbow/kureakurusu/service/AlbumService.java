@@ -5,12 +5,9 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
-import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.bo.AlbumDiscBO;
 import com.rakbow.kureakurusu.data.dto.AlbumDiscDTO;
@@ -51,6 +48,8 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     private final QiniuFileUtil qiniuFileUtil;
     private final VisitUtil visitUtil;
     private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
+
+    private final int ENTITY_ALBUM_VALUE =  Entity.ALBUM.getValue();
     //endregion
 
     //region ------crud------
@@ -60,29 +59,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
     /**
-     * 新增专辑
-     *
-     * @param album 新增的专辑
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void addAlbum(Album album) {
-        mapper.insert(album);
-    }
-
-    /**
-     * 根据Id获取专辑,泛用
-     *
-     * @param id 专辑id
-     * @return album
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Album getAlbum(int id) {
-        return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
-    }
-
-    /**
      * 根据Id获取Album,需要判断权限
      *
      * @param id id
@@ -90,7 +66,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public Album getAlbumWithAuth(long id) {
+    public Album getAlbum(long id) {
         if (AuthorityInterceptor.isSenior()) {
             return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
         }
@@ -110,10 +86,10 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
             List<Album> albums = mapper.selectBatchIds(ids);
             for (Album album : albums) {
                 //删除前先把服务器上对应图片全部删除
-                qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(album.getImages()));
+                qiniuFileUtil.deleteAllImage(album.getImages());
                 //删除专辑
                 mapper.deleteById(album.getId());
-                visitUtil.deleteVisit(Entity.ALBUM.getId(), album.getId());
+                visitUtil.deleteVisit(ENTITY_ALBUM_VALUE, album.getId());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -151,57 +127,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         VO.setTrackInfo(AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics));
 
         return VO;
-    }
-
-    /**
-     * 检测数据合法性
-     *
-     * @param albumJson 专辑json
-     * @return string类型错误消息，若为空则数据检测通过
-     * @author rakbow
-     */
-    public String checkAlbumJson(JSONObject albumJson) {
-        if (StringUtils.isBlank(albumJson.getString("name"))) {
-            return I18nHelper.getMessage("entity.crud.name.required_field");
-        }
-        if (StringUtils.isBlank(albumJson.getString("releaseDate"))) {
-            return I18nHelper.getMessage("entity.crud.release_date.required_field");
-        }
-        if (albumJson.getJSONArray("franchises").isEmpty()) {
-            return I18nHelper.getMessage("entity.crud.category.required_field");
-        }
-        if (albumJson.getJSONArray("products").isEmpty()) {
-            return I18nHelper.getMessage("entity.crud.product.required_field");
-        }
-        if (albumJson.getJSONArray("publishFormat").isEmpty()) {
-            return I18nHelper.getMessage("album.crud.publish_format.required_field");
-        }
-        if (albumJson.getJSONArray("albumFormat").isEmpty()) {
-            return I18nHelper.getMessage("album.crud.album_format.required_field");
-        }
-        if (albumJson.getJSONArray("mediaFormat").isEmpty()) {
-            return I18nHelper.getMessage("entity.crud.media_format.required_field");
-        }
-        return "";
-    }
-
-    /**
-     * 处理前端传送专辑数据
-     *
-     * @param json 专辑json
-     * @return 处理后的album json格式数据
-     * @author rakbow
-     */
-    public JSONObject handleAlbumJson(JSONObject json) {
-
-        json.put("releaseDate", json.getDate("releaseDate"));
-        json.put("franchises", "{\"ids\":" + json.getString("franchises") + "}");
-        json.put("products", "{\"ids\":" + json.getString("products") + "}");
-        json.put("publishFormat", "{\"ids\":" + json.getString("publishFormat") + "}");
-        json.put("albumFormat", "{\"ids\":" + json.getString("albumFormat") + "}");
-        json.put("mediaFormat", "{\"ids\":" + json.getString("mediaFormat") + "}");
-
-        return json;
     }
 
     //endregion

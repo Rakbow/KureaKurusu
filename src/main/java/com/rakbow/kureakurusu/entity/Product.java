@@ -1,11 +1,13 @@
 package com.rakbow.kureakurusu.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -15,6 +17,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@TableName(value = "product", autoResultMap = true)
 public class Product extends MetaEntity {
 
     private Integer id;//主键
@@ -37,7 +40,7 @@ public class Product extends MetaEntity {
         this.category = 0;
         this.organizations = "[]";
         this.staffs = "[]";
-        this.setImages("[]");
+        this.setImages(new ArrayList<>());
         this.setDescription("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());

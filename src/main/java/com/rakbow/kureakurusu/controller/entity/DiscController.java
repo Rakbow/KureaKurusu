@@ -144,7 +144,7 @@ public class DiscController {
                 //从数据库中删除专辑
                 discService.deleteDisc(disc);
             }
-            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.DISC.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.DISC.getName());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.dto.image.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
@@ -125,22 +126,13 @@ public class GeneralController {
     //更新图片，删除或更改信息
     @RequestMapping(path = "/update-images", method = RequestMethod.POST)
     @ResponseBody
-    public String updateItemImages(@RequestBody JSONObject json) {
+    public String updateItemImages(@RequestBody ImageUpdateCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            //获取图书id
-            int entityId = json.getInteger("entityId");
-            int action = json.getInteger("action");
-            String tableName = Entity.getTableName(json.getInteger("entityType"));
-
-            JSONArray images = json.getJSONArray("images");
-            for (int i = 0; i < images.size(); i++) {
-                images.getJSONObject(i).remove("thumbUrl");
-                images.getJSONObject(i).remove("thumbUrl50");
-            }
-
+            String tableName = Entity.getTableName(cmd.getEntityType());
+            List<Image> images = cmd.getImages();
             //更新图片信息
-            if (action == DataActionType.UPDATE.getValue()) {
+            if (cmd.update()) {
 
                 //检测是否存在多张封面
                 String errorMsg = CommonImageUtil.checkUpdateImages(images);
@@ -148,10 +140,10 @@ public class GeneralController {
                     throw new Exception(errorMsg);
                 }
 
-                res.message = service.updateItemImages(tableName, entityId, images.toJSONString());
+                res.message = service.updateItemImages(tableName, cmd.getEntityId(), images);
             }//删除图片
-            else if (action == DataActionType.REAL_DELETE.getValue()) {
-                res.message = service.deleteItemImages(tableName, entityId, images);
+            else if (cmd.delete()) {
+                res.message = service.deleteItemImages(tableName, cmd.getEntityId(), images);
             }else {
                 throw new Exception(I18nHelper.getMessage("entity.error.not_action"));
             }
@@ -171,7 +163,7 @@ public class GeneralController {
         ApiResult res = new ApiResult();
         try {
             service.refreshPersonRoleSet();
-            res.message = I18nHelper.getMessage("entity.curd.refresh.success", Entity.ENTRY.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.refresh.success", Entity.ENTRY.getName());
         } catch (Exception e) {
             res.setErrorMessage(e);
         }

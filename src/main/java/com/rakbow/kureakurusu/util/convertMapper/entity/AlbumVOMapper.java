@@ -29,7 +29,7 @@ public interface AlbumVOMapper extends CommonVOMapper {
 
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
     Entity ENTITY = Entity.ALBUM;
-    int entityTypeId = Entity.ALBUM.getId();
+    int entityTypeId = Entity.ALBUM.getValue();
 
     //region single convert interface
 

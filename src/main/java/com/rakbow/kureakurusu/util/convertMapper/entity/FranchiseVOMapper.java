@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
-import com.rakbow.kureakurusu.data.entity.franchise.MetaInfo;
+import com.rakbow.kureakurusu.data.entity.MetaInfo;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVOAlpha;
 import com.rakbow.kureakurusu.data.vo.franchise.ParentFranchiseVO;

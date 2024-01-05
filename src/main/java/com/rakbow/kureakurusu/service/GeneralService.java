@@ -158,8 +158,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Image> getItemImages(String tableName, int entityId) {
-        return JSON.parseArray(commonMapper.getItemImages(tableName, entityId)).toJavaList(Image.class);
+    public List<Image> getItemImages(String tableName, long entityId) {
+        return commonMapper.getItemImages(tableName, entityId);
     }
 
     /**
@@ -171,6 +171,7 @@ public class GeneralService {
      * @param newImageInfos         新增图片json数据
      * @author rakbow
      */
+    @SuppressWarnings("unchecked")
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public ActionResult addItemImages(String tableName, int entityId, MultipartFile[] images, List<Image> originalImagesJson,
                                       List<Image> newImageInfos) {
@@ -178,8 +179,7 @@ public class GeneralService {
         try{
             ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
             if(ar.state) {
-                JSONArray finalImageJson = JSON.parseArray(JSON.toJSONString(ar.data));
-                commonMapper.updateItemImages(tableName, entityId, finalImageJson.toJSONString(), DateHelper.now());
+                commonMapper.updateItemImages(tableName, entityId, (List<Image>) ar.data, DateHelper.now());
                 res.message = I18nHelper.getMessage("image.insert.success");
             }else {
                 throw new Exception(ar.message);
@@ -198,7 +198,7 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemImages(String tableName, int entityId, String images) {
+    public String updateItemImages(String tableName, long entityId, List<Image> images) {
         commonMapper.updateItemImages(tableName, entityId, images, DateHelper.now());
         return I18nHelper.getMessage("image.update.success");
     }
@@ -211,13 +211,13 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteItemImages(String tableName, int entityId, JSONArray deleteImages) throws Exception {
+    public String deleteItemImages(String tableName, long entityId, List<Image> deleteImages) throws Exception {
 
-        JSONArray images = JSON.parseArray(JSON.toJSONString(getItemImages(tableName, entityId)));
+        List<Image> images = getItemImages(tableName, entityId);
 
-        JSONArray finalImageJson = qiniuFileUtil.commonDeleteFiles(images, deleteImages);
+        List<Image> finalImageJson = qiniuFileUtil.deleteImage(images, deleteImages);
 
-        commonMapper.updateItemImages(tableName, entityId, finalImageJson.toString(), DateHelper.now());
+        commonMapper.updateItemImages(tableName, entityId, finalImageJson, DateHelper.now());
         return I18nHelper.getMessage("image.delete.success");
     }
 

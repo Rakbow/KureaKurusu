@@ -35,25 +35,25 @@ public class ProductUtil {
 //            categories.add(ProductCategory.PUBLICATION.getId());
 //            categories.add(ProductCategory.MISC.getId());
 //        }
-        if (entityType == Entity.ALBUM.getId()) {
+        if (entityType == Entity.ALBUM.getValue()) {
             categories.add(ProductCategory.GAME.getId());
             categories.add(ProductCategory.ANIMATION.getId());
             categories.add(ProductCategory.OVA_OAD.getId());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
             categories.add(ProductCategory.TV_SERIES.getId());
         }
-        if (entityType == Entity.BOOK.getId()) {
+        if (entityType == Entity.BOOK.getValue()) {
             categories.add(ProductCategory.NOVEL.getId());
             categories.add(ProductCategory.MANGA.getId());
             categories.add(ProductCategory.PUBLICATION.getId());
         }
-        if (entityType == Entity.DISC.getId()) {
+        if (entityType == Entity.DISC.getValue()) {
             categories.add(ProductCategory.ANIMATION.getId());
             categories.add(ProductCategory.OVA_OAD.getId());
             categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
             categories.add(ProductCategory.TV_SERIES.getId());
         }
-        if (entityType == Entity.GAME.getId()) {
+        if (entityType == Entity.GAME.getValue()) {
             categories.add(ProductCategory.GAME.getId());
         }
 //        if (entityType == Entity.MERCH.getId()) {

@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.common.Region;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.RegionVO;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
@@ -50,10 +51,6 @@ public class EntityConverter {
         return bool == 1;
     }
 
-    static String getThumb70Cover(String images) {
-        return QiniuImageUtil.getThumb70Url(images);
-    }
-
     static JSONArray getCompanies(String json) {
         return EntryUtil.getCompanies(json);
     }
@@ -94,6 +91,18 @@ public class EntityConverter {
 
     static JSONArray getJSONArray(String json) {
         return JSON.parseArray(json);
+    }
+
+    static JSONObject getCover(List<Image> images, Entity entity) {
+        return CommonImageUtil.generateCover(JSON.toJSONString(images), entity);
+    }
+
+    static String getThumb70Cover(List<Image> images) {
+        return QiniuImageUtil.getThumb70Url(images);
+    }
+
+    static JSONObject getThumbCover(List<Image> images, Entity entity, int size) {
+        return CommonImageUtil.generateThumbCover(JSON.toJSONString(images), entity, size);
     }
 
 }

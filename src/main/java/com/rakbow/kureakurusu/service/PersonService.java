@@ -31,6 +31,7 @@ import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         mapper.update(null, wrapper);
     }
 
-    public SearchResult getPersons(QueryParams param) {
+    public SearchResult<PersonVOBeta> getPersons(QueryParams param) {
 
         String name = param.getStr("name");
         String nameZh = param.getStr("nameZh");
@@ -105,7 +106,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         List<PersonVOBeta> persons = voMapper.toBetaVO(pages.getRecords());
 
-        return new SearchResult(persons, pages);
+        return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
     /**
@@ -114,7 +115,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
      * @param param 参数
      * @author rakbow
      */
-    public SearchResult searchPersons(SimpleSearchParam param) {
+    public SearchResult<PersonMiniVO> searchPersons(SimpleSearchParam param) {
 
         LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
                 .and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
@@ -128,7 +129,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         List<PersonMiniVO> persons = voMapper.toMiniVO(pages.getRecords());
 
-        return new SearchResult(persons, pages);
+        return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
     //endregion
 
@@ -142,7 +143,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         roleMapper.updateById(role);
     }
 
-    public SearchResult getRoles(QueryParams param) {
+    public SearchResult<PersonRole> getRoles(QueryParams param) {
         String name = param.getStr("name");
         String nameZh = param.getStr("nameZh");
         String nameEn = param.getStr("nameEn");
@@ -163,7 +164,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         IPage<PersonRole> pages = roleMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
 
-        return new SearchResult(pages);
+        return new SearchResult<>(pages);
     }
 
     //endregion

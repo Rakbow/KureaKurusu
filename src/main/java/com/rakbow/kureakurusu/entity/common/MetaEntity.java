@@ -1,12 +1,15 @@
 package com.rakbow.kureakurusu.entity.common;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -15,8 +18,8 @@ import java.sql.Timestamp;
 @Data
 public class MetaEntity {
 
-    @TableField("images")
-    private String images;//图片列表（JSON字符串）
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Image> images;//图片列表（JSON字符串）
     @TableField("description")
     private String description;//描述
     @TableField("remark")

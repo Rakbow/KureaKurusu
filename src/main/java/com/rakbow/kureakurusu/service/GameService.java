@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.GameMapper;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
@@ -58,7 +57,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addGame(Game game) {
         int id = gameMapper.addGame(game);
-        return I18nHelper.getMessage("entity.curd.insert.success", Entity.GAME.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.GAME.getName());
     }
 
     /**
@@ -97,9 +96,9 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteGame(Game game) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(game.getImages()));
+        qiniuFileUtil.deleteAllImage(game.getImages());
         gameMapper.deleteGame(game.getId());
-        visitUtil.deleteVisit(Entity.GAME.getId(), game.getId());
+        visitUtil.deleteVisit(Entity.GAME.getValue(), game.getId());
     }
 
     /**
@@ -111,7 +110,7 @@ public class GameService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateGame(int id, Game game) {
         gameMapper.updateGame(id, game);
-        return I18nHelper.getMessage("entity.curd.update.success", Entity.GAME.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.GAME.getName());
     }
 
     //endregion

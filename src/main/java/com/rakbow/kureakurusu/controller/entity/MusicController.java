@@ -7,7 +7,9 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.dto.music.MusicDeleteFileCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.entity.Album;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.*;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -148,7 +151,7 @@ public class MusicController {
     //新增音频文件
     @RequestMapping(path = "/upload-file", method = RequestMethod.POST)
     @ResponseBody
-    public String updateMusicFile(int id, MultipartFile[] files, String fileInfos, HttpServletRequest request) {
+    public String updateMusicFile(int id, MultipartFile[] files, List<File> fileInfos, HttpServletRequest request) {
         ApiResult res = new ApiResult();
         try {
             if (files == null || files.length == 0) {
@@ -157,14 +160,12 @@ public class MusicController {
             }
 
             //检测数据是否合法
-            if (!musicService.checkMusicUploadFile(id, JSON.parseArray(fileInfos))) {
+            if (!musicService.checkMusicUploadFile(id, fileInfos)) {
                 res.setErrorMessage(I18nHelper.getMessage("music.crud.file_number.error"));
                 return res.toJson();
             }
 
-            JSONArray fileInfosJson = JSON.parseArray(fileInfos);
-
-            musicService.updateMusicFile(id, files, fileInfosJson, userService.getUserByRequest(request));
+            musicService.updateMusicFile(id, files, fileInfos, userService.getUserByRequest(request));
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -174,11 +175,11 @@ public class MusicController {
     //删除音频文件
     @RequestMapping(path = "/delete-file", method = RequestMethod.POST)
     @ResponseBody
-    public String deleteMusicFile(@RequestBody String json) {
+    public String deleteMusicFile(@RequestBody MusicDeleteFileCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            int id = JSON.parseObject(json).getInteger("id");
-            JSONArray files = JSON.parseObject(json).getJSONArray("files");
+            int id = cmd.getId();
+            List<File> files = cmd.getFiles();
             res.message = musicService.deleteMusicFiles(id, files);
         } catch (Exception e) {
             res.setErrorMessage(e);

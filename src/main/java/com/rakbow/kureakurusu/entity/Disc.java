@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("disc")
+@TableName(value = "disc", autoResultMap = true)
 public class Disc extends MetaEntity {
 
     private Integer id;//主键
@@ -55,7 +56,7 @@ public class Disc extends MetaEntity {
         this.spec = "[]";
         this.hasBonus = 0;
         this.bonus = "";
-        this.setImages("[]");
+        this.setImages(new ArrayList<>());
         this.setDescription("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());

@@ -1,35 +1,23 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
-import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
-import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -174,9 +162,9 @@ public class EntityController {
             int entityType = json.getIntValue("entityType");
             String tableName = Entity.getTableName(entityType);
             String fieldName = "";
-            if(entityType == Entity.ALBUM.getId()) {
+            if(entityType == Entity.ALBUM.getValue()) {
                 fieldName = "artists";
-            }else if(entityType == Entity.BOOK.getId()) {
+            }else if(entityType == Entity.BOOK.getValue()) {
                 fieldName = "personnel";
             }
             String personnel = json.getString("personnel");

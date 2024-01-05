@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.DiscMapper;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
@@ -57,7 +56,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addDisc(Disc disc) {
         int id = discMapper.addDisc(disc);
-        return I18nHelper.getMessage("entity.curd.insert.success", Entity.DISC.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.DISC.getName());
     }
 
     /**
@@ -96,9 +95,9 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteDisc(Disc disc) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(disc.getImages()));
+        qiniuFileUtil.deleteAllImage(disc.getImages());
         discMapper.deleteDisc(disc.getId());
-        visitUtil.deleteVisit(Entity.DISC.getId(), disc.getId());
+        visitUtil.deleteVisit(Entity.DISC.getValue(), disc.getId());
     }
 
     /**
@@ -110,7 +109,7 @@ public class DiscService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateDisc(int id, Disc disc) {
         discMapper.updateDisc(id, disc);
-        return I18nHelper.getMessage("entity.curd.update.success", Entity.DISC.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.DISC.getName());
     }
 
     //endregion

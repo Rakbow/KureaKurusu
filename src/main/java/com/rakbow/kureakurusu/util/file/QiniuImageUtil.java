@@ -115,14 +115,11 @@ public class QiniuImageUtil {
         return fullImageUrl.replace(IMAGE_DOMAIN, "");
     }
 
-    public static String getThumb70Url(String imagesJson) {
-        JSONArray images = JSON.parseArray(imagesJson);
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    return getThumbBackgroundUrl(image.getString("url"), 70);
-                }
+    public static String getThumb70Url(List<Image> images) {
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                if(image.isMain())
+                    return getThumbBackgroundUrl(image.getUrl(), 70);
             }
         }
         return getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70);

@@ -106,7 +106,7 @@ public class EntryController {
                 //从数据库中删除专辑
                 entryService.deleteEntry(entry);
             }
-            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.ENTRY.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.ENTRY.getName());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

@@ -4,22 +4,30 @@ package com.rakbow.kureakurusu.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Rakbow
  * @since 2022-07-19 0:55 专辑实体类
  */
-@Data
 @EqualsAndHashCode(callSuper = true)
+@Data
 @ToString(callSuper = true)
-@TableName("album")
+@TableName(value = "album", autoResultMap = true)
 public class Album extends MetaEntity {
 
     private Long id;//表主键
@@ -65,7 +73,7 @@ public class Album extends MetaEntity {
         this.setDescription("");
         this.setRemark("");
         this.artists = "[]";
-        this.setImages("[]");
+        this.setImages(new ArrayList<>());
         this.trackInfo = "{}";
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());

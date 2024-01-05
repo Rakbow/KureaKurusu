@@ -153,22 +153,22 @@ public class VisitUtil {
 
     public String getEntityVisitRankingKeyName(int entityType) {
 
-        if(entityType == Entity.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getValue()) {
             return RedisKey.ALBUM_VISIT_RANKING;
         }
-        if(entityType == Entity.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getValue()) {
             return RedisKey.BOOK_VISIT_RANKING;
         }
-        if(entityType == Entity.DISC.getId()) {
+        if(entityType == Entity.DISC.getValue()) {
             return RedisKey.DISC_VISIT_RANKING;
         }
-        if(entityType == Entity.GAME.getId()) {
+        if(entityType == Entity.GAME.getValue()) {
             return RedisKey.GAME_VISIT_RANKING;
         }
 //        if(entityType == Entity.MERCH.getId()) {
 //            return RedisCacheConstant.MERCH_VISIT_RANKING;
 //        }
-        if(entityType == Entity.MUSIC.getId()) {
+        if(entityType == Entity.MUSIC.getValue()) {
             return RedisKey.MUSIC_VISIT_RANKING;
         }
 //        if(entityType == Entity.PRODUCT.getId()) {

@@ -11,7 +11,6 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.SpringUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -43,13 +42,13 @@ public class CommonImageUtil {
         if (!originalImages.isEmpty()) {
 
             for (Image originalImage : originalImages) {
-                if (originalImage.getType() == ImageType.COVER.getId()) {
+                if (originalImage.getType() == ImageType.MAIN.getValue()) {
                     coverCount++;
                 }
             }
         }
         for (Image newImage : newImages) {
-            if (newImage.getType() == ImageType.COVER.getId()) {
+            if (newImage.getType() == ImageType.MAIN.getValue()) {
                 coverCount++;
             }
         }
@@ -67,18 +66,15 @@ public class CommonImageUtil {
      * @return 报错信息
      * @author rakbow
      */
-    public static String checkUpdateImages(JSONArray images) {
+    public static String checkUpdateImages(List<Image> images) {
         //封面类型的图片个数
         int coverCount = 0;
-        for (int i = 0; i < images.size(); i++) {
-            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
-                coverCount++;
-            }
+        for (Image image : images) {
+            if (image.isMain()) coverCount++;
         }
         if (coverCount > 1) {
             return I18nHelper.getMessage("image.error.only_one_cover");
         }
-
         return "";
     }
 
@@ -106,15 +102,13 @@ public class CommonImageUtil {
     /**
      * 通过遍历通用图片信息json数组获取封面url
      *
-     * @param imageString 图片信息
+     * @param images 图片
      * @return coverUrl
      * @author rakbow
      */
-    public static String getCoverUrl (String imageString) {
-        JSONArray imageJson = JSON.parseArray(imageString);
-        List<Image> images = imageJson.toJavaList(Image.class);
+    public static String getCoverUrl (List<Image> images) {
         for (Image image : images) {
-            if (image.getType() == ImageType.COVER.getId()) {
+            if (image.isMain()) {
                 return image.getUrl();
             }
         }
@@ -153,7 +147,7 @@ public class CommonImageUtil {
         cover.put("name", "404");
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                if (imageVO.getType() == ImageType.COVER.getId()) {
+                if (imageVO.getType() == ImageType.MAIN.getValue()) {
 
                     if (isWidth) {
                         cover.put("url", QiniuImageUtil.getThumbUrlWidth(imageVO.getUrl(), coverSize));
@@ -169,8 +163,8 @@ public class CommonImageUtil {
         JSONArray displayImages = new JSONArray();
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                if (imageVO.getType() == ImageType.DISPLAY.getId()
-                        || imageVO.getType() == ImageType.COVER.getId()) {
+                if (imageVO.getType() == ImageType.DISPLAY.getValue()
+                        || imageVO.getType() == ImageType.MAIN.getValue()) {
                     displayImages.add(imageVO);
                 }
             }
@@ -180,7 +174,7 @@ public class CommonImageUtil {
         JSONArray otherImages = new JSONArray();
         if (!ImageVOs.isEmpty()) {
             for (ImageVO imageVO : ImageVOs) {
-                if (imageVO.getType() == ImageType.OTHER.getId()) {
+                if (imageVO.getType() == ImageType.OTHER.getValue()) {
                     otherImages.add(imageVO);
                 }
             }
@@ -217,7 +211,7 @@ public class CommonImageUtil {
         cover.put("name", "404");
         if (images.size() != 0) {
             for (Image image : images) {
-                if (image.getType() == ImageType.COVER.getId()) {
+                if (image.getType() == ImageType.MAIN.getValue()) {
                     cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 200));
                     cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getUrl(), 50));
                     cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 70));

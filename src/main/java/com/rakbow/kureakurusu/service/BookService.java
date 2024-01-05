@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.BookMapper;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
@@ -59,7 +58,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addBook(Book book) {
         int id = bookMapper.addBook(book);
-        return I18nHelper.getMessage("entity.curd.insert.success", Entity.BOOK.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.BOOK.getName());
     }
 
     /**
@@ -98,9 +97,9 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteBook(Book book) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(book.getImages()));
+        qiniuFileUtil.deleteAllImage(book.getImages());
         bookMapper.deleteBook(book.getId());
-        visitUtil.deleteVisit(Entity.BOOK.getId(), book.getId());
+        visitUtil.deleteVisit(Entity.BOOK.getValue(), book.getId());
     }
 
     /**
@@ -112,7 +111,7 @@ public class BookService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateBook(int id, Book book) {
         bookMapper.updateBook(id, book);
-        return I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName());
     }
 
     //endregion

@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.entity.Book;
 import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
 import com.rakbow.kureakurusu.entity.Music;
@@ -40,7 +41,7 @@ public interface MusicMapper extends BaseMapper<Music> {
 
     void updateMusicLyricsText(int id, String lrcText, Timestamp editedTime);
 
-    void updateMusicFiles(int id, String files, Timestamp editedTime);
+    void updateMusicFiles(int id, List<File> files, Timestamp editedTime);
 
     //简单搜索
     List<MusicAlbumView> simpleSearch(String keyWorld, int limit, int offset);

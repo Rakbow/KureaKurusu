@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("game")
+@TableName(value = "game", autoResultMap = true)
 public class Game extends MetaEntity {
 
     private Integer id;//主键编号
@@ -51,7 +52,7 @@ public class Game extends MetaEntity {
         this.organizations = "[]";
         this.staffs = "[]";
         this.bonus = "";
-        this.setImages("[]");
+        this.setImages(new ArrayList<>());
         this.setDescription("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;

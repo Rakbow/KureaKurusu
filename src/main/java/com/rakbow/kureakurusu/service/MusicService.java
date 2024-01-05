@@ -6,9 +6,9 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.MusicMapper;
 import com.rakbow.kureakurusu.data.ActionResult;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
+import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.data.vo.music.MusicVOAlpha;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.entity.User;
@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -170,7 +171,7 @@ public class MusicService {
         }catch (Exception ex) {
             throw new Exception(ex);
         }
-        return I18nHelper.getMessage("entity.curd.update.success", Entity.MUSIC.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.MUSIC.getName());
     }
 
     /**
@@ -184,7 +185,7 @@ public class MusicService {
             //删除对应music的音频文件
             deleteMusicAllFiles(music);
             musicMapper.deleteMusicById(music.getId());
-            visitUtil.deleteVisit(Entity.MUSIC.getId(), music.getId());
+            visitUtil.deleteVisit(Entity.MUSIC.getValue(), music.getId());
         }catch (Exception ex) {
             throw new Exception(ex);
         }
@@ -201,7 +202,7 @@ public class MusicService {
             List<Music> musics = getMusicsByAlbumId(albumId);
             //删除对应music的音频文件
             musics.forEach(this::deleteMusicAllFiles);
-            musics.forEach(music -> visitUtil.deleteVisit(Entity.MUSIC.getId(), music.getId()));
+            musics.forEach(music -> visitUtil.deleteVisit(Entity.MUSIC.getValue(), music.getId()));
             musicMapper.deleteMusicByAlbumId(albumId);
         }catch (Exception ex) {
             throw new Exception(ex);
@@ -226,7 +227,7 @@ public class MusicService {
                 //删除对应music的音频文件
                 deleteMusicAllFiles(music);
                 //删除浏览量数据
-                visitUtil.deleteVisit(Entity.MUSIC.getId(), music.getId());
+                visitUtil.deleteVisit(Entity.MUSIC.getValue(), music.getId());
                 //删除对应music
                 musicMapper.deleteMusicById(music.getId());
             });
@@ -327,16 +328,16 @@ public class MusicService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateMusicFile(int id, MultipartFile[] files, JSONArray fileInfos, User user) throws IOException {
+    public void updateMusicFile(int id, MultipartFile[] files, List<File> fileInfos, User user) throws IOException {
 
         //原数据库里的文件信息
-        JSONArray originalFiles = JSON.parseArray(getMusic(id).getFiles());
+        List<File> originalFiles = getMusic(id).getFiles();
 
         //最终保存到数据库的json信息
-        JSONArray addFiles = new JSONArray();
+        List<File> addFiles = new ArrayList<>();
 
         //创建存储链接前缀
-        String filePath = "file/" + Entity.MUSIC.getNameEn().toLowerCase() + "/" + id + "/";
+        String filePath = "file/" + Entity.MUSIC.getTableName() + "/" + id + "/";
 
         for (int i = 0; i < files.length; i++) {
 
@@ -350,21 +351,19 @@ public class MusicService {
                 ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.AUDIO);
             }
             if (ar.state) {
-                JSONObject jo = new JSONObject();
-                jo.put("url", ar.data.toString());
-                jo.put("name", fileInfos.getJSONObject(i).getString("name"));
-                jo.put("size", fileInfos.getJSONObject(i).getIntValue("size"));
-                jo.put("type", fileInfos.getJSONObject(i).getString("type"));
-                jo.put("uploadTime", DateHelper.getCurrentTime());
-                jo.put("uploadUser", user.getUsername());
-                addFiles.add(jo);
+                File file = File.builder()
+                        .url(ar.data.toString())
+                        .name(fileInfos.get(i).getName())
+                        .size(fileInfos.get(i).getSize())
+                        .type(fileInfos.get(i).getType())
+                        .uploadTime(DateHelper.nowStr())
+                        .uploadUser(user.getUsername())
+                        .build();
+                addFiles.add(file);
             }
         }
-
         originalFiles.addAll(addFiles);
-
-        musicMapper.updateMusicFiles(id, originalFiles.toJSONString(), DateHelper.now());
-
+        musicMapper.updateMusicFiles(id, originalFiles, DateHelper.now());
     }
 
     /**
@@ -375,13 +374,13 @@ public class MusicService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteMusicFiles(int id, JSONArray deleteFiles) throws Exception {
+    public String deleteMusicFiles(int id, List<File> deleteFiles) throws Exception {
         //获取原始文件json数组
-        JSONArray files = JSONArray.parseArray(getMusic(id).getFiles());
+        List<File> orgFiles = getMusic(id).getFiles();
 
-        JSONArray finalFileJson = qiniuFileUtil.commonDeleteFiles(files, deleteFiles);
+        List<File> finalFileJson = qiniuFileUtil.deleteFile(orgFiles, deleteFiles);
 
-        musicMapper.updateMusicFiles(id, finalFileJson.toString(), DateHelper.now());
+        musicMapper.updateMusicFiles(id, finalFileJson, DateHelper.now());
         return I18nHelper.getMessage("file.delete.success");
     }
 
@@ -393,7 +392,7 @@ public class MusicService {
      */
     public void deleteMusicAllFiles(Music music) {
         //删除七牛云上的图片
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(music.getFiles()));
+        qiniuFileUtil.deleteAllFile(music.getFiles());
     }
 
     //endregion
@@ -402,34 +401,30 @@ public class MusicService {
      * 检测上传文件是否合法
      *
      * @param id     id
-     * @param fileInfos 新增文件json数据
+     * @param fileList 新增文件json数据
      * @author rakbow
      */
-    public boolean checkMusicUploadFile(int id, JSONArray fileInfos) {
-        if (fileInfos.size() > 2) {
+    public boolean checkMusicUploadFile(int id, List<File> fileList) {
+        if (fileList.size() > 2) {
             return false;
         }
 
         //数据库中的文件信息
-        JSONArray files = JSON.parseArray(getMusic(id).getFiles());
-        if(files.size() + fileInfos.size() > 2) {
+        List<File> files = getMusic(id).getFiles();
+        if(files.size() + fileList.size() > 2) {
             return false;
         }
-
-        fileInfos.addAll(files);
+        fileList.addAll(files);
         int lrcFileNum = 0;
         int audioFileNum = 0;
-        for (int i = 0; i < fileInfos.size(); i++) {
+        for (File file : fileList) {
             //歌词文件数
-            if (fileInfos.getJSONObject(i).getString("type").contains("text")) {
+            if (file.isText())
                 lrcFileNum++;
-            }
             //音频文件数
-            if (fileInfos.getJSONObject(i).getString("type").contains("audio")) {
+            if (file.isAudio())
                 audioFileNum++;
-            }
         }
-
         return lrcFileNum <= 1 && audioFileNum <= 1;
     }
 

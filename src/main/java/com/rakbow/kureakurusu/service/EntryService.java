@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.dao.EntryMapper;
-import com.rakbow.kureakurusu.data.ApiInfo;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,7 +50,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String addEntry(Entry entry) {
         entryMapper.addEntry(entry);
-        return I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh());
+        return I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getName());
     }
 
     /**
@@ -88,10 +86,10 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteEntry(Entry entry) {
         //删除前先把服务器上对应图片全部删除
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(entry.getImages()));
+        qiniuFileUtil.deleteAllImage(entry.getImages());
         //删除专辑
         entryMapper.deleteEntry(entry.getId());
-        visitUtil.deleteVisit(Entity.ENTRY.getId(), entry.getId());
+        visitUtil.deleteVisit(Entity.ENTRY.getValue(), entry.getId());
     }
 
     /**
@@ -103,7 +101,7 @@ public class EntryService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public String updateEntry(int id, Entry entry) {
         entryMapper.updateEntry(id, entry);
-        return I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh());
+        return I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName());
     }
 
     //endregion

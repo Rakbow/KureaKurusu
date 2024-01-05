@@ -28,4 +28,12 @@ public class ActionResult {
         this.data = null;
     }
 
+    public boolean success() {
+        return this.state;
+    }
+
+    public boolean fail() {
+        return !this.state;
+    }
+
 }

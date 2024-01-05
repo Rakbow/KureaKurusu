@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.CommonConstant;
+import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.entity.view.MusicAlbumView;
 import com.rakbow.kureakurusu.entity.Music;
 import com.rakbow.kureakurusu.service.MusicService;
@@ -40,17 +41,16 @@ public class MusicUtil {
      * @param music 音乐
      * */
     public static JSONObject getMusicAudioInfo(Music music, String coverUrl) {
-        JSONArray files = JSON.parseArray(music.getFiles());
-        if (files.size() == 0) {
-            return null;
-        }
+        List<File> files = music.getFiles();
+        if (files.isEmpty()) return null;
         JSONObject audioInfo = new JSONObject();
-        for (int i = 0; i < files.size(); i++) {
+
+        for (File file : files) {
             //判断是否有音频文件
-            if (files.getJSONObject(i).getString("type").contains("audio")) {
+            if(file.isAudio()) {
                 audioInfo.put("name", music.getName());
                 audioInfo.put("artist", getArtists(music));
-                audioInfo.put("url", files.getJSONObject(i).getString("url"));
+                audioInfo.put("url", file.getUrl());
                 audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
                 if (StringUtils.isBlank(coverUrl)) {
                     audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
@@ -59,8 +59,8 @@ public class MusicUtil {
                 }
             }
             //判断是否有歌词文件
-            if (files.getJSONObject(i).getString("type").contains("text")) {
-                audioInfo.put("lrc", files.getJSONObject(i).getString("url"));
+            if (file.isText()) {
+                audioInfo.put("lrc", file.getUrl());
             }
         }
         return audioInfo;
@@ -132,8 +132,7 @@ public class MusicUtil {
      * @param music 音乐
      * */
     public static boolean hasFile(Music music) {
-        JSONArray files = JSONArray.parseArray(music.getFiles());
-        return files.size() != 0;
+        return !music.getFiles().isEmpty();
     }
 
     /**

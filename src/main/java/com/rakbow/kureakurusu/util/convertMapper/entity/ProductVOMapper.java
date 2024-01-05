@@ -82,7 +82,7 @@ public interface ProductVOMapper {
 
         //对封面图片进行处理
         JSONObject cover = new JSONObject();
-        JSONArray images = JSON.parseArray(product.getImages());
+        JSONArray images = JSON.parseArray(JSON.toJSONString(product.getImages()));
         cover.put("url", QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(CommonConstant.EMPTY_IMAGE_WIDTH_URL, 50));
         cover.put("name", "404");

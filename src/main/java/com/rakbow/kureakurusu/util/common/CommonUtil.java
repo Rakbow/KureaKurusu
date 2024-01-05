@@ -269,7 +269,7 @@ public class CommonUtil {
         //封面类型的图片个数
         int coverCount = 0;
         for (int i = 0; i < images.size(); i++) {
-            if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
+            if (images.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
                 coverCount++;
             }
         }
@@ -317,12 +317,12 @@ public class CommonUtil {
             }
 
             for (int i = 0; i < images.size(); i++) {
-                if (images.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
+                if (images.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
                     coverCount++;
                 }
             }
             for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
+                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
                     coverCount++;
                 }
             }
@@ -334,7 +334,7 @@ public class CommonUtil {
             }
 
             for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.COVER.getId()) {
+                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
                     coverCount++;
                 }
             }

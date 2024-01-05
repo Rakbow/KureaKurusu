@@ -181,7 +181,7 @@ public class ProductService {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteAllProductImages(int id) {
         Product product = getProduct(id);
-        qiniuFileUtil.commonDeleteAllFiles(JSON.parseArray(product.getImages()));
+        qiniuFileUtil.deleteAllImage(product.getImages());
 
     }
 

@@ -63,10 +63,10 @@ public class EntityUtil {
     public JSONObject getDetailOptions(int entityType) {
         JSONObject options = new JSONObject();
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        if(entityType == Entity.ENTRY.getId()) {
+        if(entityType == Entity.ENTRY.getValue()) {
             options.put("entryCategorySet", redisUtil.get(String.format(RedisKey.ENTRY_CATEGORY_SET, lang)));
         }
-        if(entityType == Entity.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getValue()) {
             options.put("mediaFormatSet", redisUtil.get(String.format(RedisKey.MEDIA_FORMAT_SET, lang)));
             options.put("albumFormatSet", redisUtil.get(String.format(RedisKey.ALBUM_FORMAT_SET, lang)));
             options.put("publishFormatSet", redisUtil.get(String.format(RedisKey.PUBLISH_FORMAT_SET, lang)));
@@ -76,7 +76,7 @@ public class EntityUtil {
             options.put("roleSet", redisUtil.get(String.format(RedisKey.ROLE_SET, lang)));
             options.put("personnelSet", redisUtil.get(String.format(RedisKey.PERSONNEL_SET, lang)));
         }
-        if(entityType == Entity.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getValue()) {
             options.put("bookTypeSet", redisUtil.get(String.format(RedisKey.BOOK_TYPE_SET, lang)));
             options.put("regionSet", redisUtil.get(String.format(RedisKey.REGION_SET, lang)));
             options.put("languageSet", redisUtil.get(String.format(RedisKey.LANGUAGE_SET, lang)));
@@ -88,12 +88,12 @@ public class EntityUtil {
             options.put("specParameterSet", redisUtil.get(String.format(RedisKey.SPEC_PARAM_SET, lang)));
             options.put("publicationSet", redisUtil.get(String.format(RedisKey.PUBLICATION_SET, lang)));
         }
-        if(entityType == Entity.DISC.getId()) {
+        if(entityType == Entity.DISC.getValue()) {
             options.put("mediaFormatSet", redisUtil.get(String.format(RedisKey.MEDIA_FORMAT_SET, lang)));
             options.put("regionSet", redisUtil.get(String.format(RedisKey.REGION_SET, lang)));
             options.put("specParameterSet", redisUtil.get(String.format(RedisKey.SPEC_PARAM_SET, lang)));
         }
-        if(entityType == Entity.GAME.getId()) {
+        if(entityType == Entity.GAME.getValue()) {
             options.put("releaseTypeSet", redisUtil.get(String.format(RedisKey.RELEASE_TYPE_SET, lang)));
             options.put("regionSet", redisUtil.get(String.format(RedisKey.REGION_SET, lang)));
             options.put("gamePlatformSet", redisUtil.get(String.format(RedisKey.GAME_PLATFORM_SET, lang)));
@@ -102,7 +102,7 @@ public class EntityUtil {
 //                options.put("merchCategorySet", redisUtil.get(RedisCacheConstant.MERCH_CATEGORY_SET_EN));
 //                options.put("regionSet", redisUtil.get(RedisCacheConstant.REGION_SET_EN));
 //            }
-        if(entityType == Entity.MUSIC.getId()) {
+        if(entityType == Entity.MUSIC.getValue()) {
             options.put("audioTypeSet", redisUtil.get(String.format(RedisKey.AUDIO_TYPE_SET, lang)));
         }
 //            if(entityType == Entity.PRODUCT.getId()) {

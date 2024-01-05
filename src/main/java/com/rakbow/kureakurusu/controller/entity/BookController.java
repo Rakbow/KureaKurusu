@@ -120,7 +120,7 @@ public class BookController {
                 //从数据库中删除专辑
                 bookService.deleteBook(book);
             }
-            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

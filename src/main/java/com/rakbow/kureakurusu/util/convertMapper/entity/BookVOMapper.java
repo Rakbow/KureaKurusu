@@ -34,7 +34,7 @@ public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
     Entity ENTITY = Entity.BOOK;
-    int entityTypeId = Entity.BOOK.getId();
+    int entityTypeId = Entity.BOOK.getValue();
 
     //region single convert interface
 

@@ -83,12 +83,12 @@ public class EntityService {
     private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
 
     private final List<Integer> searchEntityTypes = new ArrayList<>(){{
-        add(Entity.ALBUM.getId());
-        add(Entity.BOOK.getId());
-        add(Entity.DISC.getId());
-        add(Entity.GAME.getId());
+        add(Entity.ALBUM.getValue());
+        add(Entity.BOOK.getValue());
+        add(Entity.DISC.getValue());
+        add(Entity.GAME.getValue());
 //        add(Entity.MERCH.getId());
-        add(Entity.MUSIC.getId());
+        add(Entity.MUSIC.getValue());
     }};
 
     //endregion
@@ -145,7 +145,7 @@ public class EntityService {
         List<Integer> ids = new ArrayList<>(visits.keySet());
 
         if(!ids.isEmpty()) {
-            if(entityType == Entity.ALBUM.getId()) {
+            if(entityType == Entity.ALBUM.getValue()) {
                 List<AlbumVOAlpha> items = albumVOMapper.toVOAlpha(albumMapper.selectBatchIds(ids));
 
                 for (AlbumVOAlpha item : items) {
@@ -153,7 +153,7 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == Entity.BOOK.getId()) {
+            if(entityType == Entity.BOOK.getValue()) {
                 List<BookVOBeta> items = bookVOMapper.book2VOBeta(bookMapper.getBooks(ids));
 
                 for (BookVOBeta item : items) {
@@ -161,7 +161,7 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == Entity.DISC.getId()) {
+            if(entityType == Entity.DISC.getValue()) {
                 List<DiscVOAlpha> items = discVOMapper.disc2VOAlpha(discMapper.getDiscs(ids));
 
                 for (DiscVOAlpha item : items) {
@@ -169,7 +169,7 @@ public class EntityService {
                 }
                 return JSON.parseArray(JSON.toJSONString(items));
             }
-            if(entityType == Entity.GAME.getId()) {
+            if(entityType == Entity.GAME.getValue()) {
                 List<GameVOAlpha> items = gameVOMapper.game2VOAlpha(gameMapper.getGames(ids));
 
                 for (GameVOAlpha item : items) {
@@ -199,7 +199,7 @@ public class EntityService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public JSONArray getJustAddedItems(int entityType, int limit) {
-        if(entityType == Entity.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getValue()) {
             return JSON.parseArray(JSON.toJSONString(albumVOMapper.toVOBeta(
                     albumMapper.selectList(
                             new Page<>(1, limit),
@@ -207,13 +207,13 @@ public class EntityService {
                     )
             )));
         }
-        if(entityType == Entity.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getValue()) {
             return JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOBeta(bookMapper.getBooksOrderByAddedTime(limit))));
         }
-        if(entityType == Entity.DISC.getId()) {
+        if(entityType == Entity.DISC.getValue()) {
             return JSON.parseArray(JSON.toJSONString(discVOMapper.disc2VOBeta(discMapper.getDiscsOrderByAddedTime(limit))));
         }
-        if(entityType == Entity.GAME.getId()) {
+        if(entityType == Entity.GAME.getValue()) {
             return JSON.parseArray(JSON.toJSONString(gameVOMapper.game2VOBeta(gameMapper.getGamesOrderByAddedTime(limit))));
         }
 //        if(entityType == Entity.MERCH.getId()) {
@@ -386,7 +386,7 @@ public class EntityService {
         long size = limit;
         long page = offset/size + 1;
 
-        if(entityType == Entity.ALBUM.getId()) {
+        if(entityType == Entity.ALBUM.getValue()) {
 
             wrapper = new QueryWrapper<Album>()
                     .like("catalog_no", keyword)
@@ -403,21 +403,21 @@ public class EntityService {
                 res.setTotal(albums.getTotal());
             }
         }
-        if(entityType == Entity.BOOK.getId()) {
+        if(entityType == Entity.BOOK.getValue()) {
             List<Book> books = bookMapper.simpleSearch(keyword, limit, offset);
             if(!books.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(bookVOMapper.book2VOGamma(books))));
                 res.setTotal(bookMapper.simpleSearchCount(keyword));
             }
         }
-        if(entityType == Entity.DISC.getId()) {
+        if(entityType == Entity.DISC.getValue()) {
             List<Disc> discs = discMapper.simpleSearch(keyword, limit, offset);
             if(!discs.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(discVOMapper.disc2VOGamma(discs))));
                 res.setTotal(discMapper.simpleSearchCount(keyword));
             }
         }
-        if(entityType == Entity.GAME.getId()) {
+        if(entityType == Entity.GAME.getValue()) {
             List<Game> games = gameMapper.simpleSearch(keyword, limit, offset);
             if(!games.isEmpty()) {
                 res.setData(JSON.parseArray(JSON.toJSONString(gameVOMapper.game2VOGamma(games))));
@@ -431,7 +431,7 @@ public class EntityService {
 //                res.setTotal(merchMapper.simpleSearchCount(keyword));
 //            }
 //        }
-       if(entityType == Entity.MUSIC.getId()) {
+       if(entityType == Entity.MUSIC.getValue()) {
            List<MusicAlbumView> musics = musicMapper.simpleSearch(keyword, limit, offset);
            if(!musics.isEmpty()) {
                res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));

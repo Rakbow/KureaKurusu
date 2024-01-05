@@ -52,7 +52,7 @@ public interface MusicVOMapper {
 
         musicVO.setAudioType(EnumUtil.getAttribute(AudioType.class, music.getAudioType()));
 
-        musicVO.setFiles(JSON.parseArray(music.getFiles()));
+        musicVO.setFiles(JSON.parseArray(JSON.toJSONString(music.getFiles())));
         musicVO.setUploadDisabled(musicVO.getFiles().size() >= 2);
 
         if (StringUtils.isBlank(coverUrl)) {
@@ -146,8 +146,8 @@ public interface MusicVOMapper {
         musicVOBeta.setAlbumName(musicAlbumView.getAlbumName());
         musicVOBeta.setCover(QiniuImageUtil.getThumb70Url(musicAlbumView.getAlbumImages()));
 
-        musicVOBeta.setVisitCount(visitUtil.getVisit(Entity.MUSIC.getId(), musicAlbumView.getId()));
-        musicVOBeta.setLikeCount(likeUtil.getLike(Entity.MUSIC.getId(), musicAlbumView.getId()));
+        musicVOBeta.setVisitCount(visitUtil.getVisit(Entity.MUSIC.getValue(), musicAlbumView.getId()));
+        musicVOBeta.setLikeCount(likeUtil.getLike(Entity.MUSIC.getValue(), musicAlbumView.getId()));
 
         return musicVOBeta;
     }

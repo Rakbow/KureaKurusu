@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.entity.franchise;
+package com.rakbow.kureakurusu.data.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;

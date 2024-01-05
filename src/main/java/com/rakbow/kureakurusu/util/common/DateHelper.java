@@ -21,6 +21,9 @@ public class DateHelper {
     public static Timestamp now() {
         return new Timestamp(System.currentTimeMillis());
     }
+    public static String nowStr() {
+        return timestampToString(new Timestamp(System.currentTimeMillis()));
+    }
 
     //日期转为字符串(自定义格式)，例如：yyyy/MM/dd
     public static String dateToString(Date date) {

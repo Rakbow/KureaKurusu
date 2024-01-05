@@ -119,7 +119,7 @@ public class GameController {
                 //从数据库中删除专辑
                 gameService.deleteGame(game);
             }
-            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.GAME.getNameZh());
+            res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.GAME.getName());
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }

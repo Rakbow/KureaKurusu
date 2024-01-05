@@ -43,7 +43,7 @@ public class PersonController {
     private final PersonService service;
     private final GeneralService generalService;
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
-    private final int PERSON_ENTITY = Entity.PERSON.getId();
+    private final int PERSON_ENTITY = Entity.PERSON.getValue();
 
     //region person
 
@@ -54,7 +54,7 @@ public class PersonController {
         try {
             Person person = service.getById(qry.getId());
             if (person == null)
-                return res.fail(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getNameZh()));
+                return res.fail(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getName()));
 
             res.data = PersonDetailVO.builder()
                     .item(voMapper.toVO(person))
@@ -102,7 +102,7 @@ public class PersonController {
             Person person = voMapper.build(dto);
             //save
             service.save(person);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -119,7 +119,7 @@ public class PersonController {
                 return res.fail(errors);
             //save
             service.updatePerson(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -151,7 +151,7 @@ public class PersonController {
                 return res.fail(errors);
             //save
             service.addRole(role);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -168,7 +168,7 @@ public class PersonController {
                 return res.fail(errors);
             //save
             service.updateRole(role);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -197,7 +197,7 @@ public class PersonController {
         ApiResult res = new ApiResult();
         try {
             service.managePersonnel(cmd);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getNameZh()));
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());

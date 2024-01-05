@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.util.entity;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
-import com.rakbow.kureakurusu.data.entity.franchise.MetaInfo;
+import com.rakbow.kureakurusu.data.entity.MetaInfo;
 import com.rakbow.kureakurusu.entity.Franchise;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.util.common.SpringUtil;

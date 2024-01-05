@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.common;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.annotation.IEnum;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,28 +14,29 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum Entity {
 
-    ENTRY(0,"Entry", "Entry", "entry"),
-    ALBUM(1,"专辑", "Album", "album"),
-    BOOK(2,"书籍", "Book", "book"),
-    DISC(3,"碟片", "Disc", "disc"),
-    GAME(4,"游戏", "Game", "game"),
-    MUSIC(5,"音乐", "Music", "music"),
-    GOODS(6,"周边", "Goods", "goods"),
-    FIGURE(7,"手办", "Figure", "figure"),
-    PERSON(8,"人物","Person", "person");
+    ENTRY(0, "enum.entity.entry", "entry"),
+    ALBUM(1, "enum.entity.album","album"),
+    BOOK(2, "enum.entity.book","book"),
+    DISC(3, "enum.entity.disc","disc"),
+    GAME(4, "enum.entity.game","game"),
+    MUSIC(5, "enum.entity.music","music"),
+    GOODS(6, "enum.entity.goods","goods"),
+    FIGURE(7, "enum.entity.figure","figure"),
+    PERSON(8, "enum.entity.person","person");
 
-    private final Integer id;
-    private final String nameZh;
-    private final String nameEn;
+    private final Integer value;
+    private final String labelKey;
     private final String tableName;
 
-    public static String getTableName(int id) {
-        String nameEn = Arrays.stream(Entity.values())
-                .filter(entity -> entity.getId() == id)
+    public String getName() {
+        return I18nHelper.getMessage(this.labelKey);
+    }
+
+    public static String getTableName(int value) {
+        return Arrays.stream(Entity.values())
+                .filter(entity -> entity.getValue() == value)
                 .findFirst()
-                .map(Entity::getNameEn)
+                .map(Entity::getTableName)
                 .orElse(null);
-        assert nameEn != null;
-        return nameEn.toLowerCase();
     }
 }

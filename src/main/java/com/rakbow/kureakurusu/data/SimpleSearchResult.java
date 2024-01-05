@@ -28,6 +28,6 @@ public class SimpleSearchResult {
         this.entityName = entityName;
         this.offset = offset;
         this.limit = limit;
-        this.searchTime = DateHelper.timestampToString(DateHelper.now());
+        this.searchTime = DateHelper.nowStr();
     }
 }

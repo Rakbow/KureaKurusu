@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.image;
 
+import com.rakbow.kureakurusu.data.emun.image.ImageType;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 
@@ -23,9 +24,13 @@ public class Image {
         this.url = "";
         this.nameEn = "";
         this.nameZh = "";
-        this.type = 0;
+        this.type = ImageType.DISPLAY.getValue();
         this.description = "";
-        this.uploadTime = DateHelper.getCurrentTime();
+        this.uploadTime = DateHelper.nowStr();
+    }
+
+    public boolean isMain() {
+        return this.type == ImageType.MAIN.getValue();
     }
 
 }

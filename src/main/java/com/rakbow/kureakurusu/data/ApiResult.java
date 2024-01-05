@@ -16,6 +16,7 @@ public class ApiResult {
     public int code;//操作代码
     public int state;//操作状态 0-失败 1-成功
     public Object data;//响应数据
+    public long total;//数据总数
     public String message;//错误信息
 
     private final int SUCCESS_CODE = 1;
