@@ -76,6 +76,7 @@ public class CommonImageUtil {
 
     /**
      * 使用 通过图片url获取字节大小，长宽
+     *
      * @param url 图片URL
      */
     @SneakyThrows
@@ -97,7 +98,7 @@ public class CommonImageUtil {
      * @return coverUrl
      * @author rakbow
      */
-    public static String getCoverUrl (List<Image> images) {
+    public static String getCoverUrl(List<Image> images) {
         for (Image image : images) {
             if (image.isMain()) return image.getUrl();
         }
@@ -112,14 +113,14 @@ public class CommonImageUtil {
      * @return segmentImagesResult
      * @author rakbow
      */
-    public static segmentImagesResult segmentImages (List<Image> orgImages, int coverSize, Entity entity, boolean isWidth) {
+    public static segmentImagesResult segmentImages(List<Image> orgImages, int coverSize, Entity entity, boolean isWidth) {
 
         segmentImagesResult res = new segmentImagesResult();
         res.setImages(VOMapper.toVO(orgImages));
 
         if (isWidth) {
             res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
-        }else {
+        } else {
             res.setCoverUrl(QiniuImageUtil.getThumbUrl(getDefaultImageUrl(entity), coverSize));
         }
         if (!res.getImages().isEmpty()) {
@@ -131,14 +132,33 @@ public class CommonImageUtil {
                     //对封面图片进行处理
                     if (isWidth) {
                         res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(image.getUrl(), coverSize));
-                    }else {
+                    } else {
                         res.setCoverUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), coverSize));
                     }
                     res.getCover().setName(image.getNameEn());
                 }
                 if (image.isDisplay()) {
                     res.addDisplayImage(image);
-                }else {
+                } else {
+                    res.addOtherImage(image);
+                }
+            }
+        }
+        return res;
+    }
+
+    public static segmentImagesResult segmentImages(List<Image> orgImages) {
+
+        segmentImagesResult res = new segmentImagesResult();
+        res.setImages(VOMapper.toVO(orgImages));
+        if (!res.getImages().isEmpty()) {
+            for (ImageVO image : res.getImages()) {
+                //添加缩略图
+                image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+                image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+                if (image.isDisplay()) {
+                    res.addDisplayImage(image);
+                } else {
                     res.addOtherImage(image);
                 }
             }
@@ -163,7 +183,7 @@ public class CommonImageUtil {
         cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
         if (!images.isEmpty()) {
             for (Image image : images) {
-                if(!image.isMain()) continue;
+                if (!image.isMain()) continue;
                 cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), DEFAULT_THUMB_SIZE));
                 cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
                 cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
@@ -193,7 +213,7 @@ public class CommonImageUtil {
         cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
         if (!images.isEmpty()) {
             for (Image image : images) {
-                if(!image.isMain()) continue;
+                if (!image.isMain()) continue;
                 cover.setUrl(QiniuImageUtil.getBookThumbBackgroundUrl(image.getUrl(), STANDARD_BOOK_WIDTH, STANDARD_BOOK_HEIGHT));
                 cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
                 cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
@@ -219,7 +239,7 @@ public class CommonImageUtil {
         cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
         if (!images.isEmpty()) {
             for (Image image : images) {
-                if(!image.isMain()) continue;
+                if (!image.isMain()) continue;
                 cover.setUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), size));
                 cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), size));
                 cover.setName(image.getNameEn());

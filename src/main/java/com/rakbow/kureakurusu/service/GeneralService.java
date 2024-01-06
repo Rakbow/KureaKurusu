@@ -4,6 +4,7 @@ import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
+import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -12,8 +13,11 @@ import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,7 +25,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,31 +35,25 @@ import static com.rakbow.kureakurusu.data.common.Constant.*;
  * @author Rakbow
  * @since 2023-05-19 18:56
  */
+@RequiredArgsConstructor
 @Service
 public class GeneralService {
 
     //region util resource
-    @Resource
-    private RedisUtil redisUtil;
-    @Resource
-    private VisitUtil visitUtil;
-    @Resource
-    private LikeUtil likeUtil;
-    @Resource
-    private QiniuFileUtil qiniuFileUtil;
-    @Resource
-    private QiniuImageUtil qiniuImageUtil;
+    private final RedisUtil redisUtil;
+    private final VisitUtil visitUtil;
+    private final LikeUtil likeUtil;
+    private final QiniuFileUtil qiniuFileUtil;
+    private final QiniuImageUtil qiniuImageUtil;
     //endregion
 
     //region mapper
-    @Resource
-    private CommonMapper commonMapper;
-    @Resource
-    private PersonRoleMapper personRoleMapper;
+    private final CommonMapper mapper;
+    private final PersonRoleMapper personRoleMapper;
 
     //endregion
 
-    private static final Logger logger = LoggerFactory.getLogger(GeneralService.class);
+    private static final Logger log = LoggerFactory.getLogger(GeneralService.class);
 
     /**
      * 刷新redis中的选项缓存
@@ -73,7 +70,6 @@ public class GeneralService {
     //region common
 
     public void loadMetaData() {
-
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
         MetaData.optionsZh.genderSet = EnumHelper.getAttributeOptions(Gender.class, "zh");
@@ -82,8 +78,7 @@ public class GeneralService {
         MetaData.optionsEn.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "en");
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
-
-        logger.info(I18nHelper.getMessage("system.load_data.meta_data"));
+        log.info(I18nHelper.getMessage("system.load_data.meta_data"));
     }
 
     /**
@@ -113,7 +108,7 @@ public class GeneralService {
      * @author rakbow
      */
     public void updateItemStatus(String tableName, List<Long> ids, int status) {
-        commonMapper.updateItemStatus(tableName, ids, status);
+        mapper.updateItemStatus(tableName, ids, status);
     }
 
     /**
@@ -121,7 +116,7 @@ public class GeneralService {
      * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
      * @author rakbow
      */
-    public boolean entityLike(int entityType, int entityId, String likeToken) {
+    public boolean like(int entityType, long entityId, String likeToken) {
         //点过赞
         if(likeUtil.isLike(entityType, entityId, likeToken)) {
             return false;
@@ -140,7 +135,7 @@ public class GeneralService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemDetail(String tableName, long entityId, String text) {
-        commonMapper.updateItemDetail(tableName, entityId, text, DateHelper.now());
+        mapper.updateItemDetail(tableName, entityId, text, DateHelper.now());
     }
 
     //endregion
@@ -151,40 +146,42 @@ public class GeneralService {
      * 根据实体类型和实体Id获取图片
      *
      * @param tableName,entityId 实体表名 实体id
-     * @return JSONArray
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<Image> getItemImages(String tableName, long entityId) {
-        return JsonUtil.toJavaList(commonMapper.getItemImages(tableName, entityId), Image.class);
+    public segmentImagesResult getItemImages(String tableName, long entityId) {
+        //original images
+        List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
+        return CommonImageUtil.segmentImages(images);
     }
 
     /**
      * 新增图片
      *
-     * @param entityId           实体id
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param newImageInfos         新增图片json数据
+     * @param entityType 实体类型
+     * @param entityId   实体id
+     * @param images     新增图片文件数组
+     * @param imageInfos 新增图片json数据
      * @author rakbow
      */
     @SuppressWarnings("unchecked")
+    @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult addItemImages(String tableName, long entityId, MultipartFile[] images, List<Image> originalImagesJson,
-                                      List<Image> newImageInfos) {
-        ActionResult res = new ActionResult();
-        try{
-            ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImagesJson, newImageInfos);
-            if(ar.state) {
-                commonMapper.updateItemImages(tableName, entityId, (List<Image>) ar.data, DateHelper.now());
-                res.message = I18nHelper.getMessage("image.insert.success");
-            }else {
-                throw new Exception(ar.message);
-            }
-        }catch(Exception ex) {
-            res.setErrorMessage(ex.getMessage());
+    public void addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
+        String tableName = Entity.getTableName(entityType);
+        //原始图片信息json数组
+        List<Image> originalImages = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
+        //新增图片的信息
+        List<Image> newImageInfos = JsonUtil.toJavaList(imageInfos, Image.class);
+        //检测数据合法性
+        CommonImageUtil.checkAddImages(newImageInfos, originalImages);
+        //save
+        ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImages, newImageInfos);
+        if(ar.state) {
+            mapper.updateItemImages(tableName, entityId, (List<Image>) ar.data, DateHelper.now());
+        }else {
+            throw new Exception(ar.message);
         }
-        return res;
     }
 
     /**
@@ -196,7 +193,7 @@ public class GeneralService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemImages(String tableName, long entityId, List<Image> images) {
-        commonMapper.updateItemImages(tableName, entityId, images, DateHelper.now());
+        mapper.updateItemImages(tableName, entityId, images, DateHelper.now());
     }
 
     /**
@@ -208,9 +205,9 @@ public class GeneralService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteItemImages(String tableName, long entityId, List<Image> deleteImages) throws Exception {
-        List<Image> images = getItemImages(tableName, entityId);
+        List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
         List<Image> finalImageJson = qiniuFileUtil.deleteImage(images, deleteImages);
-        commonMapper.updateItemImages(tableName, entityId, finalImageJson, DateHelper.now());
+        mapper.updateItemImages(tableName, entityId, finalImageJson, DateHelper.now());
     }
 
     //endregion

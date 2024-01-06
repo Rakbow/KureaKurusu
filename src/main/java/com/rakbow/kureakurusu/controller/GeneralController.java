@@ -1,9 +1,9 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.common.UpdateDetailCmd;
 import com.rakbow.kureakurusu.data.dto.common.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.dto.image.ImageUpdateCmd;
@@ -16,7 +16,6 @@ import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -50,6 +48,7 @@ public class GeneralController {
             res.data = MetaData.getOptions();
         } catch (Exception e) {
             res.fail(e);
+            log.error(e.getMessage());
         }
         return res;
     }
@@ -63,6 +62,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("entity.crud.status.update.success"));
         } catch (Exception e) {
             res.fail(e);
+            log.error(e.getMessage());
         }
         return res;
     }
@@ -76,6 +76,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("entity.crud.description.update.success"));
         } catch (Exception e) {
             res.fail(e);
+            log.error(e.getMessage());
         }
         return res;
     }
@@ -83,6 +84,19 @@ public class GeneralController {
     //endregion
 
     //region image
+
+    @PostMapping("get-images")
+    public ApiResult getItemImages(@RequestBody EntityQry qry) {
+        ApiResult res = new ApiResult();
+        try {
+            String tableName = Entity.getTableName(qry.getEntityType());
+            res.data = service.getItemImages(tableName, qry.getEntityId());
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
+        }
+        return res;
+    }
 
     //新增图片
     @PostMapping("add-images")
@@ -92,19 +106,12 @@ public class GeneralController {
             //check
             if (images == null || images.length == 0)
                 throw new Exception(I18nHelper.getMessage("file.empty"));
-
-            String tableName = Entity.getTableName(entityType);
-            //原始图片信息json数组
-            List<Image> originalImages = service.getItemImages(tableName, entityId);
-            //新增图片的信息
-            List<Image> newImageInfos = JsonUtil.toJavaList(imageInfos, Image.class);
-            //检测数据合法性
-            CommonImageUtil.checkAddImages(newImageInfos, originalImages);
             //save
-            ActionResult ar = service.addItemImages(tableName, entityId, images, originalImages, newImageInfos);
-            if(!ar.state) throw new Exception(ar.message);
+            service.addItemImages(entityType, entityId, images, imageInfos);
+            res.ok(I18nHelper.getMessage("image.insert.success"));
         } catch (Exception e) {
             res.fail(e);
+            log.error(e.getMessage());
         }
         return res;
     }
@@ -114,8 +121,10 @@ public class GeneralController {
     public ApiResult updateItemImages(@RequestBody ImageUpdateCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            String tableName = Entity.getTableName(cmd.getEntityType());
             List<Image> images = cmd.getImages();
+            if(images.isEmpty())
+                throw new Exception(I18nHelper.getMessage("file.empty"));
+            String tableName = Entity.getTableName(cmd.getEntityType());
             //更新图片信息
             if (cmd.update()) {
                 //检测是否存在多张封面
@@ -132,6 +141,7 @@ public class GeneralController {
             }
         } catch (Exception e) {
             res.fail(e);
+            log.error(e.getMessage());
         }
         return res;
     }
@@ -140,17 +150,17 @@ public class GeneralController {
 
     //region person role
 
-    @RequestMapping(path = "/refresh-person-role", method = RequestMethod.POST)
-    @ResponseBody
-    public String refreshPersonRole() {
+    @PostMapping("refresh-person-role")
+    public ApiResult refreshPersonRole() {
         ApiResult res = new ApiResult();
         try {
             service.refreshPersonRoleSet();
-            res.message = I18nHelper.getMessage("entity.curd.refresh.success", Entity.ENTRY.getName());
+            res.ok(I18nHelper.getMessage("entity.curd.refresh.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
-            res.setErrorMessage(e);
+            res.fail(e);
+            log.error(e.getMessage());
         }
-        return res.toJson();
+        return res;
     }
 
     //endregion
@@ -158,14 +168,10 @@ public class GeneralController {
     //region other
 
     //like
-    @RequestMapping(path = "/like", method = RequestMethod.POST)
-    @ResponseBody
-    public String likeEntity(@RequestBody JSONObject json, HttpServletResponse response) {
+    @PostMapping("like")
+    public ApiResult like(@RequestBody EntityQry qry, HttpServletResponse response) {
         ApiResult res = new ApiResult();
         try {
-            int entityType = json.getIntValue("entity");
-            int entityId = json.getIntValue("entityId");
-
             // 从cookie中获取点赞token
             String likeToken = TokenInterceptor.getLikeToken();
             if(likeToken == null) {
@@ -175,15 +181,16 @@ public class GeneralController {
                 cookie.setPath(contextPath);
                 response.addCookie(cookie);
             }
-            if(service.entityLike(entityType, entityId, likeToken)) {
-                res.message = I18nHelper.getMessage("entity.like.success");
+            if(service.like(qry.getEntityType(), qry.getEntityId(), likeToken)) {
+                res.ok(I18nHelper.getMessage("entity.like.success"));
             }else {
                 throw new Exception(I18nHelper.getMessage("entity.like.failed"));
             }
         }catch (Exception e) {
-            res.setErrorMessage(e);
+            res.fail(e);
+            log.error(e.getMessage());
         }
-        return res.toJson();
+        return res;
     }
 
     //endregion
