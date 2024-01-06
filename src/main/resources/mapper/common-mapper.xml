@@ -4,6 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.CommonMapper">
 
+<!--    <resultMap id="imageResultMap" type="java.util.List">-->
+<!--        <result property="images" column="images" typeHandler="com.rakbow.kureakurusu.util.handler.TestHandler" />-->
+<!--    </resultMap>-->
+
     <update id="updateItemStatus" keyProperty="id">
         update ${param1}
         set
@@ -40,20 +44,6 @@
         where id = #{entityId}
     </update>
 
-    <update id="updateItemCompanies" keyProperty="id">
-        update ${param1}
-        set
-        companies = #{companies}, edited_time = #{editedTime}
-        where id = #{entityId}
-    </update>
-
-    <update id="updateItemPersonnel" keyProperty="id">
-        update ${param1}
-        set
-        ${param2} = #{tmpPersonnel}, edited_time = #{editedTime}
-        where id = #{entityId}
-    </update>
-
     <select id="getItemImages" resultType="string">
         select
         images
@@ -61,10 +51,11 @@
         where id = #{entityId}
     </select>
 
-    <update id="updateItemImages" keyProperty="id">
+    <update id="updateItemImages" parameterType="java.util.List">
         update ${param1}
         set
-        images = #{images}, edited_time = #{editedTime}
+        images = #{images, typeHandler=com.rakbow.kureakurusu.util.handler.ImageHandler},
+        edited_time = #{editedTime}
         where id = #{entityId}
     </update>
 

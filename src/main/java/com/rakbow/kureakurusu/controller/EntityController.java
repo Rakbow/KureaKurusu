@@ -135,47 +135,6 @@ public class EntityController {
         return res.toJson();
     }
 
-    //update item companies
-    @RequestMapping(path = "/update-item-companies", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateItemCompanies(@RequestBody JSONObject json) {
-        ApiResult res = new ApiResult();
-        try {
-            int entityId = json.getInteger("entityId");
-            String entityName = Entity.getTableName(json.getIntValue("entityType"));
-            String companies = json.getString("companies");
-            entityService.updateItemCompanies(entityName, entityId, companies);
-            res.message = I18nHelper.getMessage("entity.crud.companies.update.success");
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return res.toJson();
-    }
-
-    //update item personnel
-    @RequestMapping(path = "/update-item-personnel", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateItemPersonnel(@RequestBody JSONObject json) {
-        ApiResult res = new ApiResult();
-        try {
-            int entityId = json.getInteger("entityId");
-            int entityType = json.getIntValue("entityType");
-            String tableName = Entity.getTableName(entityType);
-            String fieldName = "";
-            if(entityType == Entity.ALBUM.getValue()) {
-                fieldName = "artists";
-            }else if(entityType == Entity.BOOK.getValue()) {
-                fieldName = "personnel";
-            }
-            String personnel = json.getString("personnel");
-            entityService.updateItemPersonnel(tableName, fieldName, entityId, personnel);
-            res.message = I18nHelper.getMessage("entity.crud.personnel.update.success");
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return res.toJson();
-    }
-
     //endregion
 
 }

@@ -11,10 +11,7 @@ import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.common.LikeUtil;
-import com.rakbow.kureakurusu.util.common.RedisUtil;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
+import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.slf4j.Logger;
@@ -159,7 +156,7 @@ public class GeneralService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public List<Image> getItemImages(String tableName, long entityId) {
-        return commonMapper.getItemImages(tableName, entityId);
+        return JsonUtil.toJavaList(commonMapper.getItemImages(tableName, entityId), Image.class);
     }
 
     /**

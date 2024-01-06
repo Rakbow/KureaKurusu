@@ -14,6 +14,7 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -105,17 +106,17 @@ public class GeneralController {
             if (images == null || images.length == 0)
                 throw new Exception(I18nHelper.getMessage("file.empty"));
 
-            String entityName = Entity.getTableName(entityType);
+            String tableName = Entity.getTableName(entityType);
 
             //原始图片信息json数组
-            List<Image> originalImages = service.getItemImages(entityName, entityId);
+            List<Image> originalImages = service.getItemImages(tableName, entityId);
             //新增图片的信息
-            List<Image> newImageInfos = JSON.parseArray(imageInfos).toJavaList(Image.class);
+            List<Image> newImageInfos = JsonUtil.toJavaList(imageInfos, Image.class);
 
             //检测数据合法性
             CommonImageUtil.checkAddImages(newImageInfos, originalImages);
 
-            ActionResult ar = service.addItemImages(entityName, entityId, images, originalImages, newImageInfos);
+            ActionResult ar = service.addItemImages(tableName, entityId, images, originalImages, newImageInfos);
             if(!ar.state) throw new Exception(ar.message);
         } catch (Exception e) {
             res.setErrorMessage(e);

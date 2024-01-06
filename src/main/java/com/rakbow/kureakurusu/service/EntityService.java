@@ -334,30 +334,6 @@ public class EntityService {
         commonMapper.updateItemSpecs(tableName, entityId, specs, DateHelper.now());
     }
 
-    /**
-     * 更新关联企业信息
-     *
-     * @param tableName,entityId 实体表名,实体id
-     * @param companies 关联企业json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateItemCompanies(String tableName, int entityId, String companies) {
-        commonMapper.updateItemCompanies(tableName, entityId, companies, DateHelper.now());
-    }
-
-    /**
-     * 更新相关人员信息
-     *
-     * @param tableName,entityId 实体表名,实体id
-     * @param personnel 相关人员json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateItemPersonnel(String tableName, String fieldName, int entityId, String personnel) {
-        commonMapper.updateItemPersonnel(tableName, fieldName, entityId, personnel, DateHelper.now());
-    }
-
     //endregion
 
     //region search

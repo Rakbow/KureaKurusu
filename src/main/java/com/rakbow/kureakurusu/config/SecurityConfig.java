@@ -59,13 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         //region 需要初级编辑权限
                         "/db/update-item-description",
                         "/db/update-item-bonus",
-                        "/db/update-item-companies",
                         "/db/update-item-specs",
-                        "/db/update-item-personnel",
 
                         "/db/album/add",
                         "/db/album/update",
-                        "/db/album/update-artists",
 
                         "/db/book/add",
                         "/db/book/update",
@@ -98,8 +95,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         )
                 .antMatchers(
                         //region 需要高级编辑权限 如文件操作,更改上传文件(图片,音频)状态,删除文件等
-                        "/db/add-images",
-                        "/db/update-images",
+                        // "/db/add-images",
+                        // "/db/update-images",
 
                         "/db/album/add-images",
                         "/db/album/update-images",

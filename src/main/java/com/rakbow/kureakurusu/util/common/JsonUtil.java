@@ -14,6 +14,10 @@ public class JsonUtil {
         return JSON.parseArray(json, clazz);
     }
 
+    public static <T> T to(String json, Class<T> clazz) {
+        return JSON.to(clazz, json);
+    }
+
     public static String toJson(Object obj) {
         return JSON.toJSONString(obj);
     }
