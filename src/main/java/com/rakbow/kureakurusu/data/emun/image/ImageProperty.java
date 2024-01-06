@@ -1,9 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.image;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @author Rakbow
@@ -12,13 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ImageProperty {
 
-    @Getter
     private long size;
-    @Getter
     private int height;
-    @Getter
     private int width;
 
 }

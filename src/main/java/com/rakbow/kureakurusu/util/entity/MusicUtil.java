@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.util.entity;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.kureakurusu.data.Audio;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.data.entity.view.MusicAlbumView;
@@ -40,30 +41,30 @@ public class MusicUtil {
      * @author rakbow
      * @param music 音乐
      * */
-    public static JSONObject getMusicAudioInfo(Music music, String coverUrl) {
+    public static Audio getMusicAudioInfo(Music music, String coverUrl) {
         List<File> files = music.getFiles();
         if (files.isEmpty()) return null;
-        JSONObject audioInfo = new JSONObject();
 
+        Audio audio = new Audio();
         for (File file : files) {
             //判断是否有音频文件
             if(file.isAudio()) {
-                audioInfo.put("name", music.getName());
-                audioInfo.put("artist", getArtists(music));
-                audioInfo.put("url", file.getUrl());
-                audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                audio.setName(music.getName());
+                audio.setArtist(getArtists(music));
+                audio.setUrl(file.getUrl());
+                audio.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
                 if (StringUtils.isBlank(coverUrl)) {
-                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
+                    audio.setCover(QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80));
                 }else {
-                    audioInfo.put("cover", QiniuImageUtil.getThumbUrl(coverUrl, 80));
+                    audio.setCover(QiniuImageUtil.getThumbUrl(coverUrl, 80));
                 }
             }
             //判断是否有歌词文件
             if (file.isText()) {
-                audioInfo.put("lrc", file.getUrl());
+                audio.setLrc(file.getUrl());
             }
         }
-        return audioInfo;
+        return audio;
     }
 
     /**
@@ -71,20 +72,14 @@ public class MusicUtil {
      * @author rakbow
      * @param musics 音乐
      * */
-    public static JSONArray getMusicAudioInfo(List<Music> musics, String coverUrl) {
-        if (musics.size() == 0) {
-            return null;
-        }
-        JSONArray audioInfos = new JSONArray();
+    public static List<Audio> getMusicAudioInfo(List<Music> musics, String coverUrl) {
+        if (musics.size() == 0) return null;
+        List<Audio> audioInfos = new ArrayList<>();
         musics.forEach(music -> {
-            JSONObject audioInfo = getMusicAudioInfo(music, coverUrl);
-            if (audioInfo != null) {
-                audioInfos.add(audioInfo);
-            }
+            Audio audio = getMusicAudioInfo(music, coverUrl);
+            if (audio != null) audioInfos.add(audio);
         });
-        if (audioInfos.size() == 0) {
-            return null;
-        }
+        if (audioInfos.isEmpty()) return null;
         return audioInfos;
     }
 

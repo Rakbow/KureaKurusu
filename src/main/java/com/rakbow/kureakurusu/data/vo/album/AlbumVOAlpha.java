@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data.vo.album;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.vo.ImageVO;
 import lombok.Data;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class AlbumVOAlpha {
     private String remark;//备注
 
     //图片相关
-    private JSONObject cover;//封面
+    private ImageVO cover;//封面
 
     //关联信息
     private List<Attribute<Integer>> franchises;//所属系列

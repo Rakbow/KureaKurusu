@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto.person;
 
-import com.rakbow.kureakurusu.data.dto.DetailQry;
+import com.rakbow.kureakurusu.data.dto.base.DetailQry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

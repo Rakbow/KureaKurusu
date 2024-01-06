@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.dto;
+package com.rakbow.kureakurusu.data.dto.base;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -2,8 +2,7 @@ package com.rakbow.kureakurusu.data.dto.person;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.dto.CommonCommand;
-import com.rakbow.kureakurusu.data.dto.DTO;
+import com.rakbow.kureakurusu.data.dto.base.DTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

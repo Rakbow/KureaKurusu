@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.dto;
+package com.rakbow.kureakurusu.data.dto.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

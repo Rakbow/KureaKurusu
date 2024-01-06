@@ -4,16 +4,15 @@ import com.rakbow.kureakurusu.data.dto.base.CommonCommand;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
  * @author Rakbow
- * @since 2024/1/3 16:01
+ * @since 2024/01/07 1:42
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AlbumDeleteCmd extends CommonCommand {
+public class UpdateAlbumTrackInfoCmd extends CommonCommand {
 
-    List<Long> ids;
+    private long id;
+    private String discList;
 
 }

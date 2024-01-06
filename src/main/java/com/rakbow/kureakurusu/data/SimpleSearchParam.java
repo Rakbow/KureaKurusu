@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
-import com.rakbow.kureakurusu.data.dto.SearchQry;
+import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import lombok.Data;
 
 /**

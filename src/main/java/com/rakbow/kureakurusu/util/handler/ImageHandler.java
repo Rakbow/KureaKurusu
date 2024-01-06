@@ -1,9 +1,4 @@
-package com.rakbow.kureakurusu.util.handler;/**
- * @Project_name: kureakurusu
- * @Author: Rakbow
- * @Create: 2024-01-05 21:03
- * @Description:
- */
+package com.rakbow.kureakurusu.util.handler;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
 import com.rakbow.kureakurusu.data.image.Image;

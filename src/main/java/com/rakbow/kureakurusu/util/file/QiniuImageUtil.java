@@ -41,7 +41,7 @@ public class QiniuImageUtil {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult commonAddImages(int entityId, String entityName, MultipartFile[] images,
+    public ActionResult commonAddImages(long entityId, String entityName, MultipartFile[] images,
                                         List<Image> originalImagesJson, List<Image> newImageInfos) {
         ActionResult res = new ActionResult();
         try{

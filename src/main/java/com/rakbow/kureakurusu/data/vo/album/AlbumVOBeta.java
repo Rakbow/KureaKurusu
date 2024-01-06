@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data.vo.album;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.vo.ImageVO;
 import lombok.Data;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class AlbumVOBeta {
     private String nameEn;//专辑名称（英语）
     private String releaseDate;//发行日期
 
-    private JSONObject cover;//封面
+    private ImageVO cover;//封面
 
     private List<Attribute<Integer>> albumFormat;//专辑分类
     private String addedTime;//收录时间

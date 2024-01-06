@@ -8,6 +8,7 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.vo.ImageVO;
 import com.rakbow.kureakurusu.data.vo.RegionVO;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
@@ -63,14 +64,6 @@ public class EntityConverter {
         return EntryUtil.getSpecs(json);
     }
 
-    static JSONObject getCover(String images, Entity entity) {
-        return CommonImageUtil.generateCover(images, entity);
-    }
-
-    static JSONObject getThumbCover(String images, Entity entity, int size) {
-        return CommonImageUtil.generateThumbCover(images, entity, size);
-    }
-
     static long getVisitCount(int entityTypeId, long id) {
         VisitUtil visitUtil = SpringUtil.getBean("visitUtil");
         return visitUtil.getVisit(entityTypeId, id);
@@ -93,16 +86,16 @@ public class EntityConverter {
         return JSON.parseArray(json);
     }
 
-    static JSONObject getCover(List<Image> images, Entity entity) {
-        return CommonImageUtil.generateCover(JSON.toJSONString(images), entity);
+    static ImageVO getCover(List<Image> images, Entity entity) {
+        return CommonImageUtil.generateCover(images, entity);
     }
 
     static String getThumb70Cover(List<Image> images) {
         return QiniuImageUtil.getThumb70Url(images);
     }
 
-    static JSONObject getThumbCover(List<Image> images, Entity entity, int size) {
-        return CommonImageUtil.generateThumbCover(JSON.toJSONString(images), entity, size);
+    static ImageVO getThumbCover(List<Image> images, Entity entity, int size) {
+        return CommonImageUtil.generateThumbCover(images, entity, size);
     }
 
 }

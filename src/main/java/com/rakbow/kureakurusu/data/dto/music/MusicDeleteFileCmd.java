@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto.music;
 
-import com.rakbow.kureakurusu.data.dto.CommonCommand;
+import com.rakbow.kureakurusu.data.dto.base.CommonCommand;
 import com.rakbow.kureakurusu.data.system.File;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

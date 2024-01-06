@@ -279,7 +279,7 @@ public class EntityService {
      * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow
      */
-    public void updateItemsStatus(String tableName, List<Integer> ids, int status) {
+    public void updateItemsStatus(String tableName, List<Long> ids, int status) {
         commonMapper.updateItemStatus(tableName, ids, status);
     }
 

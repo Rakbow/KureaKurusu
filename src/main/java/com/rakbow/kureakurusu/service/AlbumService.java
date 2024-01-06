@@ -138,7 +138,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbumTrackInfo(int id, String _discList) throws Exception {
+    public void updateAlbumTrackInfo(long id, String _discList) throws Exception {
 
         List<AlbumDiscDTO> albumDiscDTOs = JSON.parseArray(_discList).toJavaList(AlbumDiscDTO.class);
 

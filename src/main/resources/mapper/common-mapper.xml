@@ -27,7 +27,7 @@
         update ${param1}
         set
         detail = #{text}, edited_time = #{editedTime}
-        where id = #{id}
+        where id = #{entityId}
     </update>
 
     <update id="updateItemBonus" keyProperty="id">

@@ -112,7 +112,7 @@ public class GeneralService {
      * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow
      */
-    public void updateItemStatus(String tableName, List<Integer> ids, int status) {
+    public void updateItemStatus(String tableName, List<Long> ids, int status) {
         commonMapper.updateItemStatus(tableName, ids, status);
     }
 
@@ -139,8 +139,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateItemDetail(String tableName, int id, String text) {
-        commonMapper.updateItemDetail(tableName, id, text, DateHelper.now());
+    public void updateItemDetail(String tableName, long entityId, String text) {
+        commonMapper.updateItemDetail(tableName, entityId, text, DateHelper.now());
     }
 
     //endregion
@@ -170,7 +170,7 @@ public class GeneralService {
      */
     @SuppressWarnings("unchecked")
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult addItemImages(String tableName, int entityId, MultipartFile[] images, List<Image> originalImagesJson,
+    public ActionResult addItemImages(String tableName, long entityId, MultipartFile[] images, List<Image> originalImagesJson,
                                       List<Image> newImageInfos) {
         ActionResult res = new ActionResult();
         try{
@@ -195,9 +195,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String updateItemImages(String tableName, long entityId, List<Image> images) {
+    public void updateItemImages(String tableName, long entityId, List<Image> images) {
         commonMapper.updateItemImages(tableName, entityId, images, DateHelper.now());
-        return I18nHelper.getMessage("image.update.success");
     }
 
     /**
@@ -208,14 +207,10 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public String deleteItemImages(String tableName, long entityId, List<Image> deleteImages) throws Exception {
-
+    public void deleteItemImages(String tableName, long entityId, List<Image> deleteImages) throws Exception {
         List<Image> images = getItemImages(tableName, entityId);
-
         List<Image> finalImageJson = qiniuFileUtil.deleteImage(images, deleteImages);
-
         commonMapper.updateItemImages(tableName, entityId, finalImageJson, DateHelper.now());
-        return I18nHelper.getMessage("image.delete.success");
     }
 
     //endregion

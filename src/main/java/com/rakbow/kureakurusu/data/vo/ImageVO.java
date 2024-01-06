@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.vo;
 
-import lombok.Data;
+import com.rakbow.kureakurusu.data.image.Image;
+import lombok.*;
 
 /**
  * 图片
@@ -8,16 +9,15 @@ import lombok.Data;
  * @author Rakbow
  * @since 2023-02-09 10:42
  */
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class ImageVO {
+public class ImageVO extends Image {
 
-    private String url;//图片url
-    private String thumbUrl;//缩略图url(70px)
+    private String name;
+    private String thumbUrl70;//缩略图url(70px)
     private String thumbUrl50;//缩略图url(50px)
-    private String nameEn;//图片名(英)
-    private String nameZh;//图片名(中)
-    private int type;//图片类型
-    private String description;//图片描述
-    private String uploadTime;//图片上传时间
+    private String blackUrl;//缩略图url(黑背景)
 
 }

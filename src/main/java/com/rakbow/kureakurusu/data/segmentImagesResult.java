@@ -2,6 +2,9 @@ package com.rakbow.kureakurusu.data;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.kureakurusu.data.vo.ImageVO;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,22 +13,39 @@ import java.util.List;
  * @author Rakbow
  * @since 2022-12-31 1:18
  */
+@Data
 public class segmentImagesResult {
 
     //添加了缩略图的images
-    public JSONArray images;
+    private List<ImageVO> images;
     //封面图片
-    public JSONObject cover;
+    private ImageVO cover;
     //展示图片
-    public JSONArray displayImages;
+    private List<ImageVO> displayImages;
     //其他图片
-    public JSONArray otherImages;
+    private List<ImageVO> otherImages;
 
-    public segmentImagesResult () {
-        this.images = new JSONArray();
-        this.cover = new JSONObject();
-        this.displayImages = new JSONArray();
-        this.otherImages = new JSONArray();
+    public segmentImagesResult() {
+        this.images = new ArrayList<>();
+        this.cover = new ImageVO();
+        this.displayImages = new ArrayList<>();
+        this.otherImages = new ArrayList<>();
+    }
+
+    public void setCoverUrl(String url) {
+        this.cover.setUrl(url);
+    }
+
+    public void addDisplayImage(ImageVO image) {
+        this.displayImages.add(image);
+    }
+
+    public void addImage(ImageVO image) {
+        this.images.add(image);
+    }
+
+    public void addOtherImage(ImageVO image) {
+        this.otherImages.add(image);
     }
 
 }

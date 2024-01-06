@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto.person;
 
-import com.rakbow.kureakurusu.data.dto.Command;
+import com.rakbow.kureakurusu.data.dto.base.Command;
 import com.rakbow.kureakurusu.data.person.PersonnelPair;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

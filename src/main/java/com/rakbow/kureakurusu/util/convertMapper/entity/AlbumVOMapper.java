@@ -21,8 +21,10 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 /**
+ * album VO转换接口
+ *
  * @author Rakbow
- * @since 2023-01-11 16:13 album VO转换接口
+ * @since 2023-01-11 16:13
  */
 @Mapper(componentModel = "spring")
 public interface AlbumVOMapper extends CommonVOMapper {

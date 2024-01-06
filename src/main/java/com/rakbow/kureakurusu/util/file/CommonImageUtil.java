@@ -1,24 +1,20 @@
 package com.rakbow.kureakurusu.util.file;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.image.ImageProperty;
-import com.rakbow.kureakurusu.data.emun.image.ImageType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.convertMapper.GeneralVOMapper;
+import lombok.SneakyThrows;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -26,77 +22,72 @@ import java.util.Objects;
  */
 public class CommonImageUtil {
 
+    private static final GeneralVOMapper VOMapper = GeneralVOMapper.INSTANCES;
+
+    private static final int DEFAULT_THUMB_SIZE = 200;
+    private static final int THUMB_SIZE_70 = 70;
+    private static final int THUMB_SIZE_50 = 50;
+
+    private static final double STANDARD_BOOK_WIDTH = 180;
+    private static final double STANDARD_BOOK_HEIGHT = 254.558;
+
     //region ------检测------
 
     /**
      * 对新增图片信息合法性进行检测，图片类型
      *
      * @param newImages,originalImages 新增图片信息，专辑原图片集合
-     * @return boolean
      * @author rakbow
      */
-    public static void checkAddImages(List<Image> newImages, List<Image> originalImages) throws Exception {
-
+    @SneakyThrows
+    public static void checkAddImages(List<Image> newImages, List<Image> originalImages) {
         int coverCount = 0;
-
         if (!originalImages.isEmpty()) {
-
             for (Image originalImage : originalImages) {
-                if (originalImage.getType() == ImageType.MAIN.getValue()) {
-                    coverCount++;
-                }
+                if (originalImage.isMain()) coverCount++;
             }
         }
         for (Image newImage : newImages) {
-            if (newImage.getType() == ImageType.MAIN.getValue()) {
-                coverCount++;
-            }
+            if (newImage.isMain()) coverCount++;
         }
-
         //检测图片类型为封面的个数是否大于1
-        if (coverCount > 1) {
+        if (coverCount > 1)
             throw new Exception(I18nHelper.getMessage("image.error.only_one_cover"));
-        }
     }
 
     /**
      * 对更新图片信息合法性进行检测，图片英文名和图片类型
      *
      * @param images 图片json数组
-     * @return 报错信息
      * @author rakbow
      */
-    public static String checkUpdateImages(List<Image> images) {
+    @SneakyThrows
+    public static void checkUpdateImages(List<Image> images) {
         //封面类型的图片个数
         int coverCount = 0;
         for (Image image : images) {
             if (image.isMain()) coverCount++;
         }
-        if (coverCount > 1) {
-            return I18nHelper.getMessage("image.error.only_one_cover");
-        }
-        return "";
+        if (coverCount > 1)
+            throw new Exception(I18nHelper.getMessage("image.error.only_one_cover"));
     }
 
     //endregion
 
     /**
      * 使用 通过图片url获取字节大小，长宽
-     * @param imgUrl 图片URL
+     * @param url 图片URL
      */
-    public static ImageProperty getImageProperty(String imgUrl) throws IOException {
-        ImageProperty img = new ImageProperty();
-
-        File file = new File(imgUrl);
-
+    @SneakyThrows
+    public static ImageProperty getImageProperty(String url) {
+        File file = new File(url);
         // 图片对象
-        BufferedImage bufferedImage = ImageIO.read(new FileInputStream(file));
-
-        img.setSize(file.length());
-        img.setWidth(bufferedImage.getWidth());
-        img.setHeight(bufferedImage.getHeight());
-
-        return img;
+        BufferedImage image = ImageIO.read(new FileInputStream(file));
+        return ImageProperty.builder()
+                .size(file.length())
+                .height(image.getHeight())
+                .width(image.getWidth())
+                .build();
     }
 
     /**
@@ -108,9 +99,7 @@ public class CommonImageUtil {
      */
     public static String getCoverUrl (List<Image> images) {
         for (Image image : images) {
-            if (image.isMain()) {
-                return image.getUrl();
-            }
+            if (image.isMain()) return image.getUrl();
         }
         return CommonConstant.EMPTY_IMAGE_URL;
     }
@@ -118,106 +107,68 @@ public class CommonImageUtil {
     /**
      * 将图片切分为封面、展示和其他图片
      *
-     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @param orgImages 数据库原图片
      * @param coverSize 封面图尺寸
      * @return segmentImagesResult
      * @author rakbow
      */
-    public static segmentImagesResult segmentImages (String imagesJson, int coverSize, Entity entity, boolean isWidth) {
+    public static segmentImagesResult segmentImages (List<Image> orgImages, int coverSize, Entity entity, boolean isWidth) {
 
-        segmentImagesResult result = new segmentImagesResult();
+        segmentImagesResult res = new segmentImagesResult();
+        res.setImages(VOMapper.toVO(orgImages));
 
-        List<ImageVO> ImageVOs = JSON.parseArray(imagesJson, ImageVO.class);
-
-        //添加缩略图
-        if (!ImageVOs.isEmpty()) {
-            for (ImageVO imageVO : ImageVOs) {
-                imageVO.setThumbUrl(QiniuImageUtil.getThumbUrl(imageVO.getUrl(), 70));
-                imageVO.setThumbUrl50(QiniuImageUtil.getThumbUrl(imageVO.getUrl(), 50));
-            }
-        }
-
-        //对封面图片进行处理
-        JSONObject cover = new JSONObject();
         if (isWidth) {
-            cover.put("url", QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
+            res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
         }else {
-            cover.put("url", QiniuImageUtil.getThumbUrl(getDefaultImageUrl(entity), coverSize));
+            res.setCoverUrl(QiniuImageUtil.getThumbUrl(getDefaultImageUrl(entity), coverSize));
         }
-        cover.put("name", "404");
-        if (!ImageVOs.isEmpty()) {
-            for (ImageVO imageVO : ImageVOs) {
-                if (imageVO.getType() == ImageType.MAIN.getValue()) {
-
+        if (!res.getImages().isEmpty()) {
+            for (ImageVO image : res.getImages()) {
+                //添加缩略图
+                image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+                image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+                if (image.isMain()) {
+                    //对封面图片进行处理
                     if (isWidth) {
-                        cover.put("url", QiniuImageUtil.getThumbUrlWidth(imageVO.getUrl(), coverSize));
+                        res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(image.getUrl(), coverSize));
                     }else {
-                        cover.put("url", QiniuImageUtil.getThumbUrl(imageVO.getUrl(), coverSize));
+                        res.setCoverUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), coverSize));
                     }
-                    cover.put("name", imageVO.getNameEn());
+                    res.getCover().setName(image.getNameEn());
+                }
+                if (image.isDisplay()) {
+                    res.addDisplayImage(image);
+                }else {
+                    res.addOtherImage(image);
                 }
             }
         }
-
-        //对展示图片进行封装
-        JSONArray displayImages = new JSONArray();
-        if (!ImageVOs.isEmpty()) {
-            for (ImageVO imageVO : ImageVOs) {
-                if (imageVO.getType() == ImageType.DISPLAY.getValue()
-                        || imageVO.getType() == ImageType.MAIN.getValue()) {
-                    displayImages.add(imageVO);
-                }
-            }
-        }
-
-        //对其他图片进行封装
-        JSONArray otherImages = new JSONArray();
-        if (!ImageVOs.isEmpty()) {
-            for (ImageVO imageVO : ImageVOs) {
-                if (imageVO.getType() == ImageType.OTHER.getValue()) {
-                    otherImages.add(imageVO);
-                }
-            }
-        }
-
-        result.images = JSON.parseArray(JSON.toJSONString(ImageVOs));
-        result.cover = cover;
-        result.displayImages = displayImages;
-        result.otherImages = otherImages;
-
-        return result;
-
+        return res;
     }
 
     /**
      * 获取各尺寸封面图片
      *
-     * @param imagesJson 数据库原图片合集的JSON字符串
-     * @return JSONObject
+     * @param images 数据库原图片
      * @author rakbow
      */
-    public static JSONObject generateCover(String imagesJson, Entity entity) {
-
-        List<Image> images = JSON.parseArray(imagesJson).toJavaList(Image.class);
-
+    public static ImageVO generateCover(List<Image> images, Entity entity) {
+        //default image url
         String defaultImageUrl = getDefaultImageUrl(entity);
-
         //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 200));
-        cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(defaultImageUrl, 50));
-        cover.put("thumbUrl70", QiniuImageUtil.getThumbUrl(defaultImageUrl, 70));
-        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 50));
-        cover.put("name", "404");
-        if (images.size() != 0) {
+        ImageVO cover = new ImageVO();
+        cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, DEFAULT_THUMB_SIZE));
+        cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_50));
+        cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_70));
+        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
+        if (!images.isEmpty()) {
             for (Image image : images) {
-                if (image.getType() == ImageType.MAIN.getValue()) {
-                    cover.put("url", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 200));
-                    cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getUrl(), 50));
-                    cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 70));
-                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), 50));
-                    cover.put("name", image.getNameEn());
-                }
+                if(!image.isMain()) continue;
+                cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), DEFAULT_THUMB_SIZE));
+                cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+                cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50));
+                cover.setName(image.getNameEn());
             }
         }
         return cover;
@@ -226,33 +177,28 @@ public class CommonImageUtil {
     /**
      * 获取各尺寸封面图片(标准书本)
      *
-     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @param orgImages 数据库原图片
      * @return JSONObject
      * @author rakbow
      */
-    public static JSONObject generateBookCover(String imagesJson, Entity entity) {
-
-        JSONArray images = JSONArray.parseArray(imagesJson);
-
+    public static ImageVO generateBookCover(List<Image> orgImages, Entity entity) {
         String defaultImageUrl = getDefaultImageUrl(entity);
+        List<ImageVO> images = VOMapper.toVO(orgImages);
 
         //对图片封面进行处理
-        JSONObject cover = new JSONObject();
-        cover.put("url", QiniuImageUtil.getBookThumbBackgroundUrl(defaultImageUrl, 180, 254.558));
-        cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(defaultImageUrl, 50));
-        cover.put("thumbUrl70", QiniuImageUtil.getThumbUrl(defaultImageUrl, 70));
-        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, 50));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtil.getBookThumbBackgroundUrl(image.getString("url"), 180, 254.558));
-                    cover.put("thumbUrl", QiniuImageUtil.getThumbUrl(image.getString("url"), 50));
-                    cover.put("thumbUrl70", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 70));
-                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), 50));
-                    cover.put("name", image.getString("nameEn"));
-                }
+        ImageVO cover = new ImageVO();
+        cover.setUrl(QiniuImageUtil.getBookThumbBackgroundUrl(defaultImageUrl, STANDARD_BOOK_WIDTH, STANDARD_BOOK_HEIGHT));
+        cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_50));
+        cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_70));
+        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                if(!image.isMain()) continue;
+                cover.setUrl(QiniuImageUtil.getBookThumbBackgroundUrl(image.getUrl(), STANDARD_BOOK_WIDTH, STANDARD_BOOK_HEIGHT));
+                cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+                cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50));
+                cover.setName(image.getNameEn());
             }
         }
         return cover;
@@ -261,25 +207,22 @@ public class CommonImageUtil {
     /**
      * 获取封面图片缩略图
      *
-     * @param imagesJson 数据库原图片合集的JSON字符串
+     * @param orgImages 数据库原图片合集
      * @return JSONObject
      * @author rakbow
      */
-    public static JSONObject generateThumbCover(String imagesJson, Entity entity, int size) {
-        JSONObject cover = new JSONObject();
-        JSONArray images = JSONArray.parseArray(imagesJson);
+    public static ImageVO generateThumbCover(List<Image> orgImages, Entity entity, int size) {
         String defaultImageUrl = getDefaultImageUrl(entity);
-        cover.put("url", QiniuImageUtil.getThumbUrl(defaultImageUrl, size));
-        cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
-        cover.put("name", "404");
-        if (images.size() != 0) {
-            for (int i = 0; i < images.size(); i++) {
-                JSONObject image = images.getJSONObject(i);
-                if (Objects.equals(image.getString("type"), "1")) {
-                    cover.put("url", QiniuImageUtil.getThumbUrl(image.getString("url"), size));
-                    cover.put("blackUrl", QiniuImageUtil.getThumbBackgroundUrl(image.getString("url"), size));
-                    cover.put("name", image.getString("nameEn"));
-                }
+        ImageVO cover = new ImageVO();
+        List<ImageVO> images = VOMapper.toVO(orgImages);
+        cover.setUrl(QiniuImageUtil.getThumbUrl(defaultImageUrl, size));
+        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
+        if (!images.isEmpty()) {
+            for (Image image : images) {
+                if(!image.isMain()) continue;
+                cover.setUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), size));
+                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), size));
+                cover.setName(image.getNameEn());
             }
         }
         return cover;

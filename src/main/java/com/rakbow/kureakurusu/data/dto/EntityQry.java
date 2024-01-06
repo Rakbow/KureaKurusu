@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.dto.base.Query;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EntityQry extends Query{
+public class EntityQry extends Query {
 
     private Integer entityType;
     private Long entityId;

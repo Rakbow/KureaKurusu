@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import lombok.Data;
 
 import java.util.LinkedHashMap;

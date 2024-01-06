@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto.image;
 
-import com.rakbow.kureakurusu.data.dto.CommonCommand;
+import com.rakbow.kureakurusu.data.dto.base.CommonCommand;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.image.Image;
 import lombok.Data;

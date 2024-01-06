@@ -19,6 +19,7 @@ public class Image {
     private int type;//图片类型
     private String description;//图片描述
     private String uploadTime;//图片上传时间
+    private String uploadUser;
 
     public Image() {
         this.url = "";
@@ -27,10 +28,15 @@ public class Image {
         this.type = ImageType.DISPLAY.getValue();
         this.description = "";
         this.uploadTime = DateHelper.nowStr();
+        this.uploadUser = "";
     }
 
     public boolean isMain() {
         return this.type == ImageType.MAIN.getValue();
+    }
+
+    public boolean isDisplay() {
+        return this.type == ImageType.MAIN.getValue() || this.type == ImageType.DISPLAY.getValue();
     }
 
 }

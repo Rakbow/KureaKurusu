@@ -1,8 +1,4 @@
-package com.rakbow.kureakurusu.data.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package com.rakbow.kureakurusu.data.dto.base;
 
 import java.io.Serial;
 
