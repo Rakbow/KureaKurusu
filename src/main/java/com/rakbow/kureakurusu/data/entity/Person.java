@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2023-10-06 3:59
  */
 @Data
-@TableName("person")
+@TableName(value = "person", autoResultMap = true)
 public class Person {
 
     private Long id; //主键
