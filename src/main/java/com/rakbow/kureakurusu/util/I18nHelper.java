@@ -23,7 +23,6 @@ public class I18nHelper {
 
     public static String getMessage(String key) {
         init();
-        // Locale locale = LocaleContextHolder.getLocale();
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(key, null, locale);
     }

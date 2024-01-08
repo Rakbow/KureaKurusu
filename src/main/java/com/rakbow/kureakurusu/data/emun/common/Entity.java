@@ -22,7 +22,8 @@ public enum Entity {
     MUSIC(5, "enum.entity.music","music"),
     GOODS(6, "enum.entity.goods","goods"),
     FIGURE(7, "enum.entity.figure","figure"),
-    PERSON(8, "enum.entity.person","person");
+    PERSON(8, "enum.entity.person","person"),
+    ROLE(90, "enum.entity.role", "person_role");
 
     private final Integer value;
     private final String labelKey;

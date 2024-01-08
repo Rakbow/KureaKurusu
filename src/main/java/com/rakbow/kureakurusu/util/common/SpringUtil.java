@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.util.common;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -19,7 +20,7 @@ public class SpringUtil implements ApplicationContextAware {
     private static MessageSource messageSource;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
     }
 
@@ -29,9 +30,8 @@ public class SpringUtil implements ApplicationContextAware {
 
     /**
      * 通过字节码获取
-     * @param beanClass
-     * @param <T>
-     * @return
+     *
+     * @author Rakbow
      */
     public static <T> T getBean(Class<T> beanClass) {
         return context.getBean(beanClass);
@@ -39,20 +39,18 @@ public class SpringUtil implements ApplicationContextAware {
 
     /**
      * 通过BeanName获取
-     * @param beanName
-     * @param <T>
-     * @return
+     *
+     * @author Rakbow
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getBean(String beanName) {
         return (T) context.getBean(beanName);
     }
 
     /**
      * 通过beanName和字节码获取
-     * @param name
-     * @param beanClass
-     * @param <T>
-     * @return
+     *
+     * @author Rakbow
      */
     public static <T> T getBean(String name, Class<T> beanClass) {
         return context.getBean(name, beanClass);

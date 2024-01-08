@@ -14,8 +14,8 @@ import java.util.List;
  * @author Rakbow
  * @since 2024/01/05 21:03
  */
-@MappedTypes({List.class})
-@MappedJdbcTypes({JdbcType.VARCHAR})        //java数据类型
+@MappedTypes({List.class})//java数据类型
+@MappedJdbcTypes({JdbcType.VARCHAR})//数据库数据类型
 @Log
 public class ImageHandler extends AbstractJsonTypeHandler<List<Image>> {
 
