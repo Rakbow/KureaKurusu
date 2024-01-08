@@ -1,26 +1,30 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
-import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
-import com.rakbow.kureakurusu.data.system.LoginResult;
-import com.rakbow.kureakurusu.data.system.LoginUser;
-import com.rakbow.kureakurusu.data.entity.LoginTicket;
-import com.rakbow.kureakurusu.data.entity.User;
-import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.CookieUtil;
 import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.CommonConstant;
+import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
+import com.rakbow.kureakurusu.data.entity.LoginTicket;
+import com.rakbow.kureakurusu.data.entity.User;
+import com.rakbow.kureakurusu.data.system.LoginResult;
+import com.rakbow.kureakurusu.data.system.LoginUser;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.CookieUtil;
 import com.rakbow.kureakurusu.util.common.MailClient;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.ap.internal.model.assignment.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -28,29 +32,17 @@ import java.util.*;
  * @author Rakbow
  * @since 2022-08-02 0:43
  */
+@RequiredArgsConstructor
 @Service
-public class UserService{
+public class UserService extends ServiceImpl<UserMapper, User> {
 
-    @Resource
-    private UserMapper userMapper;
-
-    @Resource
-    private MailClient mailClient;
-
-    @Resource
-    private LoginTicketMapper loginTicketMapper;
-
+    private final UserMapper mapper;
+    private final MailClient mailClient;
+    private final LoginTicketMapper loginTicketMapper;
     @Value("${kureakurusu.path.domain}")
     private String domain;
-
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    
-
-    @Transactional( readOnly = true )
-    public User findUserById(int id) {
-        return userMapper.selectUserById(id);
-    }
 
     public Map<String, Object> register(User user) {
         Map<String, Object> map = new HashMap<>();
@@ -73,14 +65,14 @@ public class UserService{
         }
 
         // 验证账号
-        User u = userMapper.selectUserByUsername(user.getUsername());
+        User u = mapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, user.getUsername()));
         if (u != null) {
             map.put("usernameMsg", "该账号已存在!");
             return map;
         }
 
         // 验证邮箱
-        u = userMapper.selectUserByEmail(user.getEmail());
+        u = mapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getEmail, user.getEmail()));
         if (u != null) {
             map.put("emailMsg", "该邮箱已被注册!");
             return map;
@@ -95,7 +87,7 @@ public class UserService{
         //设置用户默认头像
         //user.setHeaderUrl(String.format("", new Random().nextInt(1000)));
         user.setCreateTime(new Date());
-        userMapper.insertUser(user);
+        mapper.insert(user);
 
         // 激活邮件
         // Context context = new Context();
@@ -109,11 +101,11 @@ public class UserService{
     }
 
     public int activation(int userId, String code) {
-        User user = userMapper.selectUserById(userId);
+        User user = getById(userId);
         if (user.getStatus() == 1) {
             return CommonConstant.ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
-            userMapper.updateStatus(userId, 1);
+            mapper.update(user, new LambdaUpdateWrapper<User>().eq(User::getId, userId).set(User::getStatus, 1));
             return CommonConstant.ACTIVATION_SUCCESS;
         } else {
             return CommonConstant.ACTIVATION_FAILURE;
@@ -134,7 +126,7 @@ public class UserService{
         }
 
         // 验证账号
-        User user = userMapper.selectUserByUsername(username);
+        User user = mapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         if (user == null) {
             res.setError(I18nHelper.getMessage("login.user.not_exist"));
             return res;
@@ -178,13 +170,13 @@ public class UserService{
         return loginTicketMapper.selectByTicket(ticket);
     }
 
-    public void updateHeader(int userId, String headerUrl) {
-        userMapper.updateHeader(userId, headerUrl);
+    public void updateHeader(int id, String headerUrl) {
+        mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, id).set(User::getHeaderUrl, headerUrl));
     }
 
     //配置用户权限!!!
     public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
-        User user = this.findUserById(userId);
+        User user = this.getById(userId);
 
         List<GrantedAuthority> list = new ArrayList<>();
 
@@ -209,7 +201,7 @@ public class UserService{
             // 检查凭证是否有效
             if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                 // 根据凭证查询用户
-                User user = findUserById(loginTicket.getUserId());
+                User user = getById(loginTicket.getUserId());
                 if (user.getType() == 1) {
                     res.setErrorMessage(I18nHelper.getMessage("auth.not_authority"));
                 }
@@ -232,7 +224,7 @@ public class UserService{
             // 检查凭证是否有效
             if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                 // 根据凭证查询用户
-                return findUserById(loginTicket.getUserId());
+                return getById(loginTicket.getUserId());
             }
         }
         return null;

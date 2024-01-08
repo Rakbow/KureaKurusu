@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.time.chrono.JapaneseDate;
 
 /**
  * @author Rakbow
@@ -33,6 +34,11 @@ public class otherTests {
     public void tmpTest() {
         String url = "https://img.rakbow.com/album/6/f57fa8a51b594e30.jpg";
         System.out.println(QiniuImageUtil.getImageKeyByFullUrl(url));
+    }
+
+    @Test
+    public void test1() {
+        System.out.println(JapaneseDate.now());
     }
 
 }

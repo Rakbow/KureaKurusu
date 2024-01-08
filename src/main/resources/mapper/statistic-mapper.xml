@@ -4,66 +4,66 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.StatisticMapper">
 
-    <sql id="selectFields">
-        entity_type, entity_id, visit_count, like_count, collect_count, status
-    </sql>
+<!--    <sql id="selectFields">-->
+<!--        entity_type, entity_id, visit_count, like_count, collect_count, status-->
+<!--    </sql>-->
 
-    <sql id="insertFields">
-        entity_type, entity_id, visit_count, like_count, collect_count, status
-    </sql>
+<!--    <sql id="insertFields">-->
+<!--        entity_type, entity_id, visit_count, like_count, collect_count, status-->
+<!--    </sql>-->
 
-    <select id="getStatistic" resultType="EntityStatistic">
-        select
-        <include refid="selectFields"></include>
-        from entity_statistic
-        where entity_type = #{entity} and entity_id = #{entityId}
-    </select>
+<!--    <select id="getStatistic" resultType="EntityStatistic">-->
+<!--        select-->
+<!--        <include refid="selectFields"></include>-->
+<!--        from entity_statistic-->
+<!--        where entity_type = #{entity} and entity_id = #{entityId}-->
+<!--    </select>-->
 
-    <select id="getAll" resultType="EntityStatistic">
-        select
-        <include refid="selectFields"></include>
-        from entity_statistic
-    </select>
+<!--    <select id="getAll" resultType="EntityStatistic">-->
+<!--        select-->
+<!--        <include refid="selectFields"></include>-->
+<!--        from entity_statistic-->
+<!--    </select>-->
 
-    <insert id="addStatistic">
-        insert into entity_statistic (<include refid="insertFields"></include>)
-        values (#{entity}, #{entityId}, #{visitCount}, #{likeCount}, #{collectCount}, #{status})
-    </insert>
+<!--    <insert id="addStatistic">-->
+<!--        insert into entity_statistic (<include refid="insertFields"></include>)-->
+<!--        values (#{entity}, #{entityId}, #{visitCount}, #{likeCount}, #{collectCount}, #{status})-->
+<!--    </insert>-->
 
-    <update id="updateVisitCount">
-        update entity_statistic
-        set
-        visit_count = #{visitCount}
-        where entity_type = #{entity} and entity_id = #{entityId}
-    </update>
+<!--    <update id="updateVisitCount">-->
+<!--        update entity_statistic-->
+<!--        set-->
+<!--        visit_count = #{visitCount}-->
+<!--        where entity_type = #{entity} and entity_id = #{entityId}-->
+<!--    </update>-->
 
-    <update id="updateLikeCount">
-        update entity_statistic
-        set
-        like_count = #{likeCount}
-        where entity_type = #{entity} and entity_id = #{entityId}
-    </update>
+<!--    <update id="updateLikeCount">-->
+<!--        update entity_statistic-->
+<!--        set-->
+<!--        like_count = #{likeCount}-->
+<!--        where entity_type = #{entity} and entity_id = #{entityId}-->
+<!--    </update>-->
 
-    <update id="updateCollectCount">
-        update entity_statistic
-        set
-        collect_count = #{collectCount}
-        where entity_type = #{entity} and entity_id = #{entityId}
-    </update>
+<!--    <update id="updateCollectCount">-->
+<!--        update entity_statistic-->
+<!--        set-->
+<!--        collect_count = #{collectCount}-->
+<!--        where entity_type = #{entity} and entity_id = #{entityId}-->
+<!--    </update>-->
 
-    <delete id="deleteStatistic">
-        delete
-        from entity_statistic
-        where entity_type = #{entity} and entity_id = #{entityId}
-    </delete>
+<!--    <delete id="deleteStatistic">-->
+<!--        delete-->
+<!--        from entity_statistic-->
+<!--        where entity_type = #{entity} and entity_id = #{entityId}-->
+<!--    </delete>-->
 
-    <select id="getPopularItems" resultType="EntityStatistic">
-        select
-        <include refid="selectFields"></include>
-        from entity_statistic
-        where entity_type = #{entity} and status = 1
-        order by visit_count desc
-        limit 10
-    </select>
+<!--    <select id="getPopularItems" resultType="EntityStatistic">-->
+<!--        select-->
+<!--        <include refid="selectFields"></include>-->
+<!--        from entity_statistic-->
+<!--        where entity_type = #{entity} and status = 1-->
+<!--        order by visit_count desc-->
+<!--        limit 10-->
+<!--    </select>-->
 
 </mapper>
