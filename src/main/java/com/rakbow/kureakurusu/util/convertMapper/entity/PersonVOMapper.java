@@ -22,14 +22,12 @@ public interface PersonVOMapper extends CommonVOMapper {
 
     PersonVOMapper INSTANCES = Mappers.getMapper(PersonVOMapper.class);
 
-    @Mapping(source = "aliases", target = "aliases", qualifiedByName = "list2Str")
     @Mapping(source = "gender", target = "gender", qualifiedByName = "getGender")
     @Named("build")
     Person build(PersonAddDTO dto);
 
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")
-    @Mapping(source = "aliases", target = "aliases", qualifiedByName = "getStrList")
     @Mapping(source = "status", target = "status", qualifiedByName = "getStatus")
     @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
@@ -46,7 +44,6 @@ public interface PersonVOMapper extends CommonVOMapper {
 
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")
-    @Mapping(source = "aliases", target = "aliases", qualifiedByName = "getStrList")
     @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
     @Named("toBetaVO")

@@ -49,11 +49,6 @@ public interface CommonVOMapper {
         return CommonUtil.getIdsStr(ids);
     }
 
-    @Named("list2Str")
-    default String list2Str(List<String> list) {
-        return CommonUtil.getListStr(list);
-    }
-
     @Named("getGender")
     default Gender getGender(int value) {
         return Gender.get(value);
