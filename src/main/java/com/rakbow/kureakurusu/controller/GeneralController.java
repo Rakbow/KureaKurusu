@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
-import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.common.UpdateDetailCmd;
@@ -13,13 +12,16 @@ import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
@@ -155,7 +157,7 @@ public class GeneralController {
         ApiResult res = new ApiResult();
         try {
             service.refreshPersonRoleSet();
-            res.ok(I18nHelper.getMessage("entity.curd.refresh.success", Entity.ENTRY.getName()));
+            res.ok(I18nHelper.getMessage("entity.curd.refresh.success", Entity.ROLE.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -174,7 +176,7 @@ public class GeneralController {
         try {
             // 从cookie中获取点赞token
             String likeToken = TokenInterceptor.getLikeToken();
-            if(likeToken == null) {
+            if(StringUtils.isBlank(likeToken)) {
                 //生成likeToken,并返回
                 likeToken = CommonUtil.generateUUID();
                 Cookie cookie = new Cookie("like_token", likeToken);
@@ -184,7 +186,7 @@ public class GeneralController {
             if(service.like(qry.getEntityType(), qry.getEntityId(), likeToken)) {
                 res.ok(I18nHelper.getMessage("entity.like.success"));
             }else {
-                throw new Exception(I18nHelper.getMessage("entity.like.failed"));
+                res.fail(I18nHelper.getMessage("entity.like.failed"));
             }
         }catch (Exception e) {
             res.fail(e);

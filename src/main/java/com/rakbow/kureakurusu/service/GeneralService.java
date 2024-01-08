@@ -63,7 +63,7 @@ public class GeneralService {
     public void refreshRedisEnumData() {
 
         Map<String, List<Attribute<Integer>>> enumOptionsRedisKeyPair = EnumUtil.getOptionRedisKeyPair();
-        enumOptionsRedisKeyPair.forEach((k, v) -> redisUtil.set(k, v));
+        enumOptionsRedisKeyPair.forEach(redisUtil::set);
 
     }
 
