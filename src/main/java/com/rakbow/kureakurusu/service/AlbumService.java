@@ -28,6 +28,7 @@ import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.AlbumUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,18 +83,13 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteAlbums(List<Long> ids) {
-        try {
-
-            List<Album> albums = mapper.selectBatchIds(ids);
-            for (Album album : albums) {
-                //删除前先把服务器上对应图片全部删除
-                qiniuFileUtil.deleteAllImage(album.getImages());
-                //删除专辑
-                mapper.deleteById(album.getId());
-                visitUtil.deleteVisit(ENTITY_ALBUM_VALUE, album.getId());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        List<Album> albums = mapper.selectBatchIds(ids);
+        for (Album album : albums) {
+            //删除前先把服务器上对应图片全部删除
+            qiniuFileUtil.deleteAllImage(album.getImages());
+            //删除专辑
+            mapper.deleteById(album.getId());
+            visitUtil.deleteVisit(ENTITY_ALBUM_VALUE, album.getId());
         }
     }
 
@@ -105,8 +101,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbum(Album album) {
-        album.setEditedTime(DateHelper.now());
-        mapper.updateById(album);
+        update(new LambdaUpdateWrapper<Album>().setEntity(album).set(Album::getEditedTime, DateHelper.now()));
     }
 
     //endregion
@@ -115,14 +110,11 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     public AlbumVO buildVO(Album album, List<Music> musics) {
         AlbumVO VO = VOMapper.toVO(album);
-
-        if (AuthorityInterceptor.isJunior()) {
+        if (AuthorityInterceptor.isJunior())
             //可供编辑的editDiscList
             VO.setEditDiscList(AlbumUtil.getEditDiscList(album.getTrackInfo(), musics));
-        }
         //音轨信息
         VO.setTrackInfo(AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics));
-
         return VO;
     }
 
@@ -137,8 +129,9 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @param _discList 专辑的音轨信息json数据
      * @author rakbow
      */
+    @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbumTrackInfo(long id, String _discList) throws Exception {
+    public void updateAlbumTrackInfo(long id, String _discList) {
 
         List<AlbumDiscDTO> albumDiscDTOs = JSON.parseArray(_discList).toJavaList(AlbumDiscDTO.class);
 
