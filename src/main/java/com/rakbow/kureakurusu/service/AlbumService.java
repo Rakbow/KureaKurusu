@@ -1,40 +1,39 @@
 package com.rakbow.kureakurusu.service;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
+import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.bo.AlbumDiscBO;
-import com.rakbow.kureakurusu.data.dto.AlbumDiscDTO;
-import com.rakbow.kureakurusu.data.dto.AlbumTrackDTO;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
-import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVOBeta;
+import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Music;
+import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
-import com.rakbow.kureakurusu.util.entity.AlbumUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static com.rakbow.kureakurusu.data.common.Constant.BAR;
 
 /**
  * @author Rakbow
@@ -45,13 +44,16 @@ import java.util.List;
 public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region ------inject------
-    private final AlbumMapper mapper;
-    private final MusicService musicService;
     private final QiniuFileUtil qiniuFileUtil;
     private final VisitUtil visitUtil;
     private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
 
-    private final int ENTITY_ALBUM_VALUE =  Entity.ALBUM.getValue();
+    private final AlbumMapper mapper;
+    private final EpisodeMapper episodeMapper;
+
+    private final SqlSessionFactory sqlSessionFactory;
+
+    private final int ENTITY_ALBUM_VALUE = Entity.ALBUM.getValue();
     //endregion
 
     //region ------crud------
@@ -108,14 +110,55 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region ------数据处理------
 
-    public AlbumVO buildVO(Album album, List<Music> musics) {
+    public AlbumVO buildVO(Album album) {
         AlbumVO VO = VOMapper.toVO(album);
-        if (AuthorityInterceptor.isJunior())
-            //可供编辑的editDiscList
-            VO.setEditDiscList(AlbumUtil.getEditDiscList(album.getTrackInfo(), musics));
         //音轨信息
-        VO.setTrackInfo(AlbumUtil.getFinalTrackInfo(album.getTrackInfo(), musics));
+        VO.setTrackInfo(getTrackInfo(album));
         return VO;
+    }
+
+    public AlbumTrackInfoVO getTrackInfo(Album album) {
+        AlbumTrackInfoVO res = new AlbumTrackInfoVO();
+        //get all episode
+        List<Episode> episodes = episodeMapper.selectList(
+                new LambdaQueryWrapper<Episode>()
+                        .eq(Episode::getRelatedId, album.getId())
+                        .orderByAsc(Episode::getDiscNum)
+                        .orderByAsc(Episode::getSerial)
+        );
+        if (episodes.isEmpty()) return res;
+
+        int totalDuration = 0;
+        int discDuration;
+
+        //grouping by Episode.discNum
+        Map<Integer, List<Episode>> episodeGroup = episodes.stream()
+                .collect(Collectors.groupingBy(Episode::getDiscNum));
+        //build
+        for (int discNum : episodeGroup.keySet()) {
+            discDuration = 0;
+            AlbumDiscVO disc = new AlbumDiscVO();
+            disc.setSerial(discNum);
+            disc.generateCode(album.getCatalogNo(), discNum);
+            for (Episode ep : episodeGroup.get(discNum)) {
+                AlbumTrackVO track = AlbumTrackVO.builder()
+                        .serial(ep.getSerial())
+                        .id(ep.getId())
+                        .title(ep.getTitle())
+                        .titleEn(ep.getTitleEn())
+                        .duration(DateHelper.getDuration(ep.getDuration()))
+                        .action(DataActionType.NO_ACTION.getValue())
+                        .build();
+                disc.addTrack(track);
+                discDuration += ep.getDuration();
+            }
+            disc.setDuration(DateHelper.getDuration(discDuration));
+            totalDuration += discDuration;
+            res.addDisc(disc);
+        }
+        res.setTotalTracks(episodes.size());
+        res.setTotalDuration(DateHelper.getDuration(totalDuration));
+        return res;
     }
 
     //endregion
@@ -125,99 +168,67 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     /**
      * 更新音轨信息
      *
-     * @param id        专辑id
-     * @param _discList 专辑的音轨信息json数据
+     * @param id    专辑id
+     * @param discs 专辑的音轨信息
      * @author rakbow
      */
     @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbumTrackInfo(long id, String _discList) {
+    public void updateAlbumTrackInfo(long id, List<AlbumDiscVO> discs) {
 
-        List<AlbumDiscDTO> albumDiscDTOs = JSON.parseArray(_discList).toJavaList(AlbumDiscDTO.class);
+        //get all episode
+        List<Episode> episodes = episodeMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, id));
 
-        //获取该专辑对应的音乐合集
-        List<Music> musics = musicService.getMusicsByAlbumId(id);
+        List<Episode> addEpSet = new ArrayList<>();
+        List<Episode> updateEpSet = new ArrayList<>();
+        List<Episode> deleteEpSet = new ArrayList<>();
 
-        JSONObject trackInfo = new JSONObject();
+        List<AlbumTrackVO> tracks = new ArrayList<>();
+        for (AlbumDiscVO disc : discs) {
 
-        List<AlbumDiscBO> discList = new ArrayList<>();
-
-        int discSerial = 1;
-
-        String trackSerial;
-
-        for (AlbumDiscDTO albumDiscDTO : albumDiscDTOs) {
-            AlbumDiscBO albumDiscBO = new AlbumDiscBO();
-            JSONArray trackList = new JSONArray();
-            int i = 1;
-            for (AlbumTrackDTO _track : albumDiscDTO.getTrackList()) {
-                if (i < 10) {
-                    trackSerial = "0" + i;
-                } else {
-                    trackSerial = Integer.toString(i);
-                }
-                _track.setSerial(trackSerial);
-
-                //往music表中添加新数据
-                //若musicId为0则代表该条数据为新增数据
-                if (_track.getMusicId() == 0) {
-                    Music music = new Music();
-                    music.setName(_track.getName());
-                    music.setAlbumId(id);
-                    music.setDiscSerial(discSerial);
-                    music.setTrackSerial(trackSerial);
-
-                    //去除时间中含有的\t影响
-                    String _time = _track.getLength();
-                    if (_time.contains("\t")) {
-                        music.setAudioLength(_time.replace("\t", ""));
-                    } else {
-                        music.setAudioLength(_time);
-                    }
-
-                    musicService.save(music);
-                    trackList.add(music.getId());
-                } else {
-                    //若musicId不为0则代表之前已经添加进music表中，需要进一步更新
-                    Music currentMusic = DataFinder.findMusicById(_track.getMusicId(), musics);
-                    assert currentMusic != null;
-                    currentMusic.setName(_track.getName());
-                    currentMusic.setAudioLength(_track.getLength());
-                    currentMusic.setDiscSerial(discSerial);
-                    currentMusic.setTrackSerial(trackSerial);
-                    //更新对应music
-                    musicService.updateMusic(currentMusic.getId(), currentMusic);
-                    trackList.add(currentMusic.getId());
-                    musics.remove(currentMusic);
-                }
-
-                i++;
+            tracks.clear();
+            tracks.addAll(disc.getTracks());
+            //insert
+            if (disc.isAdd()) {
+                //set serial
+                IntStream.range(0, tracks.size()).forEach(i -> tracks.get(i).setSerial(i + 1));
+                tracks.forEach(track -> {
+                    Episode ep = Episode.builder()
+                            .title(track.getTitle().replace("\t", ""))
+                            .duration(DateHelper.getDuration(track.getDuration()))
+                            .discNum(discs.indexOf(disc)+1)
+                            .serial(track.getSerial())
+                            .relatedId(id)
+                            .build();
+                    addEpSet.add(ep);
+                });
+                continue;
             }
-
-            albumDiscBO.setSerial(discSerial);
-            albumDiscBO.setMediaFormat(MediaFormat.getIdsByNames(albumDiscDTO.getMediaFormat()));
-            albumDiscBO.setAlbumFormat(AlbumFormat.getIdsByNames(albumDiscDTO.getAlbumFormat()));
-            albumDiscBO.setTrackList(trackList);
-
-            discSerial++;
-            discList.add(albumDiscBO);
-        }
-        if (discList.size() != 0) {
-            trackInfo.put("discList", discList);
-        }
-        LambdaUpdateWrapper<Album> updateWrapper = new LambdaUpdateWrapper<Album>()
-                .eq(Album::getId, id)
-                .set(Album::getTrackInfo, JSON.toJSONString(trackInfo))
-                .set(Album::getEditedTime, DateHelper.now());
-
-        mapper.update(null, updateWrapper);
-
-        //删除对应music
-        if (musics.size() != 0) {
-            for (Music music : musics) {
-                musicService.deleteMusic(music);
+            //update or delete
+            for(AlbumTrackVO track : tracks) {
+                if (track.isUpdate()) {
+                    Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
+                    if(ep == null) continue;
+                    ep.setEditedTime(DateHelper.now());
+                    ep.setTitle(track.getTitle().replace("\t", ""));
+                    ep.setDuration(DateHelper.getDuration(track.getDuration()));
+                    ep.setSerial(track.getSerial());
+                    updateEpSet.add(ep);
+                }else if(track.isDelete()) {
+                    Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
+                    if(ep == null) continue;
+                    deleteEpSet.add(ep);
+                }
             }
         }
+        //save
+        MybatisBatch.Method<Episode> method = new MybatisBatch.Method<>(EpisodeMapper.class);
+        MybatisBatch<Episode> batchInsert = new MybatisBatch<>(sqlSessionFactory, addEpSet);
+        MybatisBatch<Episode> batchUpdate = new MybatisBatch<>(sqlSessionFactory, updateEpSet);
+        MybatisBatch<Episode> batchDelete = new MybatisBatch<>(sqlSessionFactory, deleteEpSet);
+        batchInsert.execute(method.insert());
+        batchUpdate.execute(method.updateById());
+        batchDelete.execute(method.deleteById());
     }
 
     //endregion

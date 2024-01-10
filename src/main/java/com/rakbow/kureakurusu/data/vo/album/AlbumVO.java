@@ -38,8 +38,7 @@ public class AlbumVO {
     private String bonus;//特典信息
 
     //音轨相关
-    private JSONArray editDiscList;
-    private JSONObject trackInfo;
+    private AlbumTrackInfoVO trackInfo;
 
     private String addedTime;
     private String editedTime;

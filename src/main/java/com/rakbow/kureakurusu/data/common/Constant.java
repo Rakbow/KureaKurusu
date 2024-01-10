@@ -6,6 +6,10 @@ package com.rakbow.kureakurusu.data.common;
  */
 public interface Constant {
 
+    String TAB = "\t";
+    String CARRIAGE_RETURN = "\r";
+    String NEW_LINE = "\n";
+
     /**
      * 分割参数
      */

@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @author Rakbow
@@ -17,6 +21,9 @@ public class DateHelper {
 
     private static final String DATE_FORMAT = "yyyy/MM/dd";
     private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
+    public static final String TIME_FORMAT = "HH:mm:ss";
+    public static final String EMPTY_DURATION = "00:00:00";
 
     public static Timestamp now() {
         return new Timestamp(System.currentTimeMillis());
@@ -48,7 +55,7 @@ public class DateHelper {
     //时间转为字符串(自定义格式)，例如：yyyy/MM/dd
     public static Timestamp stringToTimestamp(String ts) {
         if (ts != null) {
-            return Timestamp.valueOf(ts.replaceAll("/", "-"));
+            return Timestamp.valueOf(ts.replaceAll(SLASH, BAR));
         } else {
             return null;
         }
@@ -68,6 +75,38 @@ public class DateHelper {
     public static Date stringToDate(String dateString) throws ParseException {
         SimpleDateFormat ft = new SimpleDateFormat(DATE_FORMAT);
         return ft.parse(dateString);
+    }
+
+    public static String getDuration(int seconds) {
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        int remainingSeconds = seconds % 60;
+
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
+        } else {
+            return String.format("%02d:%02d", minutes, remainingSeconds);
+        }
+    }
+
+    public static int getDuration(String timeStr) {
+        String time = timeStr.replace(TAB, "").trim();
+        String[] parts = time.split(":");
+
+        // 如果格式不符合预期，抛出异常
+        if (parts.length < 2 || parts.length > 3) {
+            throw new IllegalArgumentException("Invalid time format");
+        }
+
+        int minutes = Integer.parseInt(parts[parts.length - 2]);
+        int seconds = Integer.parseInt(parts[parts.length - 1]);
+
+        if (parts.length == 3) {
+            int hours = Integer.parseInt(parts[0]);
+            return hours * 3600 + minutes * 60 + seconds;
+        } else {
+            return minutes * 60 + seconds;
+        }
     }
 
 }

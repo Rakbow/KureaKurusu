@@ -59,13 +59,11 @@ public class AlbumController {
             if (album == null)
                 return res.fail(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
 
-            List<Music> musics = musicService.getMusicsByAlbumId(qry.getId());
-
             String coverUrl = CommonImageUtil.getCoverUrl(album.getImages());
 
 
             res.data = AlbumDetailVO.builder()
-                    .album(service.buildVO(album, musics))
+                    .album(service.buildVO(album))
                     .audioInfos(AuthorityInterceptor.isUser()
                             ? MusicUtil.getMusicAudioInfo(musicService.getMusicsByAlbumId(qry.getId()), coverUrl)
                             : null)
@@ -160,12 +158,24 @@ public class AlbumController {
     //region ------advanced crud------
 
     //更新专辑音轨信息TrackInfo
-    @PostMapping("update-trackInfo")
+    @PostMapping("update-track-info")
     public ApiResult updateAlbumTrackInfo(@RequestBody UpdateAlbumTrackInfoCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            service.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscList());
+            service.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
+        }
+        return res;
+    }
+
+    @PostMapping("get-track-info")
+    public ApiResult getAlbumTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
+        ApiResult res = new ApiResult();
+        try {
+            res.data = service.getTrackInfo(service.getById(qry.getId()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());

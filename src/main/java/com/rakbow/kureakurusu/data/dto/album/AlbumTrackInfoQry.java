@@ -9,13 +9,12 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2024/01/07 1:42
+ * @since 2024/01/10 15:37
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UpdateAlbumTrackInfoCmd extends CommonCommand {
+public class AlbumTrackInfoQry extends CommonCommand {
 
     private long id;
-    private List<AlbumDiscVO> discs;//碟片列表
 
 }

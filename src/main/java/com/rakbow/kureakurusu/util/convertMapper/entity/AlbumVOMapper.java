@@ -68,7 +68,6 @@ public interface AlbumVOMapper extends CommonVOMapper {
     @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
     @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "trackInfo", ignore = true)
-    @Mapping(target = "editDiscList", ignore = true)
     AlbumVO toVO(Album album);
 
     /**

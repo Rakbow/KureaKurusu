@@ -16,19 +16,18 @@ import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
+import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.PersonRelation;
+import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.person.Personnel;
 import com.rakbow.kureakurusu.data.person.PersonnelPair;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
-import com.rakbow.kureakurusu.data.entity.Person;
-import com.rakbow.kureakurusu.data.entity.PersonRelation;
-import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.common.SpringUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +54,8 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     private final PersonMapper mapper;
     private final PersonRoleMapper roleMapper;
     private final PersonRelationMapper relationMapper;
+
+    private final SqlSessionFactory sqlSessionFactory;
 
     public void updatePerson(PersonUpdateDTO dto) {
 
@@ -233,7 +234,6 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
             if(pair.getAction() == DataActionType.REAL_DELETE.getValue())
                 deleteRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
         });
-        SqlSessionFactory sqlSessionFactory = SpringUtil.getBean("sqlSessionFactory");
         //批量删除和批量新增
         MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
         MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);

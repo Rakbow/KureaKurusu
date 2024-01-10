@@ -2,10 +2,7 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Music;
-import com.rakbow.kureakurusu.data.entity.Person;
-import com.rakbow.kureakurusu.data.entity.Product;
+import com.rakbow.kureakurusu.data.entity.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -20,6 +17,9 @@ import java.util.stream.Collectors;
  * @since 2022-11-06 5:54
  */
 public class DataFinder {
+
+    public static Episode episodeFinder = new Episode();
+    public static Person personFinder = new Person();
 
     //region album
 
@@ -166,12 +166,17 @@ public class DataFinder {
     }
 
     public static Person findPersonById(long id, List<Person> persons) {
-        Person finder = new Person();
-        finder.setId(id);
-        int idx = Collections.binarySearch(persons, finder, DataSorter.personIdSorter);
+        personFinder.setId(id);
+        int idx = Collections.binarySearch(persons, personFinder, DataSorter.personIdSorter);
         return idx >= 0 ? persons.get(idx) : null;
     }
 
     //endregion
+
+    public static Episode findEpisodeById(long id, List<Episode> episodes) {
+        episodeFinder.setId(id);
+        int idx = Collections.binarySearch(episodes, episodeFinder, DataSorter.episodeIdSorter);
+        return idx >= 0 ? episodes.get(idx) : null;
+    }
 
 }
