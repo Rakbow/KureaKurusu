@@ -18,6 +18,7 @@ import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -43,7 +44,8 @@ public class PersonController {
     private final PersonService service;
     private final GeneralService generalService;
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
-    private final int PERSON_ENTITY = Entity.PERSON.getValue();
+    private final EntityUtil entityUtil;
+    private final int ENTITY_VALUE = Entity.PERSON.getValue();
 
     //region person
 
@@ -58,7 +60,7 @@ public class PersonController {
 
             res.data = PersonDetailVO.builder()
                     .item(voMapper.toVO(person))
-                    .traffic(generalService.getPageTraffic(PERSON_ENTITY, qry.getId()))
+                    .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                     .build();
         } catch (Exception e) {
             res.fail(e);

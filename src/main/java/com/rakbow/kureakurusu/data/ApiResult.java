@@ -37,10 +37,6 @@ public class ApiResult {
         this.message = e.getMessage();
     }
 
-    public void setSuccessMessage(String message) {
-        this.message = message;
-    }
-
     public void setErrorMessage(String error) {
         this.state = FAIL_CODE;
         this.message = error;
@@ -85,5 +81,9 @@ public class ApiResult {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("\n"));
         return this;
+    }
+
+    public void loadDate(Object data) {
+        this.data = data;
     }
 }

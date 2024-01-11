@@ -82,27 +82,6 @@ public class GeneralService {
     }
 
     /**
-     * 获取页面数据
-     *
-     * @param entityType,entityId 实体类型，实体id
-     * @author Rakbow
-     */
-    public PageTraffic getPageTraffic(int entityType, long entityId) {
-
-        PageTraffic pt = new PageTraffic();
-
-        // 从cookie中获取点赞token和访问token
-        String likeToken = TokenInterceptor.getLikeToken();
-        String visitToken = TokenInterceptor.getVisitToken();
-
-        pt.setLiked(likeUtil.isLike(entityType, entityId, likeToken));
-        pt.setLikeCount(likeUtil.getLike(entityType, entityId));
-        pt.setVisitCount(visitUtil.incVisit(entityType, entityId, visitToken));
-
-        return pt;
-    }
-
-    /**
      * 批量更新数据库实体激活状态
      * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow

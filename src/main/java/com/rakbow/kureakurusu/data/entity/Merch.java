@@ -50,7 +50,7 @@ public class Merch extends MetaEntity {
         this.region = "";
         this.notForSale = 0;
         this.spec = "[]";
-        this.setDescription("");
+        this.setDetail("");
         this.setImages(new ArrayList<>());
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;

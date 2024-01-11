@@ -57,7 +57,7 @@ public class Disc extends MetaEntity {
         this.hasBonus = 0;
         this.bonus = "";
         this.setImages(new ArrayList<>());
-        this.setDescription("");
+        this.setDetail("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());

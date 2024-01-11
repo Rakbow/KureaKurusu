@@ -2,10 +2,13 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
+import com.rakbow.kureakurusu.data.PageTraffic;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.image.ItemDetailInfo;
 import com.rakbow.kureakurusu.util.entry.EntryUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +18,30 @@ import javax.annotation.Resource;
  * @author Rakbow
  * @since 2023-02-06 16:38
  */
+@RequiredArgsConstructor
 @Component
 public class EntityUtil {
 
-    @Resource
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
+    private final VisitUtil visitUtil;
+    private final LikeUtil likeUtil;
+
+    /**
+     * 获取页面数据
+     *
+     * @param entityType,entityId 实体类型，实体id
+     * @author Rakbow
+     */
+    public PageTraffic getPageTraffic(int entityType, long entityId) {
+        // 从cookie中获取点赞token和访问token
+        String likeToken = TokenInterceptor.getLikeToken();
+        String visitToken = TokenInterceptor.getVisitToken();
+        return PageTraffic.builder()
+                .liked(likeUtil.isLike(entityType, entityId, likeToken))
+                .likeCount(likeUtil.getLike(entityType, entityId))
+                .visitCount(visitUtil.incVisit(entityType, entityId, visitToken))
+                .build();
+    }
 
     public ItemDetailInfo getItemDetailInfo(Object o, int entityType) {
         ItemDetailInfo detailInfo = new ItemDetailInfo();

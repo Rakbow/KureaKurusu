@@ -9,16 +9,17 @@ import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.vo.album.*;
-import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
+import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
+import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
+import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -33,8 +34,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.rakbow.kureakurusu.data.common.Constant.BAR;
-
 /**
  * @author Rakbow
  * @since 2022-07-25 1:42 album业务层
@@ -46,14 +45,15 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     //region ------inject------
     private final QiniuFileUtil qiniuFileUtil;
     private final VisitUtil visitUtil;
+    private final EntityUtil entityUtil;
     private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
 
     private final AlbumMapper mapper;
-    private final EpisodeMapper episodeMapper;
+    private final EpisodeMapper epMapper;
 
     private final SqlSessionFactory sqlSessionFactory;
 
-    private final int ENTITY_ALBUM_VALUE = Entity.ALBUM.getValue();
+    private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
 
     //region ------crud------
@@ -62,6 +62,22 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
     // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
+    @SneakyThrows
+    public AlbumDetailVO getDetail(AlbumDetailQry qry) {
+        Album album = getAlbum(qry.getId());
+        if (album == null)
+            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
+        String cover = CommonImageUtil.getCoverUrl(album.getImages());
+        List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, qry.getId()));
+        return AlbumDetailVO.builder()
+                .album(buildVO(album))
+                .audios(AuthorityInterceptor.isUser() ? EpisodeUtil.getAudios(eps, cover) : null)
+                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
+                .pageInfo(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))
+                .build();
+    }
+
     /**
      * 根据Id获取Album,需要判断权限
      *
@@ -69,7 +85,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @return Album
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public Album getAlbum(long id) {
         if (AuthorityInterceptor.isSenior()) {
             return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
@@ -85,14 +100,18 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void deleteAlbums(List<Long> ids) {
+        //get original data
         List<Album> albums = mapper.selectBatchIds(ids);
         for (Album album : albums) {
-            //删除前先把服务器上对应图片全部删除
+            //delete all image
             qiniuFileUtil.deleteAllImage(album.getImages());
-            //删除专辑
+            //delete album
             mapper.deleteById(album.getId());
-            visitUtil.deleteVisit(ENTITY_ALBUM_VALUE, album.getId());
+            //delete visit record
+            visitUtil.deleteVisit(ENTITY_VALUE, album.getId());
         }
+        //delete related episode
+        epMapper.delete(new LambdaQueryWrapper<Episode>().in(Episode::getRelatedId, ids));
     }
 
     /**
@@ -120,7 +139,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     public AlbumTrackInfoVO getTrackInfo(Album album) {
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
         //get all episode
-        List<Episode> episodes = episodeMapper.selectList(
+        List<Episode> episodes = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedId, album.getId())
                         .orderByAsc(Episode::getDiscNum)
@@ -177,7 +196,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     public void updateAlbumTrackInfo(long id, List<AlbumDiscVO> discs) {
 
         //get all episode
-        List<Episode> episodes = episodeMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, id));
+        List<Episode> episodes = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, id));
 
         List<Episode> addEpSet = new ArrayList<>();
         List<Episode> updateEpSet = new ArrayList<>();

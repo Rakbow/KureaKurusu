@@ -11,7 +11,6 @@ import com.rakbow.kureakurusu.data.vo.music.MusicVOAlpha;
 import com.rakbow.kureakurusu.data.vo.music.MusicVOBeta;
 import com.rakbow.kureakurusu.data.entity.Music;
 import com.rakbow.kureakurusu.util.common.*;
-import com.rakbow.kureakurusu.util.entity.MusicUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -136,7 +135,7 @@ public interface MusicVOMapper {
         //基础信息
         musicVOBeta.setId(musicAlbumView.getId());
         musicVOBeta.setName(musicAlbumView.getName());
-        musicVOBeta.setArtists(MusicUtil.getArtists(musicAlbumView));
+//        musicVOBeta.setArtists(MusicUtil.getArtists(musicAlbumView));
         musicVOBeta.setAudioType(EnumUtil.getAttribute(AudioType.class, musicAlbumView.getAudioType()).getLabel());
         musicVOBeta.setAudioLength(musicAlbumView.getAudioLength());
         musicVOBeta.setHasLrc(musicAlbumView.getHasLrc() == 1);

@@ -41,7 +41,7 @@ public class Product extends MetaEntity {
         this.organizations = "[]";
         this.staffs = "[]";
         this.setImages(new ArrayList<>());
-        this.setDescription("");
+        this.setDetail("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());

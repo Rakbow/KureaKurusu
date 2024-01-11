@@ -24,8 +24,7 @@ import java.util.List;
 public class AlbumDetailVO {
 
     private AlbumVO album;
-    private List<Audio> audioInfos;
-    private ItemDetailInfo detailInfo;
+    private List<Audio> audios;
     private PageTraffic pageInfo;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;

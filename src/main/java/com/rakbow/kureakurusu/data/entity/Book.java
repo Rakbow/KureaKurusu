@@ -65,7 +65,7 @@ public class Book extends MetaEntity {
         this.spec = "[]";
         this.hasBonus = 0;
         this.bonus = "";
-        this.setDescription("");
+        this.setDetail("");
         this.setImages(new ArrayList<>());
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;

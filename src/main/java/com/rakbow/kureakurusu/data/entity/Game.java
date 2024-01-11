@@ -53,7 +53,7 @@ public class Game extends MetaEntity {
         this.staffs = "[]";
         this.bonus = "";
         this.setImages(new ArrayList<>());
-        this.setDescription("");
+        this.setDetail("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;
         this.setEditedTime(DateHelper.now());;

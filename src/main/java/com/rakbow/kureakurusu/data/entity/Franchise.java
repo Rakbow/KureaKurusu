@@ -36,7 +36,7 @@ public class Franchise extends MetaEntity {
         this.metaInfo = "{\"isMeta\": 0, \"ids\": []}";
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
-        this.setDescription("");
+        this.setDetail("");
         this.setRemark("");
         this.setImages(new ArrayList<>());
         this.setStatus(1);
