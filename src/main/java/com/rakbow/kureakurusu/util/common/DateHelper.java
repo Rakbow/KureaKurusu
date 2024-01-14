@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.util.common;
 
+import lombok.SneakyThrows;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -20,6 +22,7 @@ import static com.rakbow.kureakurusu.data.common.Constant.*;
 public class DateHelper {
 
     private static final String DATE_FORMAT = "yyyy/MM/dd";
+    private static final String COMMON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
     public static final String TIME_FORMAT = "HH:mm:ss";
@@ -66,14 +69,16 @@ public class DateHelper {
         return sdf.format(DateHelper.now());
     }
 
+    @SneakyThrows
     //字符串转为时间(自定义格式)，例如：yyyy/MM/dd
-    public static Date stringToDate(String dateString, String dateFormat) throws ParseException {
+    public static Date stringToDate(String dateString, String dateFormat) {
         SimpleDateFormat ft = new SimpleDateFormat(dateFormat);
         return ft.parse(dateString);
     }
 
-    public static Date stringToDate(String dateString) throws ParseException {
-        SimpleDateFormat ft = new SimpleDateFormat(DATE_FORMAT);
+    @SneakyThrows
+    public static Date stringToDate(String dateString) {
+        SimpleDateFormat ft = new SimpleDateFormat(COMMON_DATE_FORMAT);
         return ft.parse(dateString);
     }
 

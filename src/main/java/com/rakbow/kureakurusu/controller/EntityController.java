@@ -100,24 +100,6 @@ public class EntityController {
 
     //region common update item info
 
-
-    //update item bonus
-    @RequestMapping(path = "/update-item-bonus", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateItemBonus(@RequestBody JSONObject json) {
-        ApiResult res = new ApiResult();
-        try {
-            int entityId = json.getInteger("entityId");
-            String tableName = Entity.getTableName(json.getIntValue("entityType"));
-            String bonus = json.getString("text");
-            entityService.updateItemBonus(tableName, entityId, bonus);
-            res.message = I18nHelper.getMessage("entity.crud.bonus.update.success");
-        } catch (Exception e) {
-            res.setErrorMessage(e);
-        }
-        return res.toJson();
-    }
-
     //update item specs
     @RequestMapping(path = "/update-item-specs", method = RequestMethod.POST)
     @ResponseBody

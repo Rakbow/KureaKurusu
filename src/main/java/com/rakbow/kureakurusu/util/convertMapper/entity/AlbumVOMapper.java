@@ -45,8 +45,6 @@ public interface AlbumVOMapper extends CommonVOMapper {
     Album build(AlbumAddDTO dto);
 
     @Mapping(source = "releaseDate", target = "releaseDate", qualifiedByName = "getDate")
-    @Mapping(source = "franchises", target = "franchises", qualifiedByName = "getIdsStr")
-    @Mapping(source = "products", target = "products", qualifiedByName = "getIdsStr")
     @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
@@ -60,14 +58,12 @@ public interface AlbumVOMapper extends CommonVOMapper {
      * @return AlbumVO
      * @author rakbow
      */
-    @Mapping(target = "releaseDate", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getDate(album.getReleaseDate()))")
-    @Mapping(target = "hasBonus", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getBool(album.getHasBonus()))")
+    @Mapping(target = "releaseDate", source = "releaseDate", qualifiedByName = "getDate")
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "mediaFormat", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getMediaFormat(album.getMediaFormat()))")
-    @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
-    @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
     @Mapping(target = "trackInfo", ignore = true)
+    @ToVO
     AlbumVO toVO(Album album);
 
     /**

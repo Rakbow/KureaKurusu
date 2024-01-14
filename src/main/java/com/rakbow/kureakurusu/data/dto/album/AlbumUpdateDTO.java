@@ -25,11 +25,6 @@ public class AlbumUpdateDTO extends DTO {
     private String barcode;
     @NotBlank(message = "{entity.crud.release_date.required_field}")
     private String releaseDate;
-
-    @NotEmpty(message = "{entity.crud.category.required_field}")
-    private List<Integer> franchises;
-    @NotEmpty(message = "{entity.crud.product.required_field}")
-    private List<Integer> products;
     @NotEmpty(message = "{entity.crud.publish_format.required_field}")
     private List<Integer> publishFormat;
     @NotEmpty(message = "{entity.crud.album_format.required_field}")

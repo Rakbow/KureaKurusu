@@ -26,7 +26,7 @@ public class AlbumVO {
     private String releaseDate;//发行日期
     private int price;//发行价格（含税）
     private String currencyUnit;//货币单位
-    private boolean hasBonus;//是否包含特典内容
+    private int hasBonus;//是否包含特典内容
     private String remark;//备注
 
     //规格信息
@@ -42,5 +42,8 @@ public class AlbumVO {
 
     private String addedTime;
     private String editedTime;
+
+    private String detail;
+    private boolean status;
 
 }

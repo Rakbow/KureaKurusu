@@ -1,19 +1,18 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
-import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.data.Gender;
-import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
-import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
+import lombok.SneakyThrows;
+import net.minidev.json.JSONUtil;
 import org.mapstruct.Named;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -28,7 +27,7 @@ public interface CommonVOMapper {
 
     @Named("getStrList")
     default List<String> getStrList(String json) {
-        return JSON.parseArray(json).toJavaList(String.class);
+        return JsonUtil.toJavaList(json, String.class);
     }
 
     @Named("getVOTime")
@@ -36,17 +35,22 @@ public interface CommonVOMapper {
         return DateHelper.timestampToString(timestamp);
     }
 
-    @Named("getStatus")
-    default Boolean getStatus(int status) {
+    @Named("getBool")
+    default Boolean getBool(int status) {
         return status == 1;
     }
 
     @Named("getDate")
-    default Date getDate(String date) throws ParseException { return DateHelper.stringToDate(date); }
+    default Date getDate(String date) { return DateHelper.stringToDate(date); }
+
+    @Named("getDate")
+    default String getDate(Date date) {
+        return DateHelper.dateToString(date);
+    }
 
     @Named("getIdsStr")
     default String getIdsStr(List<Integer> ids) {
-        return CommonUtil.getIdsStr(ids);
+        return JsonUtil.toJson(ids);
     }
 
     @Named("getGender")

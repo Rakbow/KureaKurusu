@@ -109,12 +109,24 @@ public class GeneralService {
      * 更新描述
      *
      * @param tableName,id 实体表名,实体id
-     * @param text 描述json数据
+     * @param text 描述数据
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateItemDetail(String tableName, long entityId, String text) {
         mapper.updateItemDetail(tableName, entityId, text, DateHelper.now());
+    }
+
+    /**
+     * 更新特典信息
+     *
+     * @param tableName,entityId 实体表名,实体id
+     * @param bonus 特典数据
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void updateItemBonus(String tableName, long entityId, String bonus) {
+        mapper.updateItemBonus(tableName, entityId, bonus, DateHelper.now());
     }
 
     //endregion

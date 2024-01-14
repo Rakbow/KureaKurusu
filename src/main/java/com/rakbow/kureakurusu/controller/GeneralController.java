@@ -70,12 +70,26 @@ public class GeneralController {
     }
 
     @PostMapping("update-item-detail")
-    public ApiResult updateItemsDetail(@RequestBody UpdateDetailCmd cmd) {
+    public ApiResult updateItemDetail(@RequestBody UpdateDetailCmd cmd) {
         ApiResult res = new ApiResult();
         try {
             String tableName = Entity.getTableName(cmd.getEntityType());
             service.updateItemDetail(tableName, cmd.getEntityId(), cmd.getText());
             res.ok(I18nHelper.getMessage("entity.crud.description.update.success"));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
+        }
+        return res;
+    }
+
+    @PostMapping("update-item-bonus")
+    public ApiResult updateItemBonus(@RequestBody UpdateDetailCmd cmd) {
+        ApiResult res = new ApiResult();
+        try {
+            String tableName = Entity.getTableName(cmd.getEntityType());
+            service.updateItemBonus(tableName, cmd.getEntityId(), cmd.getText());
+            res.ok(I18nHelper.getMessage("entity.crud.bonus.update.success"));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());

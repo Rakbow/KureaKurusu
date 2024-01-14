@@ -311,18 +311,6 @@ public class EntityService {
     }
 
     /**
-     * 更新特典信息
-     *
-     * @param tableName,entityId 实体表名,实体id
-     * @param bonus 特典json数据
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateItemBonus(String tableName, int entityId, String bonus) {
-        commonMapper.updateItemBonus(tableName, entityId, bonus, DateHelper.now());
-    }
-
-    /**
      * 更新规格信息
      *
      * @param tableName,entityId 实体表名,实体id

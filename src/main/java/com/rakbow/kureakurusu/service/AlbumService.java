@@ -122,7 +122,23 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void updateAlbum(Album album) {
-        update(new LambdaUpdateWrapper<Album>().setEntity(album).set(Album::getEditedTime, DateHelper.now()));
+        update(
+                new LambdaUpdateWrapper<Album>()
+                        .eq(Album::getId, album.getId())
+                        .set(Album::getName, album.getName())
+                        .set(Album::getNameZh, album.getNameZh())
+                        .set(Album::getNameEn, album.getNameEn())
+                        .set(Album::getCatalogNo, album.getCatalogNo())
+                        .set(Album::getBarcode, album.getBarcode())
+                        .set(Album::getReleaseDate, album.getReleaseDate())
+                        .set(Album::getPrice, album.getPrice())
+                        .set(Album::getCurrencyUnit, album.getCurrencyUnit())
+                        .set(Album::getHasBonus, album.getHasBonus())
+                        .set(Album::getAlbumFormat, album.getAlbumFormat())
+                        .set(Album::getMediaFormat, album.getMediaFormat())
+                        .set(Album::getPublishFormat, album.getPublishFormat())
+                        .set(Album::getEditedTime, DateHelper.now())
+        );
     }
 
     //endregion

@@ -28,10 +28,7 @@ public interface PersonVOMapper extends CommonVOMapper {
 
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")
-    @Mapping(source = "status", target = "status", qualifiedByName = "getStatus")
-    @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
-    @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
-    @Named("toVO")
+    @ToVO
     PersonVO toVO(Person person);
 
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
