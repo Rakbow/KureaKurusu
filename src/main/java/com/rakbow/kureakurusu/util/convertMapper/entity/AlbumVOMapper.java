@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOBeta;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOGamma;
 import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.util.common.DateHelper;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -35,16 +36,14 @@ public interface AlbumVOMapper extends CommonVOMapper {
 
     //region single convert interface
 
-    @Mapping(source = "releaseDate", target = "releaseDate", qualifiedByName = "getDate")
-    @Mapping(source = "franchises", target = "franchises", qualifiedByName = "getIdsStr")
-    @Mapping(source = "products", target = "products", qualifiedByName = "getIdsStr")
+    @Mapping(source = "releaseDate", target = "releaseDate", dateFormat = DateHelper.DATE_FORMAT)
     @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
     @Named("build")
     Album build(AlbumAddDTO dto);
 
-    @Mapping(source = "releaseDate", target = "releaseDate", qualifiedByName = "getDate")
+    @Mapping(source = "releaseDate", target = "releaseDate", dateFormat = DateHelper.DATE_FORMAT)
     @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
@@ -58,10 +57,10 @@ public interface AlbumVOMapper extends CommonVOMapper {
      * @return AlbumVO
      * @author rakbow
      */
-    @Mapping(target = "releaseDate", source = "releaseDate", qualifiedByName = "getDate")
+    @Mapping(target = "releaseDate", source = "releaseDate", dateFormat = DateHelper.DATE_FORMAT)
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
-    @Mapping(target = "mediaFormat", expression = "java(com.rakbow.kureakurusu.util.convertMapper.entity.EntityConverter.getMediaFormat(album.getMediaFormat()))")
+    @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
     @Mapping(target = "trackInfo", ignore = true)
     @ToVO
     AlbumVO toVO(Album album);

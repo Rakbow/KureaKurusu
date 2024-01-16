@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
+import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -40,14 +42,6 @@ public interface CommonVOMapper {
         return status == 1;
     }
 
-    @Named("getDate")
-    default Date getDate(String date) { return DateHelper.stringToDate(date); }
-
-    @Named("getDate")
-    default String getDate(Date date) {
-        return DateHelper.dateToString(date);
-    }
-
     @Named("getIdsStr")
     default String getIdsStr(List<Integer> ids) {
         return JsonUtil.toJson(ids);
@@ -56,6 +50,11 @@ public interface CommonVOMapper {
     @Named("getGender")
     default Gender getGender(int value) {
         return Gender.get(value);
+    }
+
+    @Named("getMediaFormat")
+    default List<Attribute<Integer>> getMediaFormat(String formats) {
+        return MediaFormat.getAttributes(formats);
     }
 
 }
