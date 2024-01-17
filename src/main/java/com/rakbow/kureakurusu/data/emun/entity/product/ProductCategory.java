@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.entity.product;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,24 +9,30 @@ import lombok.Getter;
  * @since 2022-08-20 2:54
  */
 @AllArgsConstructor
+@Getter
 public enum ProductCategory {
-    UNCATEGORIZED(0,"未分类", "Uncategorized"),
-    GAME(1, "游戏", "Game"),
-    ANIMATION(2, "TV动画/动画电影", "Animation"),
-    OVA_OAD(3, "OVA/OAD", "OVA/OAD"),
+    GAME(0, "enum.product_category.game"),
+    ANIME_TV(1, "enum.product_category.anime_tv"),
+    ANIME_MOVIE(2, "enum.product_category.anime_movie"),
+    OVA_OAD(3, "enum.product_category.ova_oad"),
+    NOVEL(4, "enum.product_category.novel"),
+    MANGA(5, "enum.product_category.manga"),
+    PUBLICATION(6, "enum.product_category.publication"),
+    LIVE_ACTION_MOVIE(7, "enum.product_category.live_action_movie"),
+    TV_SERIES(8, "enum.product_category.tv_series"),
 
-    NOVEL(4, "小说", "Novel"),
-    MANGA(5, "漫画", "Manga"),
-    PUBLICATION(6, "其他出版物", "Publication"),
-    LIVE_ACTION_MOVIE(7, "真人电影", "Live Action Movie"),
-    TV_SERIES(8, "电视剧", "TV Series"),
-    MISC(99, "杂项", "Misc");
+    MISC(99, "enum.product_category.misc");
 
-    @Getter
-    private final int id;
-    @Getter
-    private final String nameZh;
-    @Getter
-    private final String nameEn;
+    @EnumValue
+    private final Integer value;
+    private final String labelKey;
+
+    public static ProductCategory get(int value) {
+        for (ProductCategory category : ProductCategory.values()) {
+            if(category.value == value)
+                return category;
+        }
+        return MISC;
+    }
 
 }

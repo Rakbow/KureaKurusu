@@ -36,25 +36,25 @@ public class ProductUtil {
 //            categories.add(ProductCategory.MISC.getId());
 //        }
         if (entityType == Entity.ALBUM.getValue()) {
-            categories.add(ProductCategory.GAME.getId());
-            categories.add(ProductCategory.ANIMATION.getId());
-            categories.add(ProductCategory.OVA_OAD.getId());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
-            categories.add(ProductCategory.TV_SERIES.getId());
+            categories.add(ProductCategory.GAME.getValue());
+            categories.add(ProductCategory.ANIME_TV.getValue());
+            categories.add(ProductCategory.OVA_OAD.getValue());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getValue());
+            categories.add(ProductCategory.TV_SERIES.getValue());
         }
         if (entityType == Entity.BOOK.getValue()) {
-            categories.add(ProductCategory.NOVEL.getId());
-            categories.add(ProductCategory.MANGA.getId());
-            categories.add(ProductCategory.PUBLICATION.getId());
+            categories.add(ProductCategory.NOVEL.getValue());
+            categories.add(ProductCategory.MANGA.getValue());
+            categories.add(ProductCategory.PUBLICATION.getValue());
         }
         if (entityType == Entity.DISC.getValue()) {
-            categories.add(ProductCategory.ANIMATION.getId());
-            categories.add(ProductCategory.OVA_OAD.getId());
-            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getId());
-            categories.add(ProductCategory.TV_SERIES.getId());
+            categories.add(ProductCategory.ANIME_TV.getValue());
+            categories.add(ProductCategory.OVA_OAD.getValue());
+            categories.add(ProductCategory.LIVE_ACTION_MOVIE.getValue());
+            categories.add(ProductCategory.TV_SERIES.getValue());
         }
         if (entityType == Entity.GAME.getValue()) {
-            categories.add(ProductCategory.GAME.getId());
+            categories.add(ProductCategory.GAME.getValue());
         }
 //        if (entityType == Entity.MERCH.getId()) {
 //            categories.add(ProductCategory.GAME.getId());
