@@ -23,10 +23,11 @@ public class DateHelper {
 
     public static final String DATE_FORMAT = "yyyy/MM/dd";
     private static final String COMMON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-    private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+    public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
     public static final String TIME_FORMAT = "HH:mm:ss";
     public static final String EMPTY_DURATION = "00:00:00";
+    public static final String DEFAULT_DATE = "????/??/??";
 
     public static Timestamp now() {
         return new Timestamp(System.currentTimeMillis());

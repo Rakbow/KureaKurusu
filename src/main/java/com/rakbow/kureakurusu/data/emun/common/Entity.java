@@ -23,7 +23,9 @@ public enum Entity {
     GOODS(6, "enum.entity.goods","goods"),
     FIGURE(7, "enum.entity.figure","figure"),
     PERSON(8, "enum.entity.person","person"),
-    ROLE(90, "enum.entity.role", "person_role");
+    ROLE(90, "enum.entity.role", "person_role"),
+    PRODUCT(99, "enum.entity.product", "product"),
+    FRANCHISE(100, "enum.entity.franchise", "franchise");
 
     private final Integer value;
     private final String labelKey;

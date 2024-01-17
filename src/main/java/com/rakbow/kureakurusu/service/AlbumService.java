@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.controller.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
+import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
@@ -14,6 +15,7 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
@@ -50,6 +52,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     private final AlbumMapper mapper;
     private final EpisodeMapper epMapper;
+    private final PersonRelationMapper relationMapper;
 
     private final SqlSessionFactory sqlSessionFactory;
 
@@ -109,6 +112,8 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
             mapper.deleteById(album.getId());
             //delete visit record
             visitUtil.deleteVisit(ENTITY_VALUE, album.getId());
+            //delete person relation
+            relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityId, album.getId()));
         }
         //delete related episode
         epMapper.delete(new LambdaQueryWrapper<Episode>().in(Episode::getRelatedId, ids));
@@ -137,6 +142,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                         .set(Album::getAlbumFormat, album.getAlbumFormat())
                         .set(Album::getMediaFormat, album.getMediaFormat())
                         .set(Album::getPublishFormat, album.getPublishFormat())
+                        .set(Album::getRemark, album.getRemark())
                         .set(Album::getEditedTime, DateHelper.now())
         );
     }

@@ -35,5 +35,5 @@ public class AlbumUpdateDTO extends DTO {
     private int price;
     private String currencyUnit;
     private int hasBonus;
-
+    private String remark;
 }

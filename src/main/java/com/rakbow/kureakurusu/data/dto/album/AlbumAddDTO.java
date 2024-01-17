@@ -26,10 +26,6 @@ public class AlbumAddDTO extends DTO {
     @NotBlank(message = "{entity.crud.release_date.required_field}")
     private String releaseDate;
 
-    @NotEmpty(message = "{entity.crud.category.required_field}")
-    private List<Integer> franchises;
-    @NotEmpty(message = "{entity.crud.product.required_field}")
-    private List<Integer> products;
     @NotEmpty(message = "{entity.crud.publish_format.required_field}")
     private List<Integer> publishFormat;
     @NotEmpty(message = "{entity.crud.album_format.required_field}")
@@ -40,5 +36,6 @@ public class AlbumAddDTO extends DTO {
     private int price;
     private String currencyUnit;
     private int hasBonus;
+    private String remark;
 
 }
