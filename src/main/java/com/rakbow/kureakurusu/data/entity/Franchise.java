@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,20 +21,16 @@ import java.util.Date;
 @TableName(value = "franchise", autoResultMap = true)
 public class Franchise extends MetaEntity {
 
-    private Integer id;//主键
+    private Long id;//主键
     private String name;//系列名
     private String nameZh;//系列名（中文）
     private String nameEn;//系列名（英语）
-    private Date originDate;//发行日期
-    private String metaInfo;//meta相关信息
 
     public Franchise() {
-        this.id = 0;
+        this.id = 0L;
         this.name = "";
         this.nameZh = "";
         this.nameEn = "";
-        this.originDate = null;
-        this.metaInfo = "{\"isMeta\": 0, \"ids\": []}";
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
         this.setDetail("");

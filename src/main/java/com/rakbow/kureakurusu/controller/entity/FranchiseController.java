@@ -1,153 +1,121 @@
 package com.rakbow.kureakurusu.controller.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.ApiResult;
-import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVOAlpha;
+import com.rakbow.kureakurusu.data.dto.base.ListQry;
+import com.rakbow.kureakurusu.data.dto.franchise.FranchiseAddDTO;
+import com.rakbow.kureakurusu.data.dto.franchise.FranchiseDetailQry;
+import com.rakbow.kureakurusu.data.dto.franchise.FranchiseUpdateDTO;
+import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Franchise;
-import com.rakbow.kureakurusu.service.EntityService;
+import com.rakbow.kureakurusu.data.vo.franchise.FranchiseDetailVO;
 import com.rakbow.kureakurusu.service.FranchiseService;
-import com.rakbow.kureakurusu.service.ProductService;
-import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.FranchiseVOMapper;
-import org.apache.commons.lang3.StringUtils;
+import com.rakbow.kureakurusu.util.file.CommonImageUtil;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import javax.validation.Valid;
 
 /**
  * @author Rakbow
  * @since 2023-01-14 17:07
  */
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/db/franchise")
 public class FranchiseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FranchiseController.class);
+    private static final Logger log = LoggerFactory.getLogger(FranchiseController.class);
 
-    //region ------注入依赖------
+    //region ------inject------
 
-    @Resource
-    private FranchiseService franchiseService;
-    @Resource
-    private ProductService productService;
-    @Resource
-    private UserService userService;
-    @Resource
-    private EntityUtil entityUtil;
-    @Resource
-    private EntityService entityService;
-
-    private final FranchiseVOMapper franchiseVOMapper = FranchiseVOMapper.INSTANCES;
+    private final FranchiseService service;
+    private final EntityUtil entityUtil;
+    private final FranchiseVOMapper voMapper = FranchiseVOMapper.INSTANCES;
+    private final int ENTITY_VALUE = Entity.FRANCHISE.getValue();
 
     //endregion
 
-    //region ------获取页面------
+    //region ------crud------
 
-    //获取单个系列详细信息页面
-//    @UniqueVisitor
-//    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-//    public String getFranchiseDetail(@PathVariable("id") int id, Model model) {
-//        Franchise franchise = franchiseService.getFranchiseWithAuth(id);
-//        if (franchise == null) {
-//            model.addAttribute("errorMessage", String.format(ApiInfo.GET_DATA_FAILED_404, Entity.FRANCHISE.getNameZh()));
-//            return "/error/404";
-//        }
-//
-//        model.addAttribute("franchise", franchiseVOMapper.franchise2VO(franchise));
-//        model.addAttribute("products", productService.getProductsByFranchiseId(franchise.getId()));
-//        //前端选项数据
-//        model.addAttribute("options", entityUtil.getDetailOptions(Entity.FRANCHISE.getId()));
-//        //获取页面数据
-//        model.addAttribute("pageInfo", entityService.getPageInfo(Entity.FRANCHISE.getId(), id, franchise));
-//        //实体类通用信息
-//        model.addAttribute("detailInfo", EntityUtil.getMetaDetailInfo(franchise, Entity.FRANCHISE.getId()));
-//        //图片相关
-//        model.addAttribute("itemImageInfo", CommonImageUtil.segmentImages(franchise.getImages(), 200, Entity.FRANCHISE, false));
-//        return "/database/itemDetail/franchise-detail";
-//    }
+    @PostMapping("detail")
+    @UniqueVisitor
+    public ApiResult getFranchiseDetailData(@RequestBody FranchiseDetailQry qry) {
+        ApiResult res = new ApiResult();
+        try {
+            Franchise item = service.getById(qry.getId());
+            if (item == null)
+                return res.fail(I18nHelper.getMessage("entity.url.error", Entity.FRANCHISE.getName()));
 
-    //endregion
-
-    //region ------增删改查------
-
-    //根据搜索条件获取专辑
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/get-franchises", method = RequestMethod.POST)
-    @ResponseBody
-    public String getFranchisesByFilterList(@RequestBody String json, HttpServletRequest request) {
-
-        JSONObject param = JSON.parseObject(json);
-        QueryParams queryParam = JSON.to(QueryParams.class, param.getJSONObject("queryParams"));
-
-        SearchResult searchResult = franchiseService.getFranchisesByFilter(queryParam);
-
-        List<FranchiseVOAlpha> franchises = franchiseVOMapper.franchise2VOAlpha((List<Franchise>) searchResult.data);
-
-        JSONObject result = new JSONObject();
-        result.put("data", franchises);
-        result.put("total", searchResult.total);
-
-        return JSON.toJSONString(result);
+            res.data = FranchiseDetailVO.builder()
+                    .item(voMapper.toVO(item))
+                    .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                    .options(entityUtil.getDetailOptions(ENTITY_VALUE))
+                    .itemImageInfo(CommonImageUtil.segmentImages(item.getImages(), 200, Entity.FRANCHISE, false))
+                    .build();
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
+        }
+        return res;
     }
 
-    //新增
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    @ResponseBody
-    public String addFranchise(@RequestBody String json) {
+    @PostMapping("list")
+    public ApiResult getFranchises(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
         try {
-            //检测数据
-            String errorMsg = franchiseService.checkFranchiseJson(param);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return res.toJson();
-            }
-
-            Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
-
-            //保存新增
-//            res.message = franchiseService.addFranchise(franchise);
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
+            res.data = service.list(new QueryParams(qry));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
         }
-        return res.toJson();
+        return res;
     }
 
-    //更新基础信息
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ResponseBody
-    public String updateFranchise(@RequestBody String json) {
+    @PostMapping("add")
+    public ApiResult addFranchise(@Valid @RequestBody FranchiseAddDTO dto, BindingResult errors) {
         ApiResult res = new ApiResult();
-        JSONObject param = JSON.parseObject(json);
         try {
-            //检测数据
-            String errorMsg = franchiseService.checkFranchiseJson(param);
-            if (!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return res.toJson();
-            }
-
-            Franchise franchise = entityService.json2Entity(franchiseService.handleFranchiseJson(param), Franchise.class);
-
-            //修改编辑时间
-            franchise.setEditedTime(DateHelper.now());
-
-//            res.message = franchiseService.updateFranchise(franchise.getId(), franchise);
-        } catch (Exception ex) {
-            res.setErrorMessage(ex.getMessage());
+            //check
+            if (errors.hasErrors())
+                return res.fail(errors);
+            //build
+            Franchise item = voMapper.build(dto);
+            //save
+            service.save(item);
+            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.FRANCHISE.getName()));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
         }
-        return res.toJson();
+        return res;
+    }
+
+    @PostMapping("update")
+    public ApiResult updateFranchise(@Valid @RequestBody FranchiseUpdateDTO dto, BindingResult errors) {
+        ApiResult res = new ApiResult();
+        try {
+            //check
+            if (errors.hasErrors())
+                return res.fail(errors);
+            //save
+            service.update(dto);
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.FRANCHISE.getName()));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
+        }
+        return res;
     }
 
     //endregion

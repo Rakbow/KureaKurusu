@@ -19,12 +19,12 @@ public class FranchiseVO {
     private String name;//系列名
     private String nameZh;//系列名（中文）
     private String nameEn;//系列名（英语）
-    private String originDate;//发行日期
     private String remark;//备注
 
-    private boolean metaLabel;//是否为meta-franchise
-    private JSONArray childFranchiseInfos;//子系列
-    private List<Integer> childFranchises;//子系列ids
-    private ParentFranchiseVO parentFranchise;//上级元系列
+    private String addedTime;
+    private String editedTime;
+
+    private String detail;
+    private boolean status;
 
 }
