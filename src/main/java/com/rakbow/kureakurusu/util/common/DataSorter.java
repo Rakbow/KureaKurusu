@@ -2,10 +2,7 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.Music;
-import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.*;
 
 import java.util.Comparator;
 
@@ -25,6 +22,7 @@ public class DataSorter {
     public static AttributesSortByStringValue attributesStringValueSorter = new AttributesSortByStringValue();
     public static PersonSortById personIdSorter = new PersonSortById();
     public static EpisodeSortById episodeIdSorter = new EpisodeSortById();
+    public static FranchiseSortById franchiseIdSorter = new FranchiseSortById();
 
 }
 
@@ -94,6 +92,13 @@ class PersonSortById implements Comparator<Person> {
 class EpisodeSortById implements Comparator<Episode> {
     @Override
     public int compare(Episode a, Episode b) {
+        return Long.compare(a.getId(), b.getId());
+    }
+}
+
+class FranchiseSortById implements Comparator<Franchise> {
+    @Override
+    public int compare(Franchise a, Franchise b) {
         return Long.compare(a.getId(), b.getId());
     }
 }

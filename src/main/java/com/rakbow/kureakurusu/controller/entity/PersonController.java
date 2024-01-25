@@ -4,18 +4,17 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
-import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import com.rakbow.kureakurusu.data.dto.person.PersonAddDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonDetailQry;
 import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
-import com.rakbow.kureakurusu.service.GeneralService;
+import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
@@ -42,7 +41,6 @@ public class PersonController {
 
     private static final Logger log = LoggerFactory.getLogger(PersonController.class);
     private final PersonService service;
-    private final GeneralService generalService;
     private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
     private final EntityUtil entityUtil;
     private final int ENTITY_VALUE = Entity.PERSON.getValue();

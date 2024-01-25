@@ -20,6 +20,7 @@ public class DataFinder {
 
     public static Episode episodeFinder = new Episode();
     public static Person personFinder = new Person();
+    public static Franchise franchiseFinder = new Franchise();
 
     //region album
 
@@ -79,18 +80,6 @@ public class DataFinder {
     //endregion
 
     //region product
-
-    public static List<Product> findProductsByClassification(int classification, List<Product> products) {
-        List<Product> result = new ArrayList<>();
-        for (Product product : products) {
-            if (product.getCategory() == classification) {
-                if (!result.contains(product)) {
-                    result.add(product);
-                }
-            }
-        }
-        return result;
-    }
 
     /**
      * 根据jsonId从指定json列表中查找
@@ -177,6 +166,12 @@ public class DataFinder {
         episodeFinder.setId(id);
         int idx = Collections.binarySearch(episodes, episodeFinder, DataSorter.episodeIdSorter);
         return idx >= 0 ? episodes.get(idx) : null;
+    }
+
+    public static Franchise findFranchiseById(long id, List<Franchise> franchises) {
+        franchiseFinder.setId(id);
+        int idx = Collections.binarySearch(franchises, franchiseFinder, DataSorter.franchiseIdSorter);
+        return idx >= 0 ? franchises.get(idx) : null;
     }
 
 }

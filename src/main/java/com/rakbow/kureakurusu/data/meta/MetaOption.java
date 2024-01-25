@@ -15,11 +15,24 @@ public class MetaOption {
     public List<Attribute<Integer>> genderSet;
     public List<Attribute<Integer>> linkTypeSet;
     public List<Attribute<Long>> roleSet;
+    public List<Attribute<Long>> franchiseSet;
+
+    //album
+    public List<Attribute<Integer>> albumFormatSet;
+    public List<Attribute<Integer>> publishFormatSet;
+    public List<Attribute<Integer>> mediaFormatSet;
+    public List<Attribute<Integer>> productCategorySet;
 
     public MetaOption() {
         genderSet = new ArrayList<>();
         linkTypeSet = new ArrayList<>();
         roleSet = new ArrayList<>();
+        franchiseSet = new ArrayList<>();
+
+        albumFormatSet = new ArrayList<>();
+        publishFormatSet = new ArrayList<>();
+        mediaFormatSet = new ArrayList<>();
+        productCategorySet = new ArrayList<>();
     }
 
 }

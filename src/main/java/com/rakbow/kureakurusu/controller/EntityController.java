@@ -43,29 +43,6 @@ public class EntityController {
 
     //endregion
 
-    //region 获取index初始数据
-    @RequestMapping(value = "/get-index-init-data", method = RequestMethod.POST)
-    @ResponseBody
-    public String getIndexInitData(@RequestBody JSONObject json, HttpServletRequest request) {
-        int entityType = json.getIntValue("entityType");
-        JSONObject initData = entityUtil.getDetailOptions(entityType);
-        initData.put("justAddedItems", entityService.getJustAddedItems(entityType, 5));
-        initData.put("popularItems", entityService.getPopularItems(entityType, 9));
-
-        return initData.toJSONString();
-    }
-
-    //获取list初始数据
-    @RequestMapping(value = "/get-list-init-data", method = RequestMethod.POST)
-    @ResponseBody
-    public String getListInitData(@RequestBody JSONObject json, HttpServletRequest request) {
-        int entityType = json.getIntValue("entityType");
-        JSONObject initData = entityUtil.getDetailOptions(entityType);
-        initData.put("editAuth", UserAuthority.getUserOperationAuthority(AuthorityInterceptor.getCurrentUser()));
-        return initData.toJSONString();
-    }
-    //endregion
-
 //    @RequestMapping(path = "/get-entity-amount-info", method = RequestMethod.GET)
 //    @ResponseBody
 //    public String getEntityAmountInfo() {

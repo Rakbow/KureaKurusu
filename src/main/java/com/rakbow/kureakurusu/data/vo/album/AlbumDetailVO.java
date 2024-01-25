@@ -1,9 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.album;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Audio;
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.image.ItemDetailInfo;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import lombok.AllArgsConstructor;
@@ -25,10 +23,10 @@ public class AlbumDetailVO {
 
     private AlbumVO album;
     private List<Audio> audios;
+
     private PageTraffic pageInfo;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;
-
-    private JSONObject options;
+    private List<Object> options;
 
 }

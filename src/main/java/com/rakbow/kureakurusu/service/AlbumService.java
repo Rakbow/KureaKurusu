@@ -16,6 +16,7 @@ import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
+import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
@@ -72,11 +73,12 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
             throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
         String cover = CommonImageUtil.getCoverUrl(album.getImages());
         List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, qry.getId()));
+
         return AlbumDetailVO.builder()
                 .album(buildVO(album))
                 .audios(AuthorityInterceptor.isUser() ? EpisodeUtil.getAudios(eps, cover) : null)
-                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .pageInfo(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))
                 .build();
     }

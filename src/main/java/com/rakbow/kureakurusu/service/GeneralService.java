@@ -2,10 +2,16 @@ package com.rakbow.kureakurusu.service;
 
 import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.dao.CommonMapper;
+import com.rakbow.kureakurusu.dao.FranchiseMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.*;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
+import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
+import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
+import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
+import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
@@ -50,6 +56,7 @@ public class GeneralService {
     //region mapper
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
+    private final FranchiseMapper franchiseMapper;
 
     //endregion
 
@@ -72,12 +79,31 @@ public class GeneralService {
     public void loadMetaData() {
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
+
         MetaData.optionsZh.genderSet = EnumHelper.getAttributeOptions(Gender.class, "zh");
         MetaData.optionsEn.genderSet = EnumHelper.getAttributeOptions(Gender.class, "en");
+
         MetaData.optionsZh.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "zh");
         MetaData.optionsEn.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "en");
+
+        MetaData.optionsZh.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "zh");
+        MetaData.optionsEn.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "en");
+
+        MetaData.optionsZh.publishFormatSet = EnumHelper.getAttributeOptions(PublishFormat.class, "zh");
+        MetaData.optionsEn.publishFormatSet = EnumHelper.getAttributeOptions(PublishFormat.class, "en");
+
+        MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
+        MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
+
+        MetaData.optionsZh.productCategorySet = EnumHelper.getAttributeOptions(ProductCategory.class, "zh");
+        MetaData.optionsEn.productCategorySet = EnumHelper.getAttributeOptions(ProductCategory.class, "en");
+
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
+
+        MetaData.optionsZh.franchiseSet = getFranchiseSet();
+        MetaData.optionsEn.franchiseSet = MetaData.optionsZh.franchiseSet;
+
         log.info(I18nHelper.getMessage("system.load_data.meta_data"));
     }
 
@@ -212,13 +238,24 @@ public class GeneralService {
     }
 
     private List<Attribute<Long>> getPersonRoleSet() {
-        List<Attribute<Long>> roleSet = new ArrayList<>();
+        List<Attribute<Long>> res = new ArrayList<>();
         //获取所有role数据
-        List<PersonRole> allRoleSet = personRoleMapper.selectList(null);
-        allRoleSet.forEach(role -> {
-            roleSet.add(new Attribute<>(role.getNameZh() + SLASH + role.getNameEn(), role.getId()));
+        List<PersonRole> items = personRoleMapper.selectList(null);
+        items.forEach(i -> {
+            res.add(new Attribute<>(i.getNameZh() + SLASH + i.getNameEn(), i.getId()));
         });
-        return roleSet;
+        return res;
+    }
+
+    private List<Attribute<Long>> getFranchiseSet() {
+        List<Attribute<Long>> res = new ArrayList<>();
+        //获取所有role数据
+        List<Franchise> items = franchiseMapper.selectList(null);
+        items.sort(DataSorter.franchiseIdSorter);
+        items.forEach(i -> {
+            res.add(new Attribute<>(i.getName(), i.getId()));
+        });
+        return res;
     }
     //endregion
 
