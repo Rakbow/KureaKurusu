@@ -22,11 +22,11 @@ public class ProductVO {
     private Attribute<Integer> category;//作品分类
     private String remark;//备注
 
-    //关联信息
     private Attribute<Integer> franchise;//所属系列
+    private String addedTime;
+    private String editedTime;
 
-    //其他
-    private JSONArray organizations;//相关组织
-    private JSONArray staffs;//staff
+    private String detail;
+    private boolean status;
 
 }

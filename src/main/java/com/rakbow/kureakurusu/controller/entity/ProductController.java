@@ -1,35 +1,26 @@
 package com.rakbow.kureakurusu.controller.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.ApiResult;
-import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.album.AlbumDeleteCmd;
-import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductAddDTO;
 import com.rakbow.kureakurusu.data.dto.product.ProductDeleteCmd;
 import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
-import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.service.*;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.ProductVOMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -60,6 +51,18 @@ public class ProductController {
             vo.setPersonnel(personService.getPersonnel(ENTITY_VALUE, qry.getId()));
             res.loadDate(vo);
         }catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage());
+        }
+        return res;
+    }
+
+    @PostMapping("list")
+    public ApiResult getProducts(@RequestBody ListQry qry) {
+        ApiResult res = new ApiResult();
+        try {
+            res.data = service.getProducts(new QueryParams(qry));
+        } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
         }

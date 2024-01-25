@@ -23,16 +23,11 @@ public class ProductVOAlpha {
     private String remark;//备注
 
     //关联信息
-    private JSONObject franchise;//所属系列id
-
-    //图片
-    private JSONObject cover;
+    private Attribute<Long> franchise;//所属系列
 
     //审计字段
     private String addedTime;//收录时间
     private String editedTime;//编辑时间
     private boolean status;//状态
-
-    private long visitNum;//浏览数
 
 }

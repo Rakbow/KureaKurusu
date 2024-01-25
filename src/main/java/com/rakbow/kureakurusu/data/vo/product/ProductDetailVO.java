@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/01/18 1:14
@@ -20,10 +22,10 @@ import lombok.NoArgsConstructor;
 public class ProductDetailVO {
 
     private ProductVO product;
+
     private PageTraffic pageInfo;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;
-
-    private JSONObject options;
+    private List<Object> options;
 
 }
