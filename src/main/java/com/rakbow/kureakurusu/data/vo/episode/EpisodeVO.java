@@ -9,6 +9,11 @@ import lombok.Data;
 @Data
 public class EpisodeVO {
 
+    private Long id;
+    private String title;
+    private String titleEn;
+    private String titleZh;
+
 
 
 }

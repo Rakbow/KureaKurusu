@@ -25,11 +25,9 @@ public class Product extends MetaEntity {
     private String name;//原名
     private String nameZh;//中文译名
     private String nameEn;//英文译名
-    private String releaseDate;//发售日期
+    private String releaseDate;//日期
     private int franchise;//所属系列id
     private ProductCategory category;//作品分类
-    private String organizations;//相关组织
-    private String staffs;//staff
 
     public Product() {
         this.id = 0L;
@@ -39,8 +37,6 @@ public class Product extends MetaEntity {
         this.releaseDate = "";
         this.franchise = 0;
         this.category = ProductCategory.MISC;
-        this.organizations = "[]";
-        this.staffs = "[]";
         this.setImages(new ArrayList<>());
         this.setDetail("");
         this.setRemark("");
