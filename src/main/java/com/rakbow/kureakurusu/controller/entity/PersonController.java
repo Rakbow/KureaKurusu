@@ -41,7 +41,7 @@ public class PersonController {
 
     private static final Logger log = LoggerFactory.getLogger(PersonController.class);
     private final PersonService service;
-    private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
+    private final PersonVOMapper voMapper;
     private final EntityUtil entityUtil;
     private final int ENTITY_VALUE = Entity.PERSON.getValue();
 

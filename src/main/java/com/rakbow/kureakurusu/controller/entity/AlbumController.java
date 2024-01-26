@@ -34,7 +34,7 @@ public class AlbumController {
     private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
     private final AlbumService service;
     private final PersonService personService;
-    private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
+    private final AlbumVOMapper VOMapper;
 
     private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
