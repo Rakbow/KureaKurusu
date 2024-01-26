@@ -4,12 +4,10 @@ import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.GeneralService;
-import com.rakbow.kureakurusu.service.MusicService;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.convertMapper.entry.EntryConvertMapper;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
@@ -24,11 +22,7 @@ class KureaKurusuApplicationTests {
     @Resource
     private EntityService entityService;
     @Resource
-    private MusicService musicService;
-    @Resource
     private GeneralService generalService;
-    @Resource
-    private MusicMapper musicMapper;
 
     @Resource
     private ProductMapper productMapper;

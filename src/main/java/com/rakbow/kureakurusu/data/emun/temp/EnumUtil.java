@@ -9,7 +9,6 @@ import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
 import com.rakbow.kureakurusu.data.emun.entity.book.BookType;
 import com.rakbow.kureakurusu.data.emun.entity.game.GamePlatform;
 import com.rakbow.kureakurusu.data.emun.entity.game.ReleaseType;
-import com.rakbow.kureakurusu.data.emun.entity.music.AudioType;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
 import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
@@ -32,7 +31,6 @@ public class EnumUtil {
             AlbumFormat.class, PublishFormat.class,
             BookType.class,
             GamePlatform.class, ReleaseType.class,
-            AudioType.class,
             ProductCategory.class,
             EntryCategory.class
     };
@@ -45,7 +43,6 @@ public class EnumUtil {
             Map.entry(BookType.class, RedisKey.BOOK_TYPE_SET),
             Map.entry(GamePlatform.class, RedisKey.GAME_PLATFORM_SET),
             Map.entry(ReleaseType.class, RedisKey.RELEASE_TYPE_SET),
-            Map.entry(AudioType.class, RedisKey.AUDIO_TYPE_SET),
             Map.entry(ProductCategory.class, RedisKey.PRODUCT_VISIT_RANKING),
             Map.entry(EntryCategory.class, RedisKey.ENTRY_CATEGORY_SET)
     );

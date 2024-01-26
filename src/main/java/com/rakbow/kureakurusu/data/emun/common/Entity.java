@@ -19,7 +19,7 @@ public enum Entity {
     BOOK(2, "enum.entity.book","book"),
     DISC(3, "enum.entity.disc","disc"),
     GAME(4, "enum.entity.game","game"),
-    MUSIC(5, "enum.entity.music","music"),
+    EPISODE(5, "enum.entity.episode","episode"),
     GOODS(6, "enum.entity.goods","goods"),
     FIGURE(7, "enum.entity.figure","figure"),
     PERSON(8, "enum.entity.person","person"),
