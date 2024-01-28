@@ -8,15 +8,21 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.FranchiseMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.franchise.FranchiseDetailQry;
 import com.rakbow.kureakurusu.data.dto.franchise.FranchiseUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Franchise;
+import com.rakbow.kureakurusu.data.vo.franchise.FranchiseDetailVO;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.FranchiseVOMapper;
+import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +39,23 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
     private final FranchiseMapper mapper;
     private final QiniuFileUtil qiniuFileUtil;
     private final VisitUtil visitUtil;
+    private final EntityUtil entityUtil;
+    private final FranchiseVOMapper voMapper;
     private final int ENTITY_VALUE = Entity.FRANCHISE.getValue();
-    private final FranchiseVOMapper voMapper = FranchiseVOMapper.INSTANCES;
+
+    @SneakyThrows
+    public FranchiseDetailVO detail(FranchiseDetailQry qry) {
+        Franchise item = getById(qry.getId());
+        if (item == null)
+            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.FRANCHISE.getName()));
+
+        return FranchiseDetailVO.builder()
+                .item(voMapper.toVO(item))
+                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
+                .itemImageInfo(CommonImageUtil.segmentImages(item.getImages(), 200, Entity.FRANCHISE, false))
+                .build();
+    }
 
     public SearchResult<FranchiseVO> list(QueryParams param) {
         String name = param.getStr("name");
@@ -45,19 +66,18 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
                 .like(!StringUtils.isBlank(nameZh), Franchise::getNameZh, nameZh)
                 .like(!StringUtils.isBlank(nameEn), Franchise::getNameEn, nameEn);
 
-        if (!StringUtils.isBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.asc(), Franchise::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.asc(), Franchise::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.asc(), Franchise::getNameEn);
-            }
+        switch (param.sortField) {
+            case "name" -> wrapper.orderBy(true, param.asc(), Franchise::getName);
+            case "nameZh" -> wrapper.orderBy(true, param.asc(), Franchise::getNameZh);
+            case "nameEn" -> wrapper.orderBy(true, param.asc(), Franchise::getNameEn);
+            case null -> wrapper.orderByDesc(Franchise::getId);
+            default -> throw new IllegalStateException("Unexpected value: " + param.sortField);
         }
 
         IPage<Franchise> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        List<FranchiseVO> items = voMapper.toVO(pages.getRecords());
 
-        List<FranchiseVO> persons = voMapper.toVO(pages.getRecords());
-
-        return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
     public void delete(List<Long> ids) {
