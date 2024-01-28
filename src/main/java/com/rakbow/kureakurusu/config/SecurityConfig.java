@@ -1,24 +1,20 @@
 package com.rakbow.kureakurusu.config;
 
-import com.alibaba.fastjson2.JSON;
-import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -26,153 +22,91 @@ import java.io.PrintWriter;
  * @since 2022-09-27 0:12
  */
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+public class SecurityConfig {
 
     @Bean
     public HttpFirewall httpFirewall() {
         return new DefaultHttpFirewall();
     }
 
-    
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/resources/**");
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/resources/**");
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // 授权
-        http.authorizeRequests()
-                .antMatchers(
-                        //需要登陆权限
-                        "/user/setting",
-                        "/user/upload"
-                )
-                .hasAnyAuthority(
-                        "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                        "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn(),
-                        "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
-                        "ROLE_" + UserAuthority.USER.getNameEn()
-                )
-                .antMatchers(
-                        //region 需要初级编辑权限
-                        "/db/update-item-description",
-                        "/db/update-item-bonus",
-                        "/db/update-item-specs",
-
-                        "/db/album/add",
-                        "/db/album/update",
-
-                        "/db/book/add",
-                        "/db/book/update",
-                        "/db/book/update-authors",
-                        "/db/book/update-spec",
-                        "/db/book/get-isbn",
-
-                        "/db/disc/add",
-                        "/db/disc/update",
-                        "/db/disc/update-spec",
-
-                        "/db/game/add",
-                        "/db/game/update",
-                        "/db/game/update-organizations",
-                        "/db/game/update-staffs",
-
-                        "/db/merch/add",
-                        "/db/merch/update",
-                        "/db/merch/update-spec",
-
-                        "/db/music/update",
-                        "/db/music/update-artists",
-                        "/db/music/update-lyrics-text"
-                        //endregion
-                )
-                .hasAnyAuthority(
-                        "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                        "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
-                        "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                            //需要登陆权限
+                            "/user/setting",
+                            "/user/upload"
                         )
-                .antMatchers(
-                        //region 需要高级编辑权限 如文件操作,更改上传文件(图片,音频)状态,删除文件等
-                        // "/db/add-images",
-                        // "/db/update-images",
-
-                        "/db/album/add-images",
-                        "/db/album/update-images",
-                        "/db/album/update-trackInfo",
-                        "/db/album/delete",
-
-                        "/db/book/delete",
-
-                        "/db/disc/delete",
-
-                        "/db/game/delete",
-
-                        "/db/merch/delete",
-
-                        "/db/product/add",
-                        "/db/product/update",
-                        "/db/product/update-organizations",
-                        "/db/product/update-staffs",
-
-                        "/db/franchise/add",
-                        "/db/franchise/update",
-
-                        "/db/music/upload-file",
-                        "/db/music/delete-file-file",
-
-                        "/db/update-item-status",
-                        "/db/update-items-status"
-                        //endregion
+                        .hasAnyAuthority(
+                                "ROLE_" + UserAuthority.ADMIN.getNameEn(),
+                                "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn(),
+                                "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
+                                "ROLE_" + UserAuthority.USER.getNameEn()
+                        )
+                        .requestMatchers(
+                                "/db/update-item-detail",
+                                "/db/update-item-bonus"
+                        )
+                        .hasAnyAuthority(
+                                "ROLE_" + UserAuthority.ADMIN.getNameEn(),
+                                "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
+                                "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()
+                        )
+                        .requestMatchers(
+                                "/db/franchise/add",
+                                "/db/franchise/delete",
+                                "/db/franchise/update"
+                        )
+                        .hasAnyAuthority(
+                                "ROLE_" + UserAuthority.ADMIN.getNameEn(),
+                                "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()
+                        )
+                        .anyRequest()
+                        .permitAll()
                 )
-                .hasAnyAuthority(
-                        "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                        "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()
-                )
-                .antMatchers(
-                        //超级管理员权限
-                )
-                .hasAnyAuthority(
-                        "ROLE_" + UserAuthority.ADMIN.getNameEn()
-                )
-                .anyRequest().permitAll()
-                .and().csrf().disable();
+                //禁用跨域访问限制
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
 
-        // 权限不够时的处理
-        // 没有登录
-        http.exceptionHandling()
-                .authenticationEntryPoint((request, response, e) -> {
+                // 登录页面 -> DefaultLoginPageGeneratingFilter
+                .formLogin(Customizer.withDefaults())
+                // 清除session
+                .logout(logout -> logout.clearAuthentication(true).invalidateHttpSession(true))
 
-                    String xRequestedWith = request.getHeader("x-requested-with");
-                    //识别请求为同步请求还是异步请求
-                    if ("XMLHttpRequest".equals(xRequestedWith)) {//异步请求
-                        response.setContentType("application/plain;charset=utf-8");
-                        PrintWriter writer = response.getWriter();
-                        writer.write(JSON.toJSONString(new ApiResult(0, I18nHelper.getMessage("auth.not_login"))));
-                    } else {//同步请求
-                        response.sendRedirect("/login");
-                    }
-                })
-                .accessDeniedHandler(new AccessDeniedHandler() {
-                    // 权限不足
-                    @Override
-                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
-
-                        String xRequestedWith = request.getHeader("x-requested-with");
-                        if ("XMLHttpRequest".equals(xRequestedWith)) {
-                            response.setContentType("application/plain;charset=utf-8");
-                            PrintWriter writer = response.getWriter();
-                            writer.write(JSON.toJSONString(new ApiResult(0, I18nHelper.getMessage("auth.not_authority"))));
-                        } else {
-                            response.sendRedirect("/denied");
-                        }
-                    }
-                });
-
-        // Security底层默认会拦截/logout请求,进行退出处理.
-        // 覆盖它默认的逻辑,才能执行我们自己的退出代码.
-        http.logout().logoutUrl("/securitylogout");
+                //权限不足时
+                .exceptionHandling(auth -> auth
+                                .authenticationEntryPoint((request, response, e) -> {
+                                    String xRequestedWith = request.getHeader("x-requested-with");
+                                    //识别请求为同步请求还是异步请求
+                                    if ("XMLHttpRequest".equals(xRequestedWith)) {
+                                        //异步请求
+                                        response.setContentType("application/plain;charset=utf-8");
+                                        PrintWriter writer = response.getWriter();
+                                        writer.write(JsonUtil.toJson(new ApiResult(0, I18nHelper.getMessage("auth.not_login"))));
+                                    } else {
+                                        //同步请求
+                                        response.sendRedirect("/login");
+                                    }
+                                })
+                                .accessDeniedHandler((request, response, e) -> {
+                                String xRequestedWith = request.getHeader("x-requested-with");
+                                if ("XMLHttpRequest".equals(xRequestedWith)) {
+                                    response.setContentType("application/plain;charset=utf-8");
+                                    PrintWriter writer = response.getWriter();
+                                    writer.write(JsonUtil.toJson(new ApiResult(0, I18nHelper.getMessage("auth.not_authority"))));
+                                } else {
+                                    response.sendRedirect("/denied");
+                                }
+                                })
+                ).build();
     }
 
 }
