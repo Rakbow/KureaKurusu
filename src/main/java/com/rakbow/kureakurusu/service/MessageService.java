@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.util.common.SensitiveFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

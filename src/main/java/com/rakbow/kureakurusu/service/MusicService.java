@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.MusicMapper;
-import com.rakbow.kureakurusu.data.ActionResult;
+import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
 import com.rakbow.kureakurusu.data.system.File;

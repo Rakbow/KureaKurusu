@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
-import com.rakbow.kureakurusu.data.ActionResult;
+import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
 import com.rakbow.kureakurusu.data.entity.LoginTicket;
@@ -18,14 +18,12 @@ import com.rakbow.kureakurusu.util.common.CookieUtil;
 import com.rakbow.kureakurusu.util.common.MailClient;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.ap.internal.model.assignment.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -43,6 +41,11 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     private String domain;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    //     return mapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
+    // }
 
     public Map<String, Object> register(User user) {
         Map<String, Object> map = new HashMap<>();

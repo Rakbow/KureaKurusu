@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.search.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller.interceptor;
+package com.rakbow.kureakurusu.interceptor;
 
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import org.apache.ibatis.executor.statement.StatementHandler;

@@ -1,8 +1,6 @@
 package com.rakbow.kureakurusu.util.file;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.ActionResult;
+import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.system.File;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

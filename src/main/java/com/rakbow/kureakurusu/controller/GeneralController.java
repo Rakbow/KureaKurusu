@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.controller.interceptor.TokenInterceptor;
-import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.common.UpdateDetailCmd;
 import com.rakbow.kureakurusu.data.dto.common.UpdateStatusCmd;
@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

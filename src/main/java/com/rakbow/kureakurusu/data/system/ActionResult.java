@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data;
+package com.rakbow.kureakurusu.data.system;
 
 /**
  * @author Rakbow

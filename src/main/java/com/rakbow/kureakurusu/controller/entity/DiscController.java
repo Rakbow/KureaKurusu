@@ -10,7 +10,7 @@ import com.rakbow.kureakurusu.data.entity.Disc;
 import com.rakbow.kureakurusu.service.DiscService;
 import com.rakbow.kureakurusu.service.EntityService;
 import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 

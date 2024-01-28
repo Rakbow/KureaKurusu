@@ -1,10 +1,10 @@
-package com.rakbow.kureakurusu.controller.interceptor;
+package com.rakbow.kureakurusu.interceptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 /**

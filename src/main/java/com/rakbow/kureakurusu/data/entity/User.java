@@ -1,7 +1,11 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -9,7 +13,9 @@ import java.util.Date;
  * @since 2022-08-01 18:14
  */
 @Data
+@TableName("user")
 public class User {
+
     private Integer id;
     private String username;
     private String password;

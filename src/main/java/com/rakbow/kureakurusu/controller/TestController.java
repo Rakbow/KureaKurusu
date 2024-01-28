@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.service.AlbumService;

@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data;
+package com.rakbow.kureakurusu.data.system;
 
 import com.alibaba.fastjson2.JSON;
 import org.springframework.validation.BindingResult;

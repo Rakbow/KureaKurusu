@@ -1,13 +1,11 @@
-package com.rakbow.kureakurusu.controller.interceptor;
+package com.rakbow.kureakurusu.interceptor;
 
 import com.rakbow.kureakurusu.util.common.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Rakbow

@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.controller.entity;
 
-import com.rakbow.kureakurusu.data.ApiResult;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.service.EpisodeService;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**

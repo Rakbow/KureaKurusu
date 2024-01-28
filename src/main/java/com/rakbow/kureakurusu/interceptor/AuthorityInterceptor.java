@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller.interceptor;
+package com.rakbow.kureakurusu.interceptor;
 
 import com.rakbow.kureakurusu.annotation.AdminAuthorityRequired;
 import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
