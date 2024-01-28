@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.controller.entity;
 
-import com.rakbow.kureakurusu.data.dto.episode.EpisodeDeleteCmd;
+import com.rakbow.kureakurusu.data.episode.EpisodeDeleteCmd;
 import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.service.EpisodeService;

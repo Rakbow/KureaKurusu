@@ -3,10 +3,10 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
-import com.rakbow.kureakurusu.data.ActionResult;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
 import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.system.File;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.file.QiniuBaseUtil;
@@ -45,7 +45,6 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         String filePath = "file/" + Entity.EPISODE.getTableName() + "/" + id + "/";
 
         for (int i = 0; i < files.length; i++) {
-
             ActionResult ar;
             //判断文件是否为lrc歌词
             if (StringUtils.equals(Objects.requireNonNull(files[i].getOriginalFilename()).substring(Objects.requireNonNull(files[i].getOriginalFilename()).lastIndexOf(".")+1), "lrc")) {

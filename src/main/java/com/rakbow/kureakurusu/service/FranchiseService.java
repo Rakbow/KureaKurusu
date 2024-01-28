@@ -66,12 +66,14 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
                 .like(!StringUtils.isBlank(nameZh), Franchise::getNameZh, nameZh)
                 .like(!StringUtils.isBlank(nameEn), Franchise::getNameEn, nameEn);
 
-        switch (param.sortField) {
-            case "name" -> wrapper.orderBy(true, param.asc(), Franchise::getName);
-            case "nameZh" -> wrapper.orderBy(true, param.asc(), Franchise::getNameZh);
-            case "nameEn" -> wrapper.orderBy(true, param.asc(), Franchise::getNameEn);
-            case null -> wrapper.orderByDesc(Franchise::getId);
-            default -> throw new IllegalStateException("Unexpected value: " + param.sortField);
+        if(!StringUtils.isBlank(param.sortField)) {
+            switch (param.sortField) {
+                case "name" -> wrapper.orderBy(true, param.asc(), Franchise::getName);
+                case "nameZh" -> wrapper.orderBy(true, param.asc(), Franchise::getNameZh);
+                case "nameEn" -> wrapper.orderBy(true, param.asc(), Franchise::getNameEn);
+            }
+        }else {
+            wrapper.orderByDesc(Franchise::getId);
         }
 
         IPage<Franchise> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
