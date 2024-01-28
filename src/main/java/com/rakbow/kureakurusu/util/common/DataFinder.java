@@ -37,48 +37,6 @@ public class DataFinder {
 
     //endregion
 
-    //region music
-
-    /**
-     * 根据musicId从指定music列表中查找
-     *
-     * @param id,musics 查找id和music列表
-     * @return music
-     * @author rakbow
-     */
-    public static Music findMusicById(int id, List<Music> musics) {
-        Music musicFinder = new Music();
-        musicFinder.setId(id);
-        int idx = Collections.binarySearch(musics, musicFinder, DataSorter.musicIdSorter);
-        return idx >= 0 ? musics.get(idx) : null;
-    }
-
-    public static List<Music> findMusicByDiscSerial(int discSerial, List<Music> musics) {
-
-        return musics.stream().filter(music -> music.getDiscSerial() == discSerial)
-                .sorted(DataSorter.musicTrackSerialSorter).collect(Collectors.toList());
-    }
-
-    public static Music findMusicByNameAndAlbumId(String name, String nameType, int albumId, List<Music> musics) {
-        if (StringUtils.equals(nameType, "nameJp")) {
-            for (Music music : musics) {
-                if (music.getAlbumId() == albumId && StringUtils.equals(music.getName(), name)) {
-                    return music;
-                }
-            }
-        } else {
-            for (Music music : musics) {
-                if (music.getAlbumId() == albumId && StringUtils.equals(music.getNameEn(), name)) {
-                    return music;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    //endregion
-
     //region product
 
     /**

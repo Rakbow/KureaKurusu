@@ -38,7 +38,7 @@ public class Episode {
     private List<File> files = new ArrayList<>();//文件
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
-    private long relatedId;//关联id 音乐 album_id
+    private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
 
     @Builder.Default
     private Timestamp addedTime = DateHelper.now();

@@ -1,9 +1,6 @@
 package com.rakbow.kureakurusu.data.vo.franchise;
 
-import com.alibaba.fastjson2.JSONArray;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * 转换量最大的VO，一般用于详情页面

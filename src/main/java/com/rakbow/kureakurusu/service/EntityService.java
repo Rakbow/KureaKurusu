@@ -55,10 +55,6 @@ public class EntityService {
     @Resource
     private MerchMapper merchMapper;
     @Resource
-    private MusicMapper musicMapper;
-    @Resource
-    private EntryMapper entryMapper;
-    @Resource
     private RedisUtil redisUtil;
     @Resource
     private LikeUtil likeUtil;
@@ -78,8 +74,6 @@ public class EntityService {
     private final BookVOMapper bookVOMapper = BookVOMapper.INSTANCES;
     private final DiscVOMapper discVOMapper = DiscVOMapper.INSTANCES;
     private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
-    private final MerchVOMapper merchVOMapper = MerchVOMapper.INSTANCES;
-    private final MusicVOMapper musicVOMapper = MusicVOMapper.INSTANCES;
 
     private final List<Integer> searchEntityTypes = new ArrayList<>(){{
         add(Entity.ALBUM.getValue());
@@ -87,7 +81,7 @@ public class EntityService {
         add(Entity.DISC.getValue());
         add(Entity.GAME.getValue());
 //        add(Entity.MERCH.getId());
-        add(Entity.MUSIC.getValue());
+        add(Entity.EPISODE.getValue());
     }};
 
     //endregion
@@ -394,7 +388,7 @@ public class EntityService {
 //                res.setTotal(merchMapper.simpleSearchCount(keyword));
 //            }
 //        }
-       if(entityType == Entity.MUSIC.getValue()) {
+       if(entityType == Entity.EPISODE.getValue()) {
            // List<MusicAlbumView> musics = musicMapper.simpleSearch(keyword, limit, offset);
            // if(!musics.isEmpty()) {
            //     res.setData(JSON.parseArray(JSON.toJSONString(musicVOMapper.music2VOBeta(musics))));

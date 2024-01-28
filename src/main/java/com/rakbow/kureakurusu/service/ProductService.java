@@ -13,7 +13,6 @@ import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
-import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.data.entity.Product;
@@ -29,7 +28,6 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +44,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     private final QiniuFileUtil qiniuFileUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
-    private final ProductVOMapper voMapper = ProductVOMapper.INSTANCES;
+    private final ProductVOMapper voMapper;
     private final int ENTITY_VALUE = Entity.PRODUCT.getValue();
     //endregion
 
@@ -74,6 +72,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 case "releaseDate" -> wrapper.orderBy(true, param.asc(), Product::getReleaseDate);
                 case "category" -> wrapper.orderBy(true, param.asc(), Product::getCategory);
                 case "franchise" -> wrapper.orderBy(true, param.asc(), Product::getFranchise);
+                default -> wrapper.orderByDesc(Product::getId);
             }
         }
 
@@ -90,9 +89,9 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
             throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.PRODUCT.getName()));
 
         return ProductDetailVO.builder()
-                .product(voMapper.toVO(product))
+                .item(voMapper.toVO(product))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
-                .pageInfo(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .itemImageInfo(CommonImageUtil.segmentImages(product.getImages(), 100, Entity.PRODUCT, true))
                 .build();
     }

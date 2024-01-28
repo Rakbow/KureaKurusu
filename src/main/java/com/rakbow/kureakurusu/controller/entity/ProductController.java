@@ -34,9 +34,9 @@ public class ProductController {
     //region ------inject------
 
     private static final Logger log = LoggerFactory.getLogger(ProductController.class);
-    private final ProductService service;
-    private final PersonService personService;
-    private final ProductVOMapper VOMapper = ProductVOMapper.INSTANCES;
+    private final ProductService srv;
+    private final PersonService personSrv;
+    private final ProductVOMapper VOMapper;
     private final int ENTITY_VALUE = Entity.PRODUCT.getValue();
     //endregion
 
@@ -47,10 +47,10 @@ public class ProductController {
     public ApiResult getProductDetail(@RequestBody ProductDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            ProductDetailVO vo = service.getDetail(qry);
-            vo.setPersonnel(personService.getPersonnel(ENTITY_VALUE, qry.getId()));
+            ProductDetailVO vo = srv.getDetail(qry);
+            vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
             res.loadDate(vo);
-        }catch (Exception e) {
+        } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
         }
@@ -61,7 +61,7 @@ public class ProductController {
     public ApiResult getProducts(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.getProducts(new QueryParams(qry));
+            res.data = srv.getProducts(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -79,9 +79,9 @@ public class ProductController {
             //build
             Product product = VOMapper.build(dto);
             //save
-            service.save(product);
+            srv.save(product);
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PRODUCT.getName()));
-        }catch (Exception e) {
+        } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
         }
@@ -96,7 +96,7 @@ public class ProductController {
             if (errors.hasErrors())
                 return res.fail(errors);
             //save
-            service.updateProduct(dto);
+            srv.updateProduct(dto);
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PRODUCT.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -109,7 +109,7 @@ public class ProductController {
     public ApiResult deleteProduct(@RequestBody ProductDeleteCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            service.deleteProducts(cmd.getIds());
+            srv.deleteProducts(cmd.getIds());
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.PRODUCT.getName()));
         } catch (Exception e) {
             res.fail(e);

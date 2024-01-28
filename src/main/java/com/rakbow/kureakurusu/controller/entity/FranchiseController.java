@@ -43,7 +43,7 @@ public class FranchiseController {
 
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getFranchiseDetailData(@RequestBody FranchiseDetailQry qry) {
+    public ApiResult getFranchiseDetail(@RequestBody FranchiseDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
             res.data = srv.detail(qry);

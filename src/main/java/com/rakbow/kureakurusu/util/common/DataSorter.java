@@ -13,8 +13,6 @@ import java.util.Comparator;
 public class DataSorter {
 
     public static AlbumSortById albumIdSorter = new AlbumSortById();
-    public static MusicSortById musicIdSorter = new MusicSortById();
-    public static MusicSortByTrackSerial musicTrackSerialSorter = new MusicSortByTrackSerial();
     public static JsonSortById jsonIdSorter = new JsonSortById();
     public static JsonSetSortByValue jsonSetValueSorter = new JsonSetSortByValue();
     public static AttributesSortByIntValue attributesIntValueSorter = new AttributesSortByIntValue();
@@ -30,20 +28,6 @@ class AlbumSortById implements Comparator<Album> {
     @Override
     public int compare(Album a, Album b) {
         return Long.compare(a.getId(), b.getId());
-    }
-}
-
-class MusicSortById implements Comparator<Music> {
-    @Override
-    public int compare(Music a, Music b) {
-        return Integer.compare(a.getId(), b.getId());
-    }
-}
-
-class MusicSortByTrackSerial implements Comparator<Music> {
-    @Override
-    public int compare(Music a, Music b) {
-        return Integer.compare(Integer.parseInt(a.getTrackSerial()), Integer.parseInt(b.getTrackSerial()));
     }
 }
 

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.product;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.PageTraffic;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
@@ -21,11 +20,13 @@ import java.util.List;
 @Data
 public class ProductDetailVO {
 
-    private ProductVO product;
+    private ProductVO item;
 
-    private PageTraffic pageInfo;
+    private PageTraffic traffic;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;
     private List<Object> options;
+
+
 
 }

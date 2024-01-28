@@ -168,7 +168,7 @@ public class VisitUtil {
 //        if(entityType == Entity.MERCH.getId()) {
 //            return RedisCacheConstant.MERCH_VISIT_RANKING;
 //        }
-        if(entityType == Entity.MUSIC.getValue()) {
+        if(entityType == Entity.EPISODE.getValue()) {
             return RedisKey.MUSIC_VISIT_RANKING;
         }
 //        if(entityType == Entity.PRODUCT.getId()) {

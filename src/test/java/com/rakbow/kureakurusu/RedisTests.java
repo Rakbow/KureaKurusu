@@ -42,8 +42,6 @@ public class RedisTests {
     @Resource
     private MerchMapper merchMapper;
     @Resource
-    private MusicMapper musicMapper;
-    @Resource
     private ProductMapper productMapper;
     @Resource
     private StatisticMapper statisticMapper;
