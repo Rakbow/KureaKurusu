@@ -83,7 +83,7 @@ public class ApiResult {
         return this;
     }
 
-    public void loadDate(Object data) {
+    public void loadData(Object data) {
         this.data = data;
     }
 }

@@ -49,7 +49,7 @@ public class ProductController {
         try {
             ProductDetailVO vo = srv.getDetail(qry);
             vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
-            res.loadDate(vo);
+            res.loadData(vo);
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
