@@ -3,8 +3,9 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
@@ -17,14 +18,20 @@ import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
+import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.common.DataFinder;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.EntityUtil;
+import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -44,12 +51,12 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
-    //region ------inject------
+    //region inject
     private final QiniuFileUtil qiniuFileUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
-    private final AlbumVOMapper VOMapper = AlbumVOMapper.INSTANCES;
 
+    private final AlbumVOMapper VOMapper;
     private final AlbumMapper mapper;
     private final EpisodeMapper epMapper;
     private final PersonRelationMapper relationMapper;
@@ -59,7 +66,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
 
-    //region ------crud------
+    //region crud
 
     // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
     // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
@@ -150,7 +157,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //endregion
 
-    //region ------数据处理------
+    //region data handle
 
     public AlbumVO buildVO(Album album) {
         AlbumVO VO = VOMapper.toVO(album);
@@ -205,7 +212,50 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //endregion
 
-    //region ------更新复杂数据------
+    //region advance crud
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public SearchResult<AlbumVOAlpha> getAlbums(QueryParams param) {
+
+        String name = param.getStr("name");
+        String nameZh = param.getStr("nameZh");
+        String nameEn = param.getStr("nameEn");
+        LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
+                .like(StringUtils.isNotBlank(name), Album::getName, name)
+                .like(StringUtils.isNotBlank(nameZh), Album::getNameZh, nameZh)
+                .like(StringUtils.isNotBlank(nameEn), Album::getNameEn, nameEn);
+
+        List<Integer> albumFormat = param.getArray("albumFormat");
+        List<Integer> publishFormat = param.getArray("publishFormat");
+        List<Integer> mediaFormat = param.getArray("mediaFormat");
+        if(CollectionUtils.isNotEmpty(albumFormat))
+            wrapper.in(Album::getAlbumFormat, albumFormat);
+        if(CollectionUtils.isNotEmpty(publishFormat))
+            wrapper.in(Album::getAlbumFormat, publishFormat);
+        if(CollectionUtils.isNotEmpty(mediaFormat))
+            wrapper.in(Album::getAlbumFormat, mediaFormat);
+
+        if(StringUtils.isNotBlank(param.sortField)) {
+            switch (param.sortField) {
+                case "name" -> wrapper.orderBy(true, param.asc(), Album::getName);
+                case "nameZh" -> wrapper.orderBy(true, param.asc(), Album::getNameZh);
+                case "nameEn" -> wrapper.orderBy(true, param.asc(), Album::getNameEn);
+                case "releaseDate" -> wrapper.orderBy(true, param.asc(), Album::getReleaseDate);
+                case "barcode" -> wrapper.orderBy(true, param.asc(), Album::getBarcode);
+                case "catalogNo" -> wrapper.orderBy(true, param.asc(), Album::getCatalogNo);
+                case "price" -> wrapper.orderBy(true, param.asc(), Album::getPrice);
+                case "addedTime" -> wrapper.orderBy(true, param.asc(), Album::getAddedTime);
+                case "editedTime" -> wrapper.orderBy(true, param.asc(), Album::getEditedTime);
+            }
+        }else {
+            wrapper.orderByDesc(Album::getId);
+        }
+
+        IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
+
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
 
     /**
      * 更新音轨信息
@@ -272,154 +322,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         batchUpdate.execute(method.updateById());
         batchDelete.execute(method.deleteById());
     }
-
-    //endregion
-
-    //region ------特殊查询------
-
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public SearchResult getAlbums(QueryParams param) {
-
-        //region wrapper
-
-        // JSONArray products = param.getJSONArray("products");
-        // JSONArray franchises = param.getJSONArray("franchises");
-        // JSONArray publishFormat = param.getJSONArray("publishFormat");
-        // JSONArray albumFormat = param.getJSONArray("albumFormat");
-        // JSONArray mediaFormat = param.getJSONArray("mediaFormat");
-        //
-        // LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
-        //         .like(Album::getCatalogNo, param.getString("catalogNo"))
-        //         .like(Album::getName, param.getString("name"))
-        //         .like(Album::getNameZh, param.getString("nameZh"))
-        //         .like(Album::getNameEn, param.getString("nameEn"));
-        // if (products != null && products.isEmpty()) {
-        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "products"), products.toJSONString());
-        // }
-        // if (franchises != null && franchises.isEmpty()) {
-        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "franchises"), franchises.toJSONString());
-        // }
-        // if (publishFormat != null && publishFormat.isEmpty()) {
-        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "publish_format"), publishFormat.toJSONString());
-        // }
-        // if (albumFormat != null && albumFormat.isEmpty()) {
-        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "album_format"), albumFormat.toJSONString());
-        // }
-        // if (mediaFormat != null && mediaFormat.isEmpty()) {
-        //     wrapper.apply(String.format(CommonConstant.JSON_ARRAY_SEARCH_FORMAT, "media_format"), mediaFormat.toJSONString());
-        // }
-        //
-        // if (param.getBoolean("hasBonus") != null) {
-        //     wrapper.eq(Album::getHasBonus, param.getBoolean("hasBonus") ? 1 : 0);
-        // }
-        // if (!AuthorityInterceptor.isSenior()) {
-        //     wrapper.eq(Album::getStatus, 1);
-        // }
-        //
-        // if (!StringUtils.isBlank(param.sortField)) {
-        //     switch (param.sortField) {
-        //         case "addedTime" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getAddedTime);
-        //         case "editedTime" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getEditedTime);
-        //         case "name" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getName);
-        //         case "nameZh" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getNameZh);
-        //         case "nameEn" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getNameEn);
-        //         case "catalogNo" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getCatalogNo);
-        //         case "barcode" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getBarcode);
-        //         case "releaseDate" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getReleaseDate);
-        //         case "price" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getPrice);
-        //         case "hasBonus" -> wrapper.orderBy(true, param.sortOrder == 1, Album::getHasBonus);
-        //     }
-        // }
-        //
-        // //endregion
-        //
-        // IPage<Album> albums = mapper.selectPage(new Page<>(param.page, param.size), wrapper);
-        //
-        // return new SearchResult(albums);
-        return null;
-    }
-
-    /**
-     * 获取相关联专辑
-     *
-     * @param id 专辑id
-     * @return list封装的Album
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<AlbumVOBeta> getRelatedAlbums(int id) {
-
-        List<Album> result = new ArrayList<>();
-
-        // Album album = getAlbum(id);
-        //
-        // //该专辑包含的作品id
-        // List<Integer> productIds = JSON.parseArray(album.getProducts()).toJavaList(Integer.class);
-        //
-        // //该系列所有专辑
-        // List<Album> allAlbums = albumMapper.getAlbumsByFilter(null, null, CommonUtil.ids2List(album.getFranchises()),
-        //         null, null, null, null, null, false, "releaseDate",
-        //         1, 0, 0).stream().filter(tmpAlbum -> tmpAlbum.getId() != album.getId()).collect(Collectors.toList());
-        //
-        // List<Album> queryResult = allAlbums.stream().filter(tmpAlbum ->
-        //         StringUtils.equals(tmpAlbum.getProducts(), album.getProducts())).collect(Collectors.toList());
-        //
-        // if (queryResult.size() > 5) {//结果大于5
-        //     result.addAll(queryResult.subList(0, 5));
-        // } else if (queryResult.size() == 5) {//结果等于5
-        //     result.addAll(queryResult);
-        // } else if (queryResult.size() > 0) {//结果小于5不为空
-        //     List<Album> tmp = new ArrayList<>(queryResult);
-        //
-        //     if (productIds.size() > 1) {
-        //         List<Album> tmpQueryResult = allAlbums.stream().filter(tmpAlbum ->
-        //                 JSON.parseArray(tmpAlbum.getProducts()).toJavaList(Integer.class)
-        //                         .contains(productIds.get(1))).collect(Collectors.toList());
-        //
-        //         if (tmpQueryResult.size() >= 5 - queryResult.size()) {
-        //             tmp.addAll(tmpQueryResult.subList(0, 5 - queryResult.size()));
-        //         } else if (tmpQueryResult.size() > 0 && tmpQueryResult.size() < 5 - queryResult.size()) {
-        //             tmp.addAll(tmpQueryResult);
-        //         }
-        //     }
-        //     result.addAll(tmp);
-        // } else {
-        //     List<Album> tmp = new ArrayList<>(queryResult);
-        //     for (int productId : productIds) {
-        //         tmp.addAll(
-        //                 allAlbums.stream().filter(tmpAlbum ->
-        //                         JSON.parseArray(tmpAlbum.getProducts()).toJavaList(Integer.class)
-        //                                 .contains(productId)).collect(Collectors.toList())
-        //         );
-        //     }
-        //     result = CommonUtil.removeDuplicateList(tmp);
-        //     if (result.size() >= 5) {
-        //         result = result.subList(0, 5);
-        //     }
-        // }
-
-        return VOMapper.toVOBeta(CommonUtil.removeDuplicateList(result));
-    }
-
-    // /**
-    //  * 根据作品id获取关联专辑
-    //  *
-    //  * @param productId 作品id
-    //  * @return List<JSONObject>
-    //  * @author rakbow
-    //  */
-    // @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    // public List<AlbumVOBeta> getAlbumsByProductId(int productId) {
-    //
-    //     List<Integer> products = new ArrayList<>();
-    //     products.add(productId);
-    //
-    //     List<Album> albums = albumMapper.getAlbumsByFilter(null, null, null, products,
-    //             null, null, null, null, false, "releaseDate",
-    //             -1, 0, 0);
-    //
-    //     return albumVOMapper.toVOBeta(albums);
-    // }
 
     //endregion
 

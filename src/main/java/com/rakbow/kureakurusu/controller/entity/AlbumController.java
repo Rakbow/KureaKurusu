@@ -1,25 +1,23 @@
 package com.rakbow.kureakurusu.controller.entity;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.system.ApiResult;
-import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.*;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 /**
  * @author Rakbow
@@ -32,8 +30,8 @@ public class AlbumController {
 
     //region ------inject------
     private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
-    private final AlbumService service;
-    private final PersonService personService;
+    private final AlbumService srv;
+    private final PersonService personSrv;
     private final AlbumVOMapper VOMapper;
 
     private final int ENTITY_VALUE = Entity.ALBUM.getValue();
@@ -45,9 +43,9 @@ public class AlbumController {
     public ApiResult getAlbumDetailData(@RequestBody AlbumDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            AlbumDetailVO vo = service.getDetail(qry);
-            vo.setPersonnel(personService.getPersonnel(ENTITY_VALUE, qry.getId()));
-            res.loadDate(vo);
+            AlbumDetailVO vo = srv.getDetail(qry);
+            vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
+            res.loadData(vo);
         }catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -56,14 +54,11 @@ public class AlbumController {
     }
 
     //根据搜索条件获取专辑
-    @SuppressWarnings("unchecked")
     @PostMapping("list")
     public ApiResult getAlbums(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try{
-            SearchResult<Album> result = service.getAlbums(new QueryParams(qry));
-             res.data = VOMapper.toVOAlpha(result.data);
-             res.total = result.total;
+            res.loadData(srv.getAlbums(new QueryParams(qry)));
         }catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -82,7 +77,7 @@ public class AlbumController {
             //build
             Album album = VOMapper.build(dto);
             //save
-            service.save(album);
+            srv.save(album);
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -102,7 +97,7 @@ public class AlbumController {
             //build
             Album album = VOMapper.build(dto);
             //save
-            service.updateAlbum(album);
+            srv.updateAlbum(album);
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -116,7 +111,7 @@ public class AlbumController {
     public ApiResult deleteAlbum(@RequestBody AlbumDeleteCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            service.deleteAlbums(cmd.getIds());
+            srv.deleteAlbums(cmd.getIds());
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -134,7 +129,7 @@ public class AlbumController {
     public ApiResult updateAlbumTrackInfo(@RequestBody UpdateAlbumTrackInfoCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            service.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
+            srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -147,26 +142,13 @@ public class AlbumController {
     public ApiResult getAlbumTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.getTrackInfo(service.getById(qry.getId()));
+            res.loadData(srv.getTrackInfo(srv.getById(qry.getId())));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
         }
         return res;
     }
-
-    // @PostMapping("get-related-albums")
-    // public String getRelatedAlbums(@RequestBody AlbumDetailQry qry) {
-    //     ApiResult res = new ApiResult();
-    //     try {
-    //         long id = qry.getId();
-    //         // res.data = albumService.getRelatedAlbums(id);
-    //
-    //     }catch (Exception e) {
-    //         res.setErrorMessage(e);
-    //     }
-    //     return res.toJson();
-    // }
 
     //endregion
 
