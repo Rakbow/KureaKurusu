@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.vo.product;
 import com.rakbow.kureakurusu.data.PageTraffic;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
+import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,6 @@ public class ProductDetailVO {
     private PersonnelStruct personnel;
     private List<Object> options;
 
-
+    private List<EpisodeVOAlpha> episodes;
 
 }

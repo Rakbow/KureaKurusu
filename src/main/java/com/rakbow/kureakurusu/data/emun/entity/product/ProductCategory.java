@@ -11,6 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ProductCategory {
+
     GAME(0, "enum.product_category.game"),
     ANIME_TV(1, "enum.product_category.anime_tv"),
     ANIME_MOVIE(2, "enum.product_category.anime_movie"),

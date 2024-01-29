@@ -54,10 +54,10 @@ public class EntityUtil {
             options.add(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
             options.add(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
         }
-        if(entityType == Entity.PRODUCT.getValue()) {
+        else if(entityType == Entity.PRODUCT.getValue()) {
             options.add(Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
+            options.add(Objects.requireNonNull(MetaData.getOptions()).productCategorySet);
         }
-
 
         return options;
     }
