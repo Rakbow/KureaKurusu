@@ -1,8 +1,5 @@
 package com.rakbow.kureakurusu.util.common;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -191,6 +188,7 @@ public class RedisUtil {
      * @param key 键
      * @return 对应的多个键值
      */
+    @SuppressWarnings("unchecked")
     public <T>  T get(String key,  Class<T> pValClass) throws Exception {
         Object data = redisTemplate.opsForValue().get(key);
         if(null == data){
@@ -199,14 +197,14 @@ public class RedisUtil {
         if(data.getClass().equals(pValClass)){
             return (T)data;
         }
-        else if(data instanceof JSONObject){
-            T value =  JSON.to(pValClass,data);
+        else if(data instanceof LinkedHashMap){
+            T value =  JsonUtil.to(data.toString(), pValClass);
             return value;
         }else if(data instanceof String){
             if(pValClass == String.class){
                 return (T)data.toString();
             }
-            T value =  JSON.parseObject((String)data,pValClass);
+            T value =  JsonUtil.to((String) data, pValClass);
             return value;
         }
         else {
@@ -258,7 +256,7 @@ public class RedisUtil {
         Map<String, T> result = new HashMap<>();
         for(Map.Entry<Object, Object> data : map.entrySet()){
             String subKey = data.getKey().toString();
-            T value =  JSON.to(pValClass,data.getValue());
+            T value =  JsonUtil.to(data.getValue().toString(), pValClass);
             result.put(subKey,value);
         }
         return result;

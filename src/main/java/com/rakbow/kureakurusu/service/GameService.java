@@ -1,25 +1,25 @@
 package com.rakbow.kureakurusu.service;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.dao.GameMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.vo.game.GameVOBeta;
 import com.rakbow.kureakurusu.data.entity.Game;
+import com.rakbow.kureakurusu.data.vo.game.GameVOBeta;
+import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
-import com.rakbow.kureakurusu.util.convertMapper.entity.GameVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -274,7 +274,7 @@ public class GameService {
         List<Integer> productIds = JSONObject.parseObject(game.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Game
-        List<Game> allGames = gameMapper.getGamesByFilter(null, null, CommonUtil.ids2List(game.getFranchises()),
+        List<Game> allGames = gameMapper.getGamesByFilter(null, null, JsonUtil.toJavaList(game.getFranchises(), Integer.class),
                         null, 100, null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpGame -> tmpGame.getId() != game.getId()).collect(Collectors.toList());
 

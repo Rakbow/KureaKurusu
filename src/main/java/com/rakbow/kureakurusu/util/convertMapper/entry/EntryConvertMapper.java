@@ -1,19 +1,18 @@
 package com.rakbow.kureakurusu.util.convertMapper.entry;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.emun.entry.EntryCategory;
 import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
-import com.rakbow.kureakurusu.data.vo.entry.EntryVOAlpha;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.common.Company;
 import com.rakbow.kureakurusu.data.entity.common.Merchandise;
-import com.rakbow.kureakurusu.data.entity.common.TmpPersonnel;
 import com.rakbow.kureakurusu.data.entity.common.Role;
+import com.rakbow.kureakurusu.data.entity.common.TmpPersonnel;
+import com.rakbow.kureakurusu.data.vo.RegionVO;
+import com.rakbow.kureakurusu.data.vo.entry.EntryVOAlpha;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -90,8 +89,8 @@ public interface EntryConvertMapper {
     //region get property method
 
     @Named("getDetail")
-    default JSONObject getDetail(String json) {
-        return JSONObject.parseObject(json);
+    default Object getDetail(String json) {
+        return JsonUtil.to(json, Object.class);
     }
 
     @Named("getCategory")
@@ -101,13 +100,12 @@ public interface EntryConvertMapper {
 
     @Named("getAlias")
     default List<String> getAlias(String json) {
-        return JSON.parseArray(json).toJavaList(String.class);
+        return JsonUtil.toJavaList(json, String.class);
     }
 
     @Named("getLinks")
     default List<String> getLinks(String json) {
-        JSONObject detail = JSON.parseObject("detail");
-        return detail.getList("links", String.class);
+        return JsonUtil.getValueByKey(json, String.class, "links");
     }
 
     @Named("getVOTime")
@@ -119,7 +117,7 @@ public interface EntryConvertMapper {
     default RegionVO getVORegion(String detail) {
         String code = StringUtils.isBlank(detail)
                 ? Region.GLOBAL.getCode()
-                : JSON.parseObject(detail).getString("region");
+                : JsonUtil.getValueByKey("region", detail).toString();
         if(StringUtils.isBlank(code)) {
             code = Region.GLOBAL.getCode();
         }

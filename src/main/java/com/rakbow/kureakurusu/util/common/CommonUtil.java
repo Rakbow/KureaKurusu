@@ -1,22 +1,19 @@
 package com.rakbow.kureakurusu.util.common;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.emun.image.ImageType;
-import com.rakbow.kureakurusu.util.I18nHelper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
 import javax.imageio.ImageIO;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -91,58 +88,6 @@ public class CommonUtil {
         return DigestUtils.md5DigestAsHex(key.getBytes());
     }
 
-    //获取JSON字符串
-    public static String getJSONString(int code, String msg, Map<String, Object> map) {
-        JSONObject json = new JSONObject();
-        json.put("code", code);
-        json.put("msg", msg);
-        if (map != null) {
-            for (String key : map.keySet()) {
-                json.put(key, map.get(key));
-            }
-        }
-        return json.toJSONString();
-    }
-
-    //递归获取jsonObject的所有value
-    public static String getAllContentFromJson(Object object) {
-        StringBuilder mStringBuffer = new StringBuilder();
-        if(object instanceof JSONObject) {
-            JSONObject jsonObject = (JSONObject) object;
-            for (Map.Entry<String, Object> entry: jsonObject.entrySet()) {
-                Object o = entry.getValue();
-                if(o instanceof Integer){
-                    mStringBuffer.append(" ").append(entry.getValue());
-                }else if(o instanceof Double){
-                    mStringBuffer.append(" ").append(entry.getValue());
-                }else if(o instanceof Float){
-                    mStringBuffer.append(" ").append(entry.getValue());
-                }else if(o instanceof Byte){
-                    mStringBuffer.append(" ").append(entry.getValue());
-                }else if(o instanceof Long){
-                    mStringBuffer.append(" ").append(entry.getValue());
-                }else if(o instanceof String) {
-                    try{
-                        object= JSONObject.parseObject((String)o);
-                        getAllContentFromJson(object);
-                    }catch (Exception e){
-                        mStringBuffer.append(" ").append(entry.getValue());
-                    }
-                }
-                else {
-                    getAllContentFromJson(o);
-                }
-            }
-        }
-        if(object instanceof JSONArray) {
-            JSONArray jsonArray = (JSONArray) object;
-            for (Object o : jsonArray) {
-                getAllContentFromJson(o);
-            }
-        }
-        return mStringBuffer.toString();
-    }
-
     /**
      * 使用 Stream 去重list
      * @param list
@@ -162,32 +107,6 @@ public class CommonUtil {
         // int[] intArr = Arrays.stream(strArr).mapToInt(Integer::parseInt).toArray();
         Arrays.sort(strArr);
         return strArr;
-    }
-
-    /**
-     * ids字符串转list
-     *
-     * @author rakbow
-     * @param idsJson ids字符串
-     * @return List<Integer>
-     * */
-    public static List<Integer> ids2List (String idsJson) {
-        return new ArrayList<>(JSONObject.parseObject(idsJson).getList("ids", Integer.class));
-    }
-
-    public static List<String> getJsonArrayKeys(JSONArray jsonArray, String key) {
-
-        if(jsonArray == null || jsonArray.isEmpty()) {
-            return null;
-        }
-        List<String> keys = new ArrayList<>();
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject json = jsonArray.getJSONObject(i);
-            if(!StringUtils.isBlank(json.getString(key))) {
-                keys.add(json.getString(key));
-            }
-        }
-        return keys;
     }
 
     //region ------暂时废弃------
@@ -255,130 +174,6 @@ public class CommonUtil {
      * */
     public static String getImageFileNameByUrl (String url) {
         return url.substring(url.lastIndexOf("/") + 1);
-    }
-
-    /**
-     * 对更新图片信息合法性进行检测，图片英文名和图片类型
-     *
-     * @param
-     * @return
-     * @author rakbow
-     */
-    @Deprecated
-    public static String DeprecatedCheckUpdateImages(JSONArray images) {
-        //封面类型的图片个数
-        int coverCount = 0;
-        for (int i = 0; i < images.size(); i++) {
-            if (images.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
-                coverCount++;
-            }
-        }
-        if (coverCount > 1) {
-            return I18nHelper.getMessage("image.error.only_one_cover");
-        }
-
-        //检测是否存在重复英文名
-        List<String> originImageUrlNameEns = new ArrayList<>();
-        for (int i = 0; i < images.size(); i++) {
-            String imageUrl = images.getJSONObject(i).getString("url");
-            originImageUrlNameEns.add(imageUrl.substring(
-                    imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf(".")));
-        }
-        if (originImageUrlNameEns.stream().distinct().count() != images.size()) {
-            return I18nHelper.getMessage("image.error.name_en.not_repeat");
-        }
-
-        return "";
-    }
-
-    /**
-     * 对新增图片信息合法性进行检测，图片英文名和图片类型
-     *
-     * @param imageInfos,images 新增图片信息，专辑原图片集合
-     * @return boolean
-     * @author rakbow
-     */
-    @Deprecated
-    public static String DeprecatedCheckAddImages(JSONArray imageInfos, JSONArray images) {
-
-        List<String> imageUrlNameEns = new ArrayList<>();
-        int coverCount = 0;
-
-        if (images.size() != 0) {
-
-            for (int i = 0; i < images.size(); i++) {
-                String imageUrl = images.getJSONObject(i).getString("url");
-                imageUrlNameEns.add(imageUrl.substring(
-                        imageUrl.lastIndexOf("/") + 1, imageUrl.lastIndexOf(".")));
-            }
-            for (int i = 0; i < imageInfos.size(); i++) {
-                String nameEn = imageInfos.getJSONObject(i).getString("nameEn");
-                imageUrlNameEns.add(nameEn.replace(" ", ""));
-            }
-
-            for (int i = 0; i < images.size(); i++) {
-                if (images.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
-                    coverCount++;
-                }
-            }
-            for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
-                    coverCount++;
-                }
-            }
-        } else {
-
-            for (int i = 0; i < imageInfos.size(); i++) {
-                String nameEn = imageInfos.getJSONObject(i).getString("nameEn");
-                imageUrlNameEns.add(nameEn.replace(" ", ""));
-            }
-
-            for (int i = 0; i < imageInfos.size(); i++) {
-                if (imageInfos.getJSONObject(i).getIntValue("type") == ImageType.MAIN.getValue()) {
-                    coverCount++;
-                }
-            }
-
-        }
-
-        //检测是否存在重复英文名
-        int originNameUrlCount = imageUrlNameEns.size();
-        if (imageUrlNameEns.stream().distinct().count() != originNameUrlCount) {
-            return I18nHelper.getMessage("image.error.name_en.not_repeat");
-        }
-
-        //检测图片类型为封面的个数是否大于1
-        if (coverCount > 1) {
-            return I18nHelper.getMessage("image.error.only_one_cover");
-        }
-
-        return "";
-    }
-
-    /**
-     * 压缩图片并返回缩略图的url
-     *
-     * @author rakbow
-     * @param entity,id,fileName 实体类型,id和图片文件全名
-     * @return 缩略图url
-     * */
-    @Deprecated
-    public static String getCompressImageUrl(String imgPath, String entity, int entityId, String fileName) {
-        Path imagePath = Paths.get(imgPath + "/" + entity + "/" + entityId);
-        String oldFilePath = (imagePath + "\\" + fileName);
-        String outFilePath = (imgPath + "/compress/" + entity + "/" + entityId + "/" + fileName);
-
-        File file = new File(outFilePath);
-        //判断是否存在
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdir();
-        } else {
-            file.getParentFile().delete();
-            file.getParentFile().mkdir();
-        }
-
-        CommonUtil.imageCompress(oldFilePath, 200, 200, outFilePath, true);
-        return "/db/" + entity + "/" + entityId + "/compress/" + fileName;
     }
 
     //打印请求消息

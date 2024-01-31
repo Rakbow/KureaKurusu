@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.data.vo.disc.DiscVOBeta;
 import com.rakbow.kureakurusu.data.entity.Disc;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.DiscVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
@@ -235,7 +236,7 @@ public class DiscService {
 
         //该系列所有Disc
         List<Disc> allDiscs = discMapper.getDiscsByFilter(null, null, null,
-                        CommonUtil.ids2List(disc.getFranchises()), null, null, null,
+                        JsonUtil.toJavaList(disc.getFranchises(), Integer.class), null, null, null,
                         null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpDisc -> tmpDisc.getId() != disc.getId()).collect(Collectors.toList());
 

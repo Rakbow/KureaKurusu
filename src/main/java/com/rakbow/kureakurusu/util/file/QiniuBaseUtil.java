@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.util.file;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
@@ -9,10 +8,11 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
-import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
+import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.FileUtil;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -72,7 +73,7 @@ public class QiniuBaseUtil {
             }
 
             // 检测文件格式是否合法
-            int dotPos = file.getOriginalFilename().lastIndexOf(".");
+            int dotPos = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
             if (dotPos < 0) {
                 ar.setErrorMessage(I18nHelper.getMessage("file.format.error", fileType.getNameZh()));
                 return ar;
@@ -87,7 +88,7 @@ public class QiniuBaseUtil {
             }
 
             // 通过随机UUID生成唯一文件名 长度：16
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "." + fileExt;
+            String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16)}.\{fileExt}";
 
             // 生成完整文件名，例：album/11/xxx.jpg
             String fullFileName = filePath + fileName;
@@ -98,7 +99,7 @@ public class QiniuBaseUtil {
             // 打印返回的信息
             if (res.isOK() && res.isJson()) {
                 // 返回存储文件的地址
-                ar.data = FILE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key");
+                ar.data = FILE_DOMAIN + JsonUtil.getValueByKey("key", res.bodyString());
             } else {
                 ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
             }
@@ -132,7 +133,7 @@ public class QiniuBaseUtil {
             for (MultipartFile file : files) {
 
                 // 检测文件格式是否合法
-                int dotPos = file.getOriginalFilename().lastIndexOf(".");
+                int dotPos = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
                 if (dotPos < 0) {
                     ar.setErrorMessage(I18nHelper.getMessage("file.format.error", fileType.getNameZh()));
                     return ar;
@@ -147,7 +148,7 @@ public class QiniuBaseUtil {
                 }
 
                 // 通过随机UUID生成唯一文件名 长度：16
-                String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "." + fileExt;
+                String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16)}.\{fileExt}";
 
                 // 生成完整文件名，例：album/11/xxx.jpg
                 String fullFileName = filePath + fileName;
@@ -158,7 +159,7 @@ public class QiniuBaseUtil {
                 // 打印返回的信息
                 if (res.isOK() && res.isJson()) {
                     // 返回存储文件的地址并存入fullFileNames
-                    fullFileNames.add(FILE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key"));
+                    fullFileNames.add(FILE_DOMAIN + JsonUtil.getValueByKey("key", res.bodyString()));
                 } else {
                     ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
                 }

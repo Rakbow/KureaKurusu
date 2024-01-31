@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.data.vo.merch.MerchVOBeta;
 import com.rakbow.kureakurusu.data.entity.Merch;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.MerchVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
@@ -240,7 +241,7 @@ public class MerchService {
         List<Integer> productIds = JSONObject.parseObject(merch.getProducts()).getList("ids", Integer.class);
 
         //该系列所有Merch
-        List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, CommonUtil.ids2List(merch.getFranchises()),
+        List<Merch> allMerchs = merchMapper.getMerchsByFilter(null, null, JsonUtil.toJavaList(merch.getFranchises(), Integer.class),
                         null, 100, null, null, false, "releaseDate", 1, 0, 0)
                 .stream().filter(tmpMerch -> tmpMerch.getId() != merch.getId()).collect(Collectors.toList());
 

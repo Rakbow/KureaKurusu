@@ -1,13 +1,5 @@
 package com.rakbow.kureakurusu.util.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
-import com.rakbow.kureakurusu.data.entity.Book;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Rakbow
  * @since 2022-12-29 20:47
@@ -26,7 +18,7 @@ public class BookUtil {
         if (isbn10.length() != 10) {
             return isbn10;
         }
-        String isbn13 = "978" + isbn10.substring(0, isbn10.length() - 1);
+        String isbn13 = STR."978\{isbn10.substring(0, isbn10.length() - 1)}";
         int a = 0;
         int b = 0;
         int c;
@@ -80,29 +72,29 @@ public class BookUtil {
         return isbn10;
     }
 
-    /**
-     * 获取图书信息中的作者
-     * @author rakbow
-     * @param book 图书
-     * */
-    public static List<String> getAuthors(Book book) {
-        List<String> res = new ArrayList<>();
-        JSONArray authors = JSON.parseArray(book.getAuthors());
-        if (authors.size() != 0) {
-            for (int i = 0; i < authors.size(); i++) {
-                JSONObject author = authors.getJSONObject(i);
-                if(author.getIntValue("main") == 1) {
-                    List<String> authorNames = author.getList("name", String.class);
-                    if(authorNames.size() > 0 && authorNames.size() <= 2) {
-                        res.addAll(authorNames);
-                    }
-                    if(authorNames.size() > 2) {
-                        res.addAll(authorNames.subList(0, 2));
-                    }
-                }
-            }
-        }
-        return res;
-    }
+//    /**
+//     * 获取图书信息中的作者
+//     * @author rakbow
+//     * @param book 图书
+//     * */
+//    public static List<String> getAuthors(Book book) {
+//        List<String> res = new ArrayList<>();
+//        JSONArray authors = JSON.parseArray(book.getAuthors());
+//        if (!authors.isEmpty()) {
+//            for (int i = 0; i < authors.size(); i++) {
+//                JSONObject author = authors.getJSONObject(i);
+//                if(author.getIntValue("main") == 1) {
+//                    List<String> authorNames = author.getList("name", String.class);
+//                    if(!authorNames.isEmpty() && authorNames.size() <= 2) {
+//                        res.addAll(authorNames);
+//                    }
+//                    if(authorNames.size() > 2) {
+//                        res.addAll(authorNames.subList(0, 2));
+//                    }
+//                }
+//            }
+//        }
+//        return res;
+//    }
 
 }

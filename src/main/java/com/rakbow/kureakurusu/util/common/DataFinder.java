@@ -1,14 +1,14 @@
 package com.rakbow.kureakurusu.util.common;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.*;
-import org.apache.commons.lang3.StringUtils;
+import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.Person;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 数据查找
@@ -38,34 +38,6 @@ public class DataFinder {
     //endregion
 
     //region product
-
-    /**
-     * 根据jsonId从指定json列表中查找
-     *
-     * @param id,jsons 查找id和json列表
-     * @return json
-     * @author rakbow
-     */
-    public static JSONObject findJsonById(int id, List<JSONObject> jsons) {
-        JSONObject json = new JSONObject();
-        json.put("id", id);
-        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonIdSorter);
-        return idx >= 0 ? jsons.get(idx) : null;
-    }
-
-    /**
-     * 根据jsonValue从指定json列表中查找
-     *
-     * @param id,jsons 查找id和json列表
-     * @return json
-     * @author rakbow
-     */
-    public static JSONObject findJsonByIdInSet(int id, List<JSONObject> jsons) {
-        JSONObject json = new JSONObject();
-        json.put("value", id);
-        int idx = Collections.binarySearch(jsons, json, DataSorter.jsonSetValueSorter);
-        return idx >= 0 ? jsons.get(idx) : null;
-    }
 
     /**
      * 根据Value从指定attributes列表中查找
