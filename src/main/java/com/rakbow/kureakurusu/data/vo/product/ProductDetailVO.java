@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -26,7 +27,7 @@ public class ProductDetailVO {
     private PageTraffic traffic;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;
-    private List<Object> options;
+    private Map<String, Object> options;
 
     private List<EpisodeVOAlpha> episodes;
 

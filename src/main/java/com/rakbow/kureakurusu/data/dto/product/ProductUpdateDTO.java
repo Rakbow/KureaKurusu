@@ -22,7 +22,7 @@ public class ProductUpdateDTO extends DTO {
     private String nameEn;
     private String releaseDate;
     private int franchise;
-    private Attribute<Integer> category;
+    private int category;
     private String remark;
 
 }

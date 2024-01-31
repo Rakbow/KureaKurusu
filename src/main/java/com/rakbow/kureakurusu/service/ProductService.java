@@ -79,7 +79,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .like(!StringUtils.isBlank(nameZh), Product::getNameZh, nameZh)
                 .like(!StringUtils.isBlank(nameEn), Product::getNameEn, nameEn);
 
-        List<Integer> categories = param.getArray("categories");
+        List<Integer> categories = param.getArray("category");
         if(categories != null && !categories.isEmpty())
             wrapper.in(Product::getCategory, categories);
 
@@ -125,7 +125,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .set(Product::getNameZh, dto.getNameEn())
                 .set(Product::getReleaseDate, dto.getReleaseDate())
                 .set(Product::getFranchise, dto.getFranchise())
-                .set(Product::getCategory, dto.getCategory().getValue())
+                .set(Product::getCategory, dto.getCategory())
                 .set(Product::getRemark, dto.getRemark())
                 .set(Product::getEditedTime, DateHelper.now())
         );
