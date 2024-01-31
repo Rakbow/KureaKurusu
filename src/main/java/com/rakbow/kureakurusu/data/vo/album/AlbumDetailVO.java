@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -21,12 +22,12 @@ import java.util.List;
 @Data
 public class AlbumDetailVO {
 
-    private AlbumVO album;
+    private AlbumVO item;
     private List<Audio> audios;
 
-    private PageTraffic pageInfo;
+    private PageTraffic traffic;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;
-    private List<Object> options;
+    private Map<String, Object> options;
 
 }

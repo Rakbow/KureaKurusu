@@ -3,8 +3,6 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
@@ -30,8 +28,6 @@ import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -81,9 +77,9 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, qry.getId()));
 
         return AlbumDetailVO.builder()
-                .album(buildVO(album))
+                .item(buildVO(album))
                 .audios(AuthorityInterceptor.isUser() ? EpisodeUtil.getAudios(eps, cover) : null)
-                .pageInfo(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))
                 .build();
@@ -217,44 +213,45 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult<AlbumVOAlpha> getAlbums(QueryParams param) {
 
-        String name = param.getStr("name");
-        String nameZh = param.getStr("nameZh");
-        String nameEn = param.getStr("nameEn");
-        LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
-                .like(StringUtils.isNotBlank(name), Album::getName, name)
-                .like(StringUtils.isNotBlank(nameZh), Album::getNameZh, nameZh)
-                .like(StringUtils.isNotBlank(nameEn), Album::getNameEn, nameEn);
-
-        List<Integer> albumFormat = param.getArray("albumFormat");
-        List<Integer> publishFormat = param.getArray("publishFormat");
-        List<Integer> mediaFormat = param.getArray("mediaFormat");
-        if(CollectionUtils.isNotEmpty(albumFormat))
-            wrapper.in(Album::getAlbumFormat, albumFormat);
-        if(CollectionUtils.isNotEmpty(publishFormat))
-            wrapper.in(Album::getAlbumFormat, publishFormat);
-        if(CollectionUtils.isNotEmpty(mediaFormat))
-            wrapper.in(Album::getAlbumFormat, mediaFormat);
-
-        if(StringUtils.isNotBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.asc(), Album::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.asc(), Album::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.asc(), Album::getNameEn);
-                case "releaseDate" -> wrapper.orderBy(true, param.asc(), Album::getReleaseDate);
-                case "barcode" -> wrapper.orderBy(true, param.asc(), Album::getBarcode);
-                case "catalogNo" -> wrapper.orderBy(true, param.asc(), Album::getCatalogNo);
-                case "price" -> wrapper.orderBy(true, param.asc(), Album::getPrice);
-                case "addedTime" -> wrapper.orderBy(true, param.asc(), Album::getAddedTime);
-                case "editedTime" -> wrapper.orderBy(true, param.asc(), Album::getEditedTime);
-            }
-        }else {
-            wrapper.orderByDesc(Album::getId);
-        }
-
-        IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        // String name = param.getStr("name");
+        // String nameZh = param.getStr("nameZh");
+        // String nameEn = param.getStr("nameEn");
+        // LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
+        //         .like(StringUtils.isNotBlank(name), Album::getName, name)
+        //         .like(StringUtils.isNotBlank(nameZh), Album::getNameZh, nameZh)
+        //         .like(StringUtils.isNotBlank(nameEn), Album::getNameEn, nameEn);
+        //
+        // List<Integer> albumFormat = param.getArray("albumFormat");
+        // List<Integer> publishFormat = param.getArray("publishFormat");
+        // List<Integer> mediaFormat = param.getArray("mediaFormat");
+        // if(CollectionUtils.isNotEmpty(albumFormat))
+        //     wrapper.in(Album::getAlbumFormat, albumFormat);
+        // if(CollectionUtils.isNotEmpty(publishFormat))
+        //     wrapper.in(Album::getAlbumFormat, publishFormat);
+        // if(CollectionUtils.isNotEmpty(mediaFormat))
+        //     wrapper.in(Album::getAlbumFormat, mediaFormat);
+        //
+        // if(StringUtils.isNotBlank(param.sortField)) {
+        //     switch (param.sortField) {
+        //         case "name" -> wrapper.orderBy(true, param.asc(), Album::getName);
+        //         case "nameZh" -> wrapper.orderBy(true, param.asc(), Album::getNameZh);
+        //         case "nameEn" -> wrapper.orderBy(true, param.asc(), Album::getNameEn);
+        //         case "releaseDate" -> wrapper.orderBy(true, param.asc(), Album::getReleaseDate);
+        //         case "barcode" -> wrapper.orderBy(true, param.asc(), Album::getBarcode);
+        //         case "catalogNo" -> wrapper.orderBy(true, param.asc(), Album::getCatalogNo);
+        //         case "price" -> wrapper.orderBy(true, param.asc(), Album::getPrice);
+        //         case "addedTime" -> wrapper.orderBy(true, param.asc(), Album::getAddedTime);
+        //         case "editedTime" -> wrapper.orderBy(true, param.asc(), Album::getEditedTime);
+        //     }
+        // }else {
+        //     wrapper.orderByDesc(Album::getId);
+        // }
+        //
+        // IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        // List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
+        //
+        // return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return null;
     }
 
     /**
