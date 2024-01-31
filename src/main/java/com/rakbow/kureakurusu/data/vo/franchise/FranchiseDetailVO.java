@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -23,6 +24,6 @@ public class FranchiseDetailVO {
 
     private PageTraffic traffic;
     private segmentImagesResult itemImageInfo;
-    private List<Object> options;
+    private Map<String, Object> options;
 
 }

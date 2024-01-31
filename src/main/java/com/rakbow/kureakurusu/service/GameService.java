@@ -41,7 +41,7 @@ public class GameService {
     private VisitUtil visitUtil;
     
 
-    private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
+    // private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
     //endregion
 
@@ -253,7 +253,8 @@ public class GameService {
         List<Game> games = gameMapper.getGamesByFilter(null, null, null, products,
                 100, null, false, "releaseDate", 1,  0, 0);
 
-        return gameVOMapper.game2VOBeta(games);
+        // return gameVOMapper.game2VOBeta(games);
+        return null;
     }
 
     /**
@@ -314,7 +315,8 @@ public class GameService {
             }
         }
 
-        return gameVOMapper.game2VOBeta(CommonUtil.removeDuplicateList(result));
+        // return gameVOMapper.game2VOBeta(CommonUtil.removeDuplicateList(result));
+        return null;
     }
 
     //endregion

@@ -88,16 +88,16 @@ public class BookController {
         try {
             JSONObject param = JSON.parseObject(json);
             //检测数据
-            String errorMsg = bookService.checkBookJson(param);
+            String errorMsg = null;
             if(!StringUtils.isBlank(errorMsg)) {
                 res.setErrorMessage(errorMsg);
                 return res.toJson();
             }
 
-            Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
+            Book book = null;
 
             //保存新增图书
-            res.message = bookService.addBook(book);
+            res.message = null;
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -112,8 +112,6 @@ public class BookController {
         try {
             List<Book> books = JSON.parseArray(json).toJavaList(Book.class);
             for (Book book : books) {
-                //从数据库中删除专辑
-                bookService.deleteBook(book);
             }
             res.message = I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName());
         } catch (Exception ex) {
@@ -129,19 +127,13 @@ public class BookController {
         ApiResult res = new ApiResult();
         JSONObject param = JSON.parseObject(json);
         try {
-            //检测数据
-            String errorMsg = bookService.checkBookJson(param);
-            if(!StringUtils.isBlank(errorMsg)) {
-                res.setErrorMessage(errorMsg);
-                return res.toJson();
-            }
 
-            Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
+            // Book book = entityService.json2Entity(bookService.handleBookJson(param), Book.class);
 
             //修改编辑时间
-            book.setEditedTime(DateHelper.now());
+            // book.setEditedTime(DateHelper.now());
 
-            res.message = bookService.updateBook(book.getId(), book);
+            // res.message = bookService.updateBook(book.getId(), book);
         } catch (Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -163,18 +155,18 @@ public class BookController {
 
         List<BookVOAlpha> books = new ArrayList<>();
 
-        SearchResult searchResult = bookService.getBooksByFilter(queryParam);
+        // SearchResult searchResult = bookService.getBooksByFilter(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
+            // books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
+            // books = bookVOMapper.book2VOAlpha((List<Book>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();
         result.put("data", books);
-        result.put("total", searchResult.total);
+        // result.put("total", searchResult.total);
 
         return JSON.toJSONString(result);
      }
@@ -192,7 +184,7 @@ public class BookController {
                 return res.toJson();
             }
 
-            res.message = bookService.updateBookAuthors(id, authors);
+            // res.message = bookService.updateBookAuthors(id, authors);
         } catch (Exception e) {
             res.setErrorMessage(e);
         }
@@ -214,7 +206,7 @@ public class BookController {
             String label = param.getString("label");
             String isbn = param.getString("isbn");
 
-            res.data = bookService.getISBN(label, isbn);
+            // res.data = bookService.getISBN(label, isbn);
 
         }catch (Exception e) {
             res.setErrorMessage(e);
@@ -230,7 +222,7 @@ public class BookController {
 
             JSONObject param = JSON.parseObject(json);
             int id = param.getInteger("id");
-            res.data = bookService.getRelatedBooks(id);
+            // res.data = bookService.getRelatedBooks(id);
 
         }catch (Exception e) {
             res.setErrorMessage(e);

@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.util;
 
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.util.common.DataFinder;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.lang.reflect.Field;
@@ -15,19 +17,6 @@ import java.util.Locale;
  * @since 2023-11-05 2:37
  */
 public class EnumHelper {
-
-    public static <T extends Enum<T>> String getMethodResultFromEnum(T enumValue, String methodName) {
-        // 调用枚举实例的 methodName 方法
-        try {
-            Method getValueMethod = enumValue.getClass().getMethod(methodName);
-            Object result = getValueMethod.invoke(enumValue);
-            return result.toString();
-        } catch (Exception e) {
-            // 处理异常
-            e.printStackTrace();
-            return "Error: " + e.getMessage();
-        }
-    }
 
     public static <T extends Enum<T>> List<Attribute<Integer>> getAttributeOptions(Class<T> clazz, String lang) {
         List<Attribute<Integer>> attributes = new ArrayList<>();
@@ -59,6 +48,20 @@ public class EnumHelper {
             }
         }
         return attributes;
+    }
+
+    public static List<Attribute<Integer>> getAttributes(List<Attribute<Integer>> attributes, String idsStr) {
+
+        int[] values = JsonUtil.toIds(idsStr);
+        List<Attribute<Integer>> res = new ArrayList<>();
+
+        for (int value : values) {
+            Attribute<Integer> attribute = DataFinder.findAttributeByValue(value, attributes);
+            if(attribute == null) continue;
+            res.add(attribute);
+        }
+
+        return res;
     }
 
 }

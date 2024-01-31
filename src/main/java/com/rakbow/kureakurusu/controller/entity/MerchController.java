@@ -163,10 +163,10 @@ public class MerchController {
         SearchResult searchResult = merchService.getMerchsByFilterList(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);
+            merchs = null;
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            merchs = merchVOMapper.merch2VOAlpha((List<Merch>) searchResult.data);
+            merchs = null;
         }
 
         JSONObject result = new JSONObject();

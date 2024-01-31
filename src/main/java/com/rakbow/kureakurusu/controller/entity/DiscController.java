@@ -95,10 +95,10 @@ public class DiscController {
         SearchResult searchResult = discService.getDiscsByFilterList(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
+            // discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
+            // discs = discVOMapper.disc2VOAlpha((List<Disc>) searchResult.data);
         }
 
         JSONObject result = new JSONObject();

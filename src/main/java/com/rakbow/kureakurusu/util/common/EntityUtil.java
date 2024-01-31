@@ -7,9 +7,7 @@ import com.rakbow.kureakurusu.data.meta.MetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Rakbow
@@ -42,21 +40,24 @@ public class EntityUtil {
 
     /**
      * 获取页面选项数据
+     *
      * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
      * @author Rakbow
      */
-    public List<Object> getDetailOptions(int entityType) {
+    public Map<String, Object> getDetailOptions(int entityType) {
 
-        List<Object> options = new ArrayList<>();
+        Map<String, Object> options = new HashMap<>();
 
-        if(entityType == Entity.ALBUM.getValue()) {
-            options.add(Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
-            options.add(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
-            options.add(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
-        }
-        else if(entityType == Entity.PRODUCT.getValue()) {
-            options.add(Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
-            options.add(Objects.requireNonNull(MetaData.getOptions()).productCategorySet);
+        if (entityType == Entity.ALBUM.getValue()) {
+            options.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
+            options.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
+            options.put("publishFormatSet", Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
+        } else if (entityType == Entity.PRODUCT.getValue()) {
+            options.put("franchiseSet", Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
+            options.put("productCategorySet", Objects.requireNonNull(MetaData.getOptions()).productCategorySet);
+        } else if (entityType == Entity.PERSON.getValue()) {
+            options.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
+            options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
         }
 
         return options;

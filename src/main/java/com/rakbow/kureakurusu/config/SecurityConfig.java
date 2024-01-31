@@ -39,35 +39,35 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                            //需要登陆权限
-                            "/user/setting",
-                            "/user/upload"
-                        )
-                        .hasAnyAuthority(
-                                "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                                "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn(),
-                                "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
-                                "ROLE_" + UserAuthority.USER.getNameEn()
-                        )
-                        .requestMatchers(
-                                "/db/update-item-detail",
-                                "/db/update-item-bonus"
-                        )
-                        .hasAnyAuthority(
-                                "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                                "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
-                                "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()
-                        )
-                        .requestMatchers(
-                                "/db/franchise/add",
-                                "/db/franchise/delete",
-                                "/db/franchise/update"
-                        )
-                        .hasAnyAuthority(
-                                "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                                "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()
-                        )
+                        // .requestMatchers(
+                        //     //需要登陆权限
+                        //     "/user/setting",
+                        //     "/user/upload"
+                        // )
+                        // .hasAnyAuthority(
+                        //         "ROLE_" + UserAuthority.ADMIN.getNameEn(),
+                        //         "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn(),
+                        //         "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
+                        //         "ROLE_" + UserAuthority.USER.getNameEn()
+                        // )
+                        // .requestMatchers(
+                        //         "/db/update-item-detail",
+                        //         "/db/update-item-bonus"
+                        // )
+                        // .hasAnyAuthority(
+                        //         "ROLE_" + UserAuthority.ADMIN.getNameEn(),
+                        //         "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
+                        //         "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()
+                        // )
+                        // .requestMatchers(
+                        //         "/db/franchise/add",
+                        //         "/db/franchise/delete",
+                        //         "/db/franchise/update"
+                        // )
+                        // .hasAnyAuthority(
+                        //         "ROLE_" + UserAuthority.ADMIN.getNameEn(),
+                        //         "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()
+                        // )
                         .anyRequest()
                         .permitAll()
                 )
@@ -75,9 +75,6 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-
-                // 登录页面 -> DefaultLoginPageGeneratingFilter
-                .formLogin(Customizer.withDefaults())
                 // 清除session
                 .logout(logout -> logout.clearAuthentication(true).invalidateHttpSession(true))
 

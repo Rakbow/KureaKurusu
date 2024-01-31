@@ -47,7 +47,7 @@ public class GameController {
     private EntityService entityService;
     
 
-    private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
+    // private final GameVOMapper gameVOMapper = GameVOMapper.INSTANCES;
 
     //endregion
 
@@ -166,10 +166,10 @@ public class GameController {
         SearchResult serchResult = gameService.getGamesByFilter(queryParam);
 
         if (StringUtils.equals(pageLabel, "list")) {
-            games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
+            // games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
         }
         if (StringUtils.equals(pageLabel, "index")) {
-            games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
+            // games = gameVOMapper.game2VOAlpha((List<Game>) serchResult.data);
         }
 
         JSONObject result = new JSONObject();

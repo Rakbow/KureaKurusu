@@ -220,7 +220,7 @@ public class MerchService {
         List<Merch> merchs = merchMapper.getMerchsByFilter(null, null, null, products,
                 100, null, null, false, "releaseDate", -1,  0, 0);
 
-        return merchVOMapper.merch2VOBeta(merchs);
+        return null;
     }
 
     /**
@@ -281,7 +281,7 @@ public class MerchService {
             }
         }
 
-        return merchVOMapper.merch2VOBeta(CommonUtil.removeDuplicateList(result));
+        return null;
     }
 
     //endregion

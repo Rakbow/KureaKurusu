@@ -3,6 +3,8 @@ package com.rakbow.kureakurusu.util.convertMapper.entity;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
+import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
@@ -10,6 +12,7 @@ import org.mapstruct.Named;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -49,7 +52,7 @@ public interface CommonVOMapper {
 
     @Named("getMediaFormat")
     default List<Attribute<Integer>> getMediaFormat(String formats) {
-        return MediaFormat.getAttributes(formats);
+        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet, formats);
     }
 
 }

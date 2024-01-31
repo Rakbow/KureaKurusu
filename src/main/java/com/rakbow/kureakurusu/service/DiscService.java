@@ -276,7 +276,8 @@ public class DiscService {
             }
         }
 
-        return discVOMapper.disc2VOBeta(CommonUtil.removeDuplicateList(result));
+        // return discVOMapper.disc2VOBeta(CommonUtil.removeDuplicateList(result));
+        return null;
     }
 
     /**
@@ -294,7 +295,8 @@ public class DiscService {
         List<Disc> discs = discMapper.getDiscsByFilter(null, null, null, null, products,
                 null, null, null, false, "releaseDate", -1,  0, 0);
 
-        return discVOMapper.disc2VOBeta(discs);
+        // return discVOMapper.disc2VOBeta(discs);
+        return null;
     }
 
     //endregion
