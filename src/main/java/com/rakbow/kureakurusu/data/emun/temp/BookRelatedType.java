@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.temp;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import lombok.AllArgsConstructor;
@@ -11,29 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Getter
 @AllArgsConstructor
 public enum BookRelatedType {
 
+    OTHER(0, "enum.book_related_type.other"),
+    OFFPRINT(1, "enum.book_related_type.offprint"),
+    ADAPTATION(2, "enum.book_related_type.adaptation"),
+    SERIES(3, "enum.book_related_type.series"),
+    ART_BOOK(4, "enum.book_related_type.art_book"),
+    PREQUEL(5, "enum.book_related_type.prequel"),
+    SEQUEL(6, "enum.book_related_type.sequel"),
+    SIDE_STORY(7, "enum.book_related_type.side_story"),
+    PARENT_STORY(8, "enum.book_related_type.parent_story"),
+    ALTERNATIVE_VERSION(9, "enum.book_related_type.alternative_version"),
+    CHARACTER(10, "enum.book_related_type.character"),
+    SAME_SETTING(11, "enum.book_related_type.same_setting"),
+    ALTERNATIVE_SETTING(12, "enum.book_related_type.alternative_setting");
 
-    OTHER(0, "其他", "Other"),
-    OFFPRINT(1, "单行本", "Offprint"),
-    ADAPTATION(2, "改编", "Adaptation"),
-    SERIES(3, "系列", "Series"),
-    ART_BOOK(4, "设定集/画集", "Art Book"),
-    PREQUEL(5, "前作", "Prequel"),
-    SEQUEL(6, "续作", "Sequel"),
-    SIDE_STORY(7, "番外篇", "Side Story"),
-    PARENT_STORY(8, "主线故事", "Parent Story"),
-    ALTERNATIVE_VERSION(9, "不同版本", "Alternative Version"),
-    CHARACTER(10, "角色出演", "Character"),
-    SAME_SETTING(11, "相同世界观", "Same Setting"),
-    ALTERNATIVE_SETTING(12, "不同世界观", "Alternative Setting");
-
-    @Getter
-    private final int id;
-    @Getter
-    private final String nameZh;
-    @Getter
-    private final String nameEn;
+    @EnumValue
+    private final Integer value;
+    private final String labelKey;
 
 }
