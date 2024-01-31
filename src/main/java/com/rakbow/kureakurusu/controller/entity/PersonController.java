@@ -14,10 +14,8 @@ import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
-import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -40,10 +38,8 @@ import jakarta.validation.Valid;
 public class PersonController {
 
     private static final Logger log = LoggerFactory.getLogger(PersonController.class);
-    private final PersonService service;
-    private final PersonVOMapper voMapper;
-    private final EntityUtil entityUtil;
-    private final int ENTITY_VALUE = Entity.PERSON.getValue();
+    private final PersonService srv;
+    private final PersonVOMapper VOMapper;
 
     //region person
 
@@ -52,14 +48,7 @@ public class PersonController {
     public ApiResult getPersonDetailData(@RequestBody PersonDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            Person person = service.getById(qry.getId());
-            if (person == null)
-                return res.fail(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getName()));
-
-            res.data = PersonDetailVO.builder()
-                    .item(voMapper.toVO(person))
-                    .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
-                    .build();
+            res.loadData(srv.detail(qry));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -71,7 +60,7 @@ public class PersonController {
     public ApiResult searchPerson(@RequestBody SearchQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.searchPersons(new SimpleSearchParam(qry));
+            res.data = srv.searchPersons(new SimpleSearchParam(qry));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -83,7 +72,7 @@ public class PersonController {
     public ApiResult getPersons(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.getPersons(new QueryParams(qry));
+            res.data = srv.getPersons(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -99,9 +88,9 @@ public class PersonController {
             if (errors.hasErrors())
                 return res.fail(errors);
             //build
-            Person person = voMapper.build(dto);
+            Person person = VOMapper.build(dto);
             //save
-            service.save(person);
+            srv.save(person);
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -118,7 +107,7 @@ public class PersonController {
             if (errors.hasErrors())
                 return res.fail(errors);
             //save
-            service.updatePerson(dto);
+            srv.updatePerson(dto);
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -134,7 +123,7 @@ public class PersonController {
     public ApiResult getPersonRoles(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.getRoles(new QueryParams(qry));
+            res.data = srv.getRoles(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -150,7 +139,7 @@ public class PersonController {
             if (errors.hasErrors())
                 return res.fail(errors);
             //save
-            service.addRole(role);
+            srv.addRole(role);
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -167,7 +156,7 @@ public class PersonController {
             if (errors.hasErrors())
                 return res.fail(errors);
             //save
-            service.updateRole(role);
+            srv.updateRole(role);
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -184,7 +173,7 @@ public class PersonController {
     public ApiResult getPersonnel(@RequestBody EntityQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = service.getPersonnel(qry.getEntityType(), qry.getEntityId());
+            res.data = srv.getPersonnel(qry.getEntityType(), qry.getEntityId());
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());
@@ -196,7 +185,7 @@ public class PersonController {
     public ApiResult managePersonnel(@RequestBody PersonnelManageCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            service.managePersonnel(cmd);
+            srv.managePersonnel(cmd);
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);

@@ -13,8 +13,10 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.person.PersonDetailQry;
 import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
+import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
@@ -23,23 +25,25 @@ import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.person.Personnel;
 import com.rakbow.kureakurusu.data.person.PersonnelPair;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
+import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.rakbow.kureakurusu.data.common.Constant.SLASH_WITH_SPACE;
+import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @author Rakbow
@@ -49,13 +53,26 @@ import static com.rakbow.kureakurusu.data.common.Constant.SLASH_WITH_SPACE;
 @RequiredArgsConstructor
 public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
-    private static final Logger log = LoggerFactory.getLogger(PersonService.class);
-    private final PersonVOMapper voMapper = PersonVOMapper.INSTANCES;
+    private final PersonVOMapper VOMapper;
     private final PersonMapper mapper;
     private final PersonRoleMapper roleMapper;
     private final PersonRelationMapper relationMapper;
-
+    private final EntityUtil entityUtil;
     private final SqlSessionFactory sqlSessionFactory;
+    private final int ENTITY_VALUE = Entity.PERSON.getValue();
+
+    @SneakyThrows
+    public PersonDetailVO detail(PersonDetailQry qry) {
+        Person person = getById(qry.getId());
+        if (person == null)
+            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getName()));
+
+        return PersonDetailVO.builder()
+                .item(VOMapper.toVO(person))
+                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
+                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
+                .build();
+    }
 
     public void updatePerson(PersonUpdateDTO dto) {
 
@@ -104,7 +121,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         IPage<Person> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
 
-        List<PersonVOBeta> persons = voMapper.toBetaVO(pages.getRecords());
+        List<PersonVOBeta> persons = VOMapper.toBetaVO(pages.getRecords());
 
         return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
@@ -127,7 +144,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         IPage<Person> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
 
-        List<PersonMiniVO> persons = voMapper.toMiniVO(pages.getRecords());
+        List<PersonMiniVO> persons = VOMapper.toMiniVO(pages.getRecords());
 
         return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
