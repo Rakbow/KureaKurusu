@@ -1,16 +1,8 @@
 package com.rakbow.kureakurusu.data.emun.entity.album;
 
-import com.alibaba.fastjson2.JSON;
-import com.rakbow.kureakurusu.data.Attribute;
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * 专辑分类
@@ -18,81 +10,36 @@ import java.util.stream.Collectors;
  * @author Rakbow
  * @since 2022-08-19 22:57
  */
+@Getter
 @AllArgsConstructor
 public enum AlbumFormat {
-    UNCATEGORIZED(0,"未分类", "Uncategorized"),
-    VOCAL(1, "歌曲","Vocal"),
-    OPENING_THEME(2, "片头曲","Opening Theme"),
-    ENDING_THEME(3, "片尾曲","Ending Theme"),
-    INSERT_SONG(4, "插入曲","Insert Song"),
-    SOUNDTRACK(5, "原声","Soundtrack"),
-    CHARACTER_SONG(6, "角色曲","Character Song"),
-    DRAMA(7, "广播剧","Drama"),
-    TALK(8, "广播电台","Talk"),
-    REMIX(9, "混音","Remix"),
-    DOUJIN_REMIX(10, "同人混音","Doujin Remix"),
-    DERIVATIVE(11, "衍生曲","Derivative"),
-    ARRANGEMENT(12, "改编","Arrangement"),
-    DOUJIN_ARRANGEMENT(13,"同人改编","Doujin Arrangement"),
-    VIDEO(14,"影片","Video");
 
-    @Getter
-    private final int id;
-    @Getter
-    private final String nameZh;
-    @Getter
-    private final String nameEn;
+    UNCATEGORIZED(0,"enum.album_format.uncategorized"),
+    VOCAL(1, "enum.album_format.vocal"),
+    OPENING_THEME(2, "enum.album_format.opening_theme"),
+    ENDING_THEME(3, "enum.album_format.ending_theme"),
+    INSERT_SONG(4, "enum.album_format.insert_song"),
+    SOUNDTRACK(5, "enum.album_format.soundtrack"),
+    CHARACTER_SONG(6, "enum.album_format.character_song"),
+    DRAMA(7, "enum.album_format.drama"),
+    TALK(8, "enum.album_format.talk"),
+    REMIX(9, "enum.album_format.Remix"),
+    DOUJIN_REMIX(10, "enum.album_format.Doujin_Remix"),
+    DERIVATIVE(11, "enum.album_format.Derivative"),
+    ARRANGEMENT(12, "enum.album_format.Arrangement"),
+    DOUJIN_ARRANGEMENT(13,"enum.album_format.Doujin_Arrangement"),
+    VIDEO(14,"enum.album_format.Video");
 
-    public static List<String> getNamesByIds(List<Integer> ids) {
-        return ids.stream().map(AlbumFormat::getNameById).collect(Collectors.toList());
-    }
+    @EnumValue
+    private final Integer value;
+    private final String labelKey;
 
-    public static List<Integer> getIdsByNames(List<String> names) {
-        if (names.isEmpty()) return new ArrayList<>();
-        return names.stream().map(AlbumFormat::getIdByName).collect(Collectors.toList());
-    }
-
-    public static String getNameById(int id) {
+    public static AlbumFormat get(int value) {
         for (AlbumFormat format : AlbumFormat.values()) {
-            if (format.getId() == id) {
-                if(StringUtils.equals(LocaleContextHolder.getLocale().getLanguage(), Locale.ENGLISH.getLanguage())) {
-                    return format.getNameEn();
-                }else {
-                    return format.getNameZh();
-                }
-            }
+            if(format.value == value)
+                return format;
         }
-        return null;
-    }
-
-    public static int getIdByName(String name) {
-        if(StringUtils.equals(LocaleContextHolder.getLocale().getLanguage(), Locale.ENGLISH.getLanguage())) {
-            for (AlbumFormat format : AlbumFormat.values()) {
-                if(StringUtils.equals(name, format.nameEn)) {
-                    return format.id;
-                }
-            }
-        }else {
-            for (AlbumFormat format : AlbumFormat.values()) {
-                if(StringUtils.equals(name, format.nameZh)) {
-                    return format.id;
-                }
-            }
-        }
-        return 0;
-    }
-
-    public static List<Attribute<Integer>> getAttributes(String json) {
-
-        List<Attribute<Integer>> res = new ArrayList<>();
-
-        int[] ids = JSON.parseObject(json, int[].class);
-
-        for(int id : ids) {
-            res.add(new Attribute<Integer>(getNameById(id), id));
-        }
-
-        return res;
+        return UNCATEGORIZED;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.entity.album;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,19 +10,18 @@ import lombok.Getter;
  * @author Rakbow
  * @since 2022-08-19 22:34
  */
+@Getter
 @AllArgsConstructor
 public enum PublishFormat {
-    UNCATEGORIZED(0,"未分类", "Uncategorized"),
-    COMMERCIAL(1, "商业发行", "Commercial"),
-    INDIE_DOUJIN(2,"独立同人", "Doujin"),
-    BONUS(3,"同捆特典", "Bonus"),
-    EVENT_ONLY(4,"展会限定", "Event Only"),
-    PREORDER(5,"预约特典", "Preorder");
 
-    @Getter
-    private final int id;
-    @Getter
-    private final String nameZh;
-    @Getter
-    private final String nameEn;
+    UNCATEGORIZED(0,"enum.publish_format.uncategorized"),
+    COMMERCIAL(1, "enum.publish_format.commercial"),
+    INDIE_DOUJIN(2,"enum.publish_format.indie_doujin"),
+    BONUS(3,"enum.publish_format.bonus"),
+    EVENT_ONLY(4,"enum.publish_format.event_only"),
+    PREORDER(5,"enum.publish_format.preorder");
+
+    @EnumValue
+    private final Integer value;
+    private final String labelKey;
 }
