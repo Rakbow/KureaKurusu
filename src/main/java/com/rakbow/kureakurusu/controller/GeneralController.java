@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.data.dto.GetOptionQry;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
@@ -8,10 +9,10 @@ import com.rakbow.kureakurusu.data.dto.common.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.dto.image.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -41,13 +42,14 @@ public class GeneralController {
     private final GeneralService service;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    private final EntityUtil entityUtil;
 
     //region common
-    @PostMapping("get-meta-data")
-    public ApiResult getMetaData() {
+    @PostMapping("get-option")
+    public ApiResult getOption(@RequestBody GetOptionQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = MetaData.getOptions();
+            res.data = entityUtil.getDetailOptions(qry.getEntityType());
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage());

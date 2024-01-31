@@ -3,22 +3,27 @@ package com.rakbow.kureakurusu.service;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.FranchiseMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
-import com.rakbow.kureakurusu.data.*;
+import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.Gender;
+import com.rakbow.kureakurusu.data.LinkType;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
-import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
 import com.rakbow.kureakurusu.data.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
-import com.rakbow.kureakurusu.data.entity.PersonRole;
+import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.common.DataSorter;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
+import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
@@ -33,9 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static com.rakbow.kureakurusu.data.common.Constant.*;
+import static com.rakbow.kureakurusu.data.common.Constant.SLASH;
 
 /**
  * @author Rakbow
@@ -46,8 +50,6 @@ import static com.rakbow.kureakurusu.data.common.Constant.*;
 public class GeneralService {
 
     //region util resource
-    private final RedisUtil redisUtil;
-    private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
     private final QiniuFileUtil qiniuFileUtil;
     private final QiniuImageUtil qiniuImageUtil;
@@ -67,12 +69,12 @@ public class GeneralService {
      *
      * @author rakbow
      */
-    public void refreshRedisEnumData() {
-
-        Map<String, List<Attribute<Integer>>> enumOptionsRedisKeyPair = EnumUtil.getOptionRedisKeyPair();
-        enumOptionsRedisKeyPair.forEach(redisUtil::set);
-
-    }
+    // public void refreshRedisEnumData() {
+    //
+    //     Map<String, List<Attribute<Integer>>> enumOptionsRedisKeyPair = EnumUtil.getOptionRedisKeyPair();
+    //     enumOptionsRedisKeyPair.forEach(redisUtil::set);
+    //
+    // }
 
     //region common
 
@@ -241,9 +243,7 @@ public class GeneralService {
         List<Attribute<Long>> res = new ArrayList<>();
         //获取所有role数据
         List<PersonRole> items = personRoleMapper.selectList(null);
-        items.forEach(i -> {
-            res.add(new Attribute<>(i.getNameZh() + SLASH + i.getNameEn(), i.getId()));
-        });
+        items.forEach(i -> res.add(new Attribute<>(i.getNameZh() + SLASH + i.getNameEn(), i.getId())));
         return res;
     }
 
@@ -252,9 +252,7 @@ public class GeneralService {
         //获取所有role数据
         List<Franchise> items = franchiseMapper.selectList(null);
         items.sort(DataSorter.franchiseIdSorter);
-        items.forEach(i -> {
-            res.add(new Attribute<>(i.getName(), i.getId()));
-        });
+        items.forEach(i -> res.add(new Attribute<>(i.getName(), i.getId())));
         return res;
     }
     //endregion
