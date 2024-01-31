@@ -27,8 +27,7 @@ public class Album extends MetaEntity {
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
-    // @JsonDeserialize(using = DateDeserializer.class)
-    private Date releaseDate;//发行日期
+    private String releaseDate;//发行日期
     private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     private String mediaFormat;//媒体类型
@@ -47,7 +46,7 @@ public class Album extends MetaEntity {
         this.nameZh = "";
         this.nameEn = "";
         this.barcode = "";
-        this.releaseDate = null;
+        this.releaseDate = "";
         this.publishFormat = "[]";
         this.albumFormat = "[]";
         this.mediaFormat = "[]";
