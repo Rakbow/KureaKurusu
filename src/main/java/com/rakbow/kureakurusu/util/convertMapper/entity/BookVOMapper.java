@@ -1,27 +1,8 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
-import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.emun.common.Language;
-import com.rakbow.kureakurusu.data.emun.entity.book.BookType;
-import com.rakbow.kureakurusu.data.emun.temp.EnumUtil;
-import com.rakbow.kureakurusu.data.vo.LanguageVO;
-import com.rakbow.kureakurusu.data.vo.book.BookVO;
-import com.rakbow.kureakurusu.data.vo.book.BookVOAlpha;
-import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
-import com.rakbow.kureakurusu.data.vo.book.BookVOGamma;
-import com.rakbow.kureakurusu.data.entity.Book;
-import com.rakbow.kureakurusu.util.common.LikeUtil;
-import com.rakbow.kureakurusu.util.common.SpringUtil;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
-import com.rakbow.kureakurusu.util.entry.EntryUtil;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * book VO转换接口

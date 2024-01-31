@@ -4,6 +4,7 @@ import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +18,10 @@ import java.util.List;
  * @since 2022-12-01 21:25
  */
 @Component
+@RequiredArgsConstructor
 public class QiniuImageUtil {
 
     private final QiniuBaseUtil qiniuBaseUtil;
-
-    public QiniuImageUtil(QiniuBaseUtil qiniuBaseUtil) {
-        this.qiniuBaseUtil = qiniuBaseUtil;
-    }
 
     /**
      * 通用新增图片

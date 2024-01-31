@@ -58,6 +58,8 @@ public class EntityUtil {
         } else if (entityType == Entity.PERSON.getValue()) {
             options.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
             options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
+        } else if (entityType == 0) {
+            options.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
         }
 
         return options;

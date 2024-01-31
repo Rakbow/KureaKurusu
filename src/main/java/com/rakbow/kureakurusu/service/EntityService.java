@@ -7,30 +7,32 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.*;
-import com.rakbow.kureakurusu.data.*;
+import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.SimpleSearchResult;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
-import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
-import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
-import com.rakbow.kureakurusu.data.vo.game.GameVOAlpha;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.entity.Disc;
 import com.rakbow.kureakurusu.data.entity.Game;
+import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
+import com.rakbow.kureakurusu.data.vo.book.BookVOBeta;
+import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
+import com.rakbow.kureakurusu.data.vo.game.GameVOAlpha;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
-import com.rakbow.kureakurusu.util.convertMapper.entity.*;
-import com.rakbow.kureakurusu.util.entry.EntryUtil;
+import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.entity.BookVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.entity.DiscVOMapper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,13 +63,7 @@ public class EntityService {
     @Resource
     private CommonMapper commonMapper;
     @Resource
-    private QiniuImageUtil qiniuImageUtil;
-    @Resource
-    private QiniuFileUtil qiniuFileUtil;
-    @Resource
     private VisitUtil visitUtil;
-    @Resource
-    private EntryUtil entryUtil;
     
 
     private final AlbumVOMapper albumVOMapper = AlbumVOMapper.INSTANCES;
@@ -83,6 +79,9 @@ public class EntityService {
 //        add(Entity.MERCH.getId());
         add(Entity.EPISODE.getValue());
     }};
+
+    public EntityService() {
+    }
 
     //endregion
 
