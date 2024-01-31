@@ -36,8 +36,13 @@ public interface CommonVOMapper {
     }
 
     @Named("getBool")
-    default Boolean getBool(int status) {
-        return status == 1;
+    default Boolean getBool(int value) {
+        return value == 1;
+    }
+
+    @Named("getBool")
+    default int getBool(boolean value) {
+        return value ? 1 : 0;
     }
 
     @Named("getIdsStr")

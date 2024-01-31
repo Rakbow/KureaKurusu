@@ -17,9 +17,9 @@ import java.util.List;
 public class AlbumVOAlpha {
 
     //基础信息
-    private int id;//表主键
+    private long id;
     private String catalogNo;//专辑编号
-    private String name;//专辑名称（日语）
+    private String name;//专辑名称
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
@@ -31,10 +31,6 @@ public class AlbumVOAlpha {
 
     //图片相关
     private ImageVO cover;//封面
-
-    //关联信息
-    private List<Attribute<Integer>> franchises;//所属系列
-    private List<Attribute<Integer>> products;//所属产品id 在mysql中以数组字符串形式存储
 
     //规格信息
     private List<Attribute<Integer>> publishFormat;//出版形式 在mysql中以数组字符串形式存储
