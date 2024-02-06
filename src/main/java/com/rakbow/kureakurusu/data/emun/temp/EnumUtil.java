@@ -48,7 +48,7 @@ public class EnumUtil {
     );
 
     public static <T extends Enum<T>> List<Attribute<Integer>> getAttributes(Class<T> clazz, String idsJson) {
-        int[] values = JsonUtil.toIds(idsJson);
+        int[] values = JsonUtil.to(idsJson, int[].class);
 
         List<Attribute<Integer>> res = new ArrayList<>();
 

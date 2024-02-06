@@ -52,7 +52,7 @@ public class EnumHelper {
 
     public static List<Attribute<Integer>> getAttributes(List<Attribute<Integer>> attributes, String idsStr) {
 
-        int[] values = JsonUtil.toIds(idsStr);
+        int[] values = JsonUtil.to(idsStr, int[].class);
         List<Attribute<Integer>> res = new ArrayList<>();
 
         for (int value : values) {
