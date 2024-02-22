@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.image;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rakbow.kureakurusu.data.emun.image.ImageType;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
@@ -31,10 +32,12 @@ public class Image {
         this.uploadUser = "";
     }
 
+    @JsonIgnore
     public boolean isMain() {
         return this.type == ImageType.MAIN.getValue();
     }
 
+    @JsonIgnore
     public boolean isDisplay() {
         return this.type == ImageType.MAIN.getValue() || this.type == ImageType.DISPLAY.getValue();
     }
