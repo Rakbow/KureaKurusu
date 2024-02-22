@@ -38,7 +38,7 @@ public class EpisodeController {
             res.ok(I18nHelper.getMessage("file.update.success"));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -51,7 +51,7 @@ public class EpisodeController {
             res.ok(I18nHelper.getMessage("file.delete.success"));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }

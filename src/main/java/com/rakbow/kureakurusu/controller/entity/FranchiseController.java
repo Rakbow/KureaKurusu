@@ -49,7 +49,7 @@ public class FranchiseController {
             res.data = srv.detail(qry);
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -61,7 +61,7 @@ public class FranchiseController {
             res.data = srv.list(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -80,7 +80,7 @@ public class FranchiseController {
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.FRANCHISE.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -97,7 +97,7 @@ public class FranchiseController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.FRANCHISE.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -110,7 +110,7 @@ public class FranchiseController {
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.FRANCHISE.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }

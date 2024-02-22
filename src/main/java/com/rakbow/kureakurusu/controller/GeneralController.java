@@ -52,7 +52,7 @@ public class GeneralController {
             res.data = entityUtil.getDetailOptions(qry.getEntityType());
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -66,7 +66,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("entity.crud.status.update.success"));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -80,7 +80,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("entity.crud.description.update.success"));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -94,7 +94,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("entity.crud.bonus.update.success"));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -111,7 +111,7 @@ public class GeneralController {
             res.data = service.getItemImages(tableName, qry.getEntityId());
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -129,7 +129,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("image.insert.success"));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -159,7 +159,7 @@ public class GeneralController {
             }
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -176,7 +176,7 @@ public class GeneralController {
             res.ok(I18nHelper.getMessage("entity.curd.refresh.success", Entity.ROLE.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -206,7 +206,7 @@ public class GeneralController {
             }
         }catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }

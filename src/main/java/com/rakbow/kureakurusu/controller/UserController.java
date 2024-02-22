@@ -127,7 +127,7 @@ public class UserController {
             }
         }catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }

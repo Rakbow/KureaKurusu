@@ -52,7 +52,7 @@ public class ProductController {
             res.loadData(vo);
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -64,7 +64,7 @@ public class ProductController {
             res.data = srv.getProducts(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -83,7 +83,7 @@ public class ProductController {
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PRODUCT.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -100,7 +100,7 @@ public class ProductController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PRODUCT.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -113,7 +113,7 @@ public class ProductController {
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.PRODUCT.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }

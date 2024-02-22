@@ -48,7 +48,7 @@ public class AlbumController {
             res.loadData(vo);
         }catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -61,7 +61,7 @@ public class AlbumController {
             res.loadData(srv.getAlbums(new QueryParams(qry)));
         }catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -81,7 +81,7 @@ public class AlbumController {
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -101,7 +101,7 @@ public class AlbumController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -115,7 +115,7 @@ public class AlbumController {
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -133,7 +133,7 @@ public class AlbumController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -145,7 +145,7 @@ public class AlbumController {
             res.loadData(srv.getTrackInfo(srv.getById(qry.getId())));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }

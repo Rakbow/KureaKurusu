@@ -44,8 +44,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
+ * album业务层
+ *
  * @author Rakbow
- * @since 2022-07-25 1:42 album业务层
+ * @since 2022-07-25 1:42
  */
 @Service
 @RequiredArgsConstructor

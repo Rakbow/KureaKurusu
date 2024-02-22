@@ -51,7 +51,7 @@ public class PersonController {
             res.loadData(srv.detail(qry));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -63,7 +63,7 @@ public class PersonController {
             res.data = srv.searchPersons(new SimpleSearchParam(qry));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -75,7 +75,7 @@ public class PersonController {
             res.data = srv.getPersons(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -94,7 +94,7 @@ public class PersonController {
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -111,7 +111,7 @@ public class PersonController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -126,7 +126,7 @@ public class PersonController {
             res.data = srv.getRoles(new QueryParams(qry));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -143,7 +143,7 @@ public class PersonController {
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -160,7 +160,7 @@ public class PersonController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -176,7 +176,7 @@ public class PersonController {
             res.data = srv.getPersonnel(qry.getEntityType(), qry.getEntityId());
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
@@ -189,7 +189,7 @@ public class PersonController {
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
         } catch (Exception e) {
             res.fail(e);
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return res;
     }
