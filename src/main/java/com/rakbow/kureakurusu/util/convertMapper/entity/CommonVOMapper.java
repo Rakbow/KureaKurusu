@@ -56,8 +56,8 @@ public interface CommonVOMapper {
     }
 
     @Named("getMediaFormat")
-    default List<Attribute<Integer>> getMediaFormat(String formats) {
-        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet, formats);
+    default List<Attribute<Integer>> getMediaFormat(List<Integer> ids) {
+        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet, ids);
     }
 
 }

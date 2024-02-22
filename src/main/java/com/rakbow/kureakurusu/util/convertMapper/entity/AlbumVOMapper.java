@@ -31,16 +31,10 @@ public interface AlbumVOMapper extends CommonVOMapper {
 
     //region single convert interface
 
-    @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
-    @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
-    @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "hasBonus", target = "hasBonus", qualifiedByName = "getBool")
     @Named("build")
     Album build(AlbumAddDTO dto);
 
-    @Mapping(source = "publishFormat", target = "publishFormat", qualifiedByName = "getIdsStr")
-    @Mapping(source = "albumFormat", target = "albumFormat", qualifiedByName = "getIdsStr")
-    @Mapping(source = "mediaFormat", target = "mediaFormat", qualifiedByName = "getIdsStr")
     @Mapping(source = "hasBonus", target = "hasBonus", qualifiedByName = "getBool")
     @Named("build")
     Album build(AlbumUpdateDTO dto);
@@ -73,13 +67,13 @@ public interface AlbumVOMapper extends CommonVOMapper {
     List<AlbumVOAlpha> toVOAlpha(List<Album> products);
 
     @Named("getAlbumFormat")
-    default List<Attribute<Integer>> getAlbumFormat(String formats) {
-        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).albumFormatSet, formats);
+    default List<Attribute<Integer>> getAlbumFormat(List<Integer> ids) {
+        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).albumFormatSet, ids);
     }
 
     @Named("getPublishFormat")
-    default List<Attribute<Integer>> getPublishFormat(String formats) {
-        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet, formats);
+    default List<Attribute<Integer>> getPublishFormat(List<Integer> ids) {
+        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet, ids);
     }
 
     //endregion

@@ -1,15 +1,18 @@
 package com.rakbow.kureakurusu.data.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.handler.ImageHandler;
+import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -28,9 +31,12 @@ public class Album extends MetaEntity {
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
     private String releaseDate;//发行日期
-    private String publishFormat;//出版形式 在mysql中以数组字符串形式存储
-    private String albumFormat;//专辑分类 在mysql中以数组字符串形式存储
-    private String mediaFormat;//媒体类型
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> publishFormat;//出版形式 在mysql中以数组字符串形式存储
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> mediaFormat;//媒体类型
     private int price;//发行价格（含税）
     private String currencyUnit;
     private int hasBonus;//是否包含特典内容 0-无 1-有
@@ -47,9 +53,9 @@ public class Album extends MetaEntity {
         this.nameEn = "";
         this.barcode = "";
         this.releaseDate = "";
-        this.publishFormat = "[]";
-        this.albumFormat = "[]";
-        this.mediaFormat = "[]";
+        this.publishFormat = new ArrayList<>();
+        this.albumFormat = new ArrayList<>();
+        this.mediaFormat = new ArrayList<>();
         this.price = 0;
         this.currencyUnit = "";
         this.hasBonus = 0;

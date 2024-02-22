@@ -64,4 +64,17 @@ public class EnumHelper {
         return res;
     }
 
+    public static List<Attribute<Integer>> getAttributes(List<Attribute<Integer>> attributes, List<Integer> ids) {
+
+        List<Attribute<Integer>> res = new ArrayList<>();
+
+        for (int value : ids) {
+            Attribute<Integer> attribute = DataFinder.findAttributeByValue(value, attributes);
+            if(attribute == null) continue;
+            res.add(attribute);
+        }
+
+        return res;
+    }
+
 }

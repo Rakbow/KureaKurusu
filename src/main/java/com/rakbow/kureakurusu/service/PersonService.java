@@ -166,10 +166,10 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         String nameEn = param.getStr("nameEn");
 
         LambdaQueryWrapper<PersonRole> wrapper = new LambdaQueryWrapper<PersonRole>()
-                .like(!StringUtils.isBlank(name), PersonRole::getName, name)
-                .like(!StringUtils.isBlank(nameZh), PersonRole::getNameZh, nameZh)
-                .like(!StringUtils.isBlank(nameEn), PersonRole::getNameEn, nameEn);
-        if (!StringUtils.isBlank(param.sortField)) {
+                .like(StringUtils.isNotBlank(name), PersonRole::getName, name)
+                .like(StringUtils.isNotBlank(nameZh), PersonRole::getNameZh, nameZh)
+                .like(StringUtils.isNotBlank(nameEn), PersonRole::getNameEn, nameEn);
+        if (StringUtils.isNotBlank(param.sortField)) {
             switch (param.sortField) {
                 case "name" -> wrapper.orderBy(true, param.asc(), PersonRole::getName);
                 case "nameZh" -> wrapper.orderBy(true, param.asc(), PersonRole::getNameZh);
