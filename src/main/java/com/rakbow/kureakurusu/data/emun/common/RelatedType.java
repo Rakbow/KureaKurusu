@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.emun.common;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -39,5 +40,13 @@ public enum RelatedType {
     @EnumValue
     private final Integer value;
     private final String labelKey;
+
+    public static RelatedType get(int value) {
+        for (RelatedType type : RelatedType.values()) {
+            if(type.value == value)
+                return type;
+        }
+        return OTHER;
+    }
 
 }
