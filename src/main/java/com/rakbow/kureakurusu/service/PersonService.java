@@ -207,11 +207,11 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         Map<Long, List<PersonRelation>> sortedRelationGroup = relationGroup.entrySet().stream()
                 .sorted(Comparator.comparingInt(entry ->
                         entry.getValue().isEmpty() ? Integer.MAX_VALUE :
-                                entry.getValue().get(0).getId().intValue()))
+                                entry.getValue().getFirst().getId().intValue()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (a, b) -> b, // 如果有重复的键，保留后者
+                        (_, b) -> b, // 如果有重复的键，保留后者
                         LinkedHashMap::new // 保持插入顺序
                 ));
 
