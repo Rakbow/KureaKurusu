@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
 import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
@@ -18,8 +19,10 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
+import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
@@ -216,6 +219,23 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     //endregion
 
     //region advance crud
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    public SearchResult<AlbumMiniVO> searchAlbums(SimpleSearchParam param) {
+
+        LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
+                .or().like(Album::getName, param.getKeyword())
+                .or().like(Album::getNameZh, param.getKeyword())
+                .or().like(Album::getNameEn, param.getKeyword())
+                .eq(Album::getStatus, 1)
+                .orderByDesc(Album::getId);
+
+        IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+
+        List<AlbumMiniVO> persons = VOMapper.toMiniVO(pages.getRecords());
+
+        return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
     public SearchResult<AlbumVOAlpha> getAlbums(QueryParams param) {
