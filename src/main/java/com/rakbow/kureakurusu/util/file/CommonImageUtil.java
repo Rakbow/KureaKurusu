@@ -105,6 +105,13 @@ public class CommonImageUtil {
         return CommonConstant.EMPTY_IMAGE_URL;
     }
 
+    public static String getThumbCoverUrl(List<Image> images) {
+        for (Image image : images) {
+            if (image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70);
+        }
+        return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_70);
+    }
+
     /**
      * 将图片切分为封面、展示和其他图片
      *
