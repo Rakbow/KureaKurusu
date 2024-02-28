@@ -1,10 +1,7 @@
 package com.rakbow.kureakurusu.util.common;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.Franchise;
-import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.*;
 
 import java.util.Comparator;
 
@@ -15,6 +12,7 @@ import java.util.Comparator;
 public class DataSorter {
 
     public static AlbumSortById albumIdSorter = new AlbumSortById();
+    public static ProductSortById productIdSorter = new ProductSortById();
     public static AttributesSortByIntValue attributesIntValueSorter = new AttributesSortByIntValue();
     public static AttributesSortByLongValue attributesLongValueSorter = new AttributesSortByLongValue();
     public static AttributesSortByStringValue attributesStringValueSorter = new AttributesSortByStringValue();
@@ -27,6 +25,13 @@ public class DataSorter {
 class AlbumSortById implements Comparator<Album> {
     @Override
     public int compare(Album a, Album b) {
+        return Long.compare(a.getId(), b.getId());
+    }
+}
+
+class ProductSortById implements Comparator<Product> {
+    @Override
+    public int compare(Product a, Product b) {
         return Long.compare(a.getId(), b.getId());
     }
 }

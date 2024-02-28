@@ -1,10 +1,7 @@
 package com.rakbow.kureakurusu.util.common;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.Franchise;
-import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,15 +18,26 @@ public class DataFinder {
     public static Episode episodeFinder = new Episode();
     public static Person personFinder = new Person();
     public static Franchise franchiseFinder = new Franchise();
+    public static Album albumFinder = new Album();
+    public static Product productFinder = new Product();
 
     //region album
 
     public static Album findAlbumById(Long id, List<Album> albums) {
-        Album finder = new Album();
-        finder.setId(id);
-        int idx = Collections.binarySearch(albums, finder, DataSorter.albumIdSorter);
+        albumFinder.setId(id);
+        int idx = Collections.binarySearch(albums, albumFinder, DataSorter.albumIdSorter);
         if (idx >= 0) {
             return albums.get(idx);
+        }else {
+            return null;
+        }
+    }
+
+    public static Product findProductById(Long id, List<Product> products) {
+        productFinder.setId(id);
+        int idx = Collections.binarySearch(products, productFinder, DataSorter.productIdSorter);
+        if (idx >= 0) {
+            return products.get(idx);
         }else {
             return null;
         }
