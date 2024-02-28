@@ -232,9 +232,9 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
         IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
 
-        List<AlbumMiniVO> persons = VOMapper.toMiniVO(pages.getRecords());
+        List<AlbumMiniVO> items = VOMapper.toMiniVO(pages.getRecords());
 
-        return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)

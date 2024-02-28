@@ -3,11 +3,13 @@ package com.rakbow.kureakurusu.util.convertMapper.entity;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
+import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import org.mapstruct.Named;
 
 import java.sql.Timestamp;
@@ -58,6 +60,11 @@ public interface CommonVOMapper {
     @Named("getMediaFormat")
     default List<Attribute<Integer>> getMediaFormat(List<Integer> ids) {
         return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet, ids);
+    }
+
+    @Named("getThumbCover")
+    default String getThumbCover(List<Image> images) {
+        return CommonImageUtil.getThumbCoverUrl(images);
     }
 
 }

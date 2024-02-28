@@ -4,9 +4,12 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.album.AlbumAddDTO;
 import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.vo.album.AlbumMiniVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
+import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.util.EnumHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import org.mapstruct.IterableMapping;
@@ -61,6 +64,13 @@ public interface AlbumVOMapper extends CommonVOMapper {
 
     @IterableMapping(qualifiedByName = "toVOAlpha")
     List<AlbumVOAlpha> toVOAlpha(List<Album> products);
+
+    @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
+    @Named("toMiniVO")
+    AlbumMiniVO toMiniVO(Album album);
+
+    @IterableMapping(qualifiedByName = "toMiniVO")
+    List<AlbumMiniVO> toMiniVO(List<Album> albums);
 
     @Named("getAlbumFormat")
     default List<Attribute<Integer>> getAlbumFormat(List<Integer> ids) {

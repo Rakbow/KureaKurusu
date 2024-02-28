@@ -6,12 +6,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EntityRelationMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.emun.common.RelatedType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
 import com.rakbow.kureakurusu.data.entity.Product;
+import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedItemVO;
+import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
@@ -46,36 +51,44 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
                         .eq(EntityRelation::getEntityId, entityId)
                         .eq(EntityRelation::getStatus, 1)
         );
+        if(relations.isEmpty()) return res;
         //relations group by entity type
         Map<Integer, List<EntityRelation>> relationGroup = relations.stream()
                 .collect(Collectors.groupingBy(EntityRelation::getRelatedEntityType));
         for(int entity : relationGroup.keySet()) {
-            List<Long> ids = relationGroup.get(entity).stream().map(EntityRelation::getRelatedEntityId).toList();
+            List<EntityRelation> currentRelations = relationGroup.get(entity);
+            List<Long> ids = currentRelations.stream().map(EntityRelation::getRelatedEntityId).toList();
             if(entity == Entity.ALBUM.getValue()) {
                 List<Album> items = albumMapper.selectList(new LambdaQueryWrapper<Album>().eq(Album::getStatus, 1).in(Album::getId, ids));
-                for (Album item : items) {
+                for (EntityRelation r : currentRelations) {
                     RelatedItemVO vo = new RelatedItemVO();
                     vo.setEntityType(Entity.ALBUM.getValue());
                     vo.setEntityTypeName(Entity.ALBUM.getTableName());
-                    vo.setEntityId(item.getId());
+                    vo.setEntityId(r.getRelatedEntityId());
+                    Album item = DataFinder.findAlbumById(r.getId(), items);
+                    if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());
                     vo.setNameZh(item.getNameZh());
                     vo.setNameEn(item.getNameEn());
+                    vo.setRelationType(new Attribute<>(I18nHelper.getMessage(r.getRelatedType().getLabelKey()), r.getRelatedType().getValue()));
                     res.add(vo);
                 }
             }
             if(entity == Entity.PRODUCT.getValue()) {
                 List<Product> items = productMapper.selectList(new LambdaQueryWrapper<Product>().eq(Product::getStatus, 1).in(Product::getId, ids));
-                for (Product item : items) {
+                for (EntityRelation r : currentRelations) {
                     RelatedItemVO vo = new RelatedItemVO();
                     vo.setEntityType(Entity.PRODUCT.getValue());
                     vo.setEntityTypeName(Entity.PRODUCT.getTableName());
-                    vo.setEntityId(item.getId());
+                    vo.setEntityId(r.getRelatedEntityId());
+                    Product item = DataFinder.findProductById(r.getId(), items);
+                    if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());
                     vo.setNameZh(item.getNameZh());
                     vo.setNameEn(item.getNameEn());
+                    vo.setRelationType(new Attribute<>(I18nHelper.getMessage(r.getRelatedType().getLabelKey()), r.getRelatedType().getValue()));
                     res.add(vo);
                 }
             }

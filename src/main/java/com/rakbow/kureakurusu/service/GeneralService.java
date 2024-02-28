@@ -8,6 +8,7 @@ import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.LinkType;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
+import com.rakbow.kureakurusu.data.emun.common.RelatedType;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
@@ -99,6 +100,9 @@ public class GeneralService {
 
         MetaData.optionsZh.productCategorySet = EnumHelper.getAttributeOptions(ProductCategory.class, "zh");
         MetaData.optionsEn.productCategorySet = EnumHelper.getAttributeOptions(ProductCategory.class, "en");
+
+        MetaData.optionsZh.relationTypeSet = EnumHelper.getAttributeOptions(RelatedType.class, "zh");
+        MetaData.optionsEn.relationTypeSet = EnumHelper.getAttributeOptions(RelatedType.class, "en");
 
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;

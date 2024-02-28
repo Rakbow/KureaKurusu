@@ -1,9 +1,11 @@
 package com.rakbow.kureakurusu.controller.entity;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.*;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
+import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
@@ -61,6 +63,18 @@ public class AlbumController {
         try{
             res.loadData(srv.getAlbums(new QueryParams(qry)));
         }catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage(), e);
+        }
+        return res;
+    }
+
+    @PostMapping("search")
+    public ApiResult searchAlbum(@RequestBody SearchQry qry) {
+        ApiResult res = new ApiResult();
+        try {
+            res.data = srv.searchAlbums(new SimpleSearchParam(qry));
+        } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
         }
