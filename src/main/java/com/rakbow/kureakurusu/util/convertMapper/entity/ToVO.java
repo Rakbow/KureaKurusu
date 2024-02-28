@@ -12,6 +12,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.CLASS)
 @Mapping(source = "addedTime", target = "addedTime", qualifiedByName = "getVOTime")
 @Mapping(source = "editedTime", target = "editedTime", qualifiedByName = "getVOTime")
-@Mapping(source = "status", target = "status", qualifiedByName = "getBool")
 public @interface ToVO {
 }
