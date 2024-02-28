@@ -5,6 +5,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.time.Duration;
 import java.util.Locale;
 
 /**
@@ -41,9 +43,9 @@ public class LocaleResolver extends CookieLocaleResolver {
 
     //重写构造方法,改变cookie信息
     public LocaleResolver(){
-        this.setCookieName("locale");
+        super("locale");
         //cookie有效期30天
-        this.setCookieMaxAge(30*24*60*60);
+        this.setCookieMaxAge(Duration.ofSeconds(30*24*60*60));
     }
 
 }
