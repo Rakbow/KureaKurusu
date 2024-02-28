@@ -18,7 +18,7 @@ public class BookUtil {
         if (isbn10.length() != 10) {
             return isbn10;
         }
-        String isbn13 = STR."978\{isbn10.substring(0, isbn10.length() - 1)}";
+        String isbn13 = "978" + isbn10.substring(0, isbn10.length() - 1);
         int a = 0;
         int b = 0;
         int c;
