@@ -13,6 +13,7 @@ import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
+import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
@@ -132,27 +133,27 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     /**
      * 更新专辑基础信息
      *
-     * @param album 专辑
+     * @param dto 专辑
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void updateAlbum(Album album) {
+    public void updateAlbum(AlbumUpdateDTO dto) {
         update(
                 new LambdaUpdateWrapper<Album>()
-                        .eq(Album::getId, album.getId())
-                        .set(Album::getName, album.getName())
-                        .set(Album::getNameZh, album.getNameZh())
-                        .set(Album::getNameEn, album.getNameEn())
-                        .set(Album::getCatalogNo, album.getCatalogNo())
-                        .set(Album::getBarcode, album.getBarcode())
-                        .set(Album::getReleaseDate, album.getReleaseDate())
-                        .set(Album::getPrice, album.getPrice())
-                        .set(Album::getCurrencyUnit, album.getCurrencyUnit())
-                        .set(Album::getHasBonus, album.getHasBonus())
-                        .set(Album::getAlbumFormat, album.getAlbumFormat())
-                        .set(Album::getMediaFormat, album.getMediaFormat())
-                        .set(Album::getPublishFormat, album.getPublishFormat())
-                        .set(Album::getRemark, album.getRemark())
+                        .eq(Album::getId, dto.getId())
+                        .set(Album::getName, dto.getName())
+                        .set(Album::getNameZh, dto.getNameZh())
+                        .set(Album::getNameEn, dto.getNameEn())
+                        .set(Album::getCatalogNo, dto.getCatalogNo())
+                        .set(Album::getBarcode, dto.getBarcode())
+                        .set(Album::getReleaseDate, dto.getReleaseDate())
+                        .set(Album::getPrice, dto.getPrice())
+                        .set(Album::getCurrencyUnit, dto.getCurrencyUnit())
+                        .set(Album::getHasBonus, dto.isHasBonus())
+                        .set(Album::getAlbumFormat, dto.getAlbumFormat())
+                        .set(Album::getMediaFormat, dto.getMediaFormat())
+                        .set(Album::getPublishFormat, dto.getPublishFormat())
+                        .set(Album::getRemark, dto.getRemark())
                         .set(Album::getEditedTime, DateHelper.now())
         );
     }

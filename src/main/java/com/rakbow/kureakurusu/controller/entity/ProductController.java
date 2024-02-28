@@ -1,26 +1,26 @@
 package com.rakbow.kureakurusu.controller.entity;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
+import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
 import com.rakbow.kureakurusu.data.dto.product.ProductAddDTO;
-import com.rakbow.kureakurusu.data.dto.product.ProductDeleteCmd;
 import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.entity.Product;
-import com.rakbow.kureakurusu.service.*;
+import com.rakbow.kureakurusu.data.system.ApiResult;
+import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
+import com.rakbow.kureakurusu.service.PersonService;
+import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.entity.ProductVOMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 /**
  * @author Rakbow
@@ -106,7 +106,7 @@ public class ProductController {
     }
 
     @DeleteMapping("delete")
-    public ApiResult deleteProduct(@RequestBody ProductDeleteCmd cmd) {
+    public ApiResult deleteProduct(@RequestBody DeleteCmd cmd) {
         ApiResult res = new ApiResult();
         try {
             srv.deleteProducts(cmd.getIds());

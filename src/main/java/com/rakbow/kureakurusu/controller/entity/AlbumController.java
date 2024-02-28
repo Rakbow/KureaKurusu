@@ -4,6 +4,7 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.*;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
+import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.system.ApiResult;
@@ -94,10 +95,8 @@ public class AlbumController {
             //check
             if (errors.hasErrors())
                 return res.fail(errors);
-            //build
-            Album album = VOMapper.build(dto);
             //save
-            srv.updateAlbum(album);
+            srv.updateAlbum(dto);
             res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -108,7 +107,7 @@ public class AlbumController {
 
     //删除专辑(单个/多个)
     @DeleteMapping("delete")
-    public ApiResult deleteAlbum(@RequestBody AlbumDeleteCmd cmd) {
+    public ApiResult deleteAlbum(@RequestBody DeleteCmd cmd) {
         ApiResult res = new ApiResult();
         try {
             srv.deleteAlbums(cmd.getIds());

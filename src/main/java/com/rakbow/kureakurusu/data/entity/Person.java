@@ -60,7 +60,7 @@ public class Person extends MetaEntity {
         setImages(new ArrayList<>());
         setAddedTime(DateHelper.now());
         setEditedTime(DateHelper.now());
-        setStatus(1);
+        setStatus(true);
     }
 
 }

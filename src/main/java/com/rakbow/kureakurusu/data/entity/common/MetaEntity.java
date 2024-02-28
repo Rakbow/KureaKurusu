@@ -28,6 +28,6 @@ public class MetaEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     private Timestamp editedTime;//数据更新时间
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private int status;//激活状态
+    private Boolean status;//激活状态
 
 }

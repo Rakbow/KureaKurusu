@@ -22,6 +22,6 @@ public class PersonVOBeta {
     private String remark;
     private String addedTime;
     private String editedTime;
-    private int status;
+    private Boolean status;
 
 }

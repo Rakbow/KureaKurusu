@@ -57,7 +57,7 @@ public class Game extends MetaEntity {
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;
         this.setEditedTime(DateHelper.now());;
-        this.setStatus(1);
+        this.setStatus(true);
     }
 
 }

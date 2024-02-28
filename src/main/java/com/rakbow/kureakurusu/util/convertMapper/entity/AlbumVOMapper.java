@@ -35,10 +35,6 @@ public interface AlbumVOMapper extends CommonVOMapper {
     @Named("build")
     Album build(AlbumAddDTO dto);
 
-    @Mapping(source = "hasBonus", target = "hasBonus", qualifiedByName = "getBool")
-    @Named("build")
-    Album build(AlbumUpdateDTO dto);
-
     /**
      * Album转VO对象，用于详情页面，转换量最大的
      *

@@ -36,7 +36,7 @@ public class Franchise extends MetaEntity {
         this.setDetail("");
         this.setRemark("");
         this.setImages(new ArrayList<>());
-        this.setStatus(1);
+        this.setStatus(true);
     }
 
 }

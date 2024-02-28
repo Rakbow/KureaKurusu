@@ -67,7 +67,7 @@ public class Album extends MetaEntity {
         this.setImages(new ArrayList<>());
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
-        this.setStatus(1);
+        this.setStatus(true);
 
     }
 }

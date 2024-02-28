@@ -45,7 +45,7 @@ public class Episode {
     @Builder.Default
     private Timestamp editedTime = DateHelper.now();
     @Builder.Default
-    private int status = 1;
+    private Boolean status = true;
 
     public Episode() {
         id = 0L;
@@ -61,7 +61,7 @@ public class Episode {
         relatedId = 0;
         addedTime = DateHelper.now();
         editedTime = DateHelper.now();
-        status = 1;
+        status = true;
     }
 
 }
