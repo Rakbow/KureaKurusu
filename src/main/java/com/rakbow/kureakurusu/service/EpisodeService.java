@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     private final QiniuBaseUtil qiniuBaseUtil;
 
     @SneakyThrows
+    @Transactional
     public void updateFile(int id, MultipartFile[] files, List<File> fileInfos) {
 
         //org files
@@ -76,6 +78,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     }
 
     @SneakyThrows
+    @Transactional
     public void deleteFiles(long id, List<File> delFiles) {
         //original files
         List<File> orgFiles = mapper.selectById(id).getFiles();

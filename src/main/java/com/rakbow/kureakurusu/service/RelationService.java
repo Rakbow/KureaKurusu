@@ -41,7 +41,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
     private final AlbumMapper albumMapper;
     private final ProductMapper productMapper;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    @Transactional
     public List<RelatedItemVO> getRelations(int entityType, long entityId) {
         List<RelatedItemVO> res = new ArrayList<>();
         //get original relations
@@ -96,7 +96,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
         return res;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void updateRelation(RelationDTO dto) {
         update(
                 new LambdaUpdateWrapper<EntityRelation>()
@@ -106,7 +106,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
         );
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void deleteRelations(List<Long> ids) {
         //delete related episode
         mapper.delete(new LambdaQueryWrapper<EntityRelation>().in(EntityRelation::getId, ids));

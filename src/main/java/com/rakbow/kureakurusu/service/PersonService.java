@@ -39,6 +39,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,6 +63,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     private final int ENTITY_VALUE = Entity.PERSON.getValue();
 
     @SneakyThrows
+    @Transactional
     public PersonDetailVO detail(PersonDetailQry qry) {
         Person person = getById(qry.getId());
         if (person == null)
@@ -74,6 +76,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
                 .build();
     }
 
+    @Transactional
     public void updatePerson(PersonUpdateDTO dto) {
 
         LambdaUpdateWrapper<Person> wrapper = new LambdaUpdateWrapper<Person>()
@@ -91,6 +94,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         mapper.update(null, wrapper);
     }
 
+    @Transactional
     public SearchResult<PersonVOBeta> getPersons(QueryParams param) {
 
         String name = param.getStr("name");
@@ -132,6 +136,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
      * @param param 参数
      * @author rakbow
      */
+    @Transactional
     public SearchResult<PersonMiniVO> searchPersons(SimpleSearchParam param) {
 
         LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
@@ -152,14 +157,17 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
     //region person role
 
+    @Transactional
     public void addRole(PersonRole role) {
         roleMapper.insert(role);
     }
 
+    @Transactional
     public void updateRole(PersonRole role) {
         roleMapper.updateById(role);
     }
 
+    @Transactional
     public SearchResult<PersonRole> getRoles(QueryParams param) {
         String name = param.getStr("name");
         String nameZh = param.getStr("nameZh");
@@ -188,6 +196,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
     //region relation
 
+    @Transactional
     public PersonnelStruct getPersonnel(int entityType, long entityId) {
         PersonnelStruct res = new PersonnelStruct();
         if (MetaData.optionsZh.roleSet.isEmpty())
@@ -240,6 +249,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         return res;
     }
 
+    @Transactional
     public void managePersonnel(PersonnelManageCmd cmd) {
 
         List<PersonRelation> addRelationSet = new ArrayList<>();

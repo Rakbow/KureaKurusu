@@ -79,6 +79,7 @@ public class GeneralService {
 
     //region common
 
+    @Transactional
     public void loadMetaData() {
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
@@ -118,6 +119,7 @@ public class GeneralService {
      * @param tableName,ids,status 实体表名,ids,状态
      * @author rakbow
      */
+    @Transactional
     public void updateItemStatus(String tableName, List<Long> ids, int status) {
         mapper.updateItemStatus(tableName, ids, status);
     }
@@ -127,6 +129,7 @@ public class GeneralService {
      * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
      * @author rakbow
      */
+    @Transactional
     public boolean like(int entityType, long entityId, String likeToken) {
         //点过赞
         if(likeUtil.isLike(entityType, entityId, likeToken)) {
@@ -144,7 +147,7 @@ public class GeneralService {
      * @param text 描述数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void updateItemDetail(String tableName, long entityId, String text) {
         mapper.updateItemDetail(tableName, entityId, text, DateHelper.now());
     }
@@ -156,7 +159,7 @@ public class GeneralService {
      * @param bonus 特典数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void updateItemBonus(String tableName, long entityId, String bonus) {
         mapper.updateItemBonus(tableName, entityId, bonus, DateHelper.now());
     }
@@ -171,7 +174,7 @@ public class GeneralService {
      * @param tableName,entityId 实体表名 实体id
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    @Transactional
     public segmentImagesResult getItemImages(String tableName, long entityId) {
         //original images
         List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
@@ -189,7 +192,7 @@ public class GeneralService {
      */
     @SuppressWarnings("unchecked")
     @SneakyThrows
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
         String tableName = Entity.getTableName(entityType);
         //原始图片信息json数组
@@ -214,7 +217,7 @@ public class GeneralService {
      * @param images 需要更新的图片json数据
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void updateItemImages(String tableName, long entityId, List<Image> images) {
         mapper.updateItemImages(tableName, entityId, images, DateHelper.now());
     }
@@ -226,7 +229,7 @@ public class GeneralService {
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void deleteItemImages(String tableName, long entityId, List<Image> deleteImages) throws Exception {
         List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
         List<Image> finalImageJson = qiniuFileUtil.deleteImage(images, deleteImages);
@@ -236,6 +239,7 @@ public class GeneralService {
     //endregion
 
     //region person role
+    @Transactional
     public void refreshPersonRoleSet() {
         MetaData.optionsZh.roleSet.clear();
         MetaData.optionsEn.roleSet.clear();

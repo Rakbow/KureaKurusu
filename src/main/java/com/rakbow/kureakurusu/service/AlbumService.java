@@ -19,10 +19,8 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
-import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
@@ -79,6 +77,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
 
     @SneakyThrows
+    @Transactional
     public AlbumDetailVO getDetail(AlbumDetailQry qry) {
         Album album = getAlbum(qry.getId());
         if (album == null)
@@ -102,6 +101,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @return Album
      * @author rakbow
      */
+    @Transactional
     public Album getAlbum(long id) {
         if (AuthorityInterceptor.isSenior()) {
             return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
@@ -115,7 +115,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @param ids 专辑ids
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void deleteAlbums(List<Long> ids) {
         //get original data
         List<Album> albums = mapper.selectBatchIds(ids);
@@ -139,7 +139,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @param dto 专辑
      * @author rakbow
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void updateAlbum(AlbumUpdateDTO dto) {
         update(
                 new LambdaUpdateWrapper<Album>()
@@ -165,6 +165,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region data handle
 
+    @Transactional
     public AlbumVO buildVO(Album album) {
         AlbumVO VO = VOMapper.toVO(album);
         //音轨信息
@@ -172,6 +173,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         return VO;
     }
 
+    @Transactional
     public AlbumTrackInfoVO getTrackInfo(Album album) {
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
         //get all episode
@@ -220,7 +222,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region advance crud
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    @Transactional
     public SearchResult<AlbumMiniVO> searchAlbums(SimpleSearchParam param) {
 
         LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
@@ -237,7 +239,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
+    @Transactional
     public SearchResult<AlbumVOAlpha> getAlbums(QueryParams param) {
 
         String name = param.getStr("name");
@@ -292,7 +294,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
      * @author rakbow
      */
     @SneakyThrows
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @Transactional
     public void updateAlbumTrackInfo(long id, List<AlbumDiscVO> discs) {
 
         //get all episode

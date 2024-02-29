@@ -32,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +70,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
 
     //region ------basic crud------
 
+    @Transactional
     public SearchResult<ProductVOAlpha> getProducts(QueryParams param) {
         String name = param.getStr("name");
         String nameEn = param.getStr("nameEn");
@@ -103,6 +105,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     }
 
     @SneakyThrows
+    @Transactional
     public ProductDetailVO getDetail(ProductDetailQry qry) {
         Product product = getById(qry.getId());
         if(product == null)
@@ -113,10 +116,11 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .itemImageInfo(CommonImageUtil.segmentImages(product.getImages(), 100, Entity.PRODUCT, true))
-                .episodes(getEpisodeS(product.getId(), product.getCategory()))
+                .episodes(getEpisodes(product.getId(), product.getCategory()))
                 .build();
     }
 
+    @Transactional
     public void updateProduct(ProductUpdateDTO dto) {
         mapper.update(new LambdaUpdateWrapper<Product>()
                 .eq(Product::getId, dto.getId())
@@ -131,6 +135,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         );
     }
 
+    @Transactional
     public void deleteProducts(List<Long> ids) {
         //get original data
         List<Product> products = mapper.selectBatchIds(ids);
@@ -150,7 +155,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
 
     //region other
 
-    private List<EpisodeVOAlpha> getEpisodeS(long productId, ProductCategory category) {
+    private List<EpisodeVOAlpha> getEpisodes(long productId, ProductCategory category) {
         List<EpisodeVOAlpha> res = new ArrayList<>();
         if(Arrays.asList(VIDEO_PRODUCT).contains(category)) {
             List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, productId));

@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
     private final int ENTITY_VALUE = Entity.FRANCHISE.getValue();
 
     @SneakyThrows
+    @Transactional
     public FranchiseDetailVO detail(FranchiseDetailQry qry) {
         Franchise item = getById(qry.getId());
         if (item == null)
@@ -57,6 +59,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
                 .build();
     }
 
+    @Transactional
     public SearchResult<FranchiseVO> list(QueryParams param) {
         String name = param.getStr("name");
         String nameZh = param.getStr("nameZh");
@@ -82,6 +85,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
+    @Transactional
     public void delete(List<Long> ids) {
         //get original data
         List<Franchise> items = mapper.selectBatchIds(ids);
@@ -95,6 +99,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
         }
     }
 
+    @Transactional
     public void update(FranchiseUpdateDTO dto) {
         update(
                 new LambdaUpdateWrapper<Franchise>()
