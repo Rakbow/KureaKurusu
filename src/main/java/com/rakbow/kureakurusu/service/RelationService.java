@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,20 +9,20 @@ import com.rakbow.kureakurusu.dao.EntityRelationMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
+import com.rakbow.kureakurusu.data.dto.relation.RelationManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.emun.common.RelatedType;
+import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
 import com.rakbow.kureakurusu.data.entity.Product;
-import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedItemVO;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
     private final EntityRelationMapper mapper;
     private final AlbumMapper albumMapper;
     private final ProductMapper productMapper;
+    private final SqlSessionFactory sqlSessionFactory;
 
     @Transactional
     public List<RelatedItemVO> getRelations(int entityType, long entityId) {
@@ -110,6 +112,28 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
     public void deleteRelations(List<Long> ids) {
         //delete related episode
         mapper.delete(new LambdaQueryWrapper<EntityRelation>().in(EntityRelation::getId, ids));
+    }
+
+    @Transactional
+    public void manageRelation(RelationManageCmd cmd) {
+
+        List<EntityRelation> addRelationSet = new ArrayList<>();
+        List<EntityRelation> deleteRelationSet = new ArrayList<>();
+
+        cmd.getRelations().forEach(pair -> {
+            if(pair.getAction() == DataActionType.INSERT.getValue())
+                addRelationSet.add(new EntityRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
+            if(pair.getAction() == DataActionType.REAL_DELETE.getValue())
+                deleteRelationSet.add(new EntityRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
+        });
+        //批量删除和批量新增
+        MybatisBatch.Method<EntityRelation> method = new MybatisBatch.Method<>(EntityRelationMapper.class);
+        MybatisBatch<EntityRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);
+        MybatisBatch<EntityRelation> batchDelete = new MybatisBatch<>(sqlSessionFactory, deleteRelationSet);
+        if(!addRelationSet.isEmpty())
+            batchInsert.execute(method.insert());
+        if(!deleteRelationSet.isEmpty())
+            batchDelete.execute(method.deleteById());
     }
 
 }

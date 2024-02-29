@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
 import com.rakbow.kureakurusu.data.emun.common.RelatedType;
+import com.rakbow.kureakurusu.data.relation.RelationPair;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.ToString;
@@ -52,6 +53,18 @@ public class EntityRelation {
         addedTime = DateHelper.now();
         editedTime = DateHelper.now();
         status = true;
+    }
+
+    public EntityRelation(RelationPair pair, int entityType, long entityId) {
+        id = pair.getId();
+        this.entityType = entityType;
+        this.entityId = entityId;
+        this.relatedEntityType = pair.getEntityType();
+        this.relatedEntityId = pair.getEntityId();
+        this.relatedType = RelatedType.get(pair.getType().getValue());
+        this.addedTime = DateHelper.now();
+        this.editedTime = DateHelper.now();
+        this.status = true;
     }
 
 }
