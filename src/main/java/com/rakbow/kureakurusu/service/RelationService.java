@@ -64,10 +64,11 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
                 List<Album> items = albumMapper.selectList(new LambdaQueryWrapper<Album>().eq(Album::getStatus, 1).in(Album::getId, ids));
                 for (EntityRelation r : currentRelations) {
                     RelatedItemVO vo = new RelatedItemVO();
-                    vo.setEntityType(Entity.ALBUM.getValue());
+                    vo.setId(r.getId());
+                    vo.setEntityType(new Attribute<>(Entity.ALBUM.getName(), Entity.ALBUM.getValue()));
                     vo.setEntityTypeName(Entity.ALBUM.getTableName());
                     vo.setEntityId(r.getRelatedEntityId());
-                    Album item = DataFinder.findAlbumById(r.getId(), items);
+                    Album item = DataFinder.findAlbumById(r.getRelatedEntityId(), items);
                     if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());
@@ -81,10 +82,11 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
                 List<Product> items = productMapper.selectList(new LambdaQueryWrapper<Product>().eq(Product::getStatus, 1).in(Product::getId, ids));
                 for (EntityRelation r : currentRelations) {
                     RelatedItemVO vo = new RelatedItemVO();
-                    vo.setEntityType(Entity.PRODUCT.getValue());
+                    vo.setId(r.getId());
+                    vo.setEntityType(new Attribute<>(Entity.PRODUCT.getName(), Entity.PRODUCT.getValue()));
                     vo.setEntityTypeName(Entity.PRODUCT.getTableName());
                     vo.setEntityId(r.getRelatedEntityId());
-                    Product item = DataFinder.findProductById(r.getId(), items);
+                    Product item = DataFinder.findProductById(r.getRelatedEntityId(), items);
                     if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());

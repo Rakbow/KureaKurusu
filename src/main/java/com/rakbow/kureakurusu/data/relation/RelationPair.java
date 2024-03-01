@@ -12,16 +12,16 @@ import lombok.Data;
 public class RelationPair {
 
     private Long id;
-    private int entityType;
     private long entityId;
-    private Attribute<Integer> type;
+    private Attribute<Integer> entityType;
+    private Attribute<Integer> relationType;
     private int action;
 
     public RelationPair() {
         id = 0L;
-        entityType = 0;
         entityId = 0L;
-        type = new Attribute<>();
+        entityType = new Attribute<>();
+        relationType = new Attribute<>();
         action = DataActionType.NO_ACTION.getValue();
     }
 

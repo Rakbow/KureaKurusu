@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
 import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
+import com.rakbow.kureakurusu.data.dto.relation.RelationManageCmd;
 import com.rakbow.kureakurusu.data.dto.relation.RelationQry;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
 import com.rakbow.kureakurusu.data.system.ApiResult;
@@ -80,6 +81,19 @@ public class RelationController {
         try {
             srv.deleteRelations(cmd.getIds());
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", I18nHelper.getMessage("enum.entity.relation")));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage(), e);
+        }
+        return res;
+    }
+
+    @PostMapping("manage-relation")
+    public ApiResult manageRelation(@RequestBody RelationManageCmd cmd) {
+        ApiResult res = new ApiResult();
+        try {
+            srv.manageRelation(cmd);
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", I18nHelper.getMessage("enum.entity.relation")));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
