@@ -2,7 +2,9 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.base.DetailQry;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
+import com.rakbow.kureakurusu.data.dto.common.CommonDetailQty;
 import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
 import com.rakbow.kureakurusu.data.dto.product.ProductAddDTO;
 import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
@@ -111,6 +113,18 @@ public class ProductController {
         try {
             srv.deleteProducts(cmd.getIds());
             res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.PRODUCT.getName()));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage(), e);
+        }
+        return res;
+    }
+
+    @PostMapping("get-related-products")
+    public ApiResult getRelatedProducts(@RequestBody CommonDetailQty qry) {
+        ApiResult res = new ApiResult();
+        try {
+            res.loadData(srv.getRelatedProducts(qry.getId()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

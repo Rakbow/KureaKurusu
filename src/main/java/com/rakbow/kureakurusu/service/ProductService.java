@@ -73,6 +73,16 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     //region ------basic crud------
 
     @Transactional
+    public List<ProductMiniVO> getRelatedProducts(long franchiseId) {
+        List<Product> products = mapper.selectList(
+                new LambdaQueryWrapper<Product>()
+                        .eq(Product::getFranchise, franchiseId)
+                        .eq(Product::getStatus, 1)
+        );
+        return VOMapper.toMiniVO(products);
+    }
+
+    @Transactional
     public SearchResult<ProductMiniVO> searchProducts(SimpleSearchParam param) {
 
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()

@@ -26,7 +26,7 @@ public class Product extends MetaEntity {
     private String nameZh;//中文译名
     private String nameEn;//英文译名
     private String releaseDate;//日期
-    private int franchise;//所属系列id
+    private long franchise;//所属系列id
     private ProductCategory category;//作品分类
 
     public Product() {
@@ -35,7 +35,7 @@ public class Product extends MetaEntity {
         this.nameZh = "";
         this.nameEn = "";
         this.releaseDate = "";
-        this.franchise = 0;
+        this.franchise = 0L;
         this.category = ProductCategory.MISC;
         this.setImages(new ArrayList<>());
         this.setDetail("");
