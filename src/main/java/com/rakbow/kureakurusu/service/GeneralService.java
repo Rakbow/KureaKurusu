@@ -105,6 +105,9 @@ public class GeneralService {
         MetaData.optionsZh.relationTypeSet = EnumHelper.getAttributeOptions(RelatedType.class, "zh");
         MetaData.optionsEn.relationTypeSet = EnumHelper.getAttributeOptions(RelatedType.class, "en");
 
+        MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(Entity.class, "zh");
+        MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(Entity.class, "en");
+
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
 

@@ -60,6 +60,8 @@ public class EntityUtil {
             options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
         } else if (entityType == 0) {
             options.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
+            options.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
+            options.put("relationTypeSet", Objects.requireNonNull(MetaData.getOptions()).relationTypeSet);
         }
 
         return options;

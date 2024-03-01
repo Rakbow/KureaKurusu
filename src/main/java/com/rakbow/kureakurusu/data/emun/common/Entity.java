@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.common;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public enum Entity {
     PRODUCT(99, "enum.entity.product", "product"),
     FRANCHISE(100, "enum.entity.franchise", "franchise");
 
+    @EnumValue
     private final Integer value;
     private final String labelKey;
     private final String tableName;
@@ -41,5 +43,13 @@ public enum Entity {
                 .findFirst()
                 .map(Entity::getTableName)
                 .orElse(null);
+    }
+
+    public static Entity get(int value) {
+        for (Entity type : Entity.values()) {
+            if(type.value == value)
+                return type;
+        }
+        return ENTRY;
     }
 }

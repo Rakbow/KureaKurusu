@@ -59,9 +59,9 @@ public class EntityRelation {
         id = pair.getId();
         this.entityType = entityType;
         this.entityId = entityId;
-        this.relatedEntityType = pair.getEntityType();
+        this.relatedEntityType = pair.getEntityType().getValue();
         this.relatedEntityId = pair.getEntityId();
-        this.relatedType = RelatedType.get(pair.getType().getValue());
+        this.relatedType = RelatedType.get(pair.getRelationType().getValue());
         this.addedTime = DateHelper.now();
         this.editedTime = DateHelper.now();
         this.status = true;

@@ -23,6 +23,7 @@ public class MetaOption {
     public List<Attribute<Integer>> mediaFormatSet;
     public List<Attribute<Integer>> productCategorySet;
     public List<Attribute<Integer>> relationTypeSet;
+    public List<Attribute<Integer>> entityTypeSet;
 
     public MetaOption() {
         genderSet = new ArrayList<>();
@@ -35,6 +36,7 @@ public class MetaOption {
         mediaFormatSet = new ArrayList<>();
         productCategorySet = new ArrayList<>();
         relationTypeSet = new ArrayList<>();
+        entityTypeSet = new ArrayList<>();
     }
 
 }
