@@ -18,10 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 通过七牛云api实现文件的增删改查
@@ -88,7 +85,7 @@ public class QiniuBaseUtil {
             }
 
             // 通过随机UUID生成唯一文件名 长度：16
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "\\" + fileExt;
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "." + fileExt;
 
             // 生成完整文件名，例：album/11/xxx.jpg
             String fullFileName = filePath + fileName;
@@ -99,7 +96,8 @@ public class QiniuBaseUtil {
             // 打印返回的信息
             if (res.isOK() && res.isJson()) {
                 // 返回存储文件的地址
-                ar.data = FILE_DOMAIN + JsonUtil.getValueByKey("key", res.bodyString());
+                HashMap<String, String> resDic = JsonUtil.to(res.bodyString(), HashMap.class);
+                ar.data = FILE_DOMAIN + resDic.get("key");
             } else {
                 ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
             }
