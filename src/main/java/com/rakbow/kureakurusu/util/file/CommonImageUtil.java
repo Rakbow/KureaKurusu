@@ -107,9 +107,9 @@ public class CommonImageUtil {
 
     public static String getThumbCoverUrl(List<Image> images) {
         for (Image image : images) {
-            if (image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70);
+            if (image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50);
         }
-        return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_70);
+        return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
     }
 
     /**
