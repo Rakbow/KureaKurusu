@@ -5,6 +5,7 @@ import com.rakbow.kureakurusu.data.dto.product.ProductAddDTO;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.vo.product.ProductMiniVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.util.common.DataFinder;
@@ -36,6 +37,13 @@ public interface ProductVOMapper extends CommonVOMapper {
     @ToVO
     @Named("toVO")
     ProductVO toVO(Product product);
+
+    @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
+    @Named("toMiniVO")
+    ProductMiniVO toMiniVO(Product product);
+
+    @IterableMapping(qualifiedByName = "toMiniVO")
+    List<ProductMiniVO> toMiniVO(List<Product> products);
 
     @Mapping(source = "category", target = "category", qualifiedByName = "getCategoryAttribute")
     @Mapping(source = "franchise", target = "franchise", qualifiedByName = "getFranchise")

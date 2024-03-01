@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductUpdateDTO;
@@ -16,10 +17,11 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
+import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
+import com.rakbow.kureakurusu.data.vo.product.ProductMiniVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
-import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
@@ -69,6 +71,23 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     //endregion
 
     //region ------basic crud------
+
+    @Transactional
+    public SearchResult<ProductMiniVO> searchProducts(SimpleSearchParam param) {
+
+        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
+                .or().like(Product::getName, param.getKeyword())
+                .or().like(Product::getNameZh, param.getKeyword())
+                .or().like(Product::getNameEn, param.getKeyword())
+                .eq(Product::getStatus, 1)
+                .orderByDesc(Product::getId);
+
+        IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+
+        List<ProductMiniVO> items = VOMapper.toMiniVO(pages.getRecords());
+
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
 
     @Transactional
     public SearchResult<ProductVOAlpha> getProducts(QueryParams param) {
