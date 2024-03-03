@@ -33,7 +33,7 @@ public interface ProductVOMapper extends CommonVOMapper {
 
     @Mapping(source = "category.labelKey", target = "category.label", qualifiedByName = "getEnumLabel")
     @Mapping(source = "category.value", target = "category.value")
-    @Mapping(target = "franchise", ignore = true)
+    @Mapping(source = "franchise", target = "franchise", qualifiedByName = "getFranchise")
     @ToVO
     @Named("toVO")
     ProductVO toVO(Product product);

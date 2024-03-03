@@ -23,7 +23,6 @@ public class ProductAddDTO extends DTO {
     @NotBlank(message = "{entity.crud.date.required_field}")
     private String releaseDate;
     private int franchise;
-    @NotEmpty(message = "{entity.crud.category.required_field}")
     private int category;
     private String remark;
 

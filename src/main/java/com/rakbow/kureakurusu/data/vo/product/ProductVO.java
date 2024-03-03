@@ -22,7 +22,7 @@ public class ProductVO {
     private Attribute<Integer> category;//作品分类
     private String remark;//备注
 
-    private Attribute<Integer> franchise;//所属系列
+    private Attribute<Long> franchise;//所属系列
     private String addedTime;
     private String editedTime;
 
