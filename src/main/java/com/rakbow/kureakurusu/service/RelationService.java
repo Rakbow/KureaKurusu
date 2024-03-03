@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -90,8 +91,8 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
                     if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());
-                    vo.setNameZh(item.getNameZh());
-                    vo.setNameEn(item.getNameEn());
+                    vo.setNameZh(item.getNameZh() + "/(" + I18nHelper.getMessage(item.getCategory().getLabelKey(), Locale.CHINA) + ")");
+                    vo.setNameEn(item.getNameEn() + "/(" + I18nHelper.getMessage(item.getCategory().getLabelKey(), Locale.ENGLISH) + ")");
                     vo.setRelationType(new Attribute<>(I18nHelper.getMessage(r.getRelatedType().getLabelKey()), r.getRelatedType().getValue()));
                     res.add(vo);
                 }

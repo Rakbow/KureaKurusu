@@ -26,9 +26,6 @@ public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @Value("${kureakurusu.path.upload}")
-    private String uploadPath;
-
     @Value("${kureakurusu.path.domain}")
     private String domain;
 
