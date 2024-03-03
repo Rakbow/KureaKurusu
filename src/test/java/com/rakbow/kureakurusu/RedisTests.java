@@ -2,19 +2,20 @@ package com.rakbow.kureakurusu;
 
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.entity.EntityStatistic;
 import com.rakbow.kureakurusu.service.*;
-import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.LikeUtil;
+import com.rakbow.kureakurusu.util.common.RedisUtil;
+import com.rakbow.kureakurusu.util.common.VisitUtil;
+import jakarta.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import jakarta.annotation.Resource;
 import java.util.List;
-import java.util.Locale;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -53,42 +54,6 @@ public class RedisTests {
     private LikeUtil likeUtil;
     @Resource
     private RedisUtil redisUtil;
-    @Resource
-    private RelatedInfoUtil relatedInfoUtil;
-    @Resource
-    private EntryService entryService;
-
-    @Test
-    public void refreshData() {
-
-        redisUtil.set(String.format(RedisKey.REGION_SET, Region.getAttributeSet(Locale.ENGLISH.getLanguage())),
-                Region.getAttributeSet(Locale.ENGLISH.getLanguage()));
-        redisUtil.set(String.format(RedisKey.REGION_SET, Region.getAttributeSet(Locale.CHINESE.getLanguage())),
-                Region.getAttributeSet(Locale.CHINESE.getLanguage()));
-        redisUtil.set(String.format(RedisKey.LANGUAGE_SET, Region.getAttributeSet(Locale.ENGLISH.getLanguage())),
-                Region.getAttributeSet(Locale.ENGLISH.getLanguage()));
-        redisUtil.set(String.format(RedisKey.LANGUAGE_SET, Region.getAttributeSet(Locale.CHINESE.getLanguage())),
-                Region.getAttributeSet(Locale.CHINESE.getLanguage()));
-
-        // EmunUtil.refreshRedisEmunData();
-        entryService.refreshRedisEntries(0);
-        entryService.refreshRedisEntries(1);
-        entryService.refreshRedisEntries(2);
-        entryService.refreshRedisEntries(3);
-        entryService.refreshRedisEntries(4);
-        entryService.refreshRedisEntries(5);
-        entryService.refreshRedisEntries(9);
-        entryService.refreshRedisEntries(10);
-
-        // entityService.refreshRedisEntries(EntryCategory.COMPANY);
-        // productService.refreshRedisProducts();
-        // franchiseService.refreshRedisFranchises();
-        // entryService.refreshRedisEntries(EntryCategory.ROLE);
-        // entryService.refreshRedisEntries(EntryCategory.PERSONNEL.getId());
-        // entryService.refreshRedisEntries(EntryCategory.SPEC_PARAMETER);
-        // entryService.refreshRedisEntries(EntryCategory.PUBLICATION);
-        // entryService.refreshRedisEntries(EntryCategory.COMPANY);
-    }
 
     @Test
     public void redisTest1() {

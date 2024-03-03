@@ -6,11 +6,10 @@ import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.LinkType;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
-import com.rakbow.kureakurusu.data.emun.common.RelatedType;
+import com.rakbow.kureakurusu.data.emun.common.*;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
+import com.rakbow.kureakurusu.data.emun.entity.book.BookType;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
@@ -107,6 +106,18 @@ public class GeneralService {
 
         MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(Entity.class, "zh");
         MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(Entity.class, "en");
+
+        MetaData.optionsZh.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "zh");
+        MetaData.optionsEn.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "en");
+
+        MetaData.optionsZh.regionSet = EnumHelper.getAttributeStrOptions(Region.class, "zh");
+        MetaData.optionsEn.regionSet = EnumHelper.getAttributeStrOptions(Region.class, "en");
+
+        MetaData.optionsZh.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "zh");
+        MetaData.optionsEn.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "en");
+
+        MetaData.optionsZh.currencySet = EnumHelper.getAttributeStrOptions(Currency.class, "zh");
+        MetaData.optionsEn.currencySet = EnumHelper.getAttributeStrOptions(Currency.class, "en");
 
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
