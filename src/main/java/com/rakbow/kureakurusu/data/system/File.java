@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.system;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,7 +8,6 @@ import lombok.Data;
  * @author Rakbow
  * @since 2024/1/5 15:39
  */
-@Builder
 @Data
 public class File {
 
@@ -18,10 +18,21 @@ public class File {
     private String uploadTime; //上传时间
     private String uploadUser; //上传用户
 
+    public File() {
+        url = "";
+        name = "";
+        type = "";
+        size = 0;
+        uploadTime = "";
+        uploadUser = "";
+    }
+
+    @JsonIgnore
     public boolean isText() {
         return this.type.contains("text");
     }
 
+    @JsonIgnore
     public boolean isAudio() {
         return this.type.contains("audio");
     }

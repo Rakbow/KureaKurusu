@@ -57,14 +57,12 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                 ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.AUDIO);
             }
             if (ar.state) {
-                File file = File.builder()
-                        .url(ar.data.toString())
-                        .name(fileInfos.get(i).getName())
-                        .size(fileInfos.get(i).getSize())
-                        .type(fileInfos.get(i).getType())
-                        .uploadTime(DateHelper.nowStr())
-//                        .uploadUser(user.getUsername())
-                        .build();
+                File file = new File();
+                file.setUrl(ar.data.toString());
+                file.setName(fileInfos.get(i).getName());
+                file.setSize(fileInfos.get(i).getSize());
+                file.setType(fileInfos.get(i).getType());
+                file.setUploadTime(DateHelper.nowStr());
                 finalFiles.add(file);
             }
         }
