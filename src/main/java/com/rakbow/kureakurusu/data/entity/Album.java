@@ -3,9 +3,9 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.emun.common.Currency;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.handler.ImageHandler;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,12 +37,10 @@ public class Album extends MetaEntity {
     private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> mediaFormat;//媒体类型
-    private int price;//发行价格（含税）
-    private String currencyUnit;
-    private int hasBonus;//是否包含特典内容 0-无 1-有
+    private double price;//发行价格（含税）
+    private Currency currency;
+    private Boolean hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
-    private String franchises;//所属系列
-    private String products;//所属产品id 在mysql中以数组字符串形式存储
 
     public Album() {
 
@@ -57,11 +55,9 @@ public class Album extends MetaEntity {
         this.albumFormat = new ArrayList<>();
         this.mediaFormat = new ArrayList<>();
         this.price = 0;
-        this.currencyUnit = "";
-        this.hasBonus = 0;
+        this.currency = Currency.JPY;
+        this.hasBonus = true;
         this.bonus = "";
-        this.franchises = "[]";
-        this.products = "[]";
         this.setDetail("");
         this.setRemark("");
         this.setImages(new ArrayList<>());

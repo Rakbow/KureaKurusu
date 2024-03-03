@@ -44,14 +44,15 @@ public interface AlbumVOMapper extends CommonVOMapper {
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
+    @Mapping(source = "currency.value", target = "currency")
     @Mapping(target = "trackInfo", ignore = true)
     @ToVO
     AlbumVO toVO(Album album);
 
-    @Mapping(target = "hasBonus", source = "hasBonus", qualifiedByName = "getBool")
     @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
     @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
     @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
+    @Mapping(source = "currency.value", target = "currency")
     @Mapping(target = "cover", ignore = true)
     @Mapping(target = "visitNum", ignore = true)
     @ToVO

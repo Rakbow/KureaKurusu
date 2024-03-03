@@ -32,8 +32,8 @@ public class AlbumUpdateDTO extends DTO {
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
 
-    private int price;
-    private String currencyUnit;
+    private double price;
+    private String currency;
     private boolean hasBonus;
     private String remark;
 }

@@ -1,7 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.album;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
@@ -25,8 +23,8 @@ public class AlbumVO {
     private String barcode;//商品条形码
     private String releaseDate;//发行日期
     private int price;//发行价格（含税）
-    private String currencyUnit;//货币单位
-    private int hasBonus;//是否包含特典内容
+    private String currency;//货币单位
+    private boolean hasBonus;//是否包含特典内容
     private String remark;//备注
 
     //规格信息

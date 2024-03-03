@@ -25,7 +25,7 @@ public class AlbumVOAlpha {
     private String barcode;//商品条形码
     private String releaseDate;//发行日期
     private int price;//发行价格（含税）
-    private String currencyUnit;//货币单位
+    private String currency;//货币单位
     private boolean hasBonus;//是否包含特典内容
     private String remark;//备注
 

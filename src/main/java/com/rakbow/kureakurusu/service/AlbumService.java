@@ -23,10 +23,7 @@ import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.common.EntityUtil;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
+import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
@@ -150,11 +147,11 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                         .set(Album::getBarcode, dto.getBarcode())
                         .set(Album::getReleaseDate, dto.getReleaseDate())
                         .set(Album::getPrice, dto.getPrice())
-                        .set(Album::getCurrencyUnit, dto.getCurrencyUnit())
+                        .set(Album::getCurrency, dto.getCurrency())
                         .set(Album::getHasBonus, dto.isHasBonus())
-                        .set(Album::getAlbumFormat, dto.getAlbumFormat())
-                        .set(Album::getMediaFormat, dto.getMediaFormat())
-                        .set(Album::getPublishFormat, dto.getPublishFormat())
+                        .set(Album::getAlbumFormat, JsonUtil.toJson(dto.getAlbumFormat()))
+                        .set(Album::getMediaFormat, JsonUtil.toJson(dto.getMediaFormat()))
+                        .set(Album::getPublishFormat, JsonUtil.toJson(dto.getPublishFormat()))
                         .set(Album::getRemark, dto.getRemark())
                         .set(Album::getEditedTime, DateHelper.now())
         );
