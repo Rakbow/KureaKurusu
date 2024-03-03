@@ -52,6 +52,7 @@ public class EntityUtil {
             options.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
             options.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
             options.put("publishFormatSet", Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
+            options.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
         } else if (entityType == Entity.PRODUCT.getValue()) {
             options.put("franchiseSet", Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
             options.put("productCategorySet", Objects.requireNonNull(MetaData.getOptions()).productCategorySet);

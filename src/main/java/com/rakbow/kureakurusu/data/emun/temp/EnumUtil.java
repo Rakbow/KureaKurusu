@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.emun.temp;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.emun.common.CompanyRole;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
@@ -27,7 +26,7 @@ import java.util.*;
 public class EnumUtil {
 
     public static final Class[] SUPPORTED_EMUN = {
-            CompanyRole.class, MediaFormat.class,
+            MediaFormat.class,
             AlbumFormat.class, PublishFormat.class,
             BookType.class,
             GamePlatform.class, ReleaseType.class,
@@ -36,7 +35,6 @@ public class EnumUtil {
     };
 
     public static final Map<Class, String> EMUN_REDIS_KEY_PAIR = Map.ofEntries(
-            Map.entry(CompanyRole.class, RedisKey.COMPANY_SET),
             Map.entry(MediaFormat.class, RedisKey.MEDIA_FORMAT_SET),
             Map.entry(AlbumFormat.class, RedisKey.ALBUM_FORMAT_SET),
             Map.entry(PublishFormat.class, RedisKey.PUBLISH_FORMAT_SET),

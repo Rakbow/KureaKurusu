@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.emun.entity.book;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,22 +9,28 @@ import lombok.Getter;
  * @author Rakbow
  * @since 2022-12-29 21:29
  */
+@Getter
 @AllArgsConstructor
 public enum BookType {
 
-    UNCATEGORIZED(0,"未分类", "Uncategorized"),
-    NOVEL(1,"小说", "Novel"),
-    COMIC(2,"漫画", "Comic"),
-    ANTHOLOGY(3,"作品集", "Anthology"),
-    ART_BOOK(4,"原画集/设定集", "Art Book"),
-    ELECTRONIC_BOOK(5,"电子书", "E-book"),
-    OTHER(6,"其他", "Other");
+    UNCATEGORIZED(0,"enum.book_type.uncategorized"),
+    NOVEL(1,"enum.book_type.novel"),
+    COMIC(2,"enum.book_type.manga"),
+    ANTHOLOGY(3,"enum.book_type.anthology"),
+    ART_BOOK(4,"enum.book_type.art_book"),
+    ELECTRONIC_BOOK(5,"enum.book_type.e_book"),
+    OTHER(6,"enum.book_type.other");
 
-    @Getter
-    private final int id;
-    @Getter
-    private final String nameZh;
-    @Getter
-    private final String nameEn;
+    @EnumValue
+    private final int value;
+    private final String labelKey;
+
+    public static BookType get(int value) {
+        for (BookType type : BookType.values()) {
+            if(type.value == value)
+                return type;
+        }
+        return UNCATEGORIZED;
+    }
 
 }

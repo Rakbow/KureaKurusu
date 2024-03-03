@@ -50,6 +50,38 @@ public class EnumHelper {
         return attributes;
     }
 
+    public static <T extends Enum<T>> List<Attribute<String>> getAttributeStrOptions(Class<T> clazz, String lang) {
+        List<Attribute<String>> attributes = new ArrayList<>();
+        for (T enumValue : clazz.getEnumConstants()) {
+            try {
+                Field valueField = clazz.getDeclaredField("value");
+                valueField.setAccessible(true);
+                String value = (String) valueField.get(enumValue);
+
+                // 获取 getLabelKey 方法
+                Method getLabelKeyMethod = clazz.getDeclaredMethod("getLabelKey");
+
+                // 调用 getLabelKey 方法
+                Object result = getLabelKeyMethod.invoke(enumValue);
+
+                // 将结果转换为字符串
+                String labelKey = result.toString();
+
+                String label = I18nHelper.getMessage(labelKey, lang);
+
+                Attribute<String> attribute = new Attribute<>(label, value);
+
+                attributes.add(attribute);
+
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                // handle exception
+            } catch (InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return attributes;
+    }
+
     public static List<Attribute<Integer>> getAttributes(List<Attribute<Integer>> attributes, String idsStr) {
 
         int[] values = JsonUtil.to(idsStr, int[].class);
