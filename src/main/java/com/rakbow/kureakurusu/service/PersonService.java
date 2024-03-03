@@ -84,7 +84,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
                 .set(Person::getName, dto.getName())
                 .set(Person::getNameZh, dto.getNameZh())
                 .set(Person::getNameEn, dto.getNameEn())
-                .set(Person::getGender, dto.getGender().getValue())
+                .set(Person::getGender, dto.getGender())
                 .set(Person::getBirthDate, dto.getBirthDate())
                 .set(Person::getAliases, CommonUtil.getListStr(dto.getAliases()))
                 .set(Person::getRemark, dto.getRemark())

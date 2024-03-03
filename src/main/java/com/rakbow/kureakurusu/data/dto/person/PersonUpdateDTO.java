@@ -20,11 +20,10 @@ public class PersonUpdateDTO extends DTO {
     private String nameZh;
     private String nameEn;
     private List<String> aliases;
-    private Attribute<Integer> gender;
+    private int gender;
     private String birthDate;
     private String remark;
     private String addedTime;
     private String editedTime;
-    private int status;
 
 }
