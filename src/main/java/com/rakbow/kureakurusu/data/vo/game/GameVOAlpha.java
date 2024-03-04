@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.vo.game;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class GameVOAlpha {
     //复杂字段
     private Attribute<Integer> releaseType;//发售类型
     private Attribute<Integer> platform;//平台
-    private RegionVO region;//地区
+    private Attribute<String> region;//地区
 
     //图片相关
     private JSONObject cover;

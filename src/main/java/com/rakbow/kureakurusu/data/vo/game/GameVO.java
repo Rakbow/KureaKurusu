@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.vo.game;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 /**
@@ -27,7 +26,7 @@ public class GameVO {
     //复杂字段
     private Attribute<Integer> releaseType;//发售类型
     private Attribute<Integer> platform;//平台
-    private RegionVO region;//地区
+    private Attribute<String> region;//地区
     private JSONArray organizations;//相关组织
     private JSONArray staffs;//开发制作人员
     private String bonus;//特典信息

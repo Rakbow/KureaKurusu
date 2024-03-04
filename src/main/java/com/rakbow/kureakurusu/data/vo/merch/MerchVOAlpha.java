@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.vo.merch;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class MerchVOAlpha {
 
     //复杂字段
     private Attribute<Integer> category;//商品分类
-    private RegionVO region;//地区
+    private Attribute<String> region;//地区
 
     //图片
     private JSONObject cover;

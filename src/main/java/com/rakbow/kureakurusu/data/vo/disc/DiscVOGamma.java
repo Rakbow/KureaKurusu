@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.vo.disc;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class DiscVOGamma {
     private String name;//商品名(原语言)
     private String nameZh;//商品译名(中)
     private String nameEn;//商品译名(英)
-    private RegionVO region;//地区
+    private Attribute<String> region;//地区
     private String releaseDate;//发行日期
     private boolean limited;//发售版本是否为限定版 0-否 1-是
     private boolean hasBonus;//是否包含特典

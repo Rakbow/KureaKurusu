@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.data.vo.game;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class GameVOGamma {
     private List<Attribute<Integer>> products;//所属产品
 
     private Attribute<Integer> platform;//平台
-    private RegionVO region;//地区
+    private Attribute<String> region;//地区
 
     private String cover;
 

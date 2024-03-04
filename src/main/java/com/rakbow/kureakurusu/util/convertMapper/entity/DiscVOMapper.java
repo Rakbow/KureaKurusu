@@ -1,18 +1,7 @@
 package com.rakbow.kureakurusu.util.convertMapper.entity;
 
-import com.rakbow.kureakurusu.data.vo.disc.DiscVO;
-import com.rakbow.kureakurusu.data.vo.disc.DiscVOAlpha;
-import com.rakbow.kureakurusu.data.vo.disc.DiscVOBeta;
-import com.rakbow.kureakurusu.data.vo.disc.DiscVOGamma;
-import com.rakbow.kureakurusu.data.entity.Disc;
-import com.rakbow.kureakurusu.util.common.LikeUtil;
-import com.rakbow.kureakurusu.util.common.SpringUtil;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Rakbow

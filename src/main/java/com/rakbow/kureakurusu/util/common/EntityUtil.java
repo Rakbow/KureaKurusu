@@ -59,6 +59,11 @@ public class EntityUtil {
         } else if (entityType == Entity.PERSON.getValue()) {
             options.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
             options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
+        } else if (entityType == Entity.BOOK.getValue()) {
+            options.put("regionSet", Objects.requireNonNull(MetaData.getOptions()).regionSet);
+            options.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
+            options.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
+            options.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
         } else if (entityType == 0) {
             options.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
             options.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
