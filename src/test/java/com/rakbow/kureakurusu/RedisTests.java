@@ -3,7 +3,10 @@ package com.rakbow.kureakurusu;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.entity.EntityStatistic;
-import com.rakbow.kureakurusu.service.*;
+import com.rakbow.kureakurusu.service.AlbumService;
+import com.rakbow.kureakurusu.service.FranchiseService;
+import com.rakbow.kureakurusu.service.ProductService;
+import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
@@ -24,8 +27,6 @@ public class RedisTests {
 
     @Resource
     private UserService userService;
-    @Resource
-    private EntityService entityService;
     @Resource
     private AlbumService albumService;
     @Resource
