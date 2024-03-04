@@ -15,6 +15,7 @@ import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
+import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.entity.Product;
@@ -167,17 +168,17 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     @Transactional
     public void deleteProducts(List<Long> ids) {
         //get original data
-        List<Product> products = mapper.selectBatchIds(ids);
-        for (Product product : products) {
+        List<Product> items = mapper.selectBatchIds(ids);
+        for (Product item : items) {
             //delete all image
-            qiniuFileUtil.deleteAllImage(product.getImages());
-            //delete product
-            mapper.deleteById(product.getId());
+            qiniuFileUtil.deleteAllImage(item.getImages());
             //delete visit record
-            visitUtil.deleteVisit(ENTITY_VALUE, product.getId());
-            //delete person relation
-            relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityId, product.getId()));
+            visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
         }
+        //delete
+        mapper.delete(new LambdaQueryWrapper<Product>().in(Product::getId, ids));
+        //delete person relation
+        relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityType, ENTITY_VALUE).in(PersonRelation::getEntityId, ids));
     }
 
     //endregion

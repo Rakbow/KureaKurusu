@@ -114,17 +114,17 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     @Transactional
     public void deleteAlbums(List<Long> ids) {
         //get original data
-        List<Album> albums = mapper.selectBatchIds(ids);
-        for (Album album : albums) {
+        List<Album> items = mapper.selectBatchIds(ids);
+        for (Album item : items) {
             //delete all image
-            qiniuFileUtil.deleteAllImage(album.getImages());
-            //delete album
-            mapper.deleteById(album.getId());
+            qiniuFileUtil.deleteAllImage(item.getImages());
             //delete visit record
-            visitUtil.deleteVisit(ENTITY_VALUE, album.getId());
-            //delete person relation
-            relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityId, album.getId()));
+            visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
         }
+        //delete
+        mapper.delete(new LambdaQueryWrapper<Album>().in(Album::getId, ids));
+        //delete person relation
+        relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityType, ENTITY_VALUE).in(PersonRelation::getEntityId, ids));
         //delete related episode
         epMapper.delete(new LambdaQueryWrapper<Episode>().in(Episode::getRelatedId, ids));
     }

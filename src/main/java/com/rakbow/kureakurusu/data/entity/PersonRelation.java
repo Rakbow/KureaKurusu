@@ -17,8 +17,6 @@ public class PersonRelation {
     private Long id;
     private long personId;
     private long roleId;
-    // @TableField(typeHandler = EnumTypeHandler.class)
-    // private Entity entityType;
     private int entityType;
     private long entityId;
     private int main;
