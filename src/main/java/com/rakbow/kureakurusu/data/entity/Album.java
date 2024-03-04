@@ -56,7 +56,7 @@ public class Album extends MetaEntity {
         this.mediaFormat = new ArrayList<>();
         this.price = 0;
         this.currency = Currency.JPY;
-        this.hasBonus = true;
+        this.hasBonus = false;
         this.bonus = "";
         this.setDetail("");
         this.setRemark("");

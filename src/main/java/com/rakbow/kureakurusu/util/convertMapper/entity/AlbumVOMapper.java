@@ -30,7 +30,7 @@ public interface AlbumVOMapper extends CommonVOMapper {
 
     //region single convert interface
 
-    @Mapping(source = "hasBonus", target = "hasBonus", qualifiedByName = "getBool")
+    @Mapping(source = "currency", target = "currency", qualifiedByName = "getCurrency")
     @Named("build")
     Album build(AlbumAddDTO dto);
 
@@ -60,7 +60,7 @@ public interface AlbumVOMapper extends CommonVOMapper {
     AlbumVOAlpha toVOAlpha(Album album);
 
     @IterableMapping(qualifiedByName = "toVOAlpha")
-    List<AlbumVOAlpha> toVOAlpha(List<Album> products);
+    List<AlbumVOAlpha> toVOAlpha(List<Album> albums);
 
     @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
     @Named("toMiniVO")

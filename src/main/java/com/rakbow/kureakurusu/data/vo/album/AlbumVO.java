@@ -15,14 +15,14 @@ import java.util.List;
 public class AlbumVO {
 
     //基础
-    private int id;//表主键
+    private long id;//表主键
     private String catalogNo;//专辑编号
     private String name;//专辑名称（日语）
     private String nameZh;//专辑名称（中文）
     private String nameEn;//专辑名称（英语）
     private String barcode;//商品条形码
     private String releaseDate;//发行日期
-    private int price;//发行价格（含税）
+    private double price;//发行价格（含税）
     private String currency;//货币单位
     private boolean hasBonus;//是否包含特典内容
     private String remark;//备注

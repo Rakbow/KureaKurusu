@@ -221,6 +221,8 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     @Transactional
     public SearchResult<AlbumMiniVO> searchAlbums(SimpleSearchParam param) {
 
+        if(param.keywordEmpty()) new SearchResult<>();
+
         LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
                 .or().like(Album::getName, param.getKeyword())
                 .or().like(Album::getNameZh, param.getKeyword())
