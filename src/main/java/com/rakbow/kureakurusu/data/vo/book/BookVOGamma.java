@@ -3,8 +3,6 @@ package com.rakbow.kureakurusu.data.vo.book;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.LanguageVO;
-import com.rakbow.kureakurusu.data.vo.RegionVO;
 import lombok.Data;
 
 import java.util.List;
@@ -28,8 +26,8 @@ public class BookVOGamma {
     private List<String> authors;//作者信息
     private JSONObject bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
-    private RegionVO region;//地区
-    private LanguageVO publishLanguage;//语言
+    private Attribute<String> region;//地区
+    private Attribute<String> publishLanguage;//语言
     private String summary;//简介
     private boolean hasBonus;//是否包含特典
 
