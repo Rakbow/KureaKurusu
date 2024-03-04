@@ -87,13 +87,6 @@ public class RedisTests {
     }
 
     @Test
-    public void refreshIndexCoverUrls() {
-
-        entityService.refreshIndexCoverUrls();
-
-    }
-
-    @Test
     public void refreshRelatedInfos() {
 //        List<Album> albums = albumMapper.getAll();
 //        albums.forEach(album -> albumService.generateRelatedAlbumIds(album));
