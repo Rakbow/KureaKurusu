@@ -2,7 +2,10 @@ package com.rakbow.kureakurusu.util.convertMapper.entity;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
+import com.rakbow.kureakurusu.data.emun.common.Currency;
+import com.rakbow.kureakurusu.data.emun.common.Language;
 import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
+import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.util.EnumHelper;
@@ -55,6 +58,21 @@ public interface CommonVOMapper {
     @Named("getGender")
     default Gender getGender(int value) {
         return Gender.get(value);
+    }
+
+    @Named("getRegion")
+    default Region getRegion(String value) {
+        return Region.get(value);
+    }
+
+    @Named("getLanguage")
+    default Language getLanguage(String value) {
+        return Language.get(value);
+    }
+
+    @Named("getCurrency")
+    default Currency getCurrency(String value) {
+        return Currency.get(value);
     }
 
     @Named("getMediaFormat")

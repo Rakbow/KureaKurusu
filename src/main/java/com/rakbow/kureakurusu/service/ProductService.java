@@ -86,6 +86,8 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     @Transactional
     public SearchResult<ProductMiniVO> searchProducts(SimpleSearchParam param) {
 
+        if(param.keywordEmpty()) new SearchResult<>();
+
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
                 .or().like(Product::getName, param.getKeyword())
                 .or().like(Product::getNameZh, param.getKeyword())

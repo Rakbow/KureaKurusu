@@ -56,6 +56,13 @@ public class QueryParams {
         return (Boolean) value;
     }
 
+    public Integer getInteger(String key) {
+        Object value = this.filters.get(key).get(VALUE_KEY);
+        if(value == null)
+            return null;
+        return (Integer) value;
+    }
+
     @SuppressWarnings("unchecked")
     public <T> List<T> getArray(String key) {
         Object value = this.filters.get(key).get(VALUE_KEY);

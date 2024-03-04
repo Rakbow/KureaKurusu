@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data;
 
 import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Rakbow
@@ -13,6 +14,10 @@ public class SimpleSearchParam {
     private String keyword;
     private long page;
     private long size;
+
+    public boolean keywordEmpty() {
+        return StringUtils.isBlank(keyword);
+    }
 
     public SimpleSearchParam() {
         this.keyword = "";

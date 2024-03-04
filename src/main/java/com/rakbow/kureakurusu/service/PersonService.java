@@ -139,6 +139,8 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     @Transactional
     public SearchResult<PersonMiniVO> searchPersons(SimpleSearchParam param) {
 
+        if(param.keywordEmpty()) new SearchResult<>();
+
         LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
                 .and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
                 .or().like(Person::getName, param.getKeyword())
