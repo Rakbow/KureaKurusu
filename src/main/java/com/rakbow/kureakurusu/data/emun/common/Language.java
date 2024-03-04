@@ -1,15 +1,8 @@
 package com.rakbow.kureakurusu.data.emun.common;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.rakbow.kureakurusu.data.vo.LanguageVO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.util.Locale;
 
 /**
  * @author Rakbow
