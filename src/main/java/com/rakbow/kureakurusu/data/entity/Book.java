@@ -36,12 +36,7 @@ public class Book extends MetaEntity {
     private String isbn13;//国际标准书号（13位）
     private BookType bookType;//书籍类型
 
-    @TableField(typeHandler = LongListHandler.class)
-    private List<Long> products;//所属产品
     private String authors;//作者（译者，插画，原作者等，json）
-    private String companies;//相关企业
-    @TableField(typeHandler = LongListHandler.class)
-    private List<Long> serials;//连载载体
 
     private Region region;//地区
     private Language lang;//语言
@@ -62,12 +57,9 @@ public class Book extends MetaEntity {
         this.isbn10 = "";
         this.isbn13 = "";
         this.bookType = BookType.UNCATEGORIZED;
-        this.products = new ArrayList<>();
         this.region = Region.GLOBAL;
         this.lang = Language.JAPANESE;
         this.authors = "[]";
-        this.companies = "[]";
-        this.serials = new ArrayList<>();
         this.publishDate = "";
         this.price = 0;
         this.summary = "";

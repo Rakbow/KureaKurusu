@@ -2,14 +2,14 @@ package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.rakbow.kureakurusu.dao.AlbumMapper;
-import com.rakbow.kureakurusu.dao.BookMapper;
-import com.rakbow.kureakurusu.dao.EntityRelationMapper;
+import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.common.RelatedType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
+import com.rakbow.kureakurusu.data.entity.PersonRelation;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
@@ -19,7 +19,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -36,6 +38,8 @@ public class OtherTests {
     private BookMapper bookMapper;
     @Resource
     private EntityRelationMapper relationMapper;
+    @Resource
+    private PersonRelationMapper personRelationMapper;
     @Resource
     private SqlSessionFactory sqlSessionFactory;
 
@@ -89,9 +93,10 @@ public class OtherTests {
 
 
         for (Book item : items) {
-            if(item.getProducts().isEmpty()) continue;
+//            if(item.getProducts().isEmpty()) continue;
 
-            List<Long> productIds = item.getProducts();
+//            List<Long> productIds = item.getProducts();
+            List<Long> productIds = new ArrayList<>();
 //            List<Long> productIds = new ArrayList<>();
             for (long proId : productIds) {
                 long prodId = proId - 14;
@@ -117,6 +122,38 @@ public class OtherTests {
         MybatisBatch<EntityRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelations);
         batchInsert.execute(method.insert());
 
+    }
+
+    @Test
+    public void batchAddPersonRelationBook() {
+
+        List<Book> items = bookMapper.selectList(new LambdaQueryWrapper<Book>().ge(Book::getId, 96).le(Book::getId, 96));
+        List<PersonRelation> addRelations = new ArrayList<>();
+
+        int bookType = Entity.BOOK.getValue();
+
+        long role1Id = 10;
+        long person1Id = 2;
+        long role2Id = 67;
+        long person2Id = 11676;
+        for (Book item : items) {
+            PersonRelation r_1 = new PersonRelation();
+            r_1.setPersonId(person1Id);
+            r_1.setRoleId(role1Id);
+            r_1.setEntityType(bookType);
+            r_1.setEntityId(item.getId());
+            addRelations.add(r_1);
+            PersonRelation r_2 = new PersonRelation();
+            r_2.setPersonId(person2Id);
+            r_2.setRoleId(role2Id);
+            r_2.setEntityType(bookType);
+            r_2.setEntityId(item.getId());
+            r_2.setMain(1);
+            addRelations.add(r_2);
+        }
+        MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
+        MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelations);
+        batchInsert.execute(method.insert());
     }
 
 }
