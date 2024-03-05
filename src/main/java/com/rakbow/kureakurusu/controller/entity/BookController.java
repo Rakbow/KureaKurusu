@@ -75,7 +75,7 @@ public class BookController {
     public ApiResult search(@RequestBody SearchQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = srv.searchBooks(new SimpleSearchParam(qry));
+            res.data = srv.searchBooks(qry);
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

@@ -73,7 +73,7 @@ public class AlbumController {
     public ApiResult searchAlbum(@RequestBody SearchQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = srv.searchAlbums(new SimpleSearchParam(qry));
+            res.data = srv.searchAlbums(qry);
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

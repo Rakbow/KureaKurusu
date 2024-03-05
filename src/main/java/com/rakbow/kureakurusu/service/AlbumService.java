@@ -15,6 +15,7 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
 import com.rakbow.kureakurusu.data.dto.album.AlbumUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
@@ -219,8 +220,8 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     //region advance crud
 
     @Transactional
-    public SearchResult<AlbumMiniVO> searchAlbums(SimpleSearchParam param) {
-
+    public SearchResult<AlbumMiniVO> searchAlbums(SearchQry qry) {
+        SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();
 
         LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()

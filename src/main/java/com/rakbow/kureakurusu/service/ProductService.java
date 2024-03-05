@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.product.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
@@ -84,8 +85,8 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     }
 
     @Transactional
-    public SearchResult<ProductMiniVO> searchProducts(SimpleSearchParam param) {
-
+    public SearchResult<ProductMiniVO> searchProducts(SearchQry qry) {
+        SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();
 
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()

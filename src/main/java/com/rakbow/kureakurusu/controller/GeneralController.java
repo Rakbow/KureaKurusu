@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.AlbumService;
+import com.rakbow.kureakurusu.service.BookService;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -45,6 +46,7 @@ public class GeneralController {
     private static final Logger log = LoggerFactory.getLogger(GeneralController.class);
     private final GeneralService srv;
     private final AlbumService albumSrv;
+    private final BookService bookSrv;
     private final ProductService productSrv;
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -57,9 +59,11 @@ public class GeneralController {
         ApiResult res = new ApiResult();
         try {
             if(qry.getEntityType() == Entity.ALBUM.getValue())
-                res.data = albumSrv.searchAlbums(new SimpleSearchParam(qry.getParam()));
+                res.loadData(albumSrv.searchAlbums(qry.getParam()));
+            else if(qry.getEntityType() == Entity.BOOK.getValue())
+                res.loadData(bookSrv.searchBooks(qry.getParam()));
             else if(qry.getEntityType() == Entity.PRODUCT.getValue())
-                res.data = productSrv.searchProducts(new SimpleSearchParam(qry.getParam()));
+                res.loadData(productSrv.searchProducts(qry.getParam()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

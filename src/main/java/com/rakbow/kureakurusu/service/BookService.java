@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.album.AlbumDetailQry;
 import com.rakbow.kureakurusu.data.dto.base.CommonDetailQry;
+import com.rakbow.kureakurusu.data.dto.base.SearchQry;
 import com.rakbow.kureakurusu.data.dto.book.BookUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Book;
@@ -116,8 +117,8 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     }
 
     @Transactional
-    public SearchResult<BookMiniVO> searchBooks(SimpleSearchParam param) {
-
+    public SearchResult<BookMiniVO> searchBooks(SearchQry qry) {
+        SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();
 
         LambdaQueryWrapper<Book> wrapper = new LambdaQueryWrapper<Book>()
@@ -137,8 +138,8 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     public SearchResult<BookVOAlpha> getBooks(QueryParams param) {
 
         String title = param.getStr("title");
-        String titleZh = param.getStr("titleZh");
-        String titleEn = param.getStr("titleEn");
+//        String titleZh = param.getStr("titleZh");
+//        String titleEn = param.getStr("titleEn");
         String isbn10 = param.getStr("isbn10");
         String isbn13 = param.getStr("isbn13");
         String region = param.getStr("region");
@@ -147,13 +148,13 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
         Boolean hasBonus = param.getBool("hasBonus");
         LambdaQueryWrapper<Book> wrapper = new LambdaQueryWrapper<Book>()
                 .like(StringUtils.isNotBlank(title), Book::getTitle, title)
-                .like(StringUtils.isNotBlank(titleZh), Book::getTitleZh, titleZh)
-                .like(StringUtils.isNotBlank(titleEn), Book::getTitleEn, titleEn)
+//                .like(StringUtils.isNotBlank(titleZh), Book::getTitleZh, titleZh)
+//                .like(StringUtils.isNotBlank(titleEn), Book::getTitleEn, titleEn)
                 .like(StringUtils.isNotBlank(isbn10), Book::getIsbn10, isbn10)
                 .like(StringUtils.isNotBlank(isbn13), Book::getIsbn13, isbn13)
                 .eq(StringUtils.isNotBlank(region), Book::getRegion, region)
                 .eq(StringUtils.isNotBlank(lang), Book::getLang, lang)
-                .eq(bookType != null, Book::getBookType, bookType)
+                .eq(bookType != -1, Book::getBookType, bookType)
                 .eq(hasBonus != null, Book::getHasBonus, hasBonus);
 
         if(StringUtils.isNotBlank(param.sortField)) {
