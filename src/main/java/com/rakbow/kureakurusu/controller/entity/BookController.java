@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller.entity;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.base.CommonDetailQry;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;

@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.controller.entity;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.base.DetailQry;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.common.CommonDetailQty;
 import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
