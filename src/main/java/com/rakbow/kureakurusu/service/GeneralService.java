@@ -1,8 +1,6 @@
 package com.rakbow.kureakurusu.service;
 
-import com.rakbow.kureakurusu.dao.CommonMapper;
-import com.rakbow.kureakurusu.dao.FranchiseMapper;
-import com.rakbow.kureakurusu.dao.PersonRoleMapper;
+import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.LinkType;
@@ -16,6 +14,7 @@ import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
+import com.rakbow.kureakurusu.data.result.EntityStatisticInfo;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.util.EnumHelper;
@@ -32,7 +31,6 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,7 +56,11 @@ public class GeneralService {
     //region mapper
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
+    private final PersonMapper personMapper;
     private final FranchiseMapper franchiseMapper;
+    private final ProductMapper productMapper;
+    private final AlbumMapper albumMapper;
+    private final BookMapper bookMapper;
 
     //endregion
 
@@ -77,6 +79,25 @@ public class GeneralService {
     // }
 
     //region common
+
+    @Transactional
+    public List<EntityStatisticInfo> getStatisticInfo() {
+        List<EntityStatisticInfo> res = new ArrayList<>();
+
+        long franchiseCount = franchiseMapper.selectCount(null);
+        long productCount = productMapper.selectCount(null);
+        long personRoleCount = personRoleMapper.selectCount(null);
+        long albumCount = albumMapper.selectCount(null);
+        long bookCount = bookMapper.selectCount(null);
+        long total = franchiseCount + productCount + personRoleCount + albumCount + bookCount;
+        res.add(new EntityStatisticInfo(franchiseCount, total));
+        res.add(new EntityStatisticInfo(productCount, total));
+        res.add(new EntityStatisticInfo(personRoleCount, total));
+        res.add(new EntityStatisticInfo(albumCount, total));
+        res.add(new EntityStatisticInfo(bookCount, total));
+
+        return res;
+    }
 
     @Transactional
     public void loadMetaData() {

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.GetOptionQry;
 import com.rakbow.kureakurusu.data.dto.base.GeneralSearchQry;
@@ -53,6 +52,18 @@ public class GeneralController {
     private final EntityUtil entityUtil;
 
     //region common
+
+    @PostMapping("statistic-info")
+    public ApiResult getStatisticInfo() {
+        ApiResult res = new ApiResult();
+        try {
+            res.loadData(srv.getStatisticInfo());
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage(), e);
+        }
+        return res;
+    }
 
     @PostMapping("search")
     public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
