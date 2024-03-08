@@ -1,24 +1,25 @@
 package com.rakbow.kureakurusu.event;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.entity.Event;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
+import jakarta.annotation.Resource;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Rakbow
  * @since 2022-09-13 21:26
  */
-// @Component
+@Component
 public class EventProducer {
 
-    @Autowired
+    @Resource
     private KafkaTemplate kafkaTemplate;
 
     // 处理事件
     public void fireEvent(Event event) {
         // 将事件发布到指定的主题
-        kafkaTemplate.send(event.getTopic(), JSONObject.toJSONString(event));
+        kafkaTemplate.send(event.getTopic(), JsonUtil.toJson(event));
     }
 
 }

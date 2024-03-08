@@ -1,8 +1,9 @@
 package com.rakbow.kureakurusu.data.vo.disc;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 转换量最大的VO，一般用于详情页面
@@ -29,8 +30,7 @@ public class DiscVO {
     private String remark;//备注
 
     //复杂字段
-    private JSONArray mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
-    private JSONArray spec;//商品规格
+    private List<Attribute<Integer>> mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
     private String bonus;//特典信息
 
 }

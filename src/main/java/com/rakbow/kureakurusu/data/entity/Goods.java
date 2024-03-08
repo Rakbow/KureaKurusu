@@ -17,8 +17,8 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(value = "merch", autoResultMap = true)
-public class Merch extends MetaEntity {
+@TableName(value = "goods", autoResultMap = true)
+public class Goods extends MetaEntity {
 
     private Integer id;//主键编号
     private String name;//商品名（原文）
@@ -35,7 +35,7 @@ public class Merch extends MetaEntity {
     private int notForSale;//是否非卖品
     private String spec;//规格
 
-    public Merch() {
+    public Goods() {
         this.id = 0;
         this.name = "";
         this.nameEn = "";

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.album;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
 import lombok.Data;

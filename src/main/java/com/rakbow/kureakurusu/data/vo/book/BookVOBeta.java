@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.book;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
@@ -21,8 +20,6 @@ public class BookVOBeta {
     private Attribute<Integer> bookType;//书籍类型
     private Attribute<String> region;//地区
     private Attribute<String> publishLanguage;//语言
-
-    private JSONObject cover;//图片（json）
 
     private String addedTime;//收录时间
     private String editedTime;//编辑时间

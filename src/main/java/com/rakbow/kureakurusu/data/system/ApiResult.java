@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.system;
 
-import com.alibaba.fastjson2.JSON;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -52,10 +51,6 @@ public class ApiResult {
         this.message = errors.stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("\n"));
-    }
-
-    public String toJson() {
-        return JSON.toJSONString(this);
     }
 
     public ApiResult ok(String message) {

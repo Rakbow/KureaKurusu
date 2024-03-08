@@ -1,7 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.disc;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
@@ -33,13 +31,9 @@ public class DiscVOAlpha {
 
     //关联信息
     private List<Attribute<Integer>> franchises;//所属系列id
-    private JSONArray products;//所属作品id
 
     //复杂字段
-    private JSONArray mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
-
-    //图片相关
-    private JSONObject cover;
+    private List<Attribute<Integer>> mediaFormat;//媒体格式 0-未分类 1-DVD 2-Blu-ray
 
     //审计字段
     private String addedTime;//收录时间

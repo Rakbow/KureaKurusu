@@ -1,15 +1,16 @@
 package com.rakbow.kureakurusu.event;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.entity.Event;
 import com.rakbow.kureakurusu.data.entity.Message;
 import com.rakbow.kureakurusu.service.MessageService;
-import com.rakbow.kureakurusu.data.CommonConstant;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
+import jakarta.annotation.Resource;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -19,24 +20,24 @@ import java.util.Map;
  * @author Rakbow
  * @since 2022-09-13 19:53
  */
-// @Component
+@Component
 public class EventConsumer{
 
-    private static final Logger logger = LoggerFactory.getLogger(EventConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(EventConsumer.class);
 
-    @Autowired
+    @Resource
     private MessageService messageService;
 
     @KafkaListener(topics = {CommonConstant.TOPIC_COMMENT, CommonConstant.TOPIC_LIKE, CommonConstant.TOPIC_FOLLOW})
     public void handleCommentMessage(ConsumerRecord record) {
         if (record == null || record.value() == null) {
-            logger.error("消息的内容为空!");
+            log.error("消息的内容为空!");
             return;
         }
 
-        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        Event event = JsonUtil.to(record.value().toString(), Event.class);
         if (event == null) {
-            logger.error("消息格式错误!");
+            log.error("消息格式错误!");
             return;
         }
 
@@ -53,12 +54,10 @@ public class EventConsumer{
         content.put("entityId", event.getEntityId());
 
         if (!event.getData().isEmpty()) {
-            for (Map.Entry<String, Object> entry : event.getData().entrySet()) {
-                content.put(entry.getKey(), entry.getValue());
-            }
+            content.putAll(event.getData());
         }
 
-        message.setContent(JSONObject.toJSONString(content));
+        message.setContent(JsonUtil.toJson(content));
         messageService.addMessage(message);
     }
 }

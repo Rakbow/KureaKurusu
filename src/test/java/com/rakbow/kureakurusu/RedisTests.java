@@ -42,7 +42,7 @@ public class RedisTests {
     @Resource
     private GameMapper gameMapper;
     @Resource
-    private MerchMapper merchMapper;
+    private GoodsMapper merchMapper;
     @Resource
     private ProductMapper productMapper;
     @Resource

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.game;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
@@ -33,9 +32,6 @@ public class GameVOAlpha {
     private Attribute<Integer> releaseType;//发售类型
     private Attribute<Integer> platform;//平台
     private Attribute<String> region;//地区
-
-    //图片相关
-    private JSONObject cover;
 
     //审计字段
     private String addedTime;//收录时间

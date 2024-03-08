@@ -1,9 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.ArrayList;

@@ -1,7 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.book;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
@@ -24,7 +22,7 @@ public class BookVOGamma {
     private String isbn10;//国际标准书号（10位）
     private String isbn13;//国际标准书号（13位）
     private List<String> authors;//作者信息
-    private JSONObject bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
+    private Attribute<Integer> bookType;//书籍类型 0-未分类 1-小说 2-漫画 3-设定集/原画集/公式书 4-其他
     private String publishDate;//出版日期
     private Attribute<String> region;//地区
     private Attribute<String> publishLanguage;//语言
@@ -33,7 +31,6 @@ public class BookVOGamma {
 
     //关联信息
     private List<Attribute<Integer>> franchises;//所属系列
-    private JSONArray products;//所属产品
 
     private String cover;
 

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.product;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 

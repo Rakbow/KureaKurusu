@@ -1,16 +1,16 @@
 package com.rakbow.kureakurusu.controller.advice;
 
-import com.alibaba.fastjson2.JSON;
 import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -21,29 +21,24 @@ import java.io.PrintWriter;
 @ControllerAdvice(annotations = Controller.class)
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler({Exception.class})
     public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.error(I18nHelper.getMessage("server.exception") + e.getMessage());
+        log.error(I18nHelper.getMessage("server.exception") + e.getMessage());
         for (StackTraceElement element : e.getStackTrace()) {
-            logger.error(element.toString());
+            log.error(element.toString());
         }
         String xRequestedWith = request.getHeader("x-requested-with");
         //为异步请求
         if ("XMLHttpRequest".equals(xRequestedWith)) {
             response.setContentType("application/plain;charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.write(JSON.toJSONString(new ApiResult(e)));
+            writer.write(JsonUtil.toJson(new ApiResult(e)));
         //为普通请求
         } else {
             response.sendRedirect(request.getContextPath() + "/error");
         }
     }
-
-    // @ExceptionHandler({Exception.class})
-    // public ApiResult handleException(Exception e) {
-    //     return new ApiResult(e);
-    // }
 
 }
