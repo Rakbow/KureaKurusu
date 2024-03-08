@@ -2,6 +2,9 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.rakbow.kureakurusu.data.emun.system.FileType;
 
+import java.io.File;
+import java.nio.file.Path;
+
 /**
  * @author Rakbow
  * @since 2022-11-30 22:14
@@ -9,27 +12,39 @@ import com.rakbow.kureakurusu.data.emun.system.FileType;
 public class FileUtil {
 
     // 允许的后缀扩展名
-    public static String[] IMAGE_FILE_FORMATS = new String[] { "png", "bmp", "jpg", "jpeg"};
-    public static String[] AUDIO_FILE_FORMATS = new String[] { "mp3"};
-    public static String[] TEXT_FILE_FORMATS = new String[] { "lrc"};
+    public static String[] IMAGE_FILE_FORMATS = new String[]{"png", "bmp", "jpg", "jpeg"};
+    public static String[] AUDIO_FILE_FORMATS = new String[]{"mp3"};
+    public static String[] TEXT_FILE_FORMATS = new String[]{"lrc"};
 
     public static boolean isFileFormatAllowed(String fileFormat, FileType fileType) {
-        String[] formats = null;
+        String[] formats;
         if (fileType == FileType.IMAGE) {
             formats = IMAGE_FILE_FORMATS;
-        }
-        if (fileType == FileType.AUDIO) {
+        } else if (fileType == FileType.AUDIO) {
             formats = AUDIO_FILE_FORMATS;
-        }
-        if (fileType == FileType.TEXT) {
+        } else if (fileType == FileType.TEXT) {
             formats = TEXT_FILE_FORMATS;
+        } else {
+            formats = new String[]{};
         }
         for (String format : formats) {
             if (format.equals(fileFormat)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
+    }
+
+    //删除服务器上的文件
+    //dir: 文件夹路径，fileName: 文件名（不包含后缀）
+    public static void deleteFile(Path dir, String fileName){
+        File[] files = new File(dir.toUri()).listFiles();
+        assert files != null;
+        for (File file : files) {
+            if (file.getName().substring(0, file.getName().lastIndexOf(".")).equals(fileName)) {
+                file.delete();
+            }
+        }
     }
 }
 

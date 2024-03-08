@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.util.common;
 
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LikeUtil {
 
-    @Autowired
+    @Resource
     private RedisUtil redisUtil;
 
     public static final String SPLIT = ":";

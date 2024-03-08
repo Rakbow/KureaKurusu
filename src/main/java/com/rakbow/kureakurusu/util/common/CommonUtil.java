@@ -22,18 +22,6 @@ import java.util.stream.Collectors;
  */
 public class CommonUtil {
 
-    //删除服务器上的文件
-    //dir: 文件夹路径，fileName: 文件名（不包含后缀）
-    public static void deleteFile(Path dir, String fileName){
-        File[] files = new File(dir.toUri()).listFiles();
-        assert files != null;
-        for (File file : files) {
-            if (file.getName().substring(0, file.getName().lastIndexOf(".")).equals(fileName)) {
-                file.delete();
-            }
-        }
-    }
-
     //计算时间总和（返回字符串形式）
     public static String countTotalTime(List<String> times){
 
@@ -90,7 +78,6 @@ public class CommonUtil {
 
     /**
      * 使用 Stream 去重list
-     * @param list
      */
     public static <T> List<T> removeDuplicateList(List<T> list) {
         return list.stream().distinct().collect(Collectors.toList());
@@ -99,7 +86,6 @@ public class CommonUtil {
     /**
      * int字符串转为int数组并排序
      * @author rakbow
-     * @param arrStr
      * @return int[]
      * */
     public static String[] str2SortedArray(String arrStr) {

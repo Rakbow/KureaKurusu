@@ -79,7 +79,7 @@ public class QiniuBaseUtil {
             // 获取文件后缀名
             String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
             // 检测格式是否支持
-            if (!FileUtil.isFileFormatAllowed(fileExt, fileType)) {
+            if (FileUtil.isFileFormatAllowed(fileExt, fileType)) {
                 ar.setErrorMessage(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
                 return ar;
             }
@@ -140,7 +140,7 @@ public class QiniuBaseUtil {
                 // 获取文件后缀名
                 String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
                 // 检测格式是否支持
-                if (!FileUtil.isFileFormatAllowed(fileExt, fileType)) {
+                if (FileUtil.isFileFormatAllowed(fileExt, fileType)) {
                     ar.setErrorMessage(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
                     return ar;
                 }

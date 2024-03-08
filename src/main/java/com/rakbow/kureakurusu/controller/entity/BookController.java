@@ -137,7 +137,7 @@ public class BookController {
 
     //isbn互相转换
     @PostMapping("get-isbn")
-    public String getISBN(@RequestBody BookIsbnDTO dto) {
+    public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
         ApiResult res = new ApiResult();
         try {
             res.loadData(srv.getISBN(dto.getLabel(), dto.getIsbn()));
@@ -145,7 +145,7 @@ public class BookController {
             res.fail(e);
             log.error(e.getMessage(), e);
         }
-        return res.toJson();
+        return res;
     }
 
     //endregion

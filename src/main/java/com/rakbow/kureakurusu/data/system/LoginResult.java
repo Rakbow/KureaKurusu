@@ -1,10 +1,6 @@
 package com.rakbow.kureakurusu.data.system;
 
-import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Rakbow

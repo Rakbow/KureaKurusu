@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.util.I18nHelper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,16 +29,6 @@ public class HomeController {
     private String imgPath;
     @Value("${kureakurusu.path.audio}")
     private String audioPath;
-    
-//    @Resource
-//    private MeiliSearchUtils meiliSearchUtils;
-
-    //endregion
-
-//    @RequestMapping(path = "", method = RequestMethod.GET)
-//    public String getIndexPage() {
-//        return "/index";
-//    }
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     public String getIndexPage() {

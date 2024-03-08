@@ -56,7 +56,6 @@ public class GeneralService {
     //region mapper
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
-    private final PersonMapper personMapper;
     private final FranchiseMapper franchiseMapper;
     private final ProductMapper productMapper;
     private final AlbumMapper albumMapper;

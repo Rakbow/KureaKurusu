@@ -1,20 +1,25 @@
 package com.rakbow.kureakurusu.controller.entity;
 
+import com.rakbow.kureakurusu.service.DiscService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Rakbow
  * @since 2022-12-15 20:57
  */
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/db/disc")
 public class DiscController {
 
-    //region ------引入实例------
-
-    private static final Logger logger = LoggerFactory.getLogger(DiscController.class);
+    //region ------inject------
+    private final DiscService srv;
+    private static final Logger log = LoggerFactory.getLogger(DiscController.class);
+    //endregion
 
 }
