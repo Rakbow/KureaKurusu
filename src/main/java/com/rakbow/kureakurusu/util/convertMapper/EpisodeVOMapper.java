@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 2024-01-29 13:53
  */
 @Mapper(componentModel = "spring")
-public interface EpisodeVOMapper extends CommonVOMapper {
+public interface EpisodeVOMapper extends MetaVOMapper {
 
     EpisodeVOMapper  INSTANCES = Mappers.getMapper(EpisodeVOMapper.class);
 

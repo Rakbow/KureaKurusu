@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.data.common.Like;
 import com.rakbow.kureakurusu.data.common.Visit;

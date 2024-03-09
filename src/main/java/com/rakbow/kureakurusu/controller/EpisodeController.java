@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller.entity;
+package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.episode.EpisodeDeleteCmd;
 import com.rakbow.kureakurusu.data.system.ApiResult;

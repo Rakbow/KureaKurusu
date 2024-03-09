@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,11 +29,6 @@ public class HomeController {
     @Value("${kureakurusu.path.audio}")
     private String audioPath;
 
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public String getIndexPage() {
-        return "database/database";
-    }
-
     //获取图像
     @RequestMapping(path = "/img/{fileName}", method = RequestMethod.GET)
     public void getCommonImage(@PathVariable("fileName") String fileName, HttpServletResponse response) {
@@ -46,10 +40,10 @@ public class HomeController {
         response.setContentType("image/" + suffix);
         try (
                 FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
+                OutputStream os = response.getOutputStream()
         ) {
             byte[] buffer = new byte[1024];
-            int b = 0;
+            int b;
             while ((b = fis.read(buffer)) != -1) {
                 os.write(buffer, 0, b);
             }
@@ -67,29 +61,16 @@ public class HomeController {
         response.setContentType("audio/mp3");
         try (
                 FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
+                OutputStream os = response.getOutputStream()
         ) {
             byte[] buffer = new byte[1024];
-            int b = 0;
+            int b;
             while ((b = fis.read(buffer)) != -1) {
                 os.write(buffer, 0, b);
             }
         } catch (IOException e) {
             logger.error(I18nHelper.getMessage("file.load.error") + e.getMessage());
         }
-    }
-
-    //获取错误页面
-    @RequestMapping(path = "/error", method = RequestMethod.GET)
-    public String getErrorPage(){
-        return "/error/500";
-    }
-
-    //权限不足时
-    @RequestMapping(path = "/denied", method = RequestMethod.GET)
-    public String getDeniedPage(Model model) {
-        model.addAttribute("errorMessage", I18nHelper.getMessage("auth.denied"));
-        return "/error/404";
     }
 
     //获取图像
@@ -104,10 +85,10 @@ public class HomeController {
         response.setContentType("image/" + suffix);
         try (
                 FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
+                OutputStream os = response.getOutputStream()
         ) {
             byte[] buffer = new byte[1024];
-            int b = 0;
+            int b;
             while ((b = fis.read(buffer)) != -1) {
                 os.write(buffer, 0, b);
             }
@@ -128,10 +109,10 @@ public class HomeController {
         response.setContentType("image/" + suffix);
         try (
                 FileInputStream fis = new FileInputStream(fileName);
-                OutputStream os = response.getOutputStream();
+                OutputStream os = response.getOutputStream()
         ) {
             byte[] buffer = new byte[1024];
-            int b = 0;
+            int b;
             while ((b = fis.read(buffer)) != -1) {
                 os.write(buffer, 0, b);
             }
@@ -139,22 +120,5 @@ public class HomeController {
             logger.error("读取图片失败: " + e.getMessage());
         }
     }
-
-    // @RequestMapping(path = "/db/simpleSearch", method = RequestMethod.POST)
-    // @ResponseBody
-    // public String simpleSearch(@RequestBody String json, HttpServletRequest request) throws MeilisearchException {
-    //     ApiResult res = new ApiResult();
-    //     try {
-    //         String keyword = JSON.parseObject(json).getString("keyword");
-    //         int entityType = JSON.parseObject(json).getInteger("entityType");
-    //         int offset = JSON.parseObject(json).getInteger("offset");
-    //         int limit = JSON.parseObject(json).getInteger("limit");
-    //
-    //         res.data = meiliSearchUtils.simpleSearch(keyword, entityType, offset, limit);
-    //     } catch (Exception e) {
-    //         res.setErrorMessage(e);
-    //     }
-    //     return res.toJson();
-    // }
 
 }

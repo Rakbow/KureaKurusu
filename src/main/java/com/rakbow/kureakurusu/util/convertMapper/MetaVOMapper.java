@@ -1,10 +1,9 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.emun.common.Currency;
 import com.rakbow.kureakurusu.data.emun.common.Language;
-import com.rakbow.kureakurusu.data.emun.common.MediaFormat;
 import com.rakbow.kureakurusu.data.emun.common.Region;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -23,7 +22,7 @@ import java.util.Objects;
  * @author Rakbow
  * @since 2023-11-05 4:03
  */
-public interface CommonVOMapper {
+public interface MetaVOMapper {
 
     @Named("getEnumLabel")
     default String getEnumLabel(String labelKey) {

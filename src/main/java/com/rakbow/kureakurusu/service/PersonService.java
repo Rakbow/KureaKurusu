@@ -33,7 +33,7 @@ import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
-import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;

@@ -1,5 +1,6 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
+import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.dto.franchise.FranchiseAddDTO;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
@@ -15,7 +16,7 @@ import java.util.List;
  * @since 2023-01-12 10:45 Franchise VO转换接口
  */
 @Mapper(componentModel = "spring")
-public interface FranchiseVOMapper extends CommonVOMapper {
+public interface FranchiseVOMapper extends MetaVOMapper {
 
     FranchiseVOMapper INSTANCES = Mappers.getMapper(FranchiseVOMapper.class);
 

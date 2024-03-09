@@ -18,7 +18,7 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
-import com.rakbow.kureakurusu.util.convertMapper.entity.FranchiseVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.FranchiseVOMapper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;

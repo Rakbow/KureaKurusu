@@ -1,5 +1,6 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
+import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.dto.person.PersonAddDTO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVO;
@@ -18,7 +19,7 @@ import java.util.List;
  * @since 2023-10-06 5:55
  */
 @Mapper(componentModel = "spring")
-public interface PersonVOMapper extends CommonVOMapper {
+public interface PersonVOMapper extends MetaVOMapper {
 
     PersonVOMapper INSTANCES = Mappers.getMapper(PersonVOMapper.class);
 

@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller.entity;
+package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.system.ApiResult;
@@ -12,7 +12,7 @@ import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.convertMapper.entity.FranchiseVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.FranchiseVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

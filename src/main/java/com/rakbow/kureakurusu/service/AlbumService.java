@@ -25,7 +25,7 @@ import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
-import com.rakbow.kureakurusu.util.convertMapper.entity.AlbumVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;

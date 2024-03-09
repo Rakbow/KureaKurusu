@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KureaKurusuApplication {
+public class KureaKurusuApp {
 
-	public static void main(String[] args) {
-		SpringApplication.run(KureaKurusuApplication.class, args);
+	void main(String[] args) {
+		SpringApplication.run(KureaKurusuApp.class, args);
 	}
 
 }

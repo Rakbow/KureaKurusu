@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller.entity;
+package com.rakbow.kureakurusu.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

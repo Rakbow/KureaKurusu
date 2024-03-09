@@ -1,5 +1,6 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
+import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.product.ProductAddDTO;
 import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
@@ -23,7 +24,7 @@ import java.util.Objects;
  * @since 2023-01-12 10:45 Product VO转换接口
  */
 @Mapper(componentModel = "spring")
-public interface ProductVOMapper extends CommonVOMapper {
+public interface ProductVOMapper extends MetaVOMapper {
 
     ProductVOMapper INSTANCES = Mappers.getMapper(ProductVOMapper.class);
 

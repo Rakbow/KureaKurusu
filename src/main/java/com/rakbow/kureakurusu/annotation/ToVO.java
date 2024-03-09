@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.annotation;
 
 import org.mapstruct.Mapping;
 

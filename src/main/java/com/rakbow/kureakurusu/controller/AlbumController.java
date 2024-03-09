@@ -1,22 +1,19 @@
-package com.rakbow.kureakurusu.controller.entity;
+package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.base.CommonDetailQry;
+import com.rakbow.kureakurusu.data.dto.album.*;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.base.SearchQry;
-import com.rakbow.kureakurusu.data.dto.book.BookAddDTO;
-import com.rakbow.kureakurusu.data.dto.book.BookIsbnDTO;
-import com.rakbow.kureakurusu.data.dto.book.BookUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.entity.Book;
+import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.system.ApiResult;
-import com.rakbow.kureakurusu.data.vo.book.BookDetailVO;
-import com.rakbow.kureakurusu.service.BookService;
+import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
+import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.convertMapper.entity.BookVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,29 +23,29 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Rakbow
- * @since 2022-12-30 10:18
+ * @since 2022-08-07 21:53
  */
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/book")
-public class BookController {
+@RequestMapping("/db/album")
+public class AlbumController {
 
-    //region ------引入实例------
-
-    private static final Logger log = LoggerFactory.getLogger(BookController.class);
-    private final BookService srv;
+    //region ------inject------
+    private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
+    private final AlbumService srv;
     private final PersonService personSrv;
-    private final BookVOMapper VOMapper = BookVOMapper.INSTANCES;
-    private final int ENTITY_VALUE = Entity.BOOK.getValue();
+    private final AlbumVOMapper VOMapper;
+
+    private final int ENTITY_VALUE = Entity.ALBUM.getValue();
+    //endregion
 
     // region ------basic crud------
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getDetail(@RequestBody CommonDetailQry qry) {
+    public ApiResult getAlbumDetailData(@RequestBody AlbumDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            BookDetailVO vo = srv.getDetail(qry);
+            AlbumDetailVO vo = srv.getDetail(qry);
             vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
             res.loadData(vo);
         }catch (Exception e) {
@@ -58,11 +55,12 @@ public class BookController {
         return res;
     }
 
+    //根据搜索条件获取专辑
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQry qry) {
+    public ApiResult getAlbums(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try{
-            res.loadData(srv.getBooks(new QueryParams(qry)));
+            res.loadData(srv.getAlbums(new QueryParams(qry)));
         }catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
@@ -71,10 +69,10 @@ public class BookController {
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody SearchQry qry) {
+    public ApiResult searchAlbum(@RequestBody SearchQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = srv.searchBooks(qry);
+            res.data = srv.searchAlbums(qry);
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
@@ -82,17 +80,18 @@ public class BookController {
         return res;
     }
 
+    //新增专辑
     @PostMapping("add")
-    public ApiResult addBook(@Valid @RequestBody BookAddDTO dto, BindingResult errors) {
+    public ApiResult addAlbum(@Valid @RequestBody AlbumAddDTO dto, BindingResult errors) {
         ApiResult res = new ApiResult();
         try {
             //check
             if (errors.hasErrors())
                 return res.fail(errors);
             //build
-            Book book = VOMapper.build(dto);
+            Album album = VOMapper.build(dto);
             //save
-            srv.save(book);
+            srv.save(album);
             res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
@@ -101,16 +100,17 @@ public class BookController {
         return res;
     }
 
+    //更新专辑基础信息
     @PostMapping("update")
-    public ApiResult updateBook(@Valid @RequestBody BookUpdateDTO dto, BindingResult errors) {
+    public ApiResult updateAlbum(@Valid @RequestBody AlbumUpdateDTO dto, BindingResult errors) {
         ApiResult res = new ApiResult();
         try {
             //check
             if (errors.hasErrors())
                 return res.fail(errors);
             //save
-            srv.updateBook(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName()));
+            srv.updateAlbum(dto);
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
@@ -118,12 +118,13 @@ public class BookController {
         return res;
     }
 
+    //删除专辑(单个/多个)
     @DeleteMapping("delete")
-    public ApiResult deleteBook(@RequestBody DeleteCmd cmd) {
+    public ApiResult deleteAlbum(@RequestBody DeleteCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            srv.deleteBooks(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName()));
+            srv.deleteAlbums(cmd.getIds());
+            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
@@ -133,15 +134,28 @@ public class BookController {
 
     //endregion
 
-    //region other
+    //region ------advanced crud------
 
-    //isbn互相转换
-    @PostMapping("get-isbn")
-    public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
+    //更新专辑音轨信息TrackInfo
+    @PostMapping("update-track-info")
+    public ApiResult updateAlbumTrackInfo(@RequestBody UpdateAlbumTrackInfoCmd cmd) {
         ApiResult res = new ApiResult();
         try {
-            res.loadData(srv.getISBN(dto.getLabel(), dto.getIsbn()));
-        }catch (Exception e) {
+            srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
+            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
+        } catch (Exception e) {
+            res.fail(e);
+            log.error(e.getMessage(), e);
+        }
+        return res;
+    }
+
+    @PostMapping("get-track-info")
+    public ApiResult getAlbumTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
+        ApiResult res = new ApiResult();
+        try {
+            res.loadData(srv.getTrackInfo(srv.getById(qry.getId())));
+        } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
         }

@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.controller.entity;
+package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.system.ApiResult;
@@ -16,7 +16,7 @@ import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.convertMapper.entity.PersonVOMapper;
+import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

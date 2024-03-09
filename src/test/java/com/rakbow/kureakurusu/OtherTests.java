@@ -9,7 +9,6 @@ import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
-import com.rakbow.kureakurusu.util.common.JsonUtil;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
@@ -19,9 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Rakbow
@@ -29,7 +26,7 @@ import java.util.Map;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = KureaKurusuApplication.class)
+@ContextConfiguration(classes = KureaKurusuApp.class)
 public class OtherTests {
 
     @Resource

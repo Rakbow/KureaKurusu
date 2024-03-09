@@ -22,7 +22,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = KureaKurusuApplication.class)
+@ContextConfiguration(classes = KureaKurusuApp.class)
 public class RedisTests {
 
     @Resource

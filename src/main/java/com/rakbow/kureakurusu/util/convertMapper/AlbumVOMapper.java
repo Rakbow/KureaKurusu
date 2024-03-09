@@ -1,5 +1,6 @@
-package com.rakbow.kureakurusu.util.convertMapper.entity;
+package com.rakbow.kureakurusu.util.convertMapper;
 
+import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.album.AlbumAddDTO;
 import com.rakbow.kureakurusu.data.entity.Album;
@@ -24,7 +25,7 @@ import java.util.Objects;
  * @since 2023-01-11 16:13
  */
 @Mapper(componentModel = "spring")
-public interface AlbumVOMapper extends CommonVOMapper {
+public interface AlbumVOMapper extends MetaVOMapper {
 
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
 
