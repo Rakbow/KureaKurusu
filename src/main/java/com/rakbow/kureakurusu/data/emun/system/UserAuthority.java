@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.emun.system;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.rakbow.kureakurusu.data.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,53 +9,42 @@ import lombok.Getter;
  * @author Rakbow
  * @since 2023-02-10 21:01
  */
+@Getter
 @AllArgsConstructor
 public enum UserAuthority {
 
+    VISITOR(0, "enum.user_authority.visitor"),//未登录
+    USER(1, "enum.user_authority.user"),
+    JUNIOR_EDITOR(2, "enum.user_authority.junior_editor"),
+    SENIOR_EDITOR(3, "enum.user_authority.senior_editor"),
+    ADMIN(100,"enum.user_authority.admin");
 
-    VISITOR(0, "游客", "Visitor"),//未登录
-    USER(1, "普通用户", "User"),
-    JUNIOR_EDITOR(2, "初级管理员", "JuniorEditor"),
-    SENIOR_EDITOR(3, "高级管理员", "SeniorEditor"),
-    ADMIN(4,"超级管理员", "Admin");
+    @EnumValue
+    private final Integer value;
+    private final String labelKey;
 
-    @Getter
-    private final int level;
-    @Getter
-    private final String nameZh;
-    @Getter
-    private final String nameEn;
+    public static UserAuthority get(int value) {
+        for (UserAuthority type : UserAuthority.values()) {
+            if(type.value == value)
+                return type;
+        }
+        return VISITOR;
+    }
 
     public static boolean isJunior(User user) {
-        return getUserOperationAuthority(user) >= JUNIOR_EDITOR.level;
+        return user.getType().value >= JUNIOR_EDITOR.value;
     }
 
     public static boolean isSenior(User user) {
-        return getUserOperationAuthority(user) >= SENIOR_EDITOR.level;
+        return user.getType().value >= SENIOR_EDITOR.value;
     }
 
     public static boolean isAdmin(User user) {
-        return getUserOperationAuthority(user) == ADMIN.level;
+        return user.getType().value.intValue() == ADMIN.value;
     }
 
     public static boolean isUser(User user) {
-        return getUserOperationAuthority(user) > VISITOR.level;
-    }
-
-    public static int getUserOperationAuthority(User user) {
-        if(user != null) {
-            switch (user.getType()) {
-                case 0:
-                    return 4;
-                case 1:
-                    return 1;
-                case 2:
-                    return 2;
-                case 3:
-                    return 3;
-            }
-        }
-        return 0;
+        return user.getType().value > VISITOR.value;
     }
 
 }

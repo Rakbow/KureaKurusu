@@ -301,4 +301,14 @@ public interface Constant {
      */
     String IPV4_REGEX = "((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})(.((2(5[0-5]|[0-4]\\d))|[0-1]?\\d{1,2})){3}";
 
+    /**
+     * 默认状态的登录凭证的超时时间 12小时
+     */
+    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
+
+    /**
+     * 记住状态的登录凭证超时时间
+     */
+    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 10;
+
 }

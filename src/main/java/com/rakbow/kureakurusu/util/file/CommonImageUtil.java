@@ -269,15 +269,6 @@ public class CommonImageUtil {
             case GAME -> {
                 return CommonConstant.DEFAULT_GAME_IMAGE_URL;
             }
-//            case MERCH -> {
-//                return CommonConstant.DEFAULT_MERCH_IMAGE_URL;
-//            }
-//            case FRANCHISE -> {
-//                return CommonConstant.DEFAULT_FRANCHISE_IMAGE_URL;
-//            }
-//            case PRODUCT -> {
-//                return CommonConstant.DEFAULT_PRODUCT_IMAGE_URL;
-//            }
             default -> {
                 return CommonConstant.EMPTY_IMAGE_URL;
             }

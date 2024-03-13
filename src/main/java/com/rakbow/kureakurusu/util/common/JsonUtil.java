@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class JsonUtil {
@@ -20,6 +21,11 @@ public class JsonUtil {
     @SneakyThrows
     public static <T> T to(String json, Class<T> clazz) {
         return mapper.readValue(json, clazz);
+    }
+
+    @SneakyThrows
+    public static <K, V> HashMap<K, V> toMap(String json, Class<K> kClazz, Class<V> vClazz) {
+        return mapper.readValue(json, mapper.getTypeFactory().constructMapType(HashMap.class, kClazz, vClazz));
     }
 
     @SneakyThrows

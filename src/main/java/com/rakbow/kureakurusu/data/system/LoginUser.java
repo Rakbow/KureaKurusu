@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class LoginUser {
 
-    public int id;
+    public long id;
     public String username;
     public String headerUrl;
     public int type;
@@ -19,7 +19,7 @@ public class LoginUser {
         this.setId(user.getId());
         this.setUsername(user.getUsername());
         this.setHeaderUrl(user.getHeaderUrl());
-        this.setType(user.getType());
+        this.setType(user.getType().getValue());
     }
 
 }

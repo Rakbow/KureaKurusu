@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class LoginDto extends DTO {
+public class LoginDTO extends DTO {
 
     private String verifyCode;
     private Boolean rememberMe;

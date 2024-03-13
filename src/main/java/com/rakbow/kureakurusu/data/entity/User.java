@@ -1,30 +1,57 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.dto.user.UserRegisterDTO;
+import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
+import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Date;
 
 /**
  * @author Rakbow
  * @since 2022-08-01 18:14
  */
 @Data
-@TableName("user")
+@TableName(value = "user", autoResultMap = true)
 public class User {
 
-    private Integer id;
+    private Long id;
     private String username;
     private String password;
     private String salt;
     private String email;
-    private int type;
-    private int status;
+    private UserAuthority type;
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean status;
     private String activationCode;
     private String headerUrl;
-    private Date createTime;
+    private String createDate;
+
+    public User() {
+        id = 0L;
+        username = "";
+        password = "";
+        salt = "";
+        email = "";
+        type = UserAuthority.USER;
+        status = true;
+        activationCode = "";
+        headerUrl = "";
+        createDate = DateHelper.nowStr();
+    }
+
+    public User(UserRegisterDTO dto) {
+        this.username = dto.getUsername();
+        this.email = dto.getEmail();
+        this.salt = CommonUtil.generateUUID().substring(0, 5);
+        this.salt = CommonUtil.generateUUID().substring(0, 5);
+        this.password = CommonUtil.md5(STR."\{dto.getPassword()}\{this.salt}}");
+        this.type = UserAuthority.USER;
+        this.activationCode = CommonUtil.generateUUID();
+        //设置用户默认头像
+        //user.setHeaderUrl(String.format("", new Random().nextInt(1000)));
+    }
 
 }
