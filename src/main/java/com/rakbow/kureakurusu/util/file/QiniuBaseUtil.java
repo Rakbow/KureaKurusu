@@ -13,11 +13,11 @@ import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.FileUtil;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -54,12 +54,13 @@ public class QiniuBaseUtil {
      * @param file,filePath,fileType 文件，路径，文件类型
      * @return ActionResult
      */
-    public ActionResult uploadFileToQiniu(MultipartFile file, String filePath, FileType fileType) throws IOException {
+    @SneakyThrows
+    public ActionResult uploadFileToQiniu(MultipartFile file, String filePath, FileType fileType) {
         ActionResult ar = new ActionResult();
         try {
             // 构造一个带指定Zone对象的配置类,不同的七云牛存储区域调用不同的zone
             // 华东-浙江2 CnEast2
-            Configuration cfg = new Configuration(Region.regionCnEast2());
+            Configuration cfg = new Configuration(Region.autoRegion());
             // 创建上传对象
             UploadManager uploadManager = new UploadManager(cfg);
 
@@ -85,7 +86,7 @@ public class QiniuBaseUtil {
             }
 
             // 通过随机UUID生成唯一文件名 长度：16
-            String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "." + fileExt;
+            String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16)}.\{fileExt}";
 
             // 生成完整文件名，例：album/11/xxx.jpg
             String fullFileName = filePath + fileName;
@@ -96,73 +97,11 @@ public class QiniuBaseUtil {
             // 打印返回的信息
             if (res.isOK() && res.isJson()) {
                 // 返回存储文件的地址
-                HashMap<String, String> resDic = JsonUtil.to(res.bodyString(), HashMap.class);
+                HashMap<String, String> resDic = JsonUtil.toMap(res.bodyString(), String.class, String.class);
                 ar.data = FILE_DOMAIN + resDic.get("key");
             } else {
                 ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
             }
-            return ar;
-        } catch (QiniuException ex) {
-            // 请求失败时打印的异常的信息
-            ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", ex.getMessage()));
-            return ar;
-        }
-    }
-
-    /**
-     * 统一上传文件方法，多文件，同一实体类型
-     *
-     * @param files,filePath,fileType 文件数组，路径，文件类型
-     * @return ActionResult
-     */
-    public ActionResult uploadFilesToQiniu(MultipartFile[] files, String filePath, FileType fileType) throws IOException {
-        ActionResult ar = new ActionResult();
-        try {
-            // 上传后存放文件全路径名的列表
-            List<String> fullFileNames = new ArrayList<>();
-
-            // 构造一个带指定Zone对象的配置类,不同的七云牛存储区域调用不同的zone
-            // 华东-浙江2 CnEast2
-            Configuration cfg = new Configuration(Region.regionCnEast2());
-            // 创建上传对象
-            UploadManager uploadManager = new UploadManager(cfg);
-
-
-            for (MultipartFile file : files) {
-
-                // 检测文件格式是否合法
-                int dotPos = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
-                if (dotPos < 0) {
-                    ar.setErrorMessage(I18nHelper.getMessage("file.format.error", fileType.getNameZh()));
-                    return ar;
-                }
-
-                // 获取文件后缀名
-                String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
-                // 检测格式是否支持
-                if (FileUtil.isFileFormatAllowed(fileExt, fileType)) {
-                    ar.setErrorMessage(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
-                    return ar;
-                }
-
-                // 通过随机UUID生成唯一文件名 长度：16
-                String fileName = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 16) + "\\" + fileExt;
-
-                // 生成完整文件名，例：album/11/xxx.jpg
-                String fullFileName = filePath + fileName;
-
-                // 调用put方法上传
-                Response res = uploadManager.put(file.getBytes(), fullFileName, getUpToken());
-
-                // 打印返回的信息
-                if (res.isOK() && res.isJson()) {
-                    // 返回存储文件的地址并存入fullFileNames
-                    fullFileNames.add(FILE_DOMAIN + JsonUtil.getValueByKey("key", res.bodyString()));
-                } else {
-                    ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
-                }
-            }
-            ar.data = fullFileNames;
             return ar;
         } catch (QiniuException ex) {
             // 请求失败时打印的异常的信息
@@ -182,7 +121,7 @@ public class QiniuBaseUtil {
         ActionResult ar = new ActionResult();
         try{
             //构造一个带指定Zone对象的配置类
-            Configuration cfg = new Configuration(Region.regionCnEast2());
+            Configuration cfg = new Configuration(Region.autoRegion());
             Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
             BucketManager bucketManager = new BucketManager(auth, cfg);
 
@@ -217,7 +156,7 @@ public class QiniuBaseUtil {
             }
 
             //构造一个带指定Zone对象的配置类
-            Configuration cfg = new Configuration(Region.regionCnEast2());
+            Configuration cfg = new Configuration(Region.autoRegion());
             Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
             BucketManager bucketManager = new BucketManager(auth, cfg);
             BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();

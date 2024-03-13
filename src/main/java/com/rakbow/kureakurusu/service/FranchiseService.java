@@ -21,6 +21,7 @@ import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.FranchiseVOMapper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,7 @@ import java.util.List;
 public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
 
     private final FranchiseMapper mapper;
-    private final QiniuFileUtil qiniuFileUtil;
+    private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final FranchiseVOMapper voMapper;
@@ -91,7 +92,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
         List<Franchise> items = mapper.selectBatchIds(ids);
         for (Franchise item : items) {
             //delete image
-            qiniuFileUtil.deleteAllImage(item.getImages());
+            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete entity
             mapper.deleteById(item.getId());
             //delete visit record

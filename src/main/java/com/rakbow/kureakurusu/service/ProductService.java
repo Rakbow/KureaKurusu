@@ -31,6 +31,7 @@ import com.rakbow.kureakurusu.util.convertMapper.EpisodeVOMapper;
 import com.rakbow.kureakurusu.util.convertMapper.ProductVOMapper;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +54,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     private final ProductMapper mapper;
     private final EpisodeMapper epMapper;
     private final PersonRelationMapper relationMapper;
-    private final QiniuFileUtil qiniuFileUtil;
+    private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final ProductVOMapper VOMapper;
@@ -173,7 +174,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         List<Product> items = mapper.selectBatchIds(ids);
         for (Product item : items) {
             //delete all image
-            qiniuFileUtil.deleteAllImage(item.getImages());
+            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
             visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
         }

@@ -49,7 +49,6 @@ public class GeneralService {
 
     //region util resource
     private final LikeUtil likeUtil;
-    private final QiniuFileUtil qiniuFileUtil;
     private final QiniuImageUtil qiniuImageUtil;
     //endregion
 
@@ -264,9 +263,9 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void deleteItemImages(String tableName, long entityId, List<Image> deleteImages) throws Exception {
+    public void deleteItemImages(String tableName, long entityId, List<Image> deleteImages) {
         List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
-        List<Image> finalImageJson = qiniuFileUtil.deleteImage(images, deleteImages);
+        List<Image> finalImageJson = qiniuImageUtil.deleteImage(images, deleteImages);
         mapper.updateItemImages(tableName, entityId, finalImageJson, DateHelper.now());
     }
 

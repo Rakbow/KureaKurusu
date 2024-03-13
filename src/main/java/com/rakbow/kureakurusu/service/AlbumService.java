@@ -28,7 +28,7 @@ import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
-import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +53,7 @@ import java.util.stream.IntStream;
 public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region inject
-    private final QiniuFileUtil qiniuFileUtil;
+    private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
 
@@ -118,7 +118,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         List<Album> items = mapper.selectBatchIds(ids);
         for (Album item : items) {
             //delete all image
-            qiniuFileUtil.deleteAllImage(item.getImages());
+            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
             visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
         }

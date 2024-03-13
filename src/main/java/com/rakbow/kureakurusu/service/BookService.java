@@ -28,6 +28,7 @@ import com.rakbow.kureakurusu.util.convertMapper.BookVOMapper;
 import com.rakbow.kureakurusu.util.entity.BookUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
+import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookService extends ServiceImpl<BookMapper, Book> {
 
-    private final QiniuFileUtil qiniuFileUtil;
+    private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final BookMapper mapper;
@@ -82,7 +83,7 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
         List<Book> items = mapper.selectBatchIds(ids);
         for (Book item : items) {
             //delete all image
-            qiniuFileUtil.deleteAllImage(item.getImages());
+            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
             visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
         }

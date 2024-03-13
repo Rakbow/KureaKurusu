@@ -5,6 +5,9 @@ import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.emun.system.FileType;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,9 @@ import java.util.List;
 public class QiniuImageUtil {
 
     private final QiniuBaseUtil qiniuBaseUtil;
+    private final static String THUMBNAIL_URL = "?imageMogr2/auto-orient/thumbnail/";
+    @Value("${kureakurusu.qiniu.image.domain}")
+    private static String FILE_DOMAIN;
 
     /**
      * 通用新增图片
@@ -44,7 +50,7 @@ public class QiniuImageUtil {
             List<Image> addImageJson = new ArrayList<>();
 
             //创建存储链接前缀
-            String filePath = entityName + "/" + entityId + "/";
+            String filePath = STR."\{entityName}/\{entityId}/";
 
             for (int i = 0; i < images.length; i++) {
                 //上传图片
@@ -65,6 +71,54 @@ public class QiniuImageUtil {
         return res;
     }
 
+    @SuppressWarnings("unchecked")
+    @SneakyThrows
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public List<Image> deleteImage(List<Image> images, List<Image> deleteImages) {
+
+        //从七牛云上删除
+        //删除结果
+        List<String> deleteResult = new ArrayList<>();
+        //若删除的文件只有一个，调用单张删除方法
+        if (deleteImages.size() == 1) {
+            ActionResult ar = qiniuBaseUtil.deleteFileFromQiniu(deleteImages.getFirst().getUrl());
+            if (ar.fail())
+                throw new Exception(ar.message);
+            deleteResult.add(deleteImages.getFirst().getUrl());
+        } else {
+            String[] fullFileUrlList = new String[deleteImages.size()];
+            for (int i = 0; i < deleteImages.size(); i++) {
+                fullFileUrlList[i] = deleteImages.get(i).getUrl();
+            }
+            ActionResult ar = qiniuBaseUtil.deleteFilesFromQiniu(fullFileUrlList);
+            deleteResult = (List<String>) ar.data;
+        }
+
+        //根据删除结果循环删除文件信息json数组
+        // 迭代器
+
+        for (String s : deleteResult) {
+            // 删除数组元素
+            images.removeIf(image -> StringUtils.equals(image.getUrl(), s));
+        }
+
+        return images;
+    }
+
+    /**
+     * delete all images
+     *
+     * @param images delete images
+     * @author Rakbow
+     */
+    public void deleteAllImage(List<Image> images) {
+        String[] deleteImageKeyList = new String[images.size()];
+        for (int i = 0; i < images.size(); i++) {
+            deleteImageKeyList[i] = images.get(i).getUrl();
+        }
+        qiniuBaseUtil.deleteFilesFromQiniu(deleteImageKeyList);
+    }
+
     /**
      * 获取等比固定高宽的缩略图URL
      *
@@ -72,30 +126,28 @@ public class QiniuImageUtil {
      * @return thumbImageUrl
      */
     public static String getThumbUrl(String imageUrl, int size) {
-        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size;
+        return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x\{size}";
     }
 
     public static String getCustomThumbUrl(String imageUrl, int size, int lengthLabel) {
         if(lengthLabel == 0) {
-            return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x";
+            return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";
         }else {
-            return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + "x" + size;
+            return STR."\{imageUrl}\{THUMBNAIL_URL}x\{size}";
         }
     }
 
     public static String getThumbUrlWidth(String imageUrl, int size) {
-        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + 200 + "x" + size;
+        return STR."\{imageUrl}\{THUMBNAIL_URL}200x\{size}";
     }
 
     public static String getThumbBackgroundUrl(String imageUrl, int size) {
-        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + size + "x" + size
-                + "/extent/" + size + "x" + size + "/background/IzJmMzY0Zg==";
+        return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x\{size}/extent/\{size}x\{size}/background/IzJmMzY0Zg==";
     }
 
     public static String getBookThumbBackgroundUrl(String imageUrl, double width, double height) {
 
-        return imageUrl + "?imageMogr2/auto-orient/thumbnail/" + width + "x" + height
-                + "/extent/" + width + "x" + height + "/background/IzJmMzY0Zg==";
+        return STR."\{imageUrl}\{THUMBNAIL_URL}\{width}x\{height}/extent/\{width}x\{height}/background/IzJmMzY0Zg==";
     }
 
     /**
@@ -105,8 +157,7 @@ public class QiniuImageUtil {
      * @return thumbImageUrl
      */
     public static String getImageKeyByFullUrl(String fullImageUrl) {
-        String IMAGE_DOMAIN = "https://img.rakbow.com/";
-        return fullImageUrl.replace(IMAGE_DOMAIN, "");
+        return fullImageUrl.replace(FILE_DOMAIN, "");
     }
 
     public static String getThumb70Url(List<Image> images) {
