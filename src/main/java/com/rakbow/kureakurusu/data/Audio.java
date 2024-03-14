@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data;
 
-import com.rakbow.kureakurusu.data.entity.Episode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -16,12 +16,6 @@ public class ActionResult {
         this.data = null;
     }
 
-    public ActionResult(boolean state, String message, Object data) {
-        this.state = state;
-        this.message = message;
-        this.data = data;
-    }
-
     public void setErrorMessage(String error) {
         this.state = false;
         this.message = error;
