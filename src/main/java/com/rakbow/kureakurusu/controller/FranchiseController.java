@@ -46,7 +46,7 @@ public class FranchiseController {
     public ApiResult getFranchiseDetail(@RequestBody FranchiseDetailQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = srv.detail(qry);
+            res.loadData(srv.detail(qry));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
@@ -58,7 +58,7 @@ public class FranchiseController {
     public ApiResult getFranchises(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = srv.list(new QueryParams(qry));
+            res.loadData(srv.list(new QueryParams(qry)));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

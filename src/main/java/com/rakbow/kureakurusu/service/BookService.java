@@ -27,7 +27,6 @@ import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.BookVOMapper;
 import com.rakbow.kureakurusu.util.entity.BookUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
-import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -137,8 +136,6 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     public SearchResult<BookVOAlpha> getBooks(QueryParams param) {
 
         String title = param.getStr("title");
-//        String titleZh = param.getStr("titleZh");
-//        String titleEn = param.getStr("titleEn");
         String isbn10 = param.getStr("isbn10");
         String isbn13 = param.getStr("isbn13");
         String region = param.getStr("region");
@@ -147,8 +144,6 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
         Boolean hasBonus = param.getBool("hasBonus");
         LambdaQueryWrapper<Book> wrapper = new LambdaQueryWrapper<Book>()
                 .like(StringUtils.isNotBlank(title), Book::getTitle, title)
-//                .like(StringUtils.isNotBlank(titleZh), Book::getTitleZh, titleZh)
-//                .like(StringUtils.isNotBlank(titleEn), Book::getTitleEn, titleEn)
                 .like(StringUtils.isNotBlank(isbn10), Book::getIsbn10, isbn10)
                 .like(StringUtils.isNotBlank(isbn13), Book::getIsbn13, isbn13)
                 .eq(StringUtils.isNotBlank(region), Book::getRegion, region)

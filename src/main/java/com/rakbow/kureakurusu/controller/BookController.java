@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/book")
+@RequestMapping("db/book")
 public class BookController {
 
-    //region ------引入实例------
+    //region inject
 
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService srv;
@@ -42,80 +42,43 @@ public class BookController {
     private final BookVOMapper VOMapper = BookVOMapper.INSTANCES;
     private final int ENTITY_VALUE = Entity.BOOK.getValue();
 
-    // region ------basic crud------
+    // region basic crud
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getDetail(@RequestBody CommonDetailQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            BookDetailVO vo = srv.getDetail(qry);
-            vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
-            res.loadData(vo);
-        }catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult detail(@RequestBody CommonDetailQry qry) {
+        BookDetailVO vo = srv.getDetail(qry);
+        vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
+        return  new ApiResult().load(vo);
     }
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQry qry) {
-        ApiResult res = new ApiResult();
-        try{
-            res.loadData(srv.getBooks(new QueryParams(qry)));
-        }catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getBooks(new QueryParams(qry)));
     }
 
     @PostMapping("search")
     public ApiResult search(@RequestBody SearchQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = srv.searchBooks(qry);
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.searchBooks(qry));
     }
 
     @PostMapping("add")
-    public ApiResult addBook(@Valid @RequestBody BookAddDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //build
-            Book book = VOMapper.build(dto);
-            //save
-            srv.save(book);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult add(@Valid @RequestBody BookAddDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Book book = VOMapper.build(dto);
+        //save
+        srv.save(book);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
     }
 
     @PostMapping("update")
     public ApiResult updateBook(@Valid @RequestBody BookUpdateDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.updateBook(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.updateBook(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName()));
     }
 
     @DeleteMapping("delete")
@@ -123,7 +86,7 @@ public class BookController {
         ApiResult res = new ApiResult();
         try {
             srv.deleteBooks(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName()));
+            return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

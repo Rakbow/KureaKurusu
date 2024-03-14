@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
@@ -14,19 +13,17 @@ import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
 
 /**
  * @author Rakbow
@@ -34,86 +31,50 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/person")
+@RequestMapping("db/person")
 public class PersonController {
 
-    private static final Logger log = LoggerFactory.getLogger(PersonController.class);
+    //region inject
     private final PersonService srv;
     private final PersonVOMapper VOMapper;
+    //endregion
 
     //region person
 
     @PostMapping("detail")
     @UniqueVisitor
     public ApiResult getPersonDetailData(@RequestBody PersonDetailQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.detail(qry));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.detail(qry));
     }
 
     @PostMapping("search")
     public ApiResult searchPerson(@RequestBody SearchQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = srv.searchPersons(new SimpleSearchParam(qry));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.searchPersons(new SimpleSearchParam(qry)));
     }
 
     @PostMapping("list")
     public ApiResult getPersons(@RequestBody ListQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = srv.getPersons(new QueryParams(qry));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getPersons(new QueryParams(qry)));
     }
 
     @PostMapping("add")
     public ApiResult addPerson(@Valid @RequestBody PersonAddDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //build
-            Person person = VOMapper.build(dto);
-            //save
-            srv.save(person);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Person person = VOMapper.build(dto);
+        //save
+        srv.save(person);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getName()));
     }
 
     @PostMapping("update")
     public ApiResult updatePerson(@Valid @RequestBody PersonUpdateDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.updatePerson(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.updatePerson(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
     }
     //endregion
 
@@ -121,48 +82,25 @@ public class PersonController {
 
     @PostMapping("get-roles")
     public ApiResult getPersonRoles(@RequestBody ListQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = srv.getRoles(new QueryParams(qry));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getRoles(new QueryParams(qry)));
     }
 
     @PostMapping("add-role")
     public ApiResult addPersonRole(@Valid @RequestBody PersonRole role, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.addRole(role);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ENTRY.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.addRole(role);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ROLE.getName()));
     }
 
     @PostMapping("update-role")
     public ApiResult updateRole(@Valid @RequestBody PersonRole role, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.updateRole(role);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.updateRole(role);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ROLE.getName()));
     }
 
     //endregion
@@ -171,27 +109,13 @@ public class PersonController {
 
     @PostMapping("get-personnel")
     public ApiResult getPersonnel(@RequestBody EntityQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = srv.getPersonnel(qry.getEntityType(), qry.getEntityId());
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
     }
 
     @PostMapping("manage-personnel")
     public ApiResult managePersonnel(@RequestBody PersonnelManageCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.managePersonnel(cmd);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        srv.managePersonnel(cmd);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
     }
 
     //endregion

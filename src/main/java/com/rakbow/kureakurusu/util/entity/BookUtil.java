@@ -18,7 +18,7 @@ public class BookUtil {
         if (isbn10.length() != 10) {
             return isbn10;
         }
-        String isbn13 = "978" + isbn10.substring(0, isbn10.length() - 1);
+        String isbn13 = STR."978\{isbn10.substring(0, isbn10.length() - 1)}";
         int a = 0;
         int b = 0;
         int c;
@@ -71,30 +71,5 @@ public class BookUtil {
         }
         return isbn10;
     }
-
-//    /**
-//     * 获取图书信息中的作者
-//     * @author rakbow
-//     * @param book 图书
-//     * */
-//    public static List<String> getAuthors(Book book) {
-//        List<String> res = new ArrayList<>();
-//        JSONArray authors = JSON.parseArray(book.getAuthors());
-//        if (!authors.isEmpty()) {
-//            for (int i = 0; i < authors.size(); i++) {
-//                JSONObject author = authors.getJSONObject(i);
-//                if(author.getIntValue("main") == 1) {
-//                    List<String> authorNames = author.getList("name", String.class);
-//                    if(!authorNames.isEmpty() && authorNames.size() <= 2) {
-//                        res.addAll(authorNames);
-//                    }
-//                    if(authorNames.size() > 2) {
-//                        res.addAll(authorNames.subList(0, 2));
-//                    }
-//                }
-//            }
-//        }
-//        return res;
-//    }
 
 }

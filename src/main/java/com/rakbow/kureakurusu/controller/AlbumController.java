@@ -16,8 +16,6 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,11 +25,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/album")
+@RequestMapping("db/album")
 public class AlbumController {
 
-    //region ------inject------
-    private static final Logger log = LoggerFactory.getLogger(AlbumController.class);
+    //region inject
     private final AlbumService srv;
     private final PersonService personSrv;
     private final AlbumVOMapper VOMapper;
@@ -39,127 +36,64 @@ public class AlbumController {
     private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
 
-    // region ------basic crud------
+    // region basic crud
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getAlbumDetailData(@RequestBody AlbumDetailQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            AlbumDetailVO vo = srv.getDetail(qry);
-            vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
-            res.loadData(vo);
-        }catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult detail(@RequestBody AlbumDetailQry qry) {
+        AlbumDetailVO vo = srv.getDetail(qry);
+        vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
+        return new ApiResult().load(vo);
     }
 
-    //根据搜索条件获取专辑
     @PostMapping("list")
-    public ApiResult getAlbums(@RequestBody ListQry qry) {
-        ApiResult res = new ApiResult();
-        try{
-            res.loadData(srv.getAlbums(new QueryParams(qry)));
-        }catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult list(@RequestBody ListQry qry) {
+        return new ApiResult().load(srv.getAlbums(new QueryParams(qry)));
     }
 
     @PostMapping("search")
-    public ApiResult searchAlbum(@RequestBody SearchQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.data = srv.searchAlbums(qry);
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult search(@RequestBody SearchQry qry) {
+        return new ApiResult().load(srv.searchAlbums(qry));
     }
 
-    //新增专辑
     @PostMapping("add")
-    public ApiResult addAlbum(@Valid @RequestBody AlbumAddDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //build
-            Album album = VOMapper.build(dto);
-            //save
-            srv.save(album);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult add(@Valid @RequestBody AlbumAddDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Album album = VOMapper.build(dto);
+        //save
+        srv.save(album);
+        return  new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
     }
 
-    //更新专辑基础信息
     @PostMapping("update")
-    public ApiResult updateAlbum(@Valid @RequestBody AlbumUpdateDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.updateAlbum(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult update(@Valid @RequestBody AlbumUpdateDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.updateAlbum(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }
 
-    //删除专辑(单个/多个)
     @DeleteMapping("delete")
-    public ApiResult deleteAlbum(@RequestBody DeleteCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.deleteAlbums(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult delete(@RequestBody DeleteCmd cmd) {
+        srv.deleteAlbums(cmd.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
     }
 
     //endregion
 
-    //region ------advanced crud------
+    //region advanced crud
 
-    //更新专辑音轨信息TrackInfo
     @PostMapping("update-track-info")
-    public ApiResult updateAlbumTrackInfo(@RequestBody UpdateAlbumTrackInfoCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult updateTrackInfo(@RequestBody UpdateAlbumTrackInfoCmd cmd) {
+        srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }
 
     @PostMapping("get-track-info")
-    public ApiResult getAlbumTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.getTrackInfo(srv.getById(qry.getId())));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult getTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
+        return new ApiResult().load(srv.getTrackInfo(srv.getById(qry.getId())));
     }
 
     //endregion

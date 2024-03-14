@@ -86,7 +86,7 @@ public class GeneralController {
     public ApiResult getOption(@RequestBody GetOptionQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = entityUtil.getDetailOptions(qry.getEntityType());
+            res.loadData(entityUtil.getDetailOptions(qry.getEntityType()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
@@ -145,7 +145,7 @@ public class GeneralController {
         ApiResult res = new ApiResult();
         try {
             String tableName = Entity.getTableName(qry.getEntityType());
-            res.data = srv.getItemImages(tableName, qry.getEntityId());
+            res.loadData(srv.getItemImages(tableName, qry.getEntityId()));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);

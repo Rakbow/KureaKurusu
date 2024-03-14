@@ -62,7 +62,7 @@ public class ProductController {
     public ApiResult getProducts(@RequestBody ListQry qry) {
         ApiResult res = new ApiResult();
         try {
-            res.data = srv.getProducts(new QueryParams(qry));
+            res.loadData(srv.getProducts(new QueryParams(qry)));
         } catch (Exception e) {
             res.fail(e);
             log.error(e.getMessage(), e);
