@@ -82,6 +82,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, dto.getUserId()).set(User::getStatus, 1));
     }
 
+    @SneakyThrows
     @Transactional
     public LoginResult login(LoginDTO dto) throws Exception {
 

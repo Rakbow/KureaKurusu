@@ -43,22 +43,22 @@ public class PersonController {
 
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getPersonDetailData(@RequestBody PersonDetailQry qry) {
+    public ApiResult detail(@RequestBody PersonDetailQry qry) {
         return new ApiResult().load(srv.detail(qry));
     }
 
     @PostMapping("search")
-    public ApiResult searchPerson(@RequestBody SearchQry qry) {
+    public ApiResult search(@RequestBody SearchQry qry) {
         return new ApiResult().load(srv.searchPersons(new SimpleSearchParam(qry)));
     }
 
     @PostMapping("list")
-    public ApiResult getPersons(@RequestBody ListQry qry) {
+    public ApiResult list(@RequestBody ListQry qry) {
         return new ApiResult().load(srv.getPersons(new QueryParams(qry)));
     }
 
     @PostMapping("add")
-    public ApiResult addPerson(@Valid @RequestBody PersonAddDTO dto, BindingResult errors) {
+    public ApiResult add(@Valid @RequestBody PersonAddDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //build
@@ -69,7 +69,7 @@ public class PersonController {
     }
 
     @PostMapping("update")
-    public ApiResult updatePerson(@Valid @RequestBody PersonUpdateDTO dto, BindingResult errors) {
+    public ApiResult update(@Valid @RequestBody PersonUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save

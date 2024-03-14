@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.franchise.FranchiseAddDTO;
@@ -10,16 +9,14 @@ import com.rakbow.kureakurusu.data.dto.franchise.FranchiseDetailQry;
 import com.rakbow.kureakurusu.data.dto.franchise.FranchiseUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Franchise;
+import com.rakbow.kureakurusu.data.system.ApiResult;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.FranchiseVOMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 /**
  * @author Rakbow
@@ -27,92 +24,53 @@ import jakarta.validation.Valid;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/franchise")
+@RequestMapping("db/franchise")
 public class FranchiseController {
 
-    private static final Logger log = LoggerFactory.getLogger(FranchiseController.class);
-
-    //region ------inject------
+    //region inject
 
     private final FranchiseService srv;
     private final FranchiseVOMapper voMapper;
 
     //endregion
 
-    //region ------crud------
+    //region crud
 
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getFranchiseDetail(@RequestBody FranchiseDetailQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.detail(qry));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult detail(@RequestBody FranchiseDetailQry qry) {
+        return new ApiResult().load(srv.detail(qry));
     }
 
     @PostMapping("list")
-    public ApiResult getFranchises(@RequestBody ListQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.list(new QueryParams(qry)));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult list(@RequestBody ListQry qry) {
+        return new ApiResult().load(srv.list(new QueryParams(qry)));
     }
 
     @PostMapping("add")
-    public ApiResult addFranchise(@Valid @RequestBody FranchiseAddDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //build
-            Franchise item = voMapper.build(dto);
-            //save
-            srv.save(item);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.FRANCHISE.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult add(@Valid @RequestBody FranchiseAddDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Franchise item = voMapper.build(dto);
+        //save
+        srv.save(item);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.FRANCHISE.getName()));
     }
 
     @PostMapping("update")
-    public ApiResult updateFranchise(@Valid @RequestBody FranchiseUpdateDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.update(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.FRANCHISE.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult update(@Valid @RequestBody FranchiseUpdateDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.update(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.FRANCHISE.getName()));
     }
 
     @DeleteMapping("delete")
-    public ApiResult deleteFranchise(@RequestBody FranchiseDeleteCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.delete(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.FRANCHISE.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult delete(@RequestBody FranchiseDeleteCmd cmd) {
+        srv.delete(cmd.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.FRANCHISE.getName()));
     }
 
     //endregion

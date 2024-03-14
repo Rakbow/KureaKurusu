@@ -29,106 +29,61 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/product")
+@RequestMapping("db/product")
 public class ProductController {
 
-    //region ------inject------
+    //region inject
 
-    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
     private final ProductService srv;
     private final PersonService personSrv;
     private final ProductVOMapper VOMapper;
     private final int ENTITY_VALUE = Entity.PRODUCT.getValue();
     //endregion
 
-    //region ------curd------
+    //region curd
 
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult getProductDetail(@RequestBody ProductDetailQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            ProductDetailVO vo = srv.getDetail(qry);
-            vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
-            res.loadData(vo);
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult detail(@RequestBody ProductDetailQry qry) {
+        ProductDetailVO vo = srv.getDetail(qry);
+        vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
+        return new ApiResult().load(vo);
     }
 
     @PostMapping("list")
-    public ApiResult getProducts(@RequestBody ListQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.getProducts(new QueryParams(qry)));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult list(@RequestBody ListQry qry) {
+        return new ApiResult().load(srv.getProducts(new QueryParams(qry)));
     }
 
     @PostMapping("add")
-    public ApiResult addProduct(@Valid @RequestBody ProductAddDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //build
-            Product product = VOMapper.build(dto);
-            //save
-            srv.save(product);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PRODUCT.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult add(@Valid @RequestBody ProductAddDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Product product = VOMapper.build(dto);
+        //save
+        srv.save(product);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PRODUCT.getName()));
     }
 
     @PostMapping("update")
-    public ApiResult updateProduct(@Valid @RequestBody ProductUpdateDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.updateProduct(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PRODUCT.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult update(@Valid @RequestBody ProductUpdateDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.updateProduct(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PRODUCT.getName()));
     }
 
     @DeleteMapping("delete")
-    public ApiResult deleteProduct(@RequestBody DeleteCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.deleteProducts(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.PRODUCT.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult delete(@RequestBody DeleteCmd cmd) {
+        srv.deleteProducts(cmd.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.PRODUCT.getName()));
     }
 
     @PostMapping("get-related-products")
     public ApiResult getRelatedProducts(@RequestBody CommonDetailQty qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.getRelatedProducts(qry.getId()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getRelatedProducts(qry.getId()));
     }
 
     //endregion

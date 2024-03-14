@@ -8,6 +8,7 @@ import com.rakbow.kureakurusu.data.emun.system.FileType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.system.ActionResult;
 import com.rakbow.kureakurusu.data.system.File;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.file.QiniuBaseUtil;
 import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
@@ -21,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.StringTemplate.STR;
 
 /**
  * @author Rakbow
@@ -37,14 +40,15 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     @Transactional
     public void updateFile(int id, MultipartFile[] files, List<File> fileInfos) {
-
+        if (files == null || files.length == 0)
+            throw new Exception(I18nHelper.getMessage("file.empty"));
         //org files
         List<File> orgFiles = mapper.selectById(id).getFiles();
         //new files
         List<File> finalFiles = new ArrayList<>();
 
         //创建存储链接前缀
-        String filePath = "file/" + Entity.EPISODE.getTableName() + "/" + id + "/";
+        String filePath = STR."file/\{Entity.EPISODE.getTableName()}/\{id}/";
 
         for (int i = 0; i < files.length; i++) {
             ActionResult ar;

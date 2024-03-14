@@ -4,6 +4,8 @@ import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.Gender;
 import com.rakbow.kureakurusu.data.LinkType;
+import com.rakbow.kureakurusu.data.dto.common.UpdateDetailCmd;
+import com.rakbow.kureakurusu.data.dto.common.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.emun.common.*;
 import com.rakbow.kureakurusu.data.emun.entity.album.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.entity.album.PublishFormat;
@@ -149,12 +151,12 @@ public class GeneralService {
 
     /**
      * 批量更新数据库实体激活状态
-     * @param tableName,ids,status 实体表名,ids,状态
+     *
      * @author rakbow
      */
     @Transactional
-    public void updateItemStatus(String tableName, List<Long> ids, int status) {
-        mapper.updateItemStatus(tableName, ids, status);
+    public void updateItemStatus(UpdateStatusCmd cmd) {
+        mapper.updateItemStatus(Entity.getTableName(cmd.getEntity()), cmd.getIds(), cmd.status());
     }
 
     /**
@@ -176,25 +178,21 @@ public class GeneralService {
     /**
      * 更新描述
      *
-     * @param tableName,id 实体表名,实体id
-     * @param text 描述数据
      * @author rakbow
      */
     @Transactional
-    public void updateItemDetail(String tableName, long entityId, String text) {
-        mapper.updateItemDetail(tableName, entityId, text, DateHelper.now());
+    public void updateItemDetail(UpdateDetailCmd cmd) {
+        mapper.updateItemDetail(Entity.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
     }
 
     /**
      * 更新特典信息
      *
-     * @param tableName,entityId 实体表名,实体id
-     * @param bonus 特典数据
      * @author rakbow
      */
     @Transactional
-    public void updateItemBonus(String tableName, long entityId, String bonus) {
-        mapper.updateItemBonus(tableName, entityId, bonus, DateHelper.now());
+    public void updateItemBonus(UpdateDetailCmd cmd) {
+        mapper.updateItemBonus(Entity.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
     }
 
     //endregion
@@ -210,7 +208,8 @@ public class GeneralService {
     @Transactional
     public segmentImagesResult getItemImages(String tableName, long entityId) {
         //original images
-        List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
+        String imageJson = mapper.getItemImages(tableName, entityId);
+        List<Image> images = JsonUtil.toJavaList(imageJson, Image.class);
         return CommonImageUtil.segmentImages(images);
     }
 

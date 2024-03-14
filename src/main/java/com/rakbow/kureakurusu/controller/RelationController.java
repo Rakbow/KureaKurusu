@@ -10,8 +10,6 @@ import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,84 +19,46 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/db/relation")
+@RequestMapping("db/relation")
 public class RelationController {
 
-    private static final Logger log = LoggerFactory.getLogger(RelationController.class);
     private final RelationService srv;
 
     @PostMapping("get-relations")
     public ApiResult getRelations(@RequestBody RelationQry qry) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.getRelations(qry.getEntityType(), qry.getEntityId()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getRelations(qry));
     }
 
     @PostMapping("add")
-    public ApiResult addRelation(@Valid @RequestBody RelationDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //build
-            EntityRelation relation = new EntityRelation(dto);
-            //save
-            srv.save(relation);
-            res.ok(I18nHelper.getMessage("entity.curd.insert.success", I18nHelper.getMessage("enum.entity.relation")));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult add(@Valid @RequestBody RelationDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        EntityRelation relation = new EntityRelation(dto);
+        //save
+        srv.save(relation);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", I18nHelper.getMessage("enum.entity.relation")));
     }
 
     @PostMapping("update")
-    public ApiResult updateRelation(@Valid @RequestBody RelationDTO dto, BindingResult errors) {
-        ApiResult res = new ApiResult();
-        try {
-            //check
-            if (errors.hasErrors())
-                return res.fail(errors);
-            //save
-            srv.updateRelation(dto);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", I18nHelper.getMessage("enum.entity.relation")));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+    public ApiResult update(@Valid @RequestBody RelationDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        srv.updateRelation(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", I18nHelper.getMessage("enum.entity.relation")));
     }
 
     @DeleteMapping("delete")
     public ApiResult deleteRelations(@RequestBody DeleteCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.deleteRelations(cmd.getIds());
-            res.ok(I18nHelper.getMessage("entity.curd.delete.success", I18nHelper.getMessage("enum.entity.relation")));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        srv.deleteRelations(cmd.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", I18nHelper.getMessage("enum.entity.relation")));
     }
 
     @PostMapping("manage-relation")
     public ApiResult manageRelation(@RequestBody RelationManageCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.manageRelation(cmd);
-            res.ok(I18nHelper.getMessage("entity.curd.update.success", I18nHelper.getMessage("enum.entity.relation")));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        srv.manageRelation(cmd);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", I18nHelper.getMessage("enum.entity.relation")));
     }
 
 }

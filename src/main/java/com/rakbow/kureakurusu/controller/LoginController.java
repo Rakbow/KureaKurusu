@@ -58,46 +58,35 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public ApiResult login(@RequestBody LoginDTO dto, HttpSession session, HttpServletResponse response) {
+    public ApiResult login(@RequestBody LoginDTO dto, HttpSession session, HttpServletResponse response) throws Exception {
         ApiResult res = new ApiResult();
-        try {
-            //check captcha
-            String kaptcha = (String) session.getAttribute("kaptcha");
-            if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(dto.getVerifyCode()) || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
-                throw new Exception(I18nHelper.getMessage("login.verify_code.error"));
-            //login
-            LoginResult loginResult = userSrv.login(dto);
-            //load cookie to response
-            response.addCookie(loginResult.getCookie());
-            //return
-            HashMap<String, Object> data = new HashMap<>();
-            data.put("token", loginResult.getTicket());
-            data.put("user", loginResult.getUser());
-            res.loadData(data);
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
+        //check captcha
+        String kaptcha = (String) session.getAttribute("kaptcha");
+        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(dto.getVerifyCode()) || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
+            return res.fail(I18nHelper.getMessage("login.verify_code.error"));
+        //login
+        LoginResult loginResult = userSrv.login(dto);
+        //load cookie to response
+        response.addCookie(loginResult.getCookie());
+        //return
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("token", loginResult.getTicket());
+        data.put("user", loginResult.getUser());
+        res.loadData(data);
         return res;
     }
 
     @PostMapping("logout")
     public ApiResult logout(@CookieValue("ticket") String ticket, HttpServletResponse response) {
-        ApiResult res = new ApiResult();
-        try {
-            //logout
-            userSrv.logout(ticket);
-            SecurityContextHolder.clearContext();
-            //clear cookie
-            Cookie cookie = new Cookie("ticket", null);
-            cookie.setPath(contextPath);
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        //logout
+        userSrv.logout(ticket);
+        SecurityContextHolder.clearContext();
+        //clear cookie
+        Cookie cookie = new Cookie("ticket", null);
+        cookie.setPath(contextPath);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return new ApiResult();
     }
 
 }

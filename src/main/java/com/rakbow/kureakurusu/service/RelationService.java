@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
 import com.rakbow.kureakurusu.data.dto.relation.RelationManageCmd;
+import com.rakbow.kureakurusu.data.dto.relation.RelationQry;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Album;
@@ -45,13 +46,13 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
     private final SqlSessionFactory sqlSessionFactory;
 
     @Transactional
-    public List<RelatedItemVO> getRelations(int entityType, long entityId) {
+    public List<RelatedItemVO> getRelations(RelationQry qry) {
         List<RelatedItemVO> res = new ArrayList<>();
         //get original relations
         List<EntityRelation> relations = mapper.selectList(
                 new LambdaQueryWrapper<EntityRelation>()
-                        .eq(EntityRelation::getEntityType, entityType)
-                        .eq(EntityRelation::getEntityId, entityId)
+                        .eq(EntityRelation::getEntityType, qry.getEntityType())
+                        .eq(EntityRelation::getEntityId, qry.getEntityId())
                         .eq(EntityRelation::getStatus, 1)
         );
         if(relations.isEmpty()) return res;

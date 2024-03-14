@@ -40,6 +40,8 @@ public interface ProductVOMapper extends MetaVOMapper {
     ProductVO toVO(Product product);
 
     @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
+    @Mapping(source = "category.labelKey", target = "category.label", qualifiedByName = "getEnumLabel")
+    @Mapping(source = "category.value", target = "category.value")
     @Named("toMiniVO")
     ProductMiniVO toMiniVO(Product product);
 

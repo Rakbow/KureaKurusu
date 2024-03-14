@@ -19,8 +19,6 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.BookVOMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +34,6 @@ public class BookController {
 
     //region inject
 
-    private static final Logger log = LoggerFactory.getLogger(BookController.class);
     private final BookService srv;
     private final PersonService personSrv;
     private final BookVOMapper VOMapper = BookVOMapper.INSTANCES;
@@ -83,32 +80,16 @@ public class BookController {
 
     @DeleteMapping("delete")
     public ApiResult deleteBook(@RequestBody DeleteCmd cmd) {
-        ApiResult res = new ApiResult();
-        try {
-            srv.deleteBooks(cmd.getIds());
-            return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName()));
-        } catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        srv.deleteBooks(cmd.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName()));
     }
 
     //endregion
 
     //region other
-
-    //isbn互相转换
     @PostMapping("get-isbn")
     public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
-        ApiResult res = new ApiResult();
-        try {
-            res.loadData(srv.getISBN(dto.getLabel(), dto.getIsbn()));
-        }catch (Exception e) {
-            res.fail(e);
-            log.error(e.getMessage(), e);
-        }
-        return res;
+        return new ApiResult().load(srv.getISBN(dto.getLabel(), dto.getIsbn()));
     }
 
     //endregion
