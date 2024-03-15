@@ -5,6 +5,7 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +29,9 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler({Exception.class})
     public ApiResult exceptionHandler(Exception e) {
-        log.error(e.getMessage(), e);
-        return new ApiResult(e);
+        String msg = StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
+        log.error(msg, e);
+        return new ApiResult().fail(msg);
     }
 
 }
