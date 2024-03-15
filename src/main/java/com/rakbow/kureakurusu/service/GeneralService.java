@@ -26,7 +26,6 @@ import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.common.LikeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
-import com.rakbow.kureakurusu.util.file.QiniuFileUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

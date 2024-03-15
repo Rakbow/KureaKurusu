@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +33,10 @@ public class QueryParams {
 
     public boolean asc() {
         return this.sortOrder == 1;
+    }
+
+    public boolean isSort() {
+        return StringUtils.isNotBlank(this.sortField);
     }
 
     public QueryParams(ListQry qty) {

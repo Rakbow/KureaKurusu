@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.PersonMapper;
@@ -44,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.rakbow.kureakurusu.data.common.Constant.*;
+import static com.rakbow.kureakurusu.data.common.Constant.SLASH_WITH_SPACE;
 
 /**
  * @author Rakbow
@@ -103,17 +104,15 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         String aliases = param.getStr("aliases");
 
         LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
-                .apply(!StringUtils.isBlank(aliases), "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", aliases)
-                .like(!StringUtils.isBlank(name), Person::getName, name)
-                .like(!StringUtils.isBlank(nameZh), Person::getNameZh, nameZh)
-                .like(!StringUtils.isBlank(nameEn), Person::getNameEn, nameEn);
+                .apply(StringUtils.isNotBlank(aliases), "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", aliases)
+                .like(StringUtils.isNotBlank(name), Person::getName, name)
+                .like(StringUtils.isNotBlank(nameZh), Person::getNameZh, nameZh)
+                .like(StringUtils.isNotBlank(nameEn), Person::getNameEn, nameEn);
 
         List<Integer> gender = param.getArray("gender");
-        if (gender != null && !gender.isEmpty()) {
-            wrapper.in(Person::getGender, gender);
-        }
+        if (CollectionUtils.isNotEmpty(gender)) wrapper.in(Person::getGender, gender);
 
-        if (!StringUtils.isBlank(param.sortField)) {
+        if (param.isSort()) {
             switch (param.sortField) {
                 case "name" -> wrapper.orderBy(true, param.asc(), Person::getName);
                 case "nameZh" -> wrapper.orderBy(true, param.asc(), Person::getNameZh);
@@ -139,7 +138,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     @Transactional
     public SearchResult<PersonMiniVO> searchPersons(SimpleSearchParam param) {
 
-        if(param.keywordEmpty()) new SearchResult<>();
+        if (param.keywordEmpty()) new SearchResult<>();
 
         LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
                 .and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
@@ -226,15 +225,15 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
                         LinkedHashMap::new // 保持插入顺序
                 ));
 
-        for(Long roleId : sortedRelationGroup.keySet()) {
+        for (Long roleId : sortedRelationGroup.keySet()) {
             Personnel personnel = new Personnel();
             Attribute<Long> role = DataFinder.findAttributeByValue(roleId, MetaData.optionsZh.roleSet);
-            if(role == null) continue;
+            if (role == null) continue;
             personnel.setRole(role);
             List<PersonRelation> relationSet = relationGroup.get(roleId);
-            for(PersonRelation r : relationSet) {
+            for (PersonRelation r : relationSet) {
                 Person person = DataFinder.findPersonById(r.getPersonId(), persons);
-                if(person == null) continue;
+                if (person == null) continue;
 
                 PersonnelPair pair = new PersonnelPair();
                 pair.setId(r.getId());
@@ -258,18 +257,18 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
         List<PersonRelation> deleteRelationSet = new ArrayList<>();
 
         cmd.getPersonnel().forEach(pair -> {
-            if(pair.getAction() == DataActionType.INSERT.getValue())
+            if (pair.getAction() == DataActionType.INSERT.getValue())
                 addRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
-            if(pair.getAction() == DataActionType.REAL_DELETE.getValue())
+            if (pair.getAction() == DataActionType.REAL_DELETE.getValue())
                 deleteRelationSet.add(new PersonRelation(pair, cmd.getEntityType(), cmd.getEntityId()));
         });
         //批量删除和批量新增
         MybatisBatch.Method<PersonRelation> method = new MybatisBatch.Method<>(PersonRelationMapper.class);
         MybatisBatch<PersonRelation> batchInsert = new MybatisBatch<>(sqlSessionFactory, addRelationSet);
         MybatisBatch<PersonRelation> batchDelete = new MybatisBatch<>(sqlSessionFactory, deleteRelationSet);
-        if(!addRelationSet.isEmpty())
+        if (!addRelationSet.isEmpty())
             batchInsert.execute(method.insert());
-        if(!deleteRelationSet.isEmpty())
+        if (!deleteRelationSet.isEmpty())
             batchDelete.execute(method.deleteById());
 
     }

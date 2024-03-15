@@ -32,6 +32,7 @@ public class Person extends MetaEntity {
 
     private Long id; //主键
     @NotBlank(message = "{entity.crud.name.required_field}")
+    @TableField
     private String name; //原名
     private String nameZh; //简体中文名
     private String nameEn; //英文名
