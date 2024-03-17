@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.Gender;
@@ -32,9 +33,11 @@ public class Person extends MetaEntity {
 
     private Long id; //主键
     @NotBlank(message = "{entity.crud.name.required_field}")
-    @TableField
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name; //原名
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameZh; //简体中文名
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn; //英文名
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases; //别名 json数组

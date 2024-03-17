@@ -3,17 +3,14 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.base.ListQry;
 import com.rakbow.kureakurusu.data.dto.base.SearchQry;
-import com.rakbow.kureakurusu.data.dto.person.PersonAddDTO;
-import com.rakbow.kureakurusu.data.dto.person.PersonDetailQry;
-import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
+import com.rakbow.kureakurusu.data.dto.person.*;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.system.ApiResult;
+import com.rakbow.kureakurusu.service.PersonRoleService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
@@ -36,6 +33,7 @@ public class PersonController {
 
     //region inject
     private final PersonService srv;
+    private final PersonRoleService roleSrv;
     private final PersonVOMapper VOMapper;
     //endregion
 
@@ -54,7 +52,7 @@ public class PersonController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.getPersons(new QueryParams(qry)));
+        return new ApiResult().load(srv.getPersons(new PersonListParams(qry)));
     }
 
     @PostMapping("add")
@@ -72,8 +70,10 @@ public class PersonController {
     public ApiResult update(@Valid @RequestBody PersonUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Person person = VOMapper.build(dto);
         //save
-        srv.updatePerson(dto);
+        srv.updateById(person);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
     }
     //endregion
@@ -82,7 +82,7 @@ public class PersonController {
 
     @PostMapping("get-roles")
     public ApiResult getPersonRoles(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.getRoles(new QueryParams(qry)));
+        return new ApiResult().load(roleSrv.getRoles(new PersonRoleListParams(qry)));
     }
 
     @PostMapping("add-role")
@@ -90,7 +90,7 @@ public class PersonController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.addRole(role);
+        roleSrv.save(role);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ROLE.getName()));
     }
 
@@ -99,7 +99,7 @@ public class PersonController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateRole(role);
+        roleSrv.updateById(role);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ROLE.getName()));
     }
 

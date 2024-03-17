@@ -2,26 +2,23 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
-import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.person.PersonDetailQry;
-import com.rakbow.kureakurusu.data.dto.person.PersonUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.person.PersonListParams;
 import com.rakbow.kureakurusu.data.dto.person.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.common.Entity;
 import com.rakbow.kureakurusu.data.emun.system.DataActionType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
-import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.person.Personnel;
 import com.rakbow.kureakurusu.data.person.PersonnelPair;
@@ -30,14 +27,12 @@ import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.ClazzHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +52,6 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
     private final PersonVOMapper VOMapper;
     private final PersonMapper mapper;
-    private final PersonRoleMapper roleMapper;
     private final PersonRelationMapper relationMapper;
     private final EntityUtil entityUtil;
     private final SqlSessionFactory sqlSessionFactory;
@@ -78,54 +72,18 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     }
 
     @Transactional
-    public void updatePerson(PersonUpdateDTO dto) {
+    public SearchResult<PersonVOBeta> getPersons(PersonListParams param) {
 
-        LambdaUpdateWrapper<Person> wrapper = new LambdaUpdateWrapper<Person>()
-                .eq(Person::getId, dto.getId())
-                .set(Person::getName, dto.getName())
-                .set(Person::getNameZh, dto.getNameZh())
-                .set(Person::getNameEn, dto.getNameEn())
-                .set(Person::getGender, dto.getGender())
-                .set(Person::getBirthDate, dto.getBirthDate())
-                .set(Person::getAliases, CommonUtil.getListStr(dto.getAliases()))
-                .set(Person::getRemark, dto.getRemark())
-                .set(Person::getAddedTime, dto.getAddedTime())
-                .set(Person::getEditedTime, DateHelper.now());
-
-        mapper.update(null, wrapper);
-    }
-
-    @Transactional
-    public SearchResult<PersonVOBeta> getPersons(QueryParams param) {
-
-        String name = param.getStr("name");
-        String nameZh = param.getStr("nameZh");
-        String nameEn = param.getStr("nameEn");
-        String aliases = param.getStr("aliases");
-
-        LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
-                .apply(StringUtils.isNotBlank(aliases), "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", aliases)
-                .like(StringUtils.isNotBlank(name), Person::getName, name)
-                .like(StringUtils.isNotBlank(nameZh), Person::getNameZh, nameZh)
-                .like(StringUtils.isNotBlank(nameEn), Person::getNameEn, nameEn);
-
-        List<Integer> gender = param.getArray("gender");
-        if (CollectionUtils.isNotEmpty(gender)) wrapper.in(Person::getGender, gender);
-
-        if (param.isSort()) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.asc(), Person::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.asc(), Person::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.asc(), Person::getNameEn);
-                case "birthDate" -> wrapper.orderBy(true, param.asc(), Person::getBirthDate);
-                case "gender" -> wrapper.orderBy(true, param.asc(), Person::getGender);
-            }
-        }
+        QueryWrapper<Person> wrapper = new QueryWrapper<Person>()
+                .like("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getAliases()}%")
+                .like("name", param.getName())
+                .like("name_zh", param.getNameZh())
+                .like("name_en", param.getNameEn())
+                .in(CollectionUtils.isNotEmpty(param.getGender()), "gender", param.getGender())
+                .orderBy(param.isSort(), param.asc(), ClazzHelper.getColumnName(param.sortField));
 
         IPage<Person> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
         List<PersonVOBeta> persons = VOMapper.toBetaVO(pages.getRecords());
-
         return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
@@ -149,50 +107,9 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
                 .orderByDesc(Person::getId);
 
         IPage<Person> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
         List<PersonMiniVO> persons = VOMapper.toMiniVO(pages.getRecords());
-
         return new SearchResult<>(persons, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
-    //endregion
-
-    //region person role
-
-    @Transactional
-    public void addRole(PersonRole role) {
-        roleMapper.insert(role);
-    }
-
-    @Transactional
-    public void updateRole(PersonRole role) {
-        roleMapper.updateById(role);
-    }
-
-    @Transactional
-    public SearchResult<PersonRole> getRoles(QueryParams param) {
-        String name = param.getStr("name");
-        String nameZh = param.getStr("nameZh");
-        String nameEn = param.getStr("nameEn");
-
-        LambdaQueryWrapper<PersonRole> wrapper = new LambdaQueryWrapper<PersonRole>()
-                .like(StringUtils.isNotBlank(name), PersonRole::getName, name)
-                .like(StringUtils.isNotBlank(nameZh), PersonRole::getNameZh, nameZh)
-                .like(StringUtils.isNotBlank(nameEn), PersonRole::getNameEn, nameEn);
-        if (StringUtils.isNotBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.asc(), PersonRole::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.asc(), PersonRole::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.asc(), PersonRole::getNameEn);
-            }
-        } else {
-            wrapper.orderByDesc(PersonRole::getId);
-        }
-
-        IPage<PersonRole> pages = roleMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
-        return new SearchResult<>(pages);
-    }
-
     //endregion
 
     //region relation

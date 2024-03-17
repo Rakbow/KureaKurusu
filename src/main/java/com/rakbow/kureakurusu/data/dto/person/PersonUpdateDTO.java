@@ -23,7 +23,5 @@ public class PersonUpdateDTO extends DTO {
     private int gender;
     private String birthDate;
     private String remark;
-    private String addedTime;
-    private String editedTime;
 
 }

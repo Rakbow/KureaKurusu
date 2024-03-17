@@ -39,12 +39,12 @@ public class QueryParams {
         return StringUtils.isNotBlank(this.sortField);
     }
 
-    public QueryParams(ListQry qty) {
-        size = qty.getRows();
-        page = qty.getFirst()/size + 1;
-        sortField = qty.getSortField();
-        sortOrder = qty.getSortOrder();
-        filters = qty.getFilters();
+    public QueryParams(ListQry qry) {
+        size = qry.getRows();
+        page = qry.getFirst()/size + 1;
+        sortField = qry.getSortField();
+        sortOrder = qry.getSortOrder();
+        filters = qry.getFilters();
     }
 
     public String getStr(String key) {

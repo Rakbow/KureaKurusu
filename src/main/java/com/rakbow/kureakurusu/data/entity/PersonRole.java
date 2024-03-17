@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 @TableName("person_role")
 public class PersonRole {
 
+    @OrderBy
     private Long id;
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;

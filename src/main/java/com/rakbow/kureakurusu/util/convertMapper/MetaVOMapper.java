@@ -84,4 +84,9 @@ public interface MetaVOMapper {
         return CommonImageUtil.getThumbCoverUrl(images);
     }
 
+    @Named("updateEditedTime")
+    default String updateEditedTime() {
+        return DateHelper.nowStr();
+    }
+
 }
