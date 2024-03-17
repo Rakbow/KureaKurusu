@@ -32,18 +32,22 @@ public enum UserAuthority {
     }
 
     public static boolean isJunior(User user) {
+        if(user == null) return false;
         return user.getType().value >= JUNIOR_EDITOR.value;
     }
 
     public static boolean isSenior(User user) {
+        if(user == null) return false;
         return user.getType().value >= SENIOR_EDITOR.value;
     }
 
     public static boolean isAdmin(User user) {
+        if(user == null) return false;
         return user.getType().value.intValue() == ADMIN.value;
     }
 
     public static boolean isUser(User user) {
+        if(user == null) return false;
         return user.getType().value > VISITOR.value;
     }
 

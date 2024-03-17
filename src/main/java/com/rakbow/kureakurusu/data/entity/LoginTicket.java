@@ -26,7 +26,7 @@ public class LoginTicket {
         id = 0L;
         userId = 0L;
         ticket = "";
-        status = true;
+        status = false;
     }
 
 }
