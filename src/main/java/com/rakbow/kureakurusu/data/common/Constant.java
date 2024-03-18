@@ -287,6 +287,11 @@ public interface Constant {
     String HTTPS_SCHEME = "https";
 
     /**
+     * http协议
+     */
+    String HTTP_SCHEME = "http";
+
+    /**
      * www域名前缀
      */
     String WWW = "www";

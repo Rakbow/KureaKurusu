@@ -61,6 +61,7 @@ public interface PersonVOMapper extends MetaVOMapper {
 
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")
+    @Mapping(source = "links", target = "links",qualifiedByName = "getLinks")
     @ToVO
     PersonVO toVO(Person person);
 
