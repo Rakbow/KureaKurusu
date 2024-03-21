@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
-import com.rakbow.kureakurusu.data.emun.common.RelatedType;
+import com.rakbow.kureakurusu.data.dto.RelationDTO;
+import com.rakbow.kureakurusu.data.emun.RelatedType;
 import com.rakbow.kureakurusu.data.relation.RelationPair;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;

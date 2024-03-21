@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.annotation.ToVO;
-import com.rakbow.kureakurusu.data.dto.franchise.FranchiseAddDTO;
+import com.rakbow.kureakurusu.data.dto.FranchiseAddDTO;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
 import org.mapstruct.IterableMapping;

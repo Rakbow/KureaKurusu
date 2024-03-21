@@ -2,19 +2,17 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.common.Currency;
-import com.rakbow.kureakurusu.data.emun.common.Language;
-import com.rakbow.kureakurusu.data.emun.common.Region;
-import com.rakbow.kureakurusu.data.emun.entity.book.BookType;
+import com.rakbow.kureakurusu.data.emun.Currency;
+import com.rakbow.kureakurusu.data.emun.Language;
+import com.rakbow.kureakurusu.data.emun.Region;
+import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.handler.LongListHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Rakbow

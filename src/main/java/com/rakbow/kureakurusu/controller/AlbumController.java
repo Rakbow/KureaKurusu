@@ -1,14 +1,10 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.album.*;
-import com.rakbow.kureakurusu.data.dto.base.ListQry;
-import com.rakbow.kureakurusu.data.dto.base.SearchQry;
-import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.system.ApiResult;
+import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.PersonService;
@@ -86,7 +82,7 @@ public class AlbumController {
     //region advanced crud
 
     @PostMapping("update-track-info")
-    public ApiResult updateTrackInfo(@RequestBody UpdateAlbumTrackInfoCmd cmd) {
+    public ApiResult updateTrackInfo(@RequestBody AlbumUpdateTrackInfoCmd cmd) {
         srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }

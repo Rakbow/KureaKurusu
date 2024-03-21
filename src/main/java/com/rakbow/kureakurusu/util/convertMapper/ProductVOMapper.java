@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.dto.product.ProductAddDTO;
-import com.rakbow.kureakurusu.data.emun.entity.product.ProductCategory;
+import com.rakbow.kureakurusu.data.dto.ProductAddDTO;
+import com.rakbow.kureakurusu.data.emun.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.product.ProductMiniVO;

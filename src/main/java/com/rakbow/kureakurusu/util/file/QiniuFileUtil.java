@@ -1,8 +1,7 @@
 package com.rakbow.kureakurusu.util.file;
 
-import com.rakbow.kureakurusu.data.system.ActionResult;
-import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.system.File;
+import com.rakbow.kureakurusu.data.common.ActionResult;
+import com.rakbow.kureakurusu.data.common.File;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;

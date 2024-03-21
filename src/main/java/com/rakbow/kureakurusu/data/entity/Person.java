@@ -3,12 +3,11 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.Gender;
+import com.rakbow.kureakurusu.data.dto.PersonUpdateDTO;
+import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
-import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.handler.ImageHandler;
 import com.rakbow.kureakurusu.util.handler.LinkHandler;
 import com.rakbow.kureakurusu.util.handler.StrListHandler;
 import lombok.Data;
@@ -17,7 +16,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +63,18 @@ public class Person extends MetaEntity {
         setAddedTime(DateHelper.now());
         setEditedTime(DateHelper.now());
         setStatus(true);
+    }
+
+    public Person(PersonUpdateDTO dto) {
+        id = dto.getId();
+        name = dto.getName();
+        nameZh = dto.getNameZh();
+        nameEn = dto.getNameEn();
+        aliases = dto.getAliases();
+        gender = Gender.get(dto.getGender());
+        birthDate = dto.getBirthDate();
+        setRemark(dto.getRemark());
+        setEditedTime(DateHelper.now());
     }
 
 }

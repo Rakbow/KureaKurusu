@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.util.common;
 
-import com.rakbow.kureakurusu.data.emun.system.FileType;
+import com.rakbow.kureakurusu.data.emun.FileType;
 
 import java.io.File;
 import java.nio.file.Path;

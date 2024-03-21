@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.person.PersonRoleListParams;
+import com.rakbow.kureakurusu.data.dto.PersonRoleListParams;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

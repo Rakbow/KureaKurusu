@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.util.handler;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
-import com.rakbow.kureakurusu.data.system.File;
+import com.rakbow.kureakurusu.data.common.File;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import lombok.extern.java.Log;
 import org.apache.ibatis.type.JdbcType;

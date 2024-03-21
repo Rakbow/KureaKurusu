@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.dto.base.DTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

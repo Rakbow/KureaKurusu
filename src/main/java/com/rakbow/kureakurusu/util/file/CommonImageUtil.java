@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.util.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
-import com.rakbow.kureakurusu.data.emun.image.ImageProperty;
+import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.ImageProperty;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.ImageVO;

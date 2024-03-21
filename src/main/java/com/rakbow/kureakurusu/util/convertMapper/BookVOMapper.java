@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.annotation.ToVO;
-import com.rakbow.kureakurusu.data.dto.book.BookAddDTO;
-import com.rakbow.kureakurusu.data.emun.entity.book.BookType;
+import com.rakbow.kureakurusu.data.dto.BookAddDTO;
+import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.vo.book.BookMiniVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVO;

@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.controller;
 
 import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.dto.LoginDTO;
-import com.rakbow.kureakurusu.data.system.ApiResult;
-import com.rakbow.kureakurusu.data.system.LoginResult;
+import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.LoginResult;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import jakarta.servlet.http.Cookie;

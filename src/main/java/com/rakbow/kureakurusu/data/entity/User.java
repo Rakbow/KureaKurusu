@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.rakbow.kureakurusu.data.dto.user.UserRegisterDTO;
-import com.rakbow.kureakurusu.data.emun.system.UserAuthority;
+import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
+import com.rakbow.kureakurusu.data.emun.UserAuthority;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;

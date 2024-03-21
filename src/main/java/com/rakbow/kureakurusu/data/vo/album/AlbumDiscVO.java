@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.vo.album;
 
-import com.rakbow.kureakurusu.data.emun.system.DataActionType;
+import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;

@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.util.entity;
 import com.rakbow.kureakurusu.data.Audio;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.system.File;
+import com.rakbow.kureakurusu.data.common.File;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import org.apache.commons.lang3.StringUtils;
 

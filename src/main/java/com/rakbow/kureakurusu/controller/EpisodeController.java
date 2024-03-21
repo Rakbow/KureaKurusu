@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.episode.EpisodeDeleteCmd;
-import com.rakbow.kureakurusu.data.system.ApiResult;
-import com.rakbow.kureakurusu.data.system.File;
+import com.rakbow.kureakurusu.data.dto.EpisodeDeleteCmd;
+import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.File;
 import com.rakbow.kureakurusu.service.EpisodeService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import lombok.RequiredArgsConstructor;

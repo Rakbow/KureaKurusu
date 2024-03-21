@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.person;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.emun.system.DataActionType;
+import com.rakbow.kureakurusu.data.emun.DataActionType;
 import lombok.Data;
 
 /**

@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.dto.album.AlbumAddDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumAddDTO;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.album.AlbumMiniVO;

@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.util.common;
 
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.emun.Entity;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;

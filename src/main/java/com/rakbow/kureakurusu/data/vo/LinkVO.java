@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.vo;
 
 import com.rakbow.kureakurusu.data.Link;
-import com.rakbow.kureakurusu.data.LinkType;
+import com.rakbow.kureakurusu.data.emun.LinkType;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import lombok.Data;
 

@@ -1,12 +1,11 @@
 package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.Gender;
+import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.Link;
-import com.rakbow.kureakurusu.data.LinkType;
-import com.rakbow.kureakurusu.data.emun.common.Currency;
-import com.rakbow.kureakurusu.data.emun.common.Language;
-import com.rakbow.kureakurusu.data.emun.common.Region;
+import com.rakbow.kureakurusu.data.emun.Currency;
+import com.rakbow.kureakurusu.data.emun.Language;
+import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
@@ -21,8 +20,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static com.rakbow.kureakurusu.data.common.Constant.AT;
 
 /**
  * @author Rakbow

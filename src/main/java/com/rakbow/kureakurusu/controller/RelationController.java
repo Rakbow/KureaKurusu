@@ -1,11 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.dto.common.DeleteCmd;
-import com.rakbow.kureakurusu.data.dto.relation.RelationDTO;
-import com.rakbow.kureakurusu.data.dto.relation.RelationManageCmd;
-import com.rakbow.kureakurusu.data.dto.relation.RelationQry;
+import com.rakbow.kureakurusu.data.dto.DeleteCmd;
+import com.rakbow.kureakurusu.data.dto.RelationDTO;
+import com.rakbow.kureakurusu.data.dto.RelationManageCmd;
+import com.rakbow.kureakurusu.data.dto.RelationQry;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
-import com.rakbow.kureakurusu.data.system.ApiResult;
+import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import jakarta.validation.Valid;

@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.dto.user.UserActivationDTO;
-import com.rakbow.kureakurusu.data.dto.user.UserRegisterDTO;
-import com.rakbow.kureakurusu.data.system.ApiResult;
+import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
+import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
+import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import jakarta.validation.Valid;

@@ -1,9 +1,8 @@
 package com.rakbow.kureakurusu.data.vo.album;
 
-import com.rakbow.kureakurusu.data.emun.system.DataActionType;
+import com.rakbow.kureakurusu.data.emun.DataActionType;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Rakbow

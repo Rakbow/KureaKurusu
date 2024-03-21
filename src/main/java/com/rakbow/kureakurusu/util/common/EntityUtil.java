@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.emun.common.Entity;
+import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
