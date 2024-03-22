@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JsonUtil {
 
@@ -21,6 +22,11 @@ public class JsonUtil {
     @SneakyThrows
     public static <T> T to(String json, Class<T> clazz) {
         return mapper.readValue(json, clazz);
+    }
+
+    @SneakyThrows
+    public static <T> T to(Map<String, String> dic, Class<T> clazz) {
+        return mapper.convertValue(dic, clazz);
     }
 
     @SneakyThrows
