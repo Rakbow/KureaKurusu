@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.GetOptionQry;
 import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
@@ -7,6 +8,7 @@ import com.rakbow.kureakurusu.data.dto.UpdateDetailCmd;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
@@ -17,10 +19,12 @@ import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
+import com.rakbow.kureakurusu.util.common.ExcelUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -165,6 +171,20 @@ public class GeneralController {
         }else {
             res.fail(I18nHelper.getMessage("entity.like.failed"));
         }
+        return res;
+    }
+
+    //endregion
+
+    //region import
+
+    @SneakyThrows
+    @PostMapping("import-entity")
+    public ApiResult importEntity(MultipartFile file) {
+        ApiResult res = new ApiResult();
+        if(file.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
+        List<Person> items = ExcelUtil.getDataFromExcel(file.getInputStream(), Person.class);
+        Db.saveBatch(items);
         return res;
     }
 
