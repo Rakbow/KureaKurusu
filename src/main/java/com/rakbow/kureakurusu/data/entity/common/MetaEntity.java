@@ -30,4 +30,8 @@ public class MetaEntity {
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;//激活状态
 
+    public void updateEditedTime() {
+        this.editedTime = DateHelper.now();
+    }
+
 }

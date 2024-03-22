@@ -1,8 +1,9 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
@@ -10,10 +11,9 @@ import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.dto.ProductDetailQry;
-import com.rakbow.kureakurusu.data.dto.ProductUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.ProductListParams;
+import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Episode;
@@ -24,7 +24,6 @@ import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductMiniVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.EpisodeVOMapper;
@@ -33,7 +32,6 @@ import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,52 +85,27 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     public SearchResult<ProductMiniVO> searchProducts(SearchQry qry) {
         SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();
-
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
                 .or().like(Product::getName, param.getKeyword())
                 .or().like(Product::getNameZh, param.getKeyword())
                 .or().like(Product::getNameEn, param.getKeyword())
                 .eq(Product::getStatus, 1)
                 .orderByDesc(Product::getId);
-
         IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
         List<ProductMiniVO> items = VOMapper.toMiniVO(pages.getRecords());
-
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
     @Transactional
-    public SearchResult<ProductVOAlpha> getProducts(QueryParams param) {
-        String name = param.getStr("name");
-        String nameEn = param.getStr("nameEn");
-        String nameZh = param.getStr("nameZh");
-
-        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
-                .like(!StringUtils.isBlank(name), Product::getName, name)
-                .like(!StringUtils.isBlank(nameZh), Product::getNameZh, nameZh)
-                .like(!StringUtils.isBlank(nameEn), Product::getNameEn, nameEn);
-
-        List<Integer> categories = param.getArray("category");
-        if(categories != null && !categories.isEmpty())
-            wrapper.in(Product::getCategory, categories);
-
-        if(!StringUtils.isBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.asc(), Product::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.asc(), Product::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.asc(), Product::getNameEn);
-                case "releaseDate" -> wrapper.orderBy(true, param.asc(), Product::getReleaseDate);
-                case "category" -> wrapper.orderBy(true, param.asc(), Product::getCategory);
-                case "franchise" -> wrapper.orderBy(true, param.asc(), Product::getFranchise);
-            }
-        }else{
-            wrapper.orderByDesc(Product::getId);
-        }
-
+    public SearchResult<ProductVOAlpha> getProducts(ProductListParams param) {
+        QueryWrapper<Product> wrapper = new QueryWrapper<Product>()
+                .like("name", param.getName())
+                .like("name_zh", param.getNameZh())
+                .like("name_en", param.getNameEn())
+                .in(CollectionUtils.isNotEmpty(param.getCategory()), "category", param.getCategory())
+                .orderBy(param.isSort(), param.asc(), param.sortField);
         IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<ProductVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
@@ -142,7 +115,6 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         Product product = getById(qry.getId());
         if(product == null)
             throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.PRODUCT.getName()));
-
         return ProductDetailVO.builder()
                 .item(VOMapper.toVO(product))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
@@ -150,21 +122,6 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .itemImageInfo(CommonImageUtil.segmentImages(product.getImages(), 100, Entity.PRODUCT, true))
                 .episodes(getEpisodes(product.getId(), product.getCategory()))
                 .build();
-    }
-
-    @Transactional
-    public void updateProduct(ProductUpdateDTO dto) {
-        mapper.update(new LambdaUpdateWrapper<Product>()
-                .eq(Product::getId, dto.getId())
-                .set(Product::getName, dto.getName())
-                .set(Product::getNameZh, dto.getNameEn())
-                .set(Product::getNameZh, dto.getNameEn())
-                .set(Product::getReleaseDate, dto.getReleaseDate())
-                .set(Product::getFranchise, dto.getFranchise())
-                .set(Product::getCategory, dto.getCategory())
-                .set(Product::getRemark, dto.getRemark())
-                .set(Product::getEditedTime, DateHelper.now())
-        );
     }
 
     @Transactional

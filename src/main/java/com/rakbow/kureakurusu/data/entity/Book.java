@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.dto.BookUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
@@ -25,18 +27,21 @@ import java.util.ArrayList;
 public class Book extends MetaEntity {
 
     private Long id;//主键编号
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String title;//标题（原文）
     private String titleEn;//标题（英文）
     private String titleZh;//标题（中文）
-    @TableField("isbn_10")
+    @TableField(value = "isbn_10", whereStrategy = FieldStrategy.NOT_EMPTY)
     private String isbn10;//国际标准书号（10位）
-    @TableField("isbn_13")
+    @TableField(value = "isbn_13", whereStrategy = FieldStrategy.NOT_EMPTY)
     private String isbn13;//国际标准书号（13位）
     private BookType bookType;//书籍类型
 
     private String authors;//作者（译者，插画，原作者等，json）
 
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private Region region;//地区
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private Language lang;//语言
     private Currency currency;//货币
 
@@ -70,5 +75,23 @@ public class Book extends MetaEntity {
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);
+    }
+
+    public Book(BookUpdateDTO dto) {
+        id = dto.getId();
+        title = dto.getTitle();
+        titleZh = dto.getTitleZh();
+        titleEn = dto.getTitleEn();
+        isbn10 = dto.getIsbn10();
+        isbn13 = dto.getIsbn13();
+        bookType = BookType.get(dto.getBookType());
+        publishDate = dto.getPublishDate();
+        region = Region.get(dto.getRegion());
+        lang = Language.get(dto.getLang());
+        price = dto.getPrice();
+        currency = Currency.get(dto.getCurrency());
+        hasBonus = dto.isHasBonus();
+        setRemark(dto.getRemark());
+        updateEditedTime();
     }
 }

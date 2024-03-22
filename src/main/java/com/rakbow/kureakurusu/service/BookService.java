@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,10 +9,9 @@ import com.rakbow.kureakurusu.dao.BookMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
+import com.rakbow.kureakurusu.data.dto.BookListParams;
 import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
-import com.rakbow.kureakurusu.data.dto.BookUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
@@ -21,7 +20,6 @@ import com.rakbow.kureakurusu.data.vo.book.BookMiniVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVOAlpha;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.BookVOMapper;
@@ -93,28 +91,6 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     }
 
     @Transactional
-    public void updateBook(BookUpdateDTO dto) {
-        update(
-                new LambdaUpdateWrapper<Book>()
-                        .eq(Book::getId, dto.getId())
-                        .set(Book::getTitle, dto.getTitle())
-                        .set(Book::getTitleZh, dto.getTitleZh())
-                        .set(Book::getTitleEn, dto.getTitleEn())
-                        .set(Book::getIsbn10, dto.getIsbn10())
-                        .set(Book::getIsbn13, dto.getIsbn13())
-                        .set(Book::getBookType, dto.getBookType())
-                        .set(Book::getPublishDate, dto.getPublishDate())
-                        .set(Book::getRegion, dto.getRegion())
-                        .set(Book::getLang, dto.getLang())
-                        .set(Book::getPrice, dto.getPrice())
-                        .set(Book::getCurrency, dto.getCurrency())
-                        .set(Book::getHasBonus, dto.isHasBonus())
-                        .set(Book::getRemark, dto.getRemark())
-                        .set(Book::getEditedTime, DateHelper.now())
-        );
-    }
-
-    @Transactional
     public SearchResult<BookMiniVO> searchBooks(SearchQry qry) {
         SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();
@@ -133,47 +109,20 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     }
 
     @Transactional
-    public SearchResult<BookVOAlpha> getBooks(QueryParams param) {
+    public SearchResult<BookVOAlpha> getBooks(BookListParams param) {
 
-        String title = param.getStr("title");
-        String isbn10 = param.getStr("isbn10");
-        String isbn13 = param.getStr("isbn13");
-        String region = param.getStr("region");
-        String lang = param.getStr("lang");
-        Integer bookType = param.getInteger("bookType");
-        Boolean hasBonus = param.getBool("hasBonus");
-        LambdaQueryWrapper<Book> wrapper = new LambdaQueryWrapper<Book>()
-                .like(StringUtils.isNotBlank(title), Book::getTitle, title)
-                .like(StringUtils.isNotBlank(isbn10), Book::getIsbn10, isbn10)
-                .like(StringUtils.isNotBlank(isbn13), Book::getIsbn13, isbn13)
-                .eq(StringUtils.isNotBlank(region), Book::getRegion, region)
-                .eq(StringUtils.isNotBlank(lang), Book::getLang, lang)
-                .eq(bookType != -1, Book::getBookType, bookType)
-                .eq(hasBonus != null, Book::getHasBonus, hasBonus);
-
-        if(StringUtils.isNotBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "title" -> wrapper.orderBy(true, param.asc(), Book::getTitle);
-                case "titleZh" -> wrapper.orderBy(true, param.asc(), Book::getTitleZh);
-                case "titleEn" -> wrapper.orderBy(true, param.asc(), Book::getTitleEn);
-                case "isbn10" -> wrapper.orderBy(true, param.asc(), Book::getIsbn10);
-                case "isbn13" -> wrapper.orderBy(true, param.asc(), Book::getIsbn13);
-                case "region" -> wrapper.orderBy(true, param.asc(), Book::getRegion);
-                case "lang" -> wrapper.orderBy(true, param.asc(), Book::getLang);
-                case "bookType" -> wrapper.orderBy(true, param.asc(), Book::getBookType);
-                case "price" -> wrapper.orderBy(true, param.asc(), Book::getPrice);
-                case "publishDate" -> wrapper.orderBy(true, param.asc(), Book::getPublishDate);
-                case "hasBonus" -> wrapper.orderBy(true, param.asc(), Book::getHasBonus);
-                case "addedTime" -> wrapper.orderBy(true, param.asc(), Book::getAddedTime);
-                case "editedTime" -> wrapper.orderBy(true, param.asc(), Book::getEditedTime);
-            }
-        }else {
-            wrapper.orderByDesc(Book::getId);
-        }
+        QueryWrapper<Book> wrapper = new QueryWrapper<Book>()
+                .like("title", param.getTitle())
+                .like("isbn10", param.getIsbn10())
+                .like("isbn13", param.getIsbn13())
+                .eq("region", param.getRegion())
+                .eq("lang", param.getLang())
+                .eq(param.getBookType() != -1, "bookType", param.getBookType())
+                .eq(param.getHasBonus() != null, "hasBonus", param.getHasBonus())
+                .orderBy(param.isSort(), param.asc(), param.sortField);
 
         IPage<Book> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<BookVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 

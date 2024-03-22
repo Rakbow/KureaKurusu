@@ -1,14 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
-import com.rakbow.kureakurusu.data.dto.ListQry;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
-import com.rakbow.kureakurusu.data.dto.BookAddDTO;
-import com.rakbow.kureakurusu.data.dto.BookIsbnDTO;
-import com.rakbow.kureakurusu.data.dto.BookUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.DeleteCmd;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.common.ApiResult;
@@ -50,7 +43,7 @@ public class BookController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.getBooks(new QueryParams(qry)));
+        return new ApiResult().load(srv.getBooks(new BookListParams(qry)));
     }
 
     @PostMapping("search")
@@ -74,7 +67,7 @@ public class BookController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateBook(dto);
+        srv.updateById(new Book(dto));
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName()));
     }
 

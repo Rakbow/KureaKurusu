@@ -36,14 +36,14 @@ public class AlbumController {
     @PostMapping("detail")
     @UniqueVisitor
     public ApiResult detail(@RequestBody AlbumDetailQry qry) {
-        AlbumDetailVO vo = srv.getDetail(qry);
+        AlbumDetailVO vo = srv.detail(qry);
         vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
         return new ApiResult().load(vo);
     }
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.getAlbums(new QueryParams(qry)));
+        return new ApiResult().load(srv.getAlbums(new AlbumListParams(qry)));
     }
 
     @PostMapping("search")
@@ -67,7 +67,7 @@ public class AlbumController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateAlbum(dto);
+        srv.updateById(new Album(dto));
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }
 

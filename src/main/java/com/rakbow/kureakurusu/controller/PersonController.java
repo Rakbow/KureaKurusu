@@ -70,10 +70,8 @@ public class PersonController {
     public ApiResult update(@Valid @RequestBody PersonUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //build
-        Person person = VOMapper.build(dto);
         //save
-        srv.updateById(person);
+        srv.updateById(new Person(dto));
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
     }
     //endregion

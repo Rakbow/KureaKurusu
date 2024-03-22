@@ -28,11 +28,6 @@ public interface PersonVOMapper extends MetaVOMapper {
     @Named("build")
     Person build(PersonAddDTO dto);
 
-    default Person build(PersonUpdateDTO dto) {
-        if (dto == null) return null;
-        return new Person(dto);
-    }
-
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")
     @Mapping(source = "links", target = "links",qualifiedByName = "getLinks")

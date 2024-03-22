@@ -1,8 +1,10 @@
 package com.rakbow.kureakurusu.data.entity;
 
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -25,10 +27,15 @@ import java.util.List;
 public class Album extends MetaEntity {
 
     private Long id;//表主键
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String catalogNo;//专辑编号
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;//专辑名称（日语）
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameZh;//专辑名称（中文）
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;//专辑名称（英语）
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String barcode;//商品条形码
     private String releaseDate;//发行日期
     @TableField(typeHandler = IntegerListHandler.class)
@@ -43,7 +50,6 @@ public class Album extends MetaEntity {
     private String bonus;//特典信息
 
     public Album() {
-
         this.id = 0L;
         this.catalogNo = "";
         this.name = "";
@@ -64,6 +70,23 @@ public class Album extends MetaEntity {
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);
+    }
 
+    public Album(AlbumUpdateDTO dto) {
+        id = dto.getId();
+        name = dto.getName();
+        nameZh = dto.getNameZh();
+        nameEn = dto.getNameEn();
+        catalogNo = dto.getCatalogNo();
+        barcode = dto.getBarcode();
+        releaseDate = dto.getReleaseDate();
+        price = dto.getPrice();
+        currency = Currency.get(dto.getCurrency());
+        hasBonus = dto.isHasBonus();
+        albumFormat = dto.getAlbumFormat();
+        publishFormat = dto.getPublishFormat();
+        mediaFormat = dto.getMediaFormat();
+        setRemark(dto.getRemark());
+        updateEditedTime();
     }
 }

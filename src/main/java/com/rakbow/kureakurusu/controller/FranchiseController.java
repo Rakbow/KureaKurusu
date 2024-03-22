@@ -1,12 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.ListQry;
-import com.rakbow.kureakurusu.data.dto.FranchiseAddDTO;
-import com.rakbow.kureakurusu.data.dto.FranchiseDeleteCmd;
-import com.rakbow.kureakurusu.data.dto.FranchiseDetailQry;
-import com.rakbow.kureakurusu.data.dto.FranchiseUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.common.ApiResult;
@@ -44,7 +39,7 @@ public class FranchiseController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.list(new QueryParams(qry)));
+        return new ApiResult().load(srv.list(new FranchiseListParams(qry)));
     }
 
     @PostMapping("add")
@@ -63,7 +58,7 @@ public class FranchiseController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.update(dto);
+        srv.updateById(new Franchise(dto));
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.FRANCHISE.getName()));
     }
 

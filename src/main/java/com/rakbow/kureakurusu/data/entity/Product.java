@@ -1,6 +1,9 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.dto.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -21,8 +24,11 @@ import java.util.ArrayList;
 public class Product extends MetaEntity {
 
     private Long id;//主键
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;//原名
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameZh;//中文译名
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;//英文译名
     private String releaseDate;//日期
     private long franchise;//所属系列id
@@ -42,5 +48,17 @@ public class Product extends MetaEntity {
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);
+    }
+
+    public Product(ProductUpdateDTO dto) {
+        id = dto.getId();
+        name = dto.getName();
+        nameZh = dto.getNameZh();
+        nameEn = dto.getNameEn();
+        releaseDate = dto.getReleaseDate();
+        franchise = dto.getFranchise();
+        category = ProductCategory.get(dto.getCategory());
+        setRemark(dto.getRemark());
+        updateEditedTime();
     }
 }

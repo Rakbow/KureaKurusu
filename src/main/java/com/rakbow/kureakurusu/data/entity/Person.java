@@ -74,7 +74,7 @@ public class Person extends MetaEntity {
         gender = Gender.get(dto.getGender());
         birthDate = dto.getBirthDate();
         setRemark(dto.getRemark());
-        setEditedTime(DateHelper.now());
+        updateEditedTime();
     }
 
 }

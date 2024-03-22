@@ -1,13 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
-import com.rakbow.kureakurusu.data.dto.ListQry;
-import com.rakbow.kureakurusu.data.dto.CommonDetailQty;
-import com.rakbow.kureakurusu.data.dto.DeleteCmd;
-import com.rakbow.kureakurusu.data.dto.ProductAddDTO;
-import com.rakbow.kureakurusu.data.dto.ProductDetailQry;
-import com.rakbow.kureakurusu.data.dto.ProductUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.common.ApiResult;
@@ -50,7 +44,7 @@ public class ProductController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.getProducts(new QueryParams(qry)));
+        return new ApiResult().load(srv.getProducts(new ProductListParams(qry)));
     }
 
     @PostMapping("add")
@@ -69,7 +63,7 @@ public class ProductController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateProduct(dto);
+        srv.updateById(new Product(dto));
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PRODUCT.getName()));
     }
 

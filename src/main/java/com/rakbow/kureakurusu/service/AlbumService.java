@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,26 +12,27 @@ import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.QueryParams;
 import com.rakbow.kureakurusu.data.dto.AlbumDetailQry;
-import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
-import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
+import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.common.DataFinder;
+import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.util.common.EntityUtil;
+import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +76,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     @SneakyThrows
     @Transactional
-    public AlbumDetailVO getDetail(AlbumDetailQry qry) {
+    public AlbumDetailVO detail(AlbumDetailQry qry) {
         Album album = getAlbum(qry.getId());
         if (album == null)
             throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
@@ -128,34 +129,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityType, ENTITY_VALUE).in(PersonRelation::getEntityId, ids));
         //delete related episode
         epMapper.delete(new LambdaQueryWrapper<Episode>().in(Episode::getRelatedId, ids));
-    }
-
-    /**
-     * 更新专辑基础信息
-     *
-     * @param dto 专辑
-     * @author rakbow
-     */
-    @Transactional
-    public void updateAlbum(AlbumUpdateDTO dto) {
-        update(
-                new LambdaUpdateWrapper<Album>()
-                        .eq(Album::getId, dto.getId())
-                        .set(Album::getName, dto.getName())
-                        .set(Album::getNameZh, dto.getNameZh())
-                        .set(Album::getNameEn, dto.getNameEn())
-                        .set(Album::getCatalogNo, dto.getCatalogNo())
-                        .set(Album::getBarcode, dto.getBarcode())
-                        .set(Album::getReleaseDate, dto.getReleaseDate())
-                        .set(Album::getPrice, dto.getPrice())
-                        .set(Album::getCurrency, dto.getCurrency())
-                        .set(Album::getHasBonus, dto.isHasBonus())
-                        .set(Album::getAlbumFormat, JsonUtil.toJson(dto.getAlbumFormat()))
-                        .set(Album::getMediaFormat, JsonUtil.toJson(dto.getMediaFormat()))
-                        .set(Album::getPublishFormat, JsonUtil.toJson(dto.getPublishFormat()))
-                        .set(Album::getRemark, dto.getRemark())
-                        .set(Album::getEditedTime, DateHelper.now())
-        );
     }
 
     //endregion
@@ -239,49 +212,21 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     }
 
     @Transactional
-    public SearchResult<AlbumVOAlpha> getAlbums(QueryParams param) {
+    public SearchResult<AlbumVOAlpha> getAlbums(AlbumListParams param) {
 
-        String name = param.getStr("name");
-        String nameZh = param.getStr("nameZh");
-        String nameEn = param.getStr("nameEn");
-        String catalogNo = param.getStr("catalogNo");
-        String barcode = param.getStr("barcode");
-        LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
-                .like(StringUtils.isNotBlank(name), Album::getName, name)
-                .like(StringUtils.isNotBlank(nameZh), Album::getNameZh, nameZh)
-                .like(StringUtils.isNotBlank(nameEn), Album::getNameEn, nameEn)
-                .like(StringUtils.isNotBlank(catalogNo), Album::getNameEn, catalogNo)
-                .like(StringUtils.isNotBlank(barcode), Album::getNameEn, barcode);
-
-        List<Integer> albumFormat = param.getArray("albumFormat");
-        List<Integer> publishFormat = param.getArray("publishFormat");
-        List<Integer> mediaFormat = param.getArray("mediaFormat");
-        if(CollectionUtils.isNotEmpty(albumFormat))
-            wrapper.in(Album::getAlbumFormat, albumFormat);
-        if(CollectionUtils.isNotEmpty(publishFormat))
-            wrapper.in(Album::getAlbumFormat, publishFormat);
-        if(CollectionUtils.isNotEmpty(mediaFormat))
-            wrapper.in(Album::getAlbumFormat, mediaFormat);
-
-        if(StringUtils.isNotBlank(param.sortField)) {
-            switch (param.sortField) {
-                case "name" -> wrapper.orderBy(true, param.asc(), Album::getName);
-                case "nameZh" -> wrapper.orderBy(true, param.asc(), Album::getNameZh);
-                case "nameEn" -> wrapper.orderBy(true, param.asc(), Album::getNameEn);
-                case "releaseDate" -> wrapper.orderBy(true, param.asc(), Album::getReleaseDate);
-                case "barcode" -> wrapper.orderBy(true, param.asc(), Album::getBarcode);
-                case "catalogNo" -> wrapper.orderBy(true, param.asc(), Album::getCatalogNo);
-                case "price" -> wrapper.orderBy(true, param.asc(), Album::getPrice);
-                case "addedTime" -> wrapper.orderBy(true, param.asc(), Album::getAddedTime);
-                case "editedTime" -> wrapper.orderBy(true, param.asc(), Album::getEditedTime);
-            }
-        }else {
-            wrapper.orderByDesc(Album::getId);
-        }
+        QueryWrapper<Album> wrapper = new QueryWrapper<Album>()
+                .like("name", param.getName())
+                .like("name_zh", param.getNameZh())
+                .like("name_en", param.getNameEn())
+                .like("catalog_no", param.getCatalogNo())
+                .like("barcode", param.getBarcode())
+                .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), "album_format", param.getAlbumFormat())
+                .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), "publish_format", param.getPublishFormat())
+                .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), "media_format", param.getMediaFormat())
+                .orderBy(param.isSort(), param.asc(), param.sortField);
 
         IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
