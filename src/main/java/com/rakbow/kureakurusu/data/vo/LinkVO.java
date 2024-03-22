@@ -31,20 +31,20 @@ public class LinkVO {
         type = link.getType();
         if(type == LinkType.TWITTER.getValue()) {
             if(link.getUrl().contains(AT)){
-                url = STR."https://twitter.com/\{link.getUrl().replace(AT, "")}";
+                url = STR."\{HTTPS_SUFFIX}\{TWITTER}\{SLASH}\{link.getUrl().replace(AT, "")}";
                 name = link.getUrl();
             }else {
                 url = link.getUrl();
                 Pattern pattern = Pattern.compile("twitter.com/(\\w+)");
                 Matcher matcher = pattern.matcher(url);
-                if (matcher.find()) name = STR."@\{matcher.group(1)}";
+                if (matcher.find()) name = STR."\{AT}\{matcher.group(1)}";
             }
         }else {
             name = I18nHelper.getMessage(LinkType.get(type).getLabelKey());
             url = link.getUrl();
         }
         if(!url.contains(HTTP_SCHEME))
-            url = STR."https://\{link.getUrl()}";
+            url = STR."\{HTTPS_SUFFIX}\{link.getUrl()}";
     }
 
 }

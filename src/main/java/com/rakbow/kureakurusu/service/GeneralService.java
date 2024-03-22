@@ -136,6 +136,7 @@ public class GeneralService {
         MetaData.optionsEn.currencySet = EnumHelper.getAttributeStrOptions(Currency.class, "en");
 
         MetaData.optionsZh.roleSet = getPersonRoleSet();
+        MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
 
         MetaData.optionsZh.franchiseSet = getFranchiseSet();

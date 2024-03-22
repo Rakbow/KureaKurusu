@@ -286,6 +286,8 @@ public interface Constant {
      */
     String HTTPS_SCHEME = "https";
 
+    String HTTPS_SUFFIX = "https://";
+
     /**
      * http协议
      */
@@ -295,6 +297,8 @@ public interface Constant {
      * www域名前缀
      */
     String WWW = "www";
+
+    String COM = "com";
 
     /**
      * 应用名称YAML配置
@@ -315,5 +319,9 @@ public interface Constant {
      * 记住状态的登录凭证超时时间
      */
     int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 10;
+
+    String TWITTER = "twitter.com";
+
+    String FACEBOOK = "facebook.com";
 
 }
