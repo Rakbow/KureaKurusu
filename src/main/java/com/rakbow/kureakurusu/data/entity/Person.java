@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.PersonUpdateDTO;
@@ -29,6 +30,7 @@ import java.util.List;
 @TableName(value = "person", autoResultMap = true)
 public class Person extends MetaEntity {
 
+    @OrderBy
     private Long id; //主键
     @NotBlank(message = "{entity.crud.name.required_field}")
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)

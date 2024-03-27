@@ -33,6 +33,7 @@ import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +76,8 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     public SearchResult<PersonVOBeta> getPersons(PersonListParams param) {
 
         QueryWrapper<Person> wrapper = new QueryWrapper<Person>()
-                .like("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getAliases()}%")
+                .like(StringUtils.isNotBlank(param.getAliases()),
+                        "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getAliases()}%")
                 .like("name", param.getName())
                 .like("name_zh", param.getNameZh())
                 .like("name_en", param.getNameEn())

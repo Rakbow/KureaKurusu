@@ -113,10 +113,10 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
 
         QueryWrapper<Book> wrapper = new QueryWrapper<Book>()
                 .like("title", param.getTitle())
-                .like("isbn10", param.getIsbn10())
-                .like("isbn13", param.getIsbn13())
-                .eq("region", param.getRegion())
-                .eq("lang", param.getLang())
+                .like("isbn_10", param.getIsbn10())
+                .like("isbn_13", param.getIsbn13())
+                .eq(StringUtils.isNotBlank(param.getRegion()), "region", param.getRegion())
+                .eq(StringUtils.isNotBlank(param.getLang()), "lang", param.getLang())
                 .eq(param.getBookType() != -1, "bookType", param.getBookType())
                 .eq(param.getHasBonus() != null, "hasBonus", param.getHasBonus())
                 .orderBy(param.isSort(), param.asc(), param.sortField);

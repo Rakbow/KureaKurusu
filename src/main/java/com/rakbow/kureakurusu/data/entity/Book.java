@@ -39,9 +39,7 @@ public class Book extends MetaEntity {
 
     private String authors;//作者（译者，插画，原作者等，json）
 
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private Region region;//地区
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private Language lang;//语言
     private Currency currency;//货币
 
