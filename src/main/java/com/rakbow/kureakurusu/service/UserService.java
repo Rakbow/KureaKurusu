@@ -15,6 +15,7 @@ import com.rakbow.kureakurusu.data.common.LoginResult;
 import com.rakbow.kureakurusu.data.common.LoginUser;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.RedisUtil;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,8 +31,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static com.rakbow.kureakurusu.data.common.Constant.DEFAULT_EXPIRED_SECONDS;
-import static com.rakbow.kureakurusu.data.common.Constant.REMEMBER_EXPIRED_SECONDS;
+import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @author Rakbow
@@ -46,6 +46,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     private final LoginTicketMapper loginTicketMapper;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    private final RedisUtil redisUtil;
 
     @SneakyThrows
     @Transactional
@@ -96,7 +97,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         if (!user.getStatus()) throw new Exception(I18nHelper.getMessage("login.user.inactivated"));
         //check user password
         String password = CommonUtil.md5(STR."\{dto.getPassword()}\{user.getSalt()}");
-//        String password = CommonUtil.md5(dto.getPassword() + user.getSalt());
         if (!user.getPassword().equals(password)) throw new Exception(I18nHelper.getMessage("login.password.error"));
 
         //generate login ticket
@@ -106,6 +106,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         int expiredSeconds = dto.getRememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS * 1000;
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
         loginTicketMapper.insert(loginTicket);
+
+        //save ticket to redis
+        redisUtil.set(STR."login_ticket\{RISK}\{loginTicket.getTicket()}", loginTicket.getUserId(), expiredSeconds * 1000L);
 
         //generate cookie
         Cookie cookie = new Cookie("ticket", loginTicket.getTicket());
@@ -138,21 +141,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     @Transactional
     public LoginTicket getLoginTicket(String ticket) {
         return loginTicketMapper.selectOne(new LambdaQueryWrapper<LoginTicket>().eq(LoginTicket::getTicket, ticket));
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities(long userId) {
-        User user = this.getById(userId);
-
-        List<GrantedAuthority> list = new ArrayList<>();
-
-        switch (user.getType()) {
-            case UserAuthority.ADMIN -> list.add(new SimpleGrantedAuthority(STR."ROLE_\{I18nHelper.getMessage(UserAuthority.ADMIN.getLabelKey(), "en")}"));
-            case UserAuthority.USER -> list.add(new SimpleGrantedAuthority(STR."ROLE_\{I18nHelper.getMessage(UserAuthority.USER.getLabelKey(), "en")}"));
-            case UserAuthority.JUNIOR_EDITOR -> list.add(new SimpleGrantedAuthority(STR."ROLE_\{I18nHelper.getMessage(UserAuthority.JUNIOR_EDITOR.getLabelKey(), "en")}"));
-            case UserAuthority.SENIOR_EDITOR -> list.add(new SimpleGrantedAuthority(STR."ROLE_\{I18nHelper.getMessage(UserAuthority.SENIOR_EDITOR.getLabelKey(), "en")}"));
-        }
-
-        return list;
     }
 
 }

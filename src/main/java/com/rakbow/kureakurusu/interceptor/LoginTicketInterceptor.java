@@ -4,6 +4,9 @@ import com.rakbow.kureakurusu.data.entity.LoginTicket;
 import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.util.common.CookieUtil;
+import com.rakbow.kureakurusu.util.common.JsonUtil;
+import com.rakbow.kureakurusu.util.common.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Date;
+
+import static com.rakbow.kureakurusu.data.common.Constant.RISK;
 
 /**
  * @author Rakbow
@@ -27,6 +33,8 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Resource
     private UserService userSrv;
+    @Resource
+    private RedisUtil redisUtil;
 
     //每次请求前
     @Override
@@ -34,27 +42,29 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
         //get ticket from cookie
         String ticket = CookieUtil.getValue(request, "ticket");
-
-        if (ticket != null) {
-            //get login ticket
-            LoginTicket loginTicket = userSrv.getLoginTicket(ticket);
-            // 检查凭证是否有效
-            if (loginTicket != null && !loginTicket.getStatus() && loginTicket.getExpired().after(new Date())) {
-                // 根据凭证查询用户
-                User user = userSrv.getById(loginTicket.getUserId());
+        if (StringUtils.isBlank(ticket)) return false;
+        User user;
+        //get login ticket
+//        LoginTicket loginTicket = userSrv.getLoginTicket(ticket);
+        //get login ticket from redis
+        String redisTicketKey = STR."login_ticket\{RISK}\{ticket}";
+        if (redisUtil.hasKey(redisTicketKey)) {
+            long userId = (long) redisUtil.get(redisTicketKey);
+            if ((AuthorityInterceptor.isCurrentUser() && AuthorityInterceptor.getCurrentUser().getId() != userId)
+                    || !AuthorityInterceptor.isCurrentUser()) {
+                user = userSrv.getById(userId);
+                AuthorityInterceptor.clearCurrentUser();
                 // 在本次请求中持有用户
                 AuthorityInterceptor.setCurrentUser(user);
-                // 构建用户认证的结果，并存入securityContext，以便security进行授权
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        user, user.getPassword(), userSrv.getAuthorities(user.getId()));
-                SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
-
-            } else if (loginTicket != null) {
-                if(loginTicket.getStatus() || loginTicket.getExpired().before(new Date())){
-                    // 凭证失效
-                    AuthorityInterceptor.clearCurrentUser();
-                }
             }
+            user = AuthorityInterceptor.getCurrentUser();
+            // 构建用户认证的结果，并存入securityContext，以便security进行授权
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user, user.getPassword(), AuthorityInterceptor.getAuthorities(user));
+            SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
+        } else {
+            // 凭证失效
+            AuthorityInterceptor.clearCurrentUser();
         }
         return true;
     }
