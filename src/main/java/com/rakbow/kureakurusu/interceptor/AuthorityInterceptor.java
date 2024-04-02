@@ -41,7 +41,7 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     }
 
     public static boolean isCurrentUser() {
-        return CURRENT_USER.get() == null;
+        return CURRENT_USER.get() != null;
     }
 
     public static void setCurrentUser(User user) {
