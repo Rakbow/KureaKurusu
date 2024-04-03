@@ -2,6 +2,8 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +24,8 @@ public class PersonRole {
     private String nameZh;
     // @NotBlank(message = "{entity.crud.name_en.required_field}")
     private String nameEn;
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean status;//激活状态
 
     public PersonRole() {
         id = 0L;
