@@ -39,8 +39,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
         String ticket = CookieUtil.getValue(request, "ticket");
         if (StringUtils.isBlank(ticket)) return true;
         User user = null;
-        //get login ticket
-//        LoginTicket loginTicket = userSrv.getLoginTicket(ticket);
         //get login ticket from redis
         String redisTicketKey = STR."login_ticket\{RISK}\{ticket}";
         if (redisUtil.hasKey(redisTicketKey)) {

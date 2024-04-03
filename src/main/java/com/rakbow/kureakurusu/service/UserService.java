@@ -5,14 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
+import com.rakbow.kureakurusu.data.common.LoginResult;
+import com.rakbow.kureakurusu.data.common.LoginUser;
 import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
-import com.rakbow.kureakurusu.data.emun.UserAuthority;
 import com.rakbow.kureakurusu.data.entity.LoginTicket;
 import com.rakbow.kureakurusu.data.entity.User;
-import com.rakbow.kureakurusu.data.common.LoginResult;
-import com.rakbow.kureakurusu.data.common.LoginUser;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
@@ -21,15 +20,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import static com.rakbow.kureakurusu.data.common.Constant.*;
 
@@ -131,16 +125,15 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     @SneakyThrows
     @Transactional
     public void logout(String ticket) {
+        //delete login ticket from redis
+        String redisTicketKey = STR."login_ticket\{RISK}\{ticket}";
+        if (redisUtil.hasKey(redisTicketKey)) redisUtil.delete(redisTicketKey);
+        //update login ticket from db
         loginTicketMapper.update(
                 new LambdaUpdateWrapper<LoginTicket>()
                         .eq(LoginTicket::getTicket, ticket)
                         .set(LoginTicket::getStatus, 1)
         );
-    }
-
-    @Transactional
-    public LoginTicket getLoginTicket(String ticket) {
-        return loginTicketMapper.selectOne(new LambdaQueryWrapper<LoginTicket>().eq(LoginTicket::getTicket, ticket));
     }
 
 }
