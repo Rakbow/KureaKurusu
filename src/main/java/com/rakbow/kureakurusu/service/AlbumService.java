@@ -77,7 +77,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     @SneakyThrows
     @Transactional
     public AlbumDetailVO detail(AlbumDetailQry qry) {
-        Album album = getAlbum(qry.getId());
+        Album album = getById(qry.getId());
         if (album == null)
             throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
         String cover = CommonImageUtil.getCoverUrl(album.getImages());
@@ -90,21 +90,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))
                 .build();
-    }
-
-    /**
-     * 根据Id获取Album,需要判断权限
-     *
-     * @param id id
-     * @return Album
-     * @author rakbow
-     */
-    @Transactional
-    public Album getAlbum(long id) {
-        if (AuthorityInterceptor.isSenior()) {
-            return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getId, id));
-        }
-        return mapper.selectOne(new LambdaQueryWrapper<Album>().eq(Album::getStatus, 1).eq(Album::getId, id));
     }
 
     /**

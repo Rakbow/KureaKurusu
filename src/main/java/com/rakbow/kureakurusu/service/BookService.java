@@ -54,7 +54,7 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     @SneakyThrows
     @Transactional
     public BookDetailVO getDetail(CommonDetailQry qry) {
-        Book book = getBook(qry.getId());
+        Book book = getById(qry.getId());
         if (book == null)
             throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.BOOK.getName()));
 
@@ -64,14 +64,6 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .itemImageInfo(CommonImageUtil.segmentImages(book.getImages(), 180, Entity.BOOK, false))
                 .build();
-    }
-
-    @Transactional
-    public Book getBook(long id) {
-        if (AuthorityInterceptor.isSenior()) {
-            return mapper.selectOne(new LambdaQueryWrapper<Book>().eq(Book::getId, id));
-        }
-        return mapper.selectOne(new LambdaQueryWrapper<Book>().eq(Book::getStatus, 1).eq(Book::getId, id));
     }
 
     @Transactional
