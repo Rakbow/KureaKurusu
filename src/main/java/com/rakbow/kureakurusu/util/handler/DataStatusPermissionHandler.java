@@ -7,7 +7,7 @@ import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,23 +17,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataStatusPermissionHandler implements DataPermissionHandler {
 
+    private static final String[] IGNORE_INTERFACE = {
+            "com.rakbow.kureakurusu.dao.PersonRelationMapper.selectList",
+            "com.rakbow.kureakurusu.dao.UserMapper.selectById"
+    };
+
     @Override
     public Expression getSqlSegment(Expression where, String mappedStatementId) {
-
-        if(StringUtils.equals(mappedStatementId, "com.rakbow.kureakurusu.dao.UserMapper.selectById")) return where;
-
-        if (AuthorityInterceptor.isJunior()) {
-            return where;
-        } else {
-            EqualsTo equalsTo = new EqualsTo(new Column("status"), new LongValue("1"));
-            if (where == null) {
-                // 如果原来没有where条件, 就添加一个where条件
-                return equalsTo;
-            } else {
-                return new AndExpression(where, equalsTo);
-            }
-
-        }
+        if (ArrayUtils.contains(IGNORE_INTERFACE, mappedStatementId)) return where;
+        if (AuthorityInterceptor.isJunior()) return where;
+        EqualsTo equalsTo = new EqualsTo(new Column("status"), new LongValue("1"));
+        // 如果原来没有where条件, 就添加一个where条件
+        if (where == null) return equalsTo;
+        return new AndExpression(where, equalsTo);
     }
 
 }
