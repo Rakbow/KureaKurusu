@@ -19,6 +19,7 @@ public class DataSorter {
     public static PersonSortById personIdSorter = new PersonSortById();
     public static EpisodeSortById episodeIdSorter = new EpisodeSortById();
     public static FranchiseSortById franchiseIdSorter = new FranchiseSortById();
+    public static ItemSortByAddedTime itemAddedTimeSorter = new ItemSortByAddedTime();
 
 }
 
@@ -26,6 +27,13 @@ class AlbumSortById implements Comparator<Album> {
     @Override
     public int compare(Album a, Album b) {
         return Long.compare(a.getId(), b.getId());
+    }
+}
+
+class ItemSortByAddedTime implements Comparator<Item> {
+    @Override
+    public int compare(Item a, Item b) {
+        return a.getAddedTime().compareTo(b.getAddedTime());
     }
 }
 

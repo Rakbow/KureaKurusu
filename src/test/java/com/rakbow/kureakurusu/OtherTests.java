@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.RelatedType;
 import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.util.common.DataSorter;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
@@ -39,6 +42,10 @@ public class OtherTests {
     private PersonRelationMapper personRelationMapper;
     @Resource
     private SqlSessionFactory sqlSessionFactory;
+    @Resource
+    private UserMapper userMapper;
+    @Resource
+    private ItemMapper itemMapper;
 
     @Test
     public void batchAddRelation() {
@@ -123,8 +130,8 @@ public class OtherTests {
 
     @Test
     public void batchAddPersonRelationBook() {
-
-        List<Book> items = bookMapper.selectList(new LambdaQueryWrapper<Book>().ge(Book::getId, 96).le(Book::getId, 96));
+        AuthorityInterceptor.setCurrentUser(userMapper.selectById(1));
+        List<Book> items = bookMapper.selectList(new LambdaQueryWrapper<Book>().ge(Book::getId, 108).le(Book::getId, 109));
         List<PersonRelation> addRelations = new ArrayList<>();
 
         int bookType = Entity.BOOK.getValue();
@@ -132,7 +139,7 @@ public class OtherTests {
         long role1Id = 10;
         long person1Id = 2;
         long role2Id = 67;
-        long person2Id = 11676;
+        long person2Id = 11809;
         for (Book item : items) {
             PersonRelation r_1 = new PersonRelation();
             r_1.setPersonId(person1Id);
@@ -167,6 +174,58 @@ public class OtherTests {
                 System.out.println("实体类属性名: " + key + " 对应的表字段名为: " + columnName);
             }
         }
+    }
+
+    @Test
+    public void addItems() {
+        List<Album> allAlbums = albumMapper.selectList(null);
+        List<Book> allBooks = bookMapper.selectList(null);
+        List<Item> items = new ArrayList<>();
+        for (Album album : allAlbums) {
+            Item item = new Item();
+            item.setName(album.getName());
+            item.setNameZh(album.getNameZh());
+            item.setNameEn(album.getNameEn());
+            item.setType(Entity.ALBUM);
+            item.setEntityId(album.getId());
+            item.setImages(album.getImages());
+            item.setDetail(album.getDetail());
+            item.setRemark(album.getRemark());
+            item.setAddedTime(album.getAddedTime());
+            item.setEditedTime(album.getEditedTime());
+            items.add(item);
+        }
+        for (Book book : allBooks) {
+            Item item = new Item();
+            item.setName(book.getTitle());
+            item.setNameZh(book.getTitleZh());
+            item.setNameEn(book.getTitleEn());
+            item.setType(Entity.BOOK);
+            item.setEntityId(book.getId());
+            item.setImages(book.getImages());
+            item.setDetail(book.getDetail());
+            item.setRemark(book.getRemark());
+            item.setAddedTime(book.getAddedTime());
+            item.setEditedTime(book.getEditedTime());
+            items.add(item);
+        }
+        items.sort(DataSorter.itemAddedTimeSorter);
+
+        MybatisBatch.Method<Item> method = new MybatisBatch.Method<>(ItemMapper.class);
+        MybatisBatch<Item> batchInsert = new MybatisBatch<>(sqlSessionFactory, items);
+        batchInsert.execute(method.insert());
+    }
+
+    @Test
+    public void joinTest() {
+        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                .selectAll(Item.class)
+                .selectAll(ItemAlbum.class)
+                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+                .eq(Item::getType, Entity.ALBUM)
+                .eq(Item::getEntityId, 11);
+        List<Album> list = itemMapper.selectJoinList(Album.class, wrapper);
+        System.out.println(list.getFirst());
     }
 
 }

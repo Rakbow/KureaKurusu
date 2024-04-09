@@ -79,7 +79,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     @SneakyThrows
     @Transactional
-    public LoginResult login(LoginDTO dto) throws Exception {
+    public LoginResult login(LoginDTO dto) {
 
         //check empty
         if (StringUtils.isBlank(dto.getUsername())) throw new Exception(I18nHelper.getMessage("login.username.empty"));

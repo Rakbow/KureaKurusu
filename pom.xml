@@ -141,6 +141,12 @@
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>4.1.2</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.yulichang</groupId>
+			<artifactId>mybatis-plus-join</artifactId>
+			<version>1.4.11</version>
+		</dependency>
 	</dependencies>
 
 	<build>
