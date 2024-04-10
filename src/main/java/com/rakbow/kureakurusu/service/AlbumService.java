@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
@@ -17,9 +19,7 @@ import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.PersonRelation;
+import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.vo.album.*;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -62,6 +62,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     private final AlbumMapper mapper;
     private final EpisodeMapper epMapper;
     private final PersonRelationMapper relationMapper;
+    private final ItemMapper itemMapper;
 
     private final SqlSessionFactory sqlSessionFactory;
 
@@ -91,6 +92,16 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                 .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))
                 .build();
     }
+
+//    @Transactional
+//    public Album getById(long id) {
+//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+//                .selectAll(Item.class)
+//                .selectAll(ItemAlbum.class)
+//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+//                .eq(Item::getId, id);
+//        return itemMapper.selectJoinOne(Album.class, wrapper);
+//    }
 
     /**
      * 根据Id删除专辑
@@ -214,6 +225,26 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
         List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
+
+//    @Transactional
+//    public SearchResult<AlbumVOAlpha> getAlbumsTest(AlbumListParams param) {
+//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+//                .selectAll(Item.class)
+//                .selectAll(ItemAlbum.class)
+//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+//                .like(Item::getName, param.getName())
+//                .like(Item::getNameZh, param.getNameZh())
+//                .like(Item::getNameEn, param.getNameEn())
+//                .like(ItemAlbum::getCatalogNo, param.getCatalogNo())
+//                .like(ItemAlbum::getBarcode, param.getBarcode())
+//                .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), ItemAlbum::getAlbumFormat, param.getAlbumFormat())
+//                .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), ItemAlbum::getPublishFormat, param.getPublishFormat())
+//                .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), ItemAlbum::getMediaFormat, param.getMediaFormat())
+//                .orderBy(param.isSort(), param.asc(), param.sortField);
+//        IPage<Album> pages = itemMapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), Album.class, wrapper);
+//        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
+//        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+//    }
 
     /**
      * 更新音轨信息

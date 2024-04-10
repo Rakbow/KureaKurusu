@@ -46,6 +46,11 @@ public class AlbumController {
         return new ApiResult().load(srv.getAlbums(new AlbumListParams(qry)));
     }
 
+//    @PostMapping("list-test")
+//    public ApiResult listTest(@RequestBody ListQry qry) {
+//        return new ApiResult().load(srv.getAlbumsTest(new AlbumListParams(qry)));
+//    }
+
     @PostMapping("search")
     public ApiResult search(@RequestBody SearchQry qry) {
         return new ApiResult().load(srv.searchAlbums(qry));
