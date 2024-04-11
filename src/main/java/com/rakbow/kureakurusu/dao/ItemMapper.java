@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.rakbow.kureakurusu.data.entity.Item;
 import org.apache.ibatis.annotations.Mapper;

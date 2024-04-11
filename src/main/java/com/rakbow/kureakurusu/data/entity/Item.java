@@ -59,4 +59,9 @@ public class Item {
         status = true;
     }
 
+    public Item(String name) {
+        this.name = name;
+        this.editedTime = DateHelper.now();
+    }
+
 }

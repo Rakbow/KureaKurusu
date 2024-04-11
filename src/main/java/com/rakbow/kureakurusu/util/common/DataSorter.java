@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.util.common;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.Item;
 
 import java.util.Comparator;
 

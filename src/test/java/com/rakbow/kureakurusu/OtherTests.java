@@ -2,21 +2,19 @@ package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.github.yulichang.toolkit.JoinWrappers;
+import com.github.yulichang.wrapper.UpdateJoinWrapper;
 import com.rakbow.kureakurusu.dao.*;
-import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.AlbumListParams;
+import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.RelatedType;
 import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.data.entity.Item;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.util.common.DataSorter;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -222,47 +220,66 @@ public class OtherTests {
         batchInsert.execute(method.insert());
     }
 
-    @Test
-    public void joinListTest() {
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(ItemAlbum.class)
-                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-                .eq(Item::getType, Entity.ALBUM)
-                .eq(Item::getEntityId, 11);
-        List<Album> list = itemMapper.selectJoinList(Album.class, wrapper);
-        System.out.println(list.getFirst());
-    }
+//    @Test
+//    public void joinListTest() {
+//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+//                .selectAll(Item.class)
+//                .selectAll(ItemAlbum.class)
+//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+//                .eq(Item::getType, Entity.ALBUM)
+//                .eq(Item::getEntityId, 11);
+//        List<Album> list = itemMapper.selectJoinList(Album.class, wrapper);
+//        System.out.println(list.getFirst());
+//    }
+
+//    @Test
+//    public void joinPageTest(AlbumListParams param) {
+//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+//                .selectAll(Item.class)
+//                .selectAll(ItemAlbum.class)
+//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+//                .like(Item::getName, param.getName())
+//                .like(Item::getNameZh, param.getNameZh())
+//                .like(Item::getNameEn, param.getNameEn())
+//                .like(ItemAlbum::getCatalogNo, param.getCatalogNo())
+//                .like(ItemAlbum::getBarcode, param.getBarcode())
+//                .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), ItemAlbum::getAlbumFormat, param.getAlbumFormat())
+//                .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), ItemAlbum::getPublishFormat, param.getPublishFormat())
+//                .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), ItemAlbum::getMediaFormat, param.getMediaFormat())
+//                .orderBy(param.isSort(), param.asc(), param.sortField);
+//        IPage<Album> pages = itemMapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), Album.class, wrapper);
+////        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
+////        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+//    }
+
+//    @Test
+//    public void joinOneTest() {
+//        long id = 11;
+//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+//                .selectAll(Item.class)
+//                .selectAll(ItemAlbum.class)
+//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+//                .eq(Item::getId, id);
+//        Album album = itemMapper.selectJoinOne(Album.class, wrapper);
+//    }
 
     @Test
-    public void joinPageTest(AlbumListParams param) {
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(ItemAlbum.class)
-                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-                .like(Item::getName, param.getName())
-                .like(Item::getNameZh, param.getNameZh())
-                .like(Item::getNameEn, param.getNameEn())
-                .like(ItemAlbum::getCatalogNo, param.getCatalogNo())
-                .like(ItemAlbum::getBarcode, param.getBarcode())
-                .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), ItemAlbum::getAlbumFormat, param.getAlbumFormat())
-                .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), ItemAlbum::getPublishFormat, param.getPublishFormat())
-                .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), ItemAlbum::getMediaFormat, param.getMediaFormat())
-                .orderBy(param.isSort(), param.asc(), param.sortField);
-        IPage<Album> pages = itemMapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), Album.class, wrapper);
-//        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-//        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
+    public void updateJoinTest(AlbumUpdateDTO dto) {
+        Item item = new Item(dto.getName());
+        item.setId(dto.getId());
+        item.setNameZh(dto.getNameZh());
+        item.setNameEn(dto.getNameEn());
+        item.setRemark(dto.getRemark());
 
-    @Test
-    public void joinOneTest() {
-        long id = 11;
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(ItemAlbum.class)
+        ItemAlbum album = new ItemAlbum(dto);
+        UpdateJoinWrapper<Item> update = JoinWrappers.update(Item.class)
+                //设置两个副表的 set 语句
+                .setUpdateEntity(album)
+                //address和area 两张表空字段和非空字段一起更新 可以改成如下setUpdateEntityAndNull
+                //.setUpdateEntityAndNull(address, area)
                 .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-                .eq(Item::getId, id);
-        Album album = itemMapper.selectJoinOne(Album.class, wrapper);
+                .eq(Item::getId, album.getId());
+        itemMapper.updateJoin(item, update);
     }
 
 }

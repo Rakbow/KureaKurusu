@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -52,5 +53,18 @@ public class ItemAlbum {
         this.currency = Currency.JPY;
         this.hasBonus = false;
         this.bonus = "";
+    }
+
+    public ItemAlbum(AlbumUpdateDTO dto) {
+        this.id = dto.getId();
+        this.catalogNo = dto.getCatalogNo();
+        this.barcode = dto.getBarcode();
+        this.releaseDate = dto.getReleaseDate();
+//        this.publishFormat = dto.getPublishFormat();
+//        this.albumFormat = dto.getAlbumFormat();
+//        this.mediaFormat = dto.getMediaFormat();
+        this.price = dto.getPrice();
+        currency = Currency.get(dto.getCurrency());
+        hasBonus = dto.isHasBonus();
     }
 }
