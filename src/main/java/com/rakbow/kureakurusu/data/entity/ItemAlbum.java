@@ -29,7 +29,6 @@ public class ItemAlbum {
     private String catalogNo;//专辑编号
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String barcode;//商品条形码
-    private String releaseDate;//发行日期
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> publishFormat;//出版形式 在mysql中以数组字符串形式存储
     @TableField(typeHandler = IntegerListHandler.class)
@@ -45,7 +44,6 @@ public class ItemAlbum {
         this.id = 0L;
         this.catalogNo = "";
         this.barcode = "";
-        this.releaseDate = "";
         this.publishFormat = new ArrayList<>();
         this.albumFormat = new ArrayList<>();
         this.mediaFormat = new ArrayList<>();
@@ -59,7 +57,6 @@ public class ItemAlbum {
         this.id = dto.getId();
         this.catalogNo = dto.getCatalogNo();
         this.barcode = dto.getBarcode();
-        this.releaseDate = dto.getReleaseDate();
 //        this.publishFormat = dto.getPublishFormat();
 //        this.albumFormat = dto.getAlbumFormat();
 //        this.mediaFormat = dto.getMediaFormat();

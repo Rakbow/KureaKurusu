@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import jakarta.validation.Valid;
@@ -30,7 +29,7 @@ public class ItemController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateJoinTest(dto);
+        srv.update(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }
 

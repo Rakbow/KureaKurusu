@@ -33,6 +33,8 @@ public class Item {
     private String nameEn;
     private Entity type;
     private Long entityId;
+    private String ean13;//EAN-13
+    private String releaseDate;//发售日期
     @TableField(typeHandler = ImageHandler.class)
     private List<Image> images;//图片列表
     private String detail;//描述
@@ -51,6 +53,8 @@ public class Item {
         nameEn = "";
         type = Entity.ENTRY;
         entityId = 0L;
+        ean13 = "";
+        releaseDate = "";
         images = new ArrayList<>();
         detail = "";
         remark = "";

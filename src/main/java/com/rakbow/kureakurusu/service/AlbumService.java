@@ -18,9 +18,10 @@ import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.album.*;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -85,7 +86,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
         return AlbumDetailVO.builder()
                 .item(buildVO(album))
-                .audios(AuthorityInterceptor.isUser() ? EpisodeUtil.getAudios(eps, cover) : null)
+                .audios(EpisodeUtil.getAudios(eps, cover))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))

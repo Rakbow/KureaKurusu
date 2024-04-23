@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
 import com.rakbow.kureakurusu.service.AlbumService;
+import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
@@ -26,6 +27,7 @@ public class AlbumController {
 
     //region inject
     private final AlbumService srv;
+    private final ItemService itemSrv;
     private final PersonService personSrv;
     private final AlbumVOMapper VOMapper;
 
@@ -46,9 +48,9 @@ public class AlbumController {
         return new ApiResult().load(srv.getAlbums(new AlbumListParams(qry)));
     }
 
-//    @PostMapping("list-test")
-//    public ApiResult listTest(@RequestBody ListQry qry) {
-//        return new ApiResult().load(srv.getAlbumsTest(new AlbumListParams(qry)));
+//    @PostMapping("list")
+//    public ApiResult list(@RequestBody ListQry qry) {
+//        return new ApiResult().load(itemSrv.joinPageTest(new AlbumListParams(qry)));
 //    }
 
     @PostMapping("search")
