@@ -35,8 +35,8 @@ public class ItemAlbum {
     private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> mediaFormat;//媒体类型
-    private double price;//发行价格（含税）
-    private Currency currency;
+    private double price;//发行价格
+    private Currency currency;//货币单位
     private Boolean hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
 

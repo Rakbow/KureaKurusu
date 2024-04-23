@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,6 +12,7 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Item;
@@ -20,6 +23,7 @@ import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,5 +92,18 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     }
 
 
+    /**
+     * 批量更新数据库实体激活状态
+     *
+     * @author rakbow
+     */
+    @Transactional
+    public void updateItemStatus(UpdateStatusCmd cmd) {
+        mapper.update(
+                new LambdaUpdateWrapper<Item>()
+                        .set(Item::getStatus, cmd.status())
+                        .in(Item::getId, cmd.getIds())
+        );
+    }
 
 }

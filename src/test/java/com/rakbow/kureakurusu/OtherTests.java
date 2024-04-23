@@ -239,18 +239,18 @@ public class OtherTests {
             if (i.getType() == Entity.ALBUM) {
                 Album album = DataFinder.findAlbumById(i.getEntityId(), allAlbums);
                 if(album == null) continue;
-                i.setReleaseDate(album.getReleaseDate());
-                i.setEan13(album.getBarcode());
+                i.setPrice(album.getPrice());
+                i.setCurrency(album.getCurrency());
             }
             if (i.getType() == Entity.BOOK) {
                 Book book = DataFinder.findBookById(i.getEntityId(), allBooks);
                 if(book == null) continue;
-                i.setReleaseDate(book.getPublishDate());
-                i.setEan13(book.getIsbn13());
+                i.setPrice(book.getPrice());
+                i.setCurrency(book.getCurrency());
             }
             UpdateWrapper<Item> wrapper = new UpdateWrapper<Item>()
-                    .set("release_date", i.getReleaseDate())
-                    .set("ean13", i.getEan13())
+                    .set("price", i.getPrice())
+                    .set("currency", i.getCurrency())
                     .eq("id", i.getId());
             itemMapper.update(wrapper);
         }

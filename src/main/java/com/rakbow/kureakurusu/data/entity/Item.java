@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -35,6 +36,8 @@ public class Item {
     private Long entityId;
     private String ean13;//EAN-13
     private String releaseDate;//发售日期
+    private double price;//发行价格
+    private Currency currency;//货币单位
     @TableField(typeHandler = ImageHandler.class)
     private List<Image> images;//图片列表
     private String detail;//描述
@@ -55,6 +58,8 @@ public class Item {
         entityId = 0L;
         ean13 = "";
         releaseDate = "";
+        price = 0;
+        currency = Currency.JPY;
         images = new ArrayList<>();
         detail = "";
         remark = "";
