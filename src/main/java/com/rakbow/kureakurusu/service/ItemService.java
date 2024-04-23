@@ -14,14 +14,14 @@ import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.data.entity.ItemAlbum;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.boot.configurationprocessor.metadata.ItemMetadata;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +41,19 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     private final List<Class<?>> classList = new ArrayList<>();
 
-    public <T> void joinOneTest(long id) {
+    public Object getOne(long id, Entity e) {
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(ItemAlbum.class)
-                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-                .eq(Item::getId, id);
-        Album album = mapper.selectJoinOne(Album.class, wrapper);
+                .selectAll(Item.class).eq(Item::getId, id);
+        if(e == Entity.ALBUM) {
+            wrapper.selectAll(ItemAlbum.class)
+                    .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId);
+            return mapper.selectJoinOne(Album.class, wrapper);
+        } else if (e == Entity.BOOK) {
+            wrapper.selectAll(ItemBook.class)
+                    .leftJoin(ItemBook.class, ItemBook::getId, Item::getEntityId);
+            return mapper.selectJoinOne(Book.class, wrapper);
+        }
+        return null;
     }
 
     public void update(AlbumUpdateDTO dto) {
