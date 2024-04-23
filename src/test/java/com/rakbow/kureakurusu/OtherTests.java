@@ -2,12 +2,17 @@ package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.toolkit.JoinWrappers;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.github.yulichang.wrapper.UpdateJoinWrapper;
 import com.rakbow.kureakurusu.dao.*;
+import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.RelatedType;
@@ -15,8 +20,10 @@ import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.dao.ItemMapper;
+import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DataSorter;
 import jakarta.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +81,7 @@ public class OtherTests {
                                 .eq(EntityRelation::getRelatedEntityType, proType)
                                 .eq(EntityRelation::getRelatedEntityId, prodId)
                 );
-                if(!tmpRelations.isEmpty()) continue;
+                if (!tmpRelations.isEmpty()) continue;
 
                 EntityRelation relation = new EntityRelation();
                 relation.setEntityType(albumType);
@@ -115,7 +122,7 @@ public class OtherTests {
                                 .eq(EntityRelation::getRelatedEntityType, proType)
                                 .eq(EntityRelation::getRelatedEntityId, prodId)
                 );
-                if(!tmpRelations.isEmpty()) continue;
+                if (!tmpRelations.isEmpty()) continue;
 
                 EntityRelation relation = new EntityRelation();
                 relation.setEntityType(bookType);
@@ -220,6 +227,36 @@ public class OtherTests {
         batchInsert.execute(method.insert());
     }
 
+    @Test
+    public void updateItems() {
+        List<Album> allAlbums = albumMapper.selectList(null);
+        allAlbums.sort(DataSorter.albumIdSorter);
+        List<Book> allBooks = bookMapper.selectList(null);
+        allBooks.sort(DataSorter.bookIdSorter);
+        List<Item> allItems = itemMapper.selectList(null);
+
+        for (Item i : allItems) {
+            if (i.getType() == Entity.ALBUM) {
+                Album album = DataFinder.findAlbumById(i.getEntityId(), allAlbums);
+                if(album == null) continue;
+                i.setReleaseDate(album.getReleaseDate());
+                i.setEan13(album.getBarcode());
+            }
+            if (i.getType() == Entity.BOOK) {
+                Book book = DataFinder.findBookById(i.getEntityId(), allBooks);
+                if(book == null) continue;
+                i.setReleaseDate(book.getPublishDate());
+                i.setEan13(book.getIsbn13());
+            }
+            UpdateWrapper<Item> wrapper = new UpdateWrapper<Item>()
+                    .set("release_date", i.getReleaseDate())
+                    .set("ean13", i.getEan13())
+                    .eq("id", i.getId());
+            itemMapper.update(wrapper);
+        }
+
+    }
+
 //    @Test
 //    public void joinListTest() {
 //        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
@@ -231,7 +268,7 @@ public class OtherTests {
 //        List<Album> list = itemMapper.selectJoinList(Album.class, wrapper);
 //        System.out.println(list.getFirst());
 //    }
-
+//
 //    @Test
 //    public void joinPageTest(AlbumListParams param) {
 //        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
@@ -251,7 +288,7 @@ public class OtherTests {
 ////        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
 ////        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
 //    }
-
+//
 //    @Test
 //    public void joinOneTest() {
 //        long id = 11;
@@ -262,24 +299,24 @@ public class OtherTests {
 //                .eq(Item::getId, id);
 //        Album album = itemMapper.selectJoinOne(Album.class, wrapper);
 //    }
-
-    @Test
-    public void updateJoinTest(AlbumUpdateDTO dto) {
-        Item item = new Item(dto.getName());
-        item.setId(dto.getId());
-        item.setNameZh(dto.getNameZh());
-        item.setNameEn(dto.getNameEn());
-        item.setRemark(dto.getRemark());
-
-        ItemAlbum album = new ItemAlbum(dto);
-        UpdateJoinWrapper<Item> update = JoinWrappers.update(Item.class)
-                //设置两个副表的 set 语句
-                .setUpdateEntity(album)
-                //address和area 两张表空字段和非空字段一起更新 可以改成如下setUpdateEntityAndNull
-                //.setUpdateEntityAndNull(address, area)
-                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-                .eq(Item::getId, album.getId());
-        itemMapper.updateJoin(item, update);
-    }
+//
+//    @Test
+//    public void updateJoinTest(AlbumUpdateDTO dto) {
+//        Item item = new Item(dto.getName());
+//        item.setId(dto.getId());
+//        item.setNameZh(dto.getNameZh());
+//        item.setNameEn(dto.getNameEn());
+//        item.setRemark(dto.getRemark());
+//
+//        ItemAlbum album = new ItemAlbum(dto);
+//        UpdateJoinWrapper<Item> update = JoinWrappers.update(Item.class)
+//                //设置两个副表的 set 语句
+//                .setUpdateEntity(album)
+//                //address和area 两张表空字段和非空字段一起更新 可以改成如下setUpdateEntityAndNull
+//                //.setUpdateEntityAndNull(address, area)
+//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
+//                .eq(Item::getId, album.getId());
+//        itemMapper.updateJoin(item, update);
+//    }
 
 }

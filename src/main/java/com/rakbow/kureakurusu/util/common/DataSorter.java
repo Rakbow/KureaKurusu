@@ -13,6 +13,7 @@ import java.util.Comparator;
 public class DataSorter {
 
     public static AlbumSortById albumIdSorter = new AlbumSortById();
+    public static BookSortById bookIdSorter = new BookSortById();
     public static ProductSortById productIdSorter = new ProductSortById();
     public static AttributesSortByIntValue attributesIntValueSorter = new AttributesSortByIntValue();
     public static AttributesSortByLongValue attributesLongValueSorter = new AttributesSortByLongValue();
@@ -27,6 +28,13 @@ public class DataSorter {
 class AlbumSortById implements Comparator<Album> {
     @Override
     public int compare(Album a, Album b) {
+        return Long.compare(a.getId(), b.getId());
+    }
+}
+
+class BookSortById implements Comparator<Book> {
+    @Override
+    public int compare(Book a, Book b) {
         return Long.compare(a.getId(), b.getId());
     }
 }

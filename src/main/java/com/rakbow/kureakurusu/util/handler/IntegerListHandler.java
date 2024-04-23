@@ -18,13 +18,17 @@ import java.util.List;
 @Log
 public class IntegerListHandler extends AbstractJsonTypeHandler<List<Integer>> {
 
+    public IntegerListHandler(Class<?> type) {
+        super(type);
+    }
+
     @Override
-    protected List<Integer> parse(String json) {
+    public List<Integer> parse(String json) {
         return JsonUtil.toJavaList(json, Integer.class);
     }
 
     @Override
-    protected String toJson(List<Integer> obj) {
+    public String toJson(Object obj) {
         return JsonUtil.toJson(obj);
     }
 }

@@ -19,6 +19,7 @@ public class DataFinder {
     public static Person personFinder = new Person();
     public static Franchise franchiseFinder = new Franchise();
     public static Album albumFinder = new Album();
+    public static Book bookFinder = new Book();
     public static Product productFinder = new Product();
 
     //region album
@@ -28,6 +29,16 @@ public class DataFinder {
         int idx = Collections.binarySearch(albums, albumFinder, DataSorter.albumIdSorter);
         if (idx >= 0) {
             return albums.get(idx);
+        }else {
+            return null;
+        }
+    }
+
+    public static Book findBookById(Long id, List<Book> books) {
+        bookFinder.setId(id);
+        int idx = Collections.binarySearch(books, bookFinder, DataSorter.bookIdSorter);
+        if (idx >= 0) {
+            return books.get(idx);
         }else {
             return null;
         }

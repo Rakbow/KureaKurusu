@@ -19,13 +19,17 @@ import java.util.List;
 @Log
 public class FileHandler extends AbstractJsonTypeHandler<List<File>> {
 
+    public FileHandler(Class<?> type) {
+        super(type);
+    }
+
     @Override
-    protected List<File> parse(String json) {
+    public List<File> parse(String json) {
         return JsonUtil.toJavaList(json, File.class);
     }
 
     @Override
-    protected String toJson(List<File> obj) {
+    public String toJson(Object obj) {
         return JsonUtil.toJson(obj);
     }
 }

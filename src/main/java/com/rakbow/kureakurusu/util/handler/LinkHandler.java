@@ -19,13 +19,17 @@ import java.util.List;
 @Log
 public class LinkHandler extends AbstractJsonTypeHandler<List<Link>> {
 
+    public LinkHandler(Class<?> type) {
+        super(type);
+    }
+
     @Override
-    protected List<Link> parse(String json) {
+    public List<Link> parse(String json) {
         return JsonUtil.toJavaList(json, Link.class);
     }
 
     @Override
-    protected String toJson(List<Link> obj) {
+    public String toJson(Object obj) {
         return JsonUtil.toJson(obj);
     }
 }

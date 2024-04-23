@@ -19,13 +19,17 @@ import java.util.List;
 @Log
 public class ImageHandler extends AbstractJsonTypeHandler<List<Image>> {
 
+    public ImageHandler(Class<?> type) {
+        super(type);
+    }
+
     @Override
-    protected List<Image> parse(String json) {
+    public List<Image> parse(String json) {
         return JsonUtil.toJavaList(json, Image.class);
     }
 
     @Override
-    protected String toJson(List<Image> obj) {
+    public String toJson(Object obj) {
         return JsonUtil.toJson(obj);
     }
 }
