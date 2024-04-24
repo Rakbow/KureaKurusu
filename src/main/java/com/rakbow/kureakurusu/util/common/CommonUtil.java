@@ -22,6 +22,10 @@ import java.util.stream.Collectors;
  */
 public class CommonUtil {
 
+    public static String getTableNameByClass(Class<?> clazz) {
+        return clazz.getSimpleName().replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+    }
+
     //计算时间总和（返回字符串形式）
     public static String countTotalTime(List<String> times){
 

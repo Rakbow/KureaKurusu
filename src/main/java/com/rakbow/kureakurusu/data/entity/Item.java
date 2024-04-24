@@ -30,7 +30,9 @@ public class Item {
     private Long id;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameZh;
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;
     private Entity type;
     private Long entityId;

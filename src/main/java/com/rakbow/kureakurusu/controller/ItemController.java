@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.dto.AlbumListParams;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -31,6 +33,16 @@ public class ItemController {
         //save
         srv.update(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
+    }
+
+//    @PostMapping("detail")
+//    public ApiResult detail(@RequestBody CommonDetailQry qry) {
+//        return new ApiResult().load(srv.getOne(qry.getId()));
+//    }
+
+    @PostMapping("page")
+    public ApiResult detail(@RequestBody AlbumListParams qry) {
+        return new ApiResult().load(srv.joinPageTest(qry));
     }
 
 }
