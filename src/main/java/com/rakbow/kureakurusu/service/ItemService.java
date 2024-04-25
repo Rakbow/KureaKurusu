@@ -1,37 +1,35 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.yulichang.query.MPJLambdaQueryWrapper;
-import com.github.yulichang.query.MPJQueryWrapper;
 import com.github.yulichang.toolkit.JoinWrappers;
+import com.github.yulichang.wrapper.DeleteJoinWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.github.yulichang.wrapper.UpdateJoinWrapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
+import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.AlbumListParams;
-import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.vo.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
+import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
+import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
+import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.boot.configurationprocessor.metadata.ItemMetadata;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +44,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     private final ItemMapper mapper;
     private final RedisUtil redisUtil;
-    private final AlbumVOMapper VOMapper;
+    private final AlbumVOMapper albumVOMapper;
+    private final QiniuImageUtil qiniuImageUtil;
+    private final VisitUtil visitUtil;
+    private final PersonRelationMapper relationMapper;
 
     private final Map<Integer, Class<?>> sourceClassDic = new HashMap<>() {{
         put(Entity.ALBUM.getValue(), ItemAlbum.class);
@@ -59,20 +60,21 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public void detail(long id) {
-        Object obj = getById(id);
+    public ItemDetailVO detail(long id) {
+        Object item = getById(id);
+        if (item == null)
+            throw new Exception(I18nHelper.getMessage("item.url.error"));
+        return ItemDetailVO.builder()
+
+                .build();
     }
 
     @Transactional
     @SneakyThrows
     public Object getById(long id) {
-//        String redisKey = STR."item_type_related:\{id}";
-//        if(!redisUtil.hasKey(redisKey)) return null;
-//        ItemTypeRelation relation = redisUtil.get(redisKey, ItemTypeRelation.class);
-
-        ItemTypeRelation relation = new ItemTypeRelation();
-        relation.setId(4);
-        relation.setType(1);
+        String redisKey = STR."item_type_related:\{id}";
+        if(!redisUtil.hasKey(redisKey)) return null;
+        ItemTypeRelation relation = redisUtil.get(redisKey, ItemTypeRelation.class);
 
         Class<?> sourceClass = sourceClassDic.get(relation.getType());
         Class<?> targetClass = targetClassDic.get(relation.getType());
@@ -84,29 +86,54 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return mapper.selectJoinOne(targetClass, wrapper);
     }
 
-    public void update(AlbumUpdateDTO dto) {
-
-        Item item = new Item(dto.getName());
-        item.setId(dto.getId());
-        item.setNameZh(dto.getNameZh());
-        item.setNameEn(dto.getNameEn());
-        item.setRemark(dto.getRemark());
-
-        ItemAlbum album = new ItemAlbum(dto);
-        UpdateJoinWrapper<Item> update = JoinWrappers
-                .update(Item.class)
-                //设置副表的set语句
-                .setUpdateEntity(album)
-                .set(ItemAlbum::getAlbumFormat, JsonUtil.toJson(dto.getAlbumFormat()))
-                .set(ItemAlbum::getPublishFormat, JsonUtil.toJson(dto.getPublishFormat()))
-                .set(ItemAlbum::getMediaFormat, JsonUtil.toJson(dto.getMediaFormat()))
-                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-                .eq(Item::getEntityId, album.getId())
-                .eq(Item::getType, Entity.ALBUM);
-        mapper.updateJoin(item, update);
+    @Transactional
+    @SneakyThrows
+    public void delete(List<Long> ids, int type) {
+        Class<?> subTable = sourceClassDic.get(type);
+        //get original data
+        List<Item> items = mapper.selectBatchIds(ids);
+        for (Item item : items) {
+            //delete all image
+            qiniuImageUtil.deleteAllImage(item.getImages());
+            //delete visit record
+            visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
+        }
+        //delete
+        DeleteJoinWrapper<Item> wrapper = JoinWrappers
+                .delete(Item.class)
+                .delete(subTable)
+                .leftJoin(STR."\{CommonUtil.getTableNameByClass(subTable)} t1 on t1.id = t.entity_id")
+                .in(Item::getId, ids);
+        mapper.deleteJoin(wrapper);
+        //delete person relation
+        relationMapper.delete(
+                new LambdaQueryWrapper<PersonRelation>()
+                        .eq(PersonRelation::getEntityType, EntityType.ITEM.getValue())
+                        .in(PersonRelation::getEntityId, ids)
+        );
     }
 
-    public SearchResult<AlbumVOAlpha> joinPageTest(AlbumListParams param) {
+    @Transactional
+    @SneakyThrows
+    public void update(ItemUpdateDTO dto) {
+
+        Class<?> subTable = sourceClassDic.get(dto.getType());
+        Object subItem = null;
+        Item item = null;
+        if(dto instanceof AlbumItemUpdateDTO) {
+            subItem = ((AlbumItemUpdateDTO) dto).toItemAlbum();
+            item = albumVOMapper.toItem((AlbumItemUpdateDTO) dto);
+        }
+
+        UpdateJoinWrapper<Item> wrapper = JoinWrappers
+                .update(Item.class)
+                .setUpdateEntity(subItem)
+                .leftJoin(STR."\{CommonUtil.getTableNameByClass(subTable)} t1 on t1.id = t.entity_id")
+                .eq(Item::getId, dto.getId());
+        mapper.updateJoin(item, wrapper);
+    }
+
+    public SearchResult<AlbumVOAlpha> list(AlbumListParams param) {
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
                 .selectAll(ItemAlbum.class)
@@ -114,29 +141,14 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .like(Item::getName, param.getName())
                 .like(Item::getNameZh, param.getNameZh())
                 .like(Item::getNameEn, param.getNameEn())
+                .like(Item::getEan13, param.getEan13())
                 .like(ItemAlbum::getCatalogNo, param.getCatalogNo())
                 .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), ItemAlbum::getAlbumFormat, param.getAlbumFormat())
                 .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), ItemAlbum::getPublishFormat, param.getPublishFormat())
                 .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), ItemAlbum::getMediaFormat, param.getMediaFormat())
                 .orderBy(param.isSort(), param.asc(), param.sortField);
         IPage<Album> pages = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), Album.class, wrapper);
-        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
+        List<AlbumVOAlpha> items = albumVOMapper.toVOAlpha(pages.getRecords());
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
-
-
-    /**
-     * 批量更新数据库实体激活状态
-     *
-     * @author rakbow
-     */
-    @Transactional
-    public void updateItemStatus(UpdateStatusCmd cmd) {
-        mapper.update(
-                new LambdaUpdateWrapper<Item>()
-                        .set(Item::getStatus, cmd.status())
-                        .in(Item::getId, cmd.getIds())
-        );
-    }
-
 }

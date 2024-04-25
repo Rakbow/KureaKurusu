@@ -70,7 +70,7 @@ public class AlbumController {
     }
 
     @PostMapping("update")
-    public ApiResult update(@Valid @RequestBody AlbumUpdateDTO dto, BindingResult errors) {
+    public ApiResult update(@Valid @RequestBody AlbumItemUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save

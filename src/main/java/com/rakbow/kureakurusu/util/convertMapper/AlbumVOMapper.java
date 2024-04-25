@@ -3,7 +3,11 @@ package com.rakbow.kureakurusu.util.convertMapper;
 import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.AlbumAddDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.entity.Item;
+import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.album.AlbumMiniVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
@@ -30,6 +34,15 @@ public interface AlbumVOMapper extends MetaVOMapper {
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
 
     //region single convert interface
+
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "entityId", ignore = true)
+    @Mapping(target = "images", ignore = true)
+    @Mapping(target = "detail", ignore = true)
+    @Mapping(target = "addedTime", ignore = true)
+    @Mapping(target = "editedTime", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    Item toItem(AlbumItemUpdateDTO dto);
 
     @Mapping(source = "currency", target = "currency", qualifiedByName = "getCurrency")
     @Named("build")

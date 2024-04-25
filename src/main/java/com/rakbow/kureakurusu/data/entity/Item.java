@@ -12,8 +12,6 @@ import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.ImageHandler;
 import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -68,11 +66,6 @@ public class Item {
         addedTime = DateHelper.now();
         editedTime = DateHelper.now();
         status = true;
-    }
-
-    public Item(String name) {
-        this.name = name;
-        this.editedTime = DateHelper.now();
     }
 
 }

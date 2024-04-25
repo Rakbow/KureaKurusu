@@ -45,6 +45,11 @@ public class JsonUtil {
     }
 
     @SneakyThrows
+    public static int getIntValueByKey(String key, String json) {
+        return mapper.readTree(json).get(key).asInt();
+    }
+
+    @SneakyThrows
     public static <T> List<T> getValueByKey(String json, Class<T> clazz, String key) {
         JsonNode rootNode = mapper.readTree(json);
 

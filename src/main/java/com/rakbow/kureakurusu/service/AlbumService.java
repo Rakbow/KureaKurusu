@@ -215,7 +215,7 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                 .like("name_zh", param.getNameZh())
                 .like("name_en", param.getNameEn())
                 .like("catalog_no", param.getCatalogNo())
-                .like("barcode", param.getBarcode())
+                .like("ean13", param.getEan13())
                 .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), "album_format", param.getAlbumFormat())
                 .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), "publish_format", param.getPublishFormat())
                 .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), "media_format", param.getMediaFormat())

@@ -1,9 +1,9 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
@@ -13,26 +13,27 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AlbumUpdateDTO extends DTO {
+public class AlbumItemUpdateDTO extends ItemUpdateDTO {
 
-    private long id;
     private String catalogNo;
-    @NotBlank(message = "{entity.crud.name.required_field}")
-    private String name;
-    private String nameZh;
-    private String nameEn;
-    private String barcode;
-    @NotBlank(message = "{entity.crud.release_date.required_field}")
-    private String releaseDate;
     @NotEmpty(message = "{entity.crud.publish_format.required_field}")
     private List<Integer> publishFormat;
     @NotEmpty(message = "{entity.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
-
-    private double price;
-    private String currency;
     private boolean hasBonus;
-    private String remark;
+
+    public ItemAlbum toItemAlbum() {
+        ItemAlbum itemAlbum = new ItemAlbum();
+        itemAlbum.setId(this.getId());
+        itemAlbum.setCatalogNo(this.catalogNo);
+        itemAlbum.setPublishFormat(this.publishFormat);
+        itemAlbum.setAlbumFormat(this.albumFormat);
+        itemAlbum.setMediaFormat(this.mediaFormat);
+        itemAlbum.setHasBonus(this.hasBonus);
+        itemAlbum.setBonus(null);
+        return itemAlbum;
+    }
+
 }

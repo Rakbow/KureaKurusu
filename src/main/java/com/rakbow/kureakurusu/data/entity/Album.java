@@ -4,7 +4,7 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.util.common.DateHelper;
@@ -36,7 +36,7 @@ public class Album extends MetaEntity {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;//专辑名称（英语）
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String barcode;//商品条形码
+    private String ean13;//商品条形码
     private String releaseDate;//发行日期
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> publishFormat;//出版形式 在mysql中以数组字符串形式存储
@@ -55,7 +55,7 @@ public class Album extends MetaEntity {
         this.name = "";
         this.nameZh = "";
         this.nameEn = "";
-        this.barcode = "";
+        this.ean13 = "";
         this.releaseDate = "";
         this.publishFormat = new ArrayList<>();
         this.albumFormat = new ArrayList<>();
@@ -72,13 +72,13 @@ public class Album extends MetaEntity {
         this.setStatus(true);
     }
 
-    public Album(AlbumUpdateDTO dto) {
+    public Album(AlbumItemUpdateDTO dto) {
         id = dto.getId();
         name = dto.getName();
         nameZh = dto.getNameZh();
         nameEn = dto.getNameEn();
         catalogNo = dto.getCatalogNo();
-        barcode = dto.getBarcode();
+        ean13 = dto.getEan13();
         releaseDate = dto.getReleaseDate();
         price = dto.getPrice();
         currency = Currency.get(dto.getCurrency());

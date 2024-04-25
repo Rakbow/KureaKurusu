@@ -3,13 +3,9 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
-import com.rakbow.kureakurusu.data.emun.Currency;
-import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
-import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -46,7 +42,7 @@ public class ItemAlbum {
         this.bonus = "";
     }
 
-    public ItemAlbum(AlbumUpdateDTO dto) {
+    public ItemAlbum(AlbumItemUpdateDTO dto) {
         this.id = dto.getId();
         this.catalogNo = dto.getCatalogNo();
 //        this.publishFormat = dto.getPublishFormat();

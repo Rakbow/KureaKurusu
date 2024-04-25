@@ -21,7 +21,7 @@ public class AlbumListParams extends QueryParams {
     private String nameZh;
     private String nameEn;
     private String catalogNo;
-    private String barcode;
+    private String ean13;
     private List<Integer> albumFormat;
     private List<Integer> mediaFormat;
     private List<Integer> publishFormat;
@@ -32,7 +32,7 @@ public class AlbumListParams extends QueryParams {
         this.nameZh = super.getStr("nameZh");
         this.nameEn = super.getStr("nameEn");
         this.catalogNo = super.getStr("catalogNo");
-        this.barcode = super.getStr("barcode");
+        this.ean13 = super.getStr("ean13");
         this.albumFormat = super.getArray("albumFormat");
         this.mediaFormat = super.getArray("mediaFormat");
         this.publishFormat = super.getArray("publishFormat");
