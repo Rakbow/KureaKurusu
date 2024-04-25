@@ -20,7 +20,7 @@ import java.util.Date;
 @TableName(value = "disc", autoResultMap = true)
 public class Disc extends MetaEntity {
 
-    private Integer id;//主键
+    private Long id;//主键
     private String catalogNo;//商品型番
     private String name;//商品名(原语言)
     private String nameZh;//商品译名(中)
@@ -39,7 +39,7 @@ public class Disc extends MetaEntity {
     private String bonus;//特典信息
 
     public Disc () {
-        this.id = 0;
+        this.id = 0L;
         this.catalogNo = "";
         this.name = "";
         this.nameZh = "";

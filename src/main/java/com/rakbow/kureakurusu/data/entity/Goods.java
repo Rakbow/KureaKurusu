@@ -20,7 +20,7 @@ import java.util.Date;
 @TableName(value = "goods", autoResultMap = true)
 public class Goods extends MetaEntity {
 
-    private Integer id;//主键编号
+    private Long id;//主键编号
     private String name;//商品名（原文）
     private String nameZh;//商品名（中文）
     private String nameEn;//商品名（英文）
@@ -36,7 +36,7 @@ public class Goods extends MetaEntity {
     private String spec;//规格
 
     public Goods() {
-        this.id = 0;
+        this.id = 0L;
         this.name = "";
         this.nameEn = "";
         this.nameZh = "";

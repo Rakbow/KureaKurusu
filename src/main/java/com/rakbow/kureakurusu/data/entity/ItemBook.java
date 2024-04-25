@@ -7,16 +7,18 @@ import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
  * @author Rakbow
  * @since 2024/4/23 16:14
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
 @TableName(value = "item_book", autoResultMap = true)
-public class ItemBook {
+public class ItemBook extends SubItem {
 
     private Long id;//主键编号
     @TableField(value = "isbn_10", whereStrategy = FieldStrategy.NOT_EMPTY)

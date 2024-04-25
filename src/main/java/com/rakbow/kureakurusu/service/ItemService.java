@@ -8,6 +8,7 @@ import com.github.yulichang.toolkit.JoinWrappers;
 import com.github.yulichang.wrapper.DeleteJoinWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.github.yulichang.wrapper.UpdateJoinWrapper;
+import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
@@ -16,6 +17,7 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.util.I18nHelper;
@@ -42,18 +44,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
-    private final ItemMapper mapper;
     private final RedisUtil redisUtil;
-    private final AlbumVOMapper albumVOMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
+
+    private final ItemMapper mapper;
+
+    private final ItemAlbumMapper itemAlbumMapper;
+
     private final PersonRelationMapper relationMapper;
 
-    private final Map<Integer, Class<?>> sourceClassDic = new HashMap<>() {{
+    private final AlbumVOMapper albumVOMapper;
+
+    private final Map<Integer, Class<? extends SubItem>> sourceClassDic = new HashMap<>() {{
         put(Entity.ALBUM.getValue(), ItemAlbum.class);
         put(Entity.BOOK.getValue(), ItemBook.class);
     }};
-    private final Map<Integer, Class<?>> targetClassDic = new HashMap<>() {{
+    private final Map<Integer, Class<? extends SuperItem>> targetClassDic = new HashMap<>() {{
         put(Entity.ALBUM.getValue(), Album.class);
         put(Entity.BOOK.getValue(), Book.class);
     }};
@@ -76,13 +83,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         if(!redisUtil.hasKey(redisKey)) return null;
         ItemTypeRelation relation = redisUtil.get(redisKey, ItemTypeRelation.class);
 
-        Class<?> sourceClass = sourceClassDic.get(relation.getType());
-        Class<?> targetClass = targetClassDic.get(relation.getType());
+        Class<? extends SubItem> sourceClass = sourceClassDic.get(relation.getType());
+        Class<? extends SuperItem> targetClass = targetClassDic.get(relation.getType());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
                 .selectAll(sourceClass, "t1")
-                .leftJoin(STR."\{CommonUtil.getTableNameByClass(sourceClass)} t1 on t1.id = t.entity_id")
-                .eq("t.id", id);
+                .leftJoin(STR."\{CommonUtil.getTableName(sourceClass)} t1 on t1.id = t.entity_id")
+                .eq(Item::getId, id);
         return mapper.selectJoinOne(targetClass, wrapper);
     }
 
@@ -98,11 +105,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             //delete visit record
             visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
         }
+        //todo 还未测试过
         //delete
         DeleteJoinWrapper<Item> wrapper = JoinWrappers
                 .delete(Item.class)
                 .delete(subTable)
-                .leftJoin(STR."\{CommonUtil.getTableNameByClass(subTable)} t1 on t1.id = t.entity_id")
+                .leftJoin(STR."\{CommonUtil.getTableName(subTable)} t1 on t1.id = t.entity_id")
                 .in(Item::getId, ids);
         mapper.deleteJoin(wrapper);
         //delete person relation
@@ -117,18 +125,19 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public void update(ItemUpdateDTO dto) {
 
-        Class<?> subTable = sourceClassDic.get(dto.getType());
+        Class<? extends SubItem> subTable = sourceClassDic.get(dto.getType());
         Object subItem = null;
         Item item = null;
         if(dto instanceof AlbumItemUpdateDTO) {
             subItem = ((AlbumItemUpdateDTO) dto).toItemAlbum();
-            item = albumVOMapper.toItem((AlbumItemUpdateDTO) dto);
+            item = new Item(dto);
         }
 
+        //todo 更新时左连接条件失效
         UpdateJoinWrapper<Item> wrapper = JoinWrappers
                 .update(Item.class)
                 .setUpdateEntity(subItem)
-                .leftJoin(STR."\{CommonUtil.getTableNameByClass(subTable)} t1 on t1.id = t.entity_id")
+                .leftJoin(subTable, SubItem::getId, Item::getEntityId)
                 .eq(Item::getId, dto.getId());
         mapper.updateJoin(item, wrapper);
     }

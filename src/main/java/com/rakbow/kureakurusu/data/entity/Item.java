@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.image.Image;
@@ -32,12 +33,17 @@ public class Item {
     private String nameZh;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;
+
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     private Entity type;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     private Long entityId;
+
     private String ean13;//EAN-13
     private String releaseDate;//发售日期
     private double price;//发行价格
     private Currency currency;//货币单位
+
     @TableField(typeHandler = ImageHandler.class)
     private List<Image> images;//图片列表
     private String detail;//描述
@@ -66,6 +72,18 @@ public class Item {
         addedTime = DateHelper.now();
         editedTime = DateHelper.now();
         status = true;
+    }
+
+    public Item(ItemUpdateDTO dto) {
+        id = dto.getId();
+        name = dto.getName();
+        nameZh = dto.getNameZh();
+        nameEn = dto.getNameEn();
+        ean13 = dto.getEan13();
+        releaseDate = dto.getReleaseDate();
+        price = dto.getPrice();
+        currency = Currency.get(dto.getCurrency());
+        editedTime = DateHelper.now();
     }
 
 }

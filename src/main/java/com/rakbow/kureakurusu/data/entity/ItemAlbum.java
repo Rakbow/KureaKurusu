@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -16,9 +17,10 @@ import java.util.List;
  * @since 2024/4/8 18:17
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(value = "item_album", autoResultMap = true)
-public class ItemAlbum {
+public class ItemAlbum extends SubItem {
 
     private Long id;//表主键
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
@@ -40,14 +42,5 @@ public class ItemAlbum {
         this.mediaFormat = new ArrayList<>();
         this.hasBonus = false;
         this.bonus = "";
-    }
-
-    public ItemAlbum(AlbumItemUpdateDTO dto) {
-        this.id = dto.getId();
-        this.catalogNo = dto.getCatalogNo();
-//        this.publishFormat = dto.getPublishFormat();
-//        this.albumFormat = dto.getAlbumFormat();
-//        this.mediaFormat = dto.getMediaFormat();
-        hasBonus = dto.isHasBonus();
     }
 }

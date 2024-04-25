@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(value = "book", autoResultMap = true)
-public class Book extends MetaEntity {
+public class Book extends SuperItem {
 
     private Long id;//主键编号
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)

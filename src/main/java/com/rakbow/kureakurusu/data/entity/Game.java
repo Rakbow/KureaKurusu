@@ -20,7 +20,7 @@ import java.util.Date;
 @TableName(value = "game", autoResultMap = true)
 public class Game extends MetaEntity {
 
-    private Integer id;//主键编号
+    private Long id;//主键编号
     private String name;//游戏名（原文）
     private String nameZh;//游戏名（中文）
     private String nameEn;//游戏名（英文）
@@ -37,7 +37,7 @@ public class Game extends MetaEntity {
     private String bonus;//特典信息
 
     public Game () {
-        this.id = 0;
+        this.id = 0L;
         this.name = "";
         this.nameZh = "";
         this.nameEn = "";

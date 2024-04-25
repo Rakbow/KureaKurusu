@@ -30,11 +30,16 @@ public class ItemController {
     private final ItemService srv;
     private final PersonService personSrv;
 
+//    @PostMapping("detail")
+//    public ApiResult detail(@RequestBody CommonDetailQry qry) {
+//        ItemDetailVO vo = srv.detail(qry.getId());
+//        vo.setPersonnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), qry.getId()));
+//        return new ApiResult().load(vo);
+//    }
+
     @PostMapping("detail")
     public ApiResult detail(@RequestBody CommonDetailQry qry) {
-        ItemDetailVO vo = srv.detail(qry.getId());
-        vo.setPersonnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), qry.getId()));
-        return new ApiResult().load(vo);
+        return new ApiResult().load(srv.getById(qry.getId()));
     }
 
     @PostMapping("update")

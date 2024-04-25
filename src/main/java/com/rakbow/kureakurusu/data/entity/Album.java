@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
 import lombok.Data;
@@ -24,7 +25,7 @@ import java.util.List;
 @Data
 @ToString(callSuper = true)
 @TableName(value = "album", autoResultMap = true)
-public class Album extends MetaEntity {
+public class Album extends SuperItem {
 
     private Long id;//表主键
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)

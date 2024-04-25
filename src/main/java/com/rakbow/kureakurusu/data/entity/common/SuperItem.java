@@ -14,10 +14,10 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2023-05-02 3:55
+ * @since 2024/4/26 2:34
  */
 @Data
-public class MetaEntity {
+public abstract class SuperItem {
 
     private Long id;
     @TableField(typeHandler = ImageHandler.class)

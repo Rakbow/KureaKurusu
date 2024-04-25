@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AlbumItemUpdateDTO extends ItemUpdateDTO {
 
     private String catalogNo;
