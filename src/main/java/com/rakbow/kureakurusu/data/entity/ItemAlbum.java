@@ -34,8 +34,13 @@ public class ItemAlbum extends SubItem {
     private Boolean hasBonus;//是否包含特典内容 0-无 1-有
     private String bonus;//特典信息
 
+
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private Long orgId;//表主键
+
     public ItemAlbum() {
         this.id = 0L;
+        this.orgId = 0L;
         this.catalogNo = "";
         this.publishFormat = new ArrayList<>();
         this.albumFormat = new ArrayList<>();

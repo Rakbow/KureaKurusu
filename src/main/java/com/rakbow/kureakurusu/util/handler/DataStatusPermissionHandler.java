@@ -19,7 +19,8 @@ public class DataStatusPermissionHandler implements DataPermissionHandler {
 
     private static final String[] IGNORE_INTERFACE = {
             "com.rakbow.kureakurusu.dao.PersonRelationMapper.selectList",
-            "com.rakbow.kureakurusu.dao.UserMapper.selectById"
+            "com.rakbow.kureakurusu.dao.UserMapper.selectById",
+            "com.rakbow.kureakurusu.dao.ItemAlbumMapper.updateById"
     };
 
     @Override

@@ -21,7 +21,7 @@ import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVOAlpha;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.CommonUtil;
+import com.rakbow.kureakurusu.util.common.MyBatisUtil;
 import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
@@ -88,7 +88,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
                 .selectAll(sourceClass, "t1")
-                .leftJoin(STR."\{CommonUtil.getTableName(sourceClass)} t1 on t1.id = t.entity_id")
+                .leftJoin(STR."\{MyBatisUtil.getTableName(sourceClass)} t1 on t1.id = t.id")
                 .eq(Item::getId, id);
         return mapper.selectJoinOne(targetClass, wrapper);
     }
@@ -110,7 +110,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         DeleteJoinWrapper<Item> wrapper = JoinWrappers
                 .delete(Item.class)
                 .delete(subTable)
-                .leftJoin(STR."\{CommonUtil.getTableName(subTable)} t1 on t1.id = t.entity_id")
+                .leftJoin(STR."\{MyBatisUtil.getTableName(subTable)} t1 on t1.id = t.id")
                 .in(Item::getId, ids);
         mapper.deleteJoin(wrapper);
         //delete person relation
@@ -124,22 +124,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public void update(ItemUpdateDTO dto) {
-
-        Class<? extends SubItem> subTable = sourceClassDic.get(dto.getType());
-        Object subItem = null;
-        Item item = null;
+        mapper.updateById(new Item(dto));
         if(dto instanceof AlbumItemUpdateDTO) {
-            subItem = ((AlbumItemUpdateDTO) dto).toItemAlbum();
-            item = new Item(dto);
+            itemAlbumMapper.updateById(((AlbumItemUpdateDTO) dto).toItemAlbum());
         }
-
-        //todo 更新时左连接条件失效
-        UpdateJoinWrapper<Item> wrapper = JoinWrappers
-                .update(Item.class)
-                .setUpdateEntity(subItem)
-                .leftJoin(subTable, SubItem::getId, Item::getEntityId)
-                .eq(Item::getId, dto.getId());
-        mapper.updateJoin(item, wrapper);
     }
 
     public SearchResult<AlbumVOAlpha> list(AlbumListParams param) {

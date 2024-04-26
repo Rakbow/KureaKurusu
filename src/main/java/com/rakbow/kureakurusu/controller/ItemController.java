@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.data.vo.ItemDetailVO;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.util.common.ItemUtil;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +45,7 @@ public class ItemController {
 
     @PostMapping("update")
     public ApiResult update(@Valid @RequestBody String param, BindingResult errors) {
-        int type = JsonUtil.getIntValueByKey("type", param);
-        ItemUpdateDTO dto = null;
-        if(type == ItemType.ALBUM.getValue()){
-            dto = JsonUtil.to(param, AlbumItemUpdateDTO.class);
-        }
+        ItemUpdateDTO dto = ItemUtil.getItemUpdateDTO(param);
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
