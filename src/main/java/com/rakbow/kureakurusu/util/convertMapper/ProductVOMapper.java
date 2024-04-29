@@ -23,8 +23,8 @@ import java.util.Objects;
  * @author Rakbow
  * @since 2023-01-12 10:45 Product VO转换接口
  */
-@Mapper(componentModel = "spring")
-public interface ProductVOMapper extends MetaVOMapper {
+@Mapper(componentModel = "spring", uses = MetaVOMapper.class)
+public interface ProductVOMapper {
 
     ProductVOMapper INSTANCES = Mappers.getMapper(ProductVOMapper.class);
 
@@ -48,7 +48,8 @@ public interface ProductVOMapper extends MetaVOMapper {
     @IterableMapping(qualifiedByName = "toMiniVO")
     List<ProductMiniVO> toMiniVO(List<Product> products);
 
-    @Mapping(source = "category", target = "category", qualifiedByName = "getCategoryAttribute")
+    @Mapping(source = "category.labelKey", target = "category.label", qualifiedByName = "getEnumLabel")
+    @Mapping(source = "category.value", target = "category.value")
     @Mapping(source = "franchise", target = "franchise", qualifiedByName = "getFranchise")
     @ToVO
     @Named("toVOAlpha")

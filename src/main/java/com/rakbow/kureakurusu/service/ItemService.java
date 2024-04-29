@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.toolkit.JoinWrappers;
 import com.github.yulichang.wrapper.DeleteJoinWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.github.yulichang.wrapper.UpdateJoinWrapper;
 import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
@@ -26,6 +25,7 @@ import com.rakbow.kureakurusu.util.common.RedisUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
@@ -56,6 +56,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     private final AlbumVOMapper albumVOMapper;
 
+    private final Converter converter;
+
     private final Map<Integer, Class<? extends SubItem>> sourceClassDic = new HashMap<>() {{
         put(Entity.ALBUM.getValue(), ItemAlbum.class);
         put(Entity.BOOK.getValue(), ItemBook.class);
@@ -64,6 +66,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         put(Entity.ALBUM.getValue(), Album.class);
         put(Entity.BOOK.getValue(), Book.class);
     }};
+
+    @Transactional
+    @SneakyThrows
+    public void test(AlbumUpdateDTO dto) {
+        Item item = converter.convert(dto, Item.class);
+    }
 
     @Transactional
     @SneakyThrows
@@ -95,16 +103,18 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public void delete(List<Long> ids, int type) {
-        Class<?> subTable = sourceClassDic.get(type);
+    public void delete(List<Long> ids) {
         //get original data
         List<Item> items = mapper.selectBatchIds(ids);
+        if(items.isEmpty()) return;
         for (Item item : items) {
             //delete all image
             qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
             visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
         }
+        int type = items.getFirst().getType().getValue();
+        Class<?> subTable = sourceClassDic.get(type);
         //todo 还未测试过
         //delete
         DeleteJoinWrapper<Item> wrapper = JoinWrappers
@@ -119,15 +129,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                         .eq(PersonRelation::getEntityType, EntityType.ITEM.getValue())
                         .in(PersonRelation::getEntityId, ids)
         );
-    }
-
-    @Transactional
-    @SneakyThrows
-    public void update(ItemUpdateDTO dto) {
-        mapper.updateById(new Item(dto));
-        if(dto instanceof AlbumItemUpdateDTO) {
-            itemAlbumMapper.updateById(((AlbumItemUpdateDTO) dto).toItemAlbum());
-        }
     }
 
     public SearchResult<AlbumVOAlpha> list(AlbumListParams param) {

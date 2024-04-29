@@ -17,7 +17,7 @@ import java.util.List;
  * @author Rakbow
  * @since 2023-02-22 20:08
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = MetaVOMapper.class)
 public interface StatisticPOMapper {
 
     StatisticPOMapper INSTANCES = Mappers.getMapper(StatisticPOMapper.class);

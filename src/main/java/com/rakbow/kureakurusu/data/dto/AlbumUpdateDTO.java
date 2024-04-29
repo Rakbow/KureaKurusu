@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +17,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AlbumItemUpdateDTO extends ItemUpdateDTO {
+@AutoMapper(target = Item.class)
+public class AlbumUpdateDTO extends ItemUpdateDTO {
 
     private String catalogNo;
     @NotEmpty(message = "{entity.crud.publish_format.required_field}")

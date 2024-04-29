@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.util.common;
 
-import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 
@@ -14,7 +14,7 @@ public class ItemUtil {
         int type = JsonUtil.getIntValueByKey("type", param);
         ItemUpdateDTO dto = null;
         if(type == ItemType.ALBUM.getValue()){
-            dto = JsonUtil.to(param, AlbumItemUpdateDTO.class);
+            dto = JsonUtil.to(param, AlbumUpdateDTO.class);
         }
         return dto;
     }

@@ -7,8 +7,8 @@ import org.mapstruct.factory.Mappers;
  * @author Rakbow
  * @since 2023-01-12 10:45 Merch VO转换接口
  */
-@Mapper(componentModel = "spring")
-public interface MerchVOMapper extends MetaVOMapper {
+@Mapper(componentModel = "spring", uses = MetaVOMapper.class)
+public interface MerchVOMapper {
 
     MerchVOMapper INSTANCES = Mappers.getMapper(MerchVOMapper.class);
 

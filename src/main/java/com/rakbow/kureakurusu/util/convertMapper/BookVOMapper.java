@@ -21,8 +21,8 @@ import java.util.List;
  * @author Rakbow
  * @since 2023-01-11 16:13
  */
-@Mapper(componentModel = "spring")
-public interface BookVOMapper extends MetaVOMapper {
+@Mapper(componentModel = "spring", uses = MetaVOMapper.class)
+public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
 

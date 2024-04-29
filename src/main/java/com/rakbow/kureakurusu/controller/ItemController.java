@@ -14,10 +14,7 @@ import com.rakbow.kureakurusu.util.common.JsonUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Rakbow
@@ -43,20 +40,21 @@ public class ItemController {
         return new ApiResult().load(srv.getById(qry.getId()));
     }
 
-    @PostMapping("update")
-    public ApiResult update(@Valid @RequestBody String param, BindingResult errors) {
-        ItemUpdateDTO dto = ItemUtil.getItemUpdateDTO(param);
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        assert dto != null;
-        srv.update(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
+    @DeleteMapping("delete")
+    public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
+        srv.delete(dto.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.delete.success"));
     }
 
     @PostMapping("page")
     public ApiResult page(@RequestBody AlbumListParams qry) {
         return new ApiResult().load(srv.list(qry));
+    }
+
+    @PostMapping("test")
+    public ApiResult test(@RequestBody AlbumUpdateDTO dto) {
+        srv.test(dto);
+        return new ApiResult().ok("");
     }
 
 }

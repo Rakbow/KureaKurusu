@@ -4,9 +4,8 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.dto.AlbumItemUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
-import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
@@ -73,7 +72,7 @@ public class Album extends SuperItem {
         this.setStatus(true);
     }
 
-    public Album(AlbumItemUpdateDTO dto) {
+    public Album(AlbumUpdateDTO dto) {
         id = dto.getId();
         name = dto.getName();
         nameZh = dto.getNameZh();

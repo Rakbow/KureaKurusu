@@ -24,8 +24,8 @@ import java.util.Objects;
  * @author Rakbow
  * @since 2023-01-11 16:13
  */
-@Mapper(componentModel = "spring")
-public interface AlbumVOMapper extends MetaVOMapper {
+@Mapper(componentModel = "spring", uses = MetaVOMapper.class)
+public interface AlbumVOMapper {
 
     AlbumVOMapper INSTANCES = Mappers.getMapper(AlbumVOMapper.class);
 

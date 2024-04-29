@@ -93,16 +93,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
                 .build();
     }
 
-//    @Transactional
-//    public Album getById(long id) {
-//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-//                .selectAll(Item.class)
-//                .selectAll(ItemAlbum.class)
-//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-//                .eq(Item::getId, id);
-//        return itemMapper.selectJoinOne(Album.class, wrapper);
-//    }
-
     /**
      * 根据Id删除专辑
      *
