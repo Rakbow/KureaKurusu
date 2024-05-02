@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.RelatedType;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
@@ -183,31 +184,50 @@ public class OtherTests {
     public void addItems() {
         List<Album> allAlbums = albumMapper.selectList(null);
         List<Book> allBooks = bookMapper.selectList(null);
+
         List<Item> items = new ArrayList<>();
         for (Album album : allAlbums) {
             Item item = new Item();
+
+            item.setId(0L);
+            item.setType(ItemType.ALBUM);
+            item.setOrgId(album.getId());
             item.setName(album.getName());
             item.setNameZh(album.getNameZh());
             item.setNameEn(album.getNameEn());
-            item.setType(Entity.ALBUM);
-            item.setEntityId(album.getId());
+
+            item.setEan13(album.getEan13());
+            item.setReleaseDate(album.getReleaseDate());
+            item.setPrice(album.getPrice());
+            item.setCurrency(album.getCurrency());
+
             item.setImages(album.getImages());
             item.setDetail(album.getDetail());
             item.setRemark(album.getRemark());
+
             item.setAddedTime(album.getAddedTime());
             item.setEditedTime(album.getEditedTime());
             items.add(item);
         }
         for (Book book : allBooks) {
             Item item = new Item();
+
+            item.setId(0L);
+            item.setType(ItemType.BOOK);
+            item.setOrgId(book.getId());
             item.setName(book.getTitle());
             item.setNameZh(book.getTitleZh());
             item.setNameEn(book.getTitleEn());
-            item.setType(Entity.BOOK);
-            item.setEntityId(book.getId());
+
+            item.setEan13(book.getIsbn13());
+            item.setReleaseDate(book.getPublishDate());
+            item.setPrice(book.getPrice());
+            item.setCurrency(book.getCurrency());
+
             item.setImages(book.getImages());
             item.setDetail(book.getDetail());
             item.setRemark(book.getRemark());
+
             item.setAddedTime(book.getAddedTime());
             item.setEditedTime(book.getEditedTime());
             items.add(item);
@@ -220,34 +240,83 @@ public class OtherTests {
     }
 
     @Test
-    public void updateItems() {
+    public void addSubItems() {
         List<Album> allAlbums = albumMapper.selectList(null);
-        allAlbums.sort(DataSorter.albumIdSorter);
         List<Book> allBooks = bookMapper.selectList(null);
-        allBooks.sort(DataSorter.bookIdSorter);
         List<Item> allItems = itemMapper.selectList(null);
 
-        for (Item i : allItems) {
-            if (i.getType() == Entity.ALBUM) {
-                Album album = DataFinder.findAlbumById(i.getEntityId(), allAlbums);
-                if(album == null) continue;
-                i.setPrice(album.getPrice());
-                i.setCurrency(album.getCurrency());
-            }
-            if (i.getType() == Entity.BOOK) {
-                Book book = DataFinder.findBookById(i.getEntityId(), allBooks);
-                if(book == null) continue;
-                i.setPrice(book.getPrice());
-                i.setCurrency(book.getCurrency());
-            }
-            UpdateWrapper<Item> wrapper = new UpdateWrapper<Item>()
-                    .set("price", i.getPrice())
-                    .set("currency", i.getCurrency())
-                    .eq("id", i.getId());
-            itemMapper.update(wrapper);
-        }
+        List<ItemAlbum> itemAlbums = new ArrayList<>();
+        List<ItemBook> itemBooks = new ArrayList<>();
+        for (Item item : allItems) {
+            if(item.getType() == ItemType.ALBUM) {
+                ItemAlbum itemAlbum = new ItemAlbum();
 
+                Album album = DataFinder.findAlbumById(item.getOrgId(), allAlbums);
+                if(album == null) continue;
+                itemAlbum.setId(item.getId());
+                itemAlbum.setCatalogNo(album.getCatalogNo());
+                itemAlbum.setPublishFormat(album.getPublishFormat());
+                itemAlbum.setAlbumFormat(album.getAlbumFormat());
+                itemAlbum.setMediaFormat(album.getMediaFormat());
+                itemAlbum.setHasBonus(album.getHasBonus());
+                itemAlbum.setBonus(album.getBonus());
+                itemAlbums.add(itemAlbum);
+            }else if(item.getType() == ItemType.BOOK) {
+                ItemBook itemBook = new ItemBook();
+
+                Book book = DataFinder.findBookById(item.getOrgId(), allBooks);
+                if(book == null) continue;
+                itemBook.setId(item.getId());
+                itemBook.setIsbn10(book.getIsbn10());
+                itemBook.setBookType(book.getBookType());
+                itemBook.setAuthors(book.getAuthors());
+                itemBook.setRegion(book.getRegion());
+                itemBook.setLang(book.getLang());
+                itemBook.setSummary(book.getSummary());
+                itemBook.setSpec(book.getSpec());
+                itemBook.setHasBonus(book.getHasBonus());
+                itemBook.setBonus(book.getBonus());
+                itemBooks.add(itemBook);
+            }
+        }
+        MybatisBatch.Method<ItemAlbum> albumMethod = new MybatisBatch.Method<>(ItemAlbumMapper.class);
+        MybatisBatch<ItemAlbum> albumBatchInsert = new MybatisBatch<>(sqlSessionFactory, itemAlbums);
+        albumBatchInsert.execute(albumMethod.insert());
+
+        MybatisBatch.Method<ItemBook> bookMethod = new MybatisBatch.Method<>(ItemBookMapper.class);
+        MybatisBatch<ItemBook> bookBatchInsert = new MybatisBatch<>(sqlSessionFactory, itemBooks);
+        bookBatchInsert.execute(bookMethod.insert());
     }
+
+//    @Test
+//    public void updateItems() {
+//        List<Album> allAlbums = albumMapper.selectList(null);
+//        allAlbums.sort(DataSorter.albumIdSorter);
+//        List<Book> allBooks = bookMapper.selectList(null);
+//        allBooks.sort(DataSorter.bookIdSorter);
+//        List<Item> allItems = itemMapper.selectList(null);
+//
+//        for (Item i : allItems) {
+//            if (i.getType() == ItemType.ALBUM) {
+//                Album album = DataFinder.findAlbumById(i.getEntityId(), allAlbums);
+//                if(album == null) continue;
+//                i.setPrice(album.getPrice());
+//                i.setCurrency(album.getCurrency());
+//            }
+//            if (i.getType() == ItemType.BOOK) {
+//                Book book = DataFinder.findBookById(i.getEntityId(), allBooks);
+//                if(book == null) continue;
+//                i.setPrice(book.getPrice());
+//                i.setCurrency(book.getCurrency());
+//            }
+//            UpdateWrapper<Item> wrapper = new UpdateWrapper<Item>()
+//                    .set("price", i.getPrice())
+//                    .set("currency", i.getCurrency())
+//                    .eq("id", i.getId());
+//            itemMapper.update(wrapper);
+//        }
+//
+//    }
 
 //    @Test
 //    public void joinListTest() {

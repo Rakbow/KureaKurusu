@@ -5,7 +5,6 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.ItemService;
@@ -60,7 +59,7 @@ public class AlbumController {
     }
 
     @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody AlbumAddDTO dto, BindingResult errors) {
+    public ApiResult add(@Valid @RequestBody AlbumCreateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //build
@@ -75,8 +74,7 @@ public class AlbumController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateById(new Album(dto));
-        itemSrv.updateById(new Item(dto));
+        itemSrv.update(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }
 

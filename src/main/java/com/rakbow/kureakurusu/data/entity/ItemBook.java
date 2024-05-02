@@ -21,7 +21,7 @@ import lombok.ToString;
 public class ItemBook extends SubItem {
 
     private Long id;//主键编号
-    @TableField(value = "isbn_10", whereStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String isbn10;//国际标准书号（10位）
     private BookType bookType;//书籍类型
 

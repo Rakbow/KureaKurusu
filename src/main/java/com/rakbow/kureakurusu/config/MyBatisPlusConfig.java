@@ -23,7 +23,7 @@ public class MyBatisPlusConfig {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
 
         //添加MySQL的数据权限拦截器
-        interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataPermissionHandler));
+//        interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataPermissionHandler));
         PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
         paginationInnerInterceptor.setDialect(DialectFactory.getDialect(DbType.MYSQL));
         //添加MySQL的分页拦截器

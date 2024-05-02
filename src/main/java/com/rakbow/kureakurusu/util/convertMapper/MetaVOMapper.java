@@ -14,6 +14,7 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
+import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
 import java.sql.Timestamp;
@@ -25,6 +26,7 @@ import java.util.Objects;
  * @author Rakbow
  * @since 2023-11-05 4:03
  */
+@Mapper(componentModel = "spring")
 public interface MetaVOMapper {
 
     @Named("getEnumLabel")

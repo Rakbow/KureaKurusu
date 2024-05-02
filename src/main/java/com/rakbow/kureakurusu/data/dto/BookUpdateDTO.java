@@ -1,5 +1,10 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rakbow.kureakurusu.data.entity.Item;
+import com.rakbow.kureakurusu.data.entity.ItemBook;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,22 +15,17 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class BookUpdateDTO extends DTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@AutoMappers({
+        @AutoMapper(target = Item.class, reverseConvertGenerate = false),
+        @AutoMapper(target = ItemBook.class, reverseConvertGenerate = false)
+})
+public class BookUpdateDTO extends ItemUpdateDTO {
 
-    private long id;
-    @NotBlank(message = "{entity.crud.name.required_field}")
-    private String title;
-    private String titleZh;
-    private String titleEn;
     private String isbn10;
-    private String isbn13;
     private int bookType;
     private String region;
     private String lang;
-    private double price;
-    private String currency;
-    private String publishDate;
-    private String remark;
     private String summary;
     private boolean hasBonus;
 

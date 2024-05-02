@@ -75,22 +75,4 @@ public class Book extends SuperItem {
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);
     }
-
-    public Book(BookUpdateDTO dto) {
-        id = dto.getId();
-        title = dto.getTitle();
-        titleZh = dto.getTitleZh();
-        titleEn = dto.getTitleEn();
-        isbn10 = dto.getIsbn10();
-        isbn13 = dto.getIsbn13();
-        bookType = BookType.get(dto.getBookType());
-        publishDate = dto.getPublishDate();
-        region = Region.get(dto.getRegion());
-        lang = Language.get(dto.getLang());
-        price = dto.getPrice();
-        currency = Currency.get(dto.getCurrency());
-        hasBonus = dto.isHasBonus();
-        setRemark(dto.getRemark());
-        updateEditedTime();
-    }
 }

@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.annotation.ToVO;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.dto.AlbumAddDTO;
+import com.rakbow.kureakurusu.data.dto.AlbumCreateDTO;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.album.AlbumMiniVO;
@@ -33,7 +33,7 @@ public interface AlbumVOMapper {
 
     @Mapping(source = "currency", target = "currency", qualifiedByName = "getCurrency")
     @Named("build")
-    Album build(AlbumAddDTO dto);
+    Album build(AlbumCreateDTO dto);
 
     /**
      * Album转VO对象，用于详情页面，转换量最大的

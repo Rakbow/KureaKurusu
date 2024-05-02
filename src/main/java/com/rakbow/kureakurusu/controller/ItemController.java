@@ -46,15 +46,15 @@ public class ItemController {
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.delete.success"));
     }
 
-    @PostMapping("page")
-    public ApiResult page(@RequestBody AlbumListParams qry) {
-        return new ApiResult().load(srv.list(qry));
-    }
+//    @PostMapping("page")
+//    public ApiResult page(@RequestBody AlbumListParams qry) {
+//        return new ApiResult().load(srv.list(qry));
+//    }
 
-    @PostMapping("test")
-    public ApiResult test(@RequestBody AlbumUpdateDTO dto) {
-        srv.test(dto);
-        return new ApiResult().ok("");
+    @PostMapping("update")
+    public ApiResult updateBook(@RequestBody BookUpdateDTO dto) {
+        srv.update(dto);
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
 }

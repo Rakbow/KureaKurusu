@@ -1,29 +1,28 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
-import com.rakbow.kureakurusu.util.converter.EnumToAttribute;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import jakarta.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2024/1/3 16:12
+ * @since 2024/1/3 14:49
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AutoMappers({
         @AutoMapper(target = Item.class, reverseConvertGenerate = false),
         @AutoMapper(target = ItemAlbum.class, reverseConvertGenerate = false)
 })
-public class AlbumUpdateDTO extends ItemUpdateDTO {
+public class AlbumCreateDTO extends ItemCreateDTO {
 
     private String catalogNo;
     @NotEmpty(message = "{entity.crud.publish_format.required_field}")
@@ -33,5 +32,14 @@ public class AlbumUpdateDTO extends ItemUpdateDTO {
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
     private boolean hasBonus;
+
+    public AlbumCreateDTO() {
+        setType(ItemType.ALBUM.getValue());
+        catalogNo = "";
+        publishFormat = new ArrayList<>();
+        albumFormat = new ArrayList<>();
+        mediaFormat = new ArrayList<>();
+        hasBonus = true;
+    }
 
 }

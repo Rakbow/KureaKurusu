@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.vo.book.BookDetailVO;
 import com.rakbow.kureakurusu.service.BookService;
+import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.convertMapper.BookVOMapper;
@@ -28,6 +29,7 @@ public class BookController {
     //region inject
 
     private final BookService srv;
+    private final ItemService itemSrv;
     private final PersonService personSrv;
     private final BookVOMapper VOMapper = BookVOMapper.INSTANCES;
     private final int ENTITY_VALUE = Entity.BOOK.getValue();
@@ -67,7 +69,7 @@ public class BookController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        srv.updateById(new Book(dto));
+        itemSrv.update(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName()));
     }
 

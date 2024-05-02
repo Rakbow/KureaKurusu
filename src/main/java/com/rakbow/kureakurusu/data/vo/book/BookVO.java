@@ -13,7 +13,7 @@ import lombok.Data;
 public class BookVO {
 
     //基础信息
-    private int id;
+    private long id;
     private String title;
     private String titleEn;
     private String titleZh;

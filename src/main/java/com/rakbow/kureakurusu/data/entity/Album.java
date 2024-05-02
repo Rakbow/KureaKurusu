@@ -71,22 +71,4 @@ public class Album extends SuperItem {
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);
     }
-
-    public Album(AlbumUpdateDTO dto) {
-        id = dto.getId();
-        name = dto.getName();
-        nameZh = dto.getNameZh();
-        nameEn = dto.getNameEn();
-        catalogNo = dto.getCatalogNo();
-        ean13 = dto.getEan13();
-        releaseDate = dto.getReleaseDate();
-        price = dto.getPrice();
-        currency = Currency.get(dto.getCurrency());
-        hasBonus = dto.isHasBonus();
-        albumFormat = dto.getAlbumFormat();
-        publishFormat = dto.getPublishFormat();
-        mediaFormat = dto.getMediaFormat();
-        setRemark(dto.getRemark());
-        updateEditedTime();
-    }
 }

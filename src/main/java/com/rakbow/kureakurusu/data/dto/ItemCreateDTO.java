@@ -1,19 +1,17 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.util.converter.EnumToAttribute;
-import io.github.linpeilie.annotations.AutoMapper;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * @author Rakbow
- * @since 2024/4/25 14:42
+ * @since 2024/5/3 4:02
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ItemUpdateDTO extends DTO {
+public class ItemCreateDTO extends DTO {
 
     private Long id;
     private Integer type;
@@ -24,8 +22,6 @@ public class ItemUpdateDTO extends DTO {
     private String nameEn;
 
     private String ean13;
-
-    @NotBlank(message = "{entity.crud.release_date.required_field}")
     private String releaseDate;
 
     private double price;

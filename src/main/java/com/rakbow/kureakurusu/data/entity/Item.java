@@ -8,11 +8,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.ImageHandler;
 import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -24,20 +26,21 @@ import java.util.List;
  */
 @Data
 @TableName(value = "item", autoResultMap = true)
+@NoArgsConstructor
 public class Item {
 
     private Long id;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private ItemType type;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private Long orgId;
+
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameZh;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;
-
-    @TableField(updateStrategy = FieldStrategy.NEVER)
-    private Entity type;
-    @TableField(updateStrategy = FieldStrategy.NEVER)
-    private Long entityId;
 
     private String ean13;//EAN-13
     private String releaseDate;//发售日期
@@ -48,42 +51,14 @@ public class Item {
     private List<Image> images;//图片列表
     private String detail;//描述
     private String remark;//备注
+
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     private Timestamp addedTime;//数据新增时间
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     private Timestamp editedTime;//数据更新时间
+
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;//激活状态
-
-    public Item() {
-        id = 0L;
-        name = "";
-        nameZh = "";
-        nameEn = "";
-        type = Entity.ENTRY;
-        entityId = 0L;
-        ean13 = "";
-        releaseDate = "";
-        price = 0;
-        currency = Currency.JPY;
-        images = new ArrayList<>();
-        detail = "";
-        remark = "";
-        addedTime = DateHelper.now();
-        editedTime = DateHelper.now();
-        status = true;
-    }
-
-    public Item(ItemUpdateDTO dto) {
-        id = dto.getId();
-        name = dto.getName();
-        nameZh = dto.getNameZh();
-        nameEn = dto.getNameEn();
-        ean13 = dto.getEan13();
-        releaseDate = dto.getReleaseDate();
-        price = dto.getPrice();
-        currency = Currency.get(dto.getCurrency());
-        editedTime = DateHelper.now();
-    }
 
 }
