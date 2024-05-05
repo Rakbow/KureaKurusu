@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonListParams extends QueryParams {
+public class PersonListParams extends ListQueryParams {
 
     private String name;
     private String nameZh;
@@ -23,7 +23,7 @@ public class PersonListParams extends QueryParams {
     private String aliases;
     private List<Integer> gender;
 
-    public PersonListParams(ListQry qry) {
+    public PersonListParams(ListQueryDTO qry) {
         super(qry);
         this.name = super.getStr("name");
         this.nameZh = super.getStr("nameZh");

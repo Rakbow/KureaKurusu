@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
-import com.rakbow.kureakurusu.data.dto.ListQry;
+import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
@@ -51,7 +51,7 @@ public class PersonController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQry qry) {
+    public ApiResult list(@RequestBody ListQueryDTO qry) {
         return new ApiResult().load(srv.getPersons(new PersonListParams(qry)));
     }
 
@@ -79,7 +79,7 @@ public class PersonController {
     //region role
 
     @PostMapping("get-roles")
-    public ApiResult getPersonRoles(@RequestBody ListQry qry) {
+    public ApiResult getPersonRoles(@RequestBody ListQueryDTO qry) {
         return new ApiResult().load(roleSrv.getRoles(new PersonRoleListParams(qry)));
     }
 

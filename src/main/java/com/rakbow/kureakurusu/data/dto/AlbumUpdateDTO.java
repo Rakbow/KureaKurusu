@@ -3,13 +3,12 @@ package com.rakbow.kureakurusu.data.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
-import com.rakbow.kureakurusu.util.converter.EnumToAttribute;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**

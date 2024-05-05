@@ -1,16 +1,14 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Album;
-import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -29,7 +27,6 @@ public class AlbumController {
     private final AlbumService srv;
     private final ItemService itemSrv;
     private final PersonService personSrv;
-    private final AlbumVOMapper VOMapper;
 
     private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
@@ -44,14 +41,9 @@ public class AlbumController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQry qry) {
-        return new ApiResult().load(srv.getAlbums(new AlbumListParams(qry)));
+    public ApiResult list(@RequestBody ListQueryDTO qry) {
+        return new ApiResult().load(itemSrv.list(new AlbumListQueryDTO(qry)));
     }
-
-//    @PostMapping("list")
-//    public ApiResult list(@RequestBody ListQry qry) {
-//        return new ApiResult().load(itemSrv.joinPageTest(new AlbumListParams(qry)));
-//    }
 
     @PostMapping("search")
     public ApiResult search(@RequestBody SearchQry qry) {
@@ -62,25 +54,23 @@ public class AlbumController {
     public ApiResult add(@Valid @RequestBody AlbumCreateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //build
-        Album album = VOMapper.build(dto);
         //save
-        srv.save(album);
-        return  new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
+        itemSrv.insert(dto);
+        return  new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
     }
 
     @PostMapping("update")
     public ApiResult update(@Valid @RequestBody AlbumUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
+        //update
         itemSrv.update(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
     }
 
     @DeleteMapping("delete")
-    public ApiResult delete(@RequestBody DeleteCmd cmd) {
-        srv.deleteAlbums(cmd.getIds());
+    public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
+        itemSrv.delete(dto.getIds());
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
     }
 

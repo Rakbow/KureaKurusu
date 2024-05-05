@@ -7,6 +7,8 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.ImageHandler;
 import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
 import java.sql.Timestamp;

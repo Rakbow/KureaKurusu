@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonRoleListParams extends QueryParams {
+public class PersonRoleListParams extends ListQueryParams {
 
     private String name;
     private String nameZh;
     private String nameEn;
 
-    public PersonRoleListParams(ListQry qry) {
+    public PersonRoleListParams(ListQueryDTO qry) {
         super(qry);
         this.name = super.getStr("name");
         this.nameZh = super.getStr("nameZh");

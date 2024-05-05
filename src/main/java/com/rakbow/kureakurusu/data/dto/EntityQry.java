@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EntityQry extends Query {
+public class EntityQry extends QueryDTO {
 
     private Integer entityType;
     private Long entityId;

@@ -38,7 +38,7 @@ public class FranchiseController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQry qry) {
+    public ApiResult list(@RequestBody ListQueryDTO qry) {
         return new ApiResult().load(srv.list(new FranchiseListParams(qry)));
     }
 

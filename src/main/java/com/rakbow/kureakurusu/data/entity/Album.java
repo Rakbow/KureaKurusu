@@ -4,11 +4,15 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.dto.AlbumUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
+import com.rakbow.kureakurusu.data.vo.test.AlbumListVO;
+import com.rakbow.kureakurusu.toolkit.converter.ItemToItemListVO;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,6 +28,9 @@ import java.util.List;
 @Data
 @ToString(callSuper = true)
 @TableName(value = "album", autoResultMap = true)
+@AutoMappers({
+        @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false, uses = ItemToItemListVO.class)
+})
 public class Album extends SuperItem {
 
     private Long id;//表主键
@@ -38,10 +45,14 @@ public class Album extends SuperItem {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String ean13;//商品条形码
     private String releaseDate;//发行日期
+
+    @AutoMapping(qualifiedByName = "getPublishFormat")
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> publishFormat;//出版形式 在mysql中以数组字符串形式存储
+    @AutoMapping(qualifiedByName = "getAlbumFormat")
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    @AutoMapping(qualifiedByName = "getMediaFormat")
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> mediaFormat;//媒体类型
     private double price;//发行价格（含税）

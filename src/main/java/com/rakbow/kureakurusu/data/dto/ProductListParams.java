@@ -15,14 +15,14 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductListParams extends QueryParams {
+public class ProductListParams extends ListQueryParams {
 
     private String name;
     private String nameZh;
     private String nameEn;
     private List<Integer> category;
 
-    public ProductListParams(ListQry qry) {
+    public ProductListParams(ListQueryDTO qry) {
         super(qry);
         this.name = super.getStr("name");
         this.nameZh = super.getStr("nameZh");

@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.util.converter;
+package com.rakbow.kureakurusu.toolkit.converter;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.util.I18nHelper;

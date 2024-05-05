@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.util.common;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +20,10 @@ import java.util.stream.Collectors;
  * @since 2022-08-02 0:38
  */
 public class CommonUtil {
+
+    public static String camelToUnderline(String s) {
+        return com.baomidou.mybatisplus.core.toolkit.StringUtils.camelToUnderline(s);
+    }
 
     //计算时间总和（返回字符串形式）
     public static String countTotalTime(List<String> times){

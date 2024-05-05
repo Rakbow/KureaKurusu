@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FranchiseListParams extends QueryParams {
+public class FranchiseListParams extends ListQueryParams {
 
     private String name;
     private String nameZh;
     private String nameEn;
 
-    public FranchiseListParams(ListQry qry) {
+    public FranchiseListParams(ListQueryDTO qry) {
         super(qry);
         this.name = super.getStr("name");
         this.nameZh = super.getStr("nameZh");

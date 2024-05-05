@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookListParams extends QueryParams {
+public class BookListParams extends ListQueryParams {
 
     private String title;
     private String isbn10;
@@ -23,7 +23,7 @@ public class BookListParams extends QueryParams {
     private Integer bookType;
     private Boolean hasBonus;
 
-    public BookListParams(ListQry qry) {
+    public BookListParams(ListQueryDTO qry) {
         super(qry);
         this.title = super.getStr("title");
         this.isbn10 = super.getStr("isbn10");

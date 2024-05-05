@@ -50,19 +50,6 @@ public interface AlbumVOMapper {
     @ToVO
     AlbumVO toVO(Album album);
 
-    @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
-    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
-    @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
-    @Mapping(source = "currency.value", target = "currency")
-    @Mapping(target = "cover", ignore = true)
-    @Mapping(target = "visitNum", ignore = true)
-    @ToVO
-    @Named("toVOAlpha")
-    AlbumVOAlpha toVOAlpha(Album album);
-
-    @IterableMapping(qualifiedByName = "toVOAlpha")
-    List<AlbumVOAlpha> toVOAlpha(List<Album> albums);
-
     @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
     @Named("toMiniVO")
     AlbumMiniVO toMiniVO(Album album);

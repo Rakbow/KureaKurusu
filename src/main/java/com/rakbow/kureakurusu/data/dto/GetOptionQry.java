@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetOptionQry extends Query {
+public class GetOptionQry extends QueryDTO {
 
     private int entityType;
 

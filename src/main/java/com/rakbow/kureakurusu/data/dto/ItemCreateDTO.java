@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ItemCreateDTO extends DTO {
 
-    private Long id;
+    private long id;
     private Integer type;
 
     @NotBlank(message = "{entity.crud.name.required_field}")

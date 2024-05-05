@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController {
 
     private final ItemService srv;
-    private final PersonService personSrv;
 
 //    @PostMapping("detail")
 //    public ApiResult detail(@RequestBody CommonDetailQry qry) {
@@ -46,10 +45,16 @@ public class ItemController {
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.delete.success"));
     }
 
-//    @PostMapping("page")
-//    public ApiResult page(@RequestBody AlbumListParams qry) {
-//        return new ApiResult().load(srv.list(qry));
-//    }
+    @PostMapping("add")
+    public ApiResult add(@RequestBody AlbumCreateDTO dto) {
+        srv.insert(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
+    }
+
+    @PostMapping("list")
+    public ApiResult list(@RequestBody ListQueryDTO dto) {
+        return new ApiResult().load(srv.list(new AlbumListQueryDTO(dto)));
+    }
 
     @PostMapping("update")
     public ApiResult updateBook(@RequestBody BookUpdateDTO dto) {

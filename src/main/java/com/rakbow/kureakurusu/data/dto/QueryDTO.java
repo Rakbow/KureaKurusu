@@ -6,7 +6,7 @@ import java.io.Serial;
  * @author Rakbow
  * @since 2023-12-23 11:12
  */
-public abstract class Query extends DTO {
+public abstract class QueryDTO extends DTO {
 
     @Serial
     private static final long serialVersionUID = 1L;

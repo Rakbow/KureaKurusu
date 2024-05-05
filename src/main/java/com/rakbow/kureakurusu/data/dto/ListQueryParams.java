@@ -12,7 +12,7 @@ import static com.rakbow.kureakurusu.data.common.Constant.*;
  * @since 2023-04-06 10:34
  */
 @Data
-public class QueryParams {
+public class ListQueryParams {
 
     public int page;
     public int size;
@@ -22,7 +22,7 @@ public class QueryParams {
 
     private static String VALUE_KEY = "value";
 
-    public QueryParams() {
+    public ListQueryParams() {
         page = 0;
         size = 0;
         sortField = "";
@@ -38,7 +38,7 @@ public class QueryParams {
         return StringUtils.isNotBlank(this.sortField);
     }
 
-    public QueryParams(ListQry qry) {
+    public ListQueryParams(ListQueryDTO qry) {
         size = qry.getRows();
         page = qry.getFirst()/size + 1;
         sortField = qry.getSortField();

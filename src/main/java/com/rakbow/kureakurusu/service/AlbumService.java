@@ -14,7 +14,7 @@ import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.AlbumDetailQry;
-import com.rakbow.kureakurusu.data.dto.AlbumListParams;
+import com.rakbow.kureakurusu.data.dto.AlbumListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.Entity;
@@ -196,45 +196,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
-
-    @Transactional
-    public SearchResult<AlbumVOAlpha> getAlbums(AlbumListParams param) {
-
-        QueryWrapper<Album> wrapper = new QueryWrapper<Album>()
-                .like("name", param.getName())
-                .like("name_zh", param.getNameZh())
-                .like("name_en", param.getNameEn())
-                .like("catalog_no", param.getCatalogNo())
-                .like("ean13", param.getEan13())
-                .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), "album_format", param.getAlbumFormat())
-                .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), "publish_format", param.getPublishFormat())
-                .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), "media_format", param.getMediaFormat())
-                .orderBy(param.isSort(), param.asc(), param.sortField);
-
-        IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
-
-//    @Transactional
-//    public SearchResult<AlbumVOAlpha> getAlbumsTest(AlbumListParams param) {
-//        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-//                .selectAll(Item.class)
-//                .selectAll(ItemAlbum.class)
-//                .leftJoin(ItemAlbum.class, ItemAlbum::getId, Item::getEntityId)
-//                .like(Item::getName, param.getName())
-//                .like(Item::getNameZh, param.getNameZh())
-//                .like(Item::getNameEn, param.getNameEn())
-//                .like(ItemAlbum::getCatalogNo, param.getCatalogNo())
-//                .like(ItemAlbum::getBarcode, param.getBarcode())
-//                .in(CollectionUtils.isNotEmpty(param.getAlbumFormat()), ItemAlbum::getAlbumFormat, param.getAlbumFormat())
-//                .in(CollectionUtils.isNotEmpty(param.getPublishFormat()), ItemAlbum::getPublishFormat, param.getPublishFormat())
-//                .in(CollectionUtils.isNotEmpty(param.getMediaFormat()), ItemAlbum::getMediaFormat, param.getMediaFormat())
-//                .orderBy(param.isSort(), param.asc(), param.sortField);
-//        IPage<Album> pages = itemMapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), Album.class, wrapper);
-//        List<AlbumVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
-//        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-//    }
 
     /**
      * 更新音轨信息

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchQry extends Query {
+public class SearchQry extends QueryDTO {
 
     private String keyword;
     private int first;

@@ -1,8 +1,6 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
@@ -29,6 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Item {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private ItemType type;
@@ -54,9 +53,9 @@ public class Item {
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp addedTime;//数据新增时间
+    private Timestamp addedTime = DateHelper.now();//数据新增时间
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp editedTime;//数据更新时间
+    private Timestamp editedTime = DateHelper.now();//数据更新时间
 
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;//激活状态
