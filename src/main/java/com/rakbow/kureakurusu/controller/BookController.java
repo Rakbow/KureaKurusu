@@ -31,7 +31,6 @@ public class BookController {
     private final BookService srv;
     private final ItemService itemSrv;
     private final PersonService personSrv;
-    private final BookVOMapper VOMapper = BookVOMapper.INSTANCES;
     private final int ENTITY_VALUE = Entity.BOOK.getValue();
 
     // region basic crud
@@ -45,7 +44,7 @@ public class BookController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(srv.getBooks(new BookListParams(qry)));
+        return new ApiResult().load(itemSrv.list(new BookListQueryDTO(qry)));
     }
 
     @PostMapping("search")
@@ -54,14 +53,11 @@ public class BookController {
     }
 
     @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody BookAddDTO dto, BindingResult errors) {
+    public ApiResult add(@Valid @RequestBody BookCreateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //build
-        Book book = VOMapper.build(dto);
         //save
-        srv.save(book);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ALBUM.getName()));
+        return new ApiResult().ok(itemSrv.insert(dto));
     }
 
     @PostMapping("update")
@@ -69,14 +65,7 @@ public class BookController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        itemSrv.update(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.BOOK.getName()));
-    }
-
-    @DeleteMapping("delete")
-    public ApiResult deleteBook(@RequestBody DeleteCmd cmd) {
-        srv.deleteBooks(cmd.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.BOOK.getName()));
+        return  new ApiResult().ok(itemSrv.update(dto));
     }
 
     //endregion

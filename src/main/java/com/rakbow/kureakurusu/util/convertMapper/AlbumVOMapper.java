@@ -31,10 +31,6 @@ public interface AlbumVOMapper {
 
     //region single convert interface
 
-    @Mapping(source = "currency", target = "currency", qualifiedByName = "getCurrency")
-    @Named("build")
-    Album build(AlbumCreateDTO dto);
-
     /**
      * Album转VO对象，用于详情页面，转换量最大的
      *
@@ -56,16 +52,6 @@ public interface AlbumVOMapper {
 
     @IterableMapping(qualifiedByName = "toMiniVO")
     List<AlbumMiniVO> toMiniVO(List<Album> albums);
-
-    @Named("getAlbumFormat")
-    default List<Attribute<Integer>> getAlbumFormat(List<Integer> ids) {
-        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).albumFormatSet, ids);
-    }
-
-    @Named("getPublishFormat")
-    default List<Attribute<Integer>> getPublishFormat(List<Integer> ids) {
-        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet, ids);
-    }
 
     //endregion
 

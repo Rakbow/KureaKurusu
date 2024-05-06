@@ -1,12 +1,10 @@
 package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.annotation.ToVO;
-import com.rakbow.kureakurusu.data.dto.BookAddDTO;
-import com.rakbow.kureakurusu.data.emun.BookType;
+import com.rakbow.kureakurusu.data.dto.BookCreateDTO;
 import com.rakbow.kureakurusu.data.entity.Book;
 import com.rakbow.kureakurusu.data.vo.book.BookMiniVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVO;
-import com.rakbow.kureakurusu.data.vo.book.BookVOAlpha;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -37,13 +35,6 @@ public interface BookVOMapper {
     @Named("toVO")
     BookVO toVO(Book book);
 
-    @Mapping(source = "region", target = "region", qualifiedByName = "getRegion")
-    @Mapping(source = "lang", target = "lang", qualifiedByName = "getLanguage")
-    @Mapping(source = "bookType", target = "bookType", qualifiedByName = "getBookType")
-    @Mapping(source = "currency", target = "currency", qualifiedByName = "getCurrency")
-    @Named("build")
-    Book build(BookAddDTO dto);
-
     @Mapping(source = "region.labelKey", target = "region.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "region.value", target = "region.value")
     @Mapping(source = "lang.labelKey", target = "lang.label",qualifiedByName = "getEnumLabel")
@@ -56,26 +47,5 @@ public interface BookVOMapper {
 
     @IterableMapping(qualifiedByName = "toMiniVO")
     List<BookMiniVO> toMiniVO(List<Book> Books);
-
-    @Mapping(source = "currency.value", target = "currency")
-    @Mapping(source = "region.labelKey", target = "region.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "region.value", target = "region.value")
-    @Mapping(source = "lang.labelKey", target = "lang.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "lang.value", target = "lang.value")
-    @Mapping(source = "bookType.labelKey", target = "bookType.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "bookType.value", target = "bookType.value")
-    @Mapping(target = "cover", ignore = true)
-    @Mapping(target = "visitNum", ignore = true)
-    @ToVO
-    @Named("toVOAlpha")
-    BookVOAlpha toVOAlpha(Book book);
-
-    @IterableMapping(qualifiedByName = "toVOAlpha")
-    List<BookVOAlpha> toVOAlpha(List<Book> books);
-
-    @Named("getBookType")
-    default BookType getBookType(int value) {
-        return BookType.get(value);
-    }
 
 }

@@ -55,8 +55,7 @@ public class AlbumController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        itemSrv.insert(dto);
-        return  new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
+        return new ApiResult().ok(itemSrv.insert(dto));
     }
 
     @PostMapping("update")
@@ -64,14 +63,7 @@ public class AlbumController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
-        itemSrv.update(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
-    }
-
-    @DeleteMapping("delete")
-    public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
-        itemSrv.delete(dto.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.ALBUM.getName()));
+        return new ApiResult().ok(itemSrv.update(dto));
     }
 
     //endregion

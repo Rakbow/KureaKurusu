@@ -18,7 +18,6 @@ import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.vo.book.BookDetailVO;
 import com.rakbow.kureakurusu.data.vo.book.BookMiniVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVOAlpha;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.EntityUtil;
 import com.rakbow.kureakurusu.util.common.VisitUtil;
@@ -88,33 +87,15 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
         if(param.keywordEmpty()) new SearchResult<>();
 
         LambdaQueryWrapper<Book> wrapper = new LambdaQueryWrapper<Book>()
-                .or().like(Book::getTitle, param.getKeyword())
-                .or().like(Book::getTitleZh, param.getKeyword())
-                .or().like(Book::getTitleEn, param.getKeyword())
+                .or().like(Book::getName, param.getKeyword())
+                .or().like(Book::getNameZh, param.getKeyword())
+                .or().like(Book::getNameEn, param.getKeyword())
                 .orderByDesc(Book::getId);
 
         IPage<Book> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
 
         List<BookMiniVO> items = VOMapper.toMiniVO(pages.getRecords());
 
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
-
-    @Transactional
-    public SearchResult<BookVOAlpha> getBooks(BookListParams param) {
-
-        QueryWrapper<Book> wrapper = new QueryWrapper<Book>()
-                .like("title", param.getTitle())
-                .like("isbn_10", param.getIsbn10())
-                .like("isbn_13", param.getIsbn13())
-                .eq(StringUtils.isNotBlank(param.getRegion()), "region", param.getRegion())
-                .eq(StringUtils.isNotBlank(param.getLang()), "lang", param.getLang())
-                .eq(param.getBookType() != -1, "bookType", param.getBookType())
-                .eq(param.getHasBonus() != null, "hasBonus", param.getHasBonus())
-                .orderBy(param.isSort(), param.asc(), param.sortField);
-
-        IPage<Book> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<BookVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
