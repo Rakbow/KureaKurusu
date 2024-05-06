@@ -41,29 +41,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookService extends ServiceImpl<BookMapper, Book> {
 
-    private final QiniuImageUtil qiniuImageUtil;
-    private final VisitUtil visitUtil;
-    private final EntityUtil entityUtil;
     private final BookMapper mapper;
     private final BookVOMapper VOMapper;
-    private final PersonRelationMapper relationMapper;
-
-    private final int ENTITY_VALUE = Entity.BOOK.getValue();
-
-    @SneakyThrows
-    @Transactional
-    public BookDetailVO getDetail(CommonDetailQry qry) {
-        Book book = getById(qry.getId());
-        if (book == null)
-            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.BOOK.getName()));
-
-        return BookDetailVO.builder()
-                .item(VOMapper.toVO(book))
-                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
-                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
-                .itemImageInfo(CommonImageUtil.segmentImages(book.getImages(), 180, Entity.BOOK, false))
-                .build();
-    }
 
     @Transactional
     public SearchResult<BookMiniVO> searchBooks(SearchQry qry) {

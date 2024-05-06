@@ -8,6 +8,7 @@ import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
+import com.rakbow.kureakurusu.data.vo.book.BookVO;
 import com.rakbow.kureakurusu.data.vo.test.BookListVO;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -28,7 +29,8 @@ import java.util.ArrayList;
 @ToString(callSuper = true)
 @TableName(value = "book", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = BookListVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = BookListVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = BookVO.class, reverseConvertGenerate = false)
 })
 public class Book extends SuperItem {
 

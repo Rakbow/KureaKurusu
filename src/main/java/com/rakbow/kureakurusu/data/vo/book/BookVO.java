@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.data.vo.book;
 
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.vo.ItemVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 转换量最大的VO，一般用于详情页面
@@ -9,29 +11,15 @@ import lombok.Data;
  * @author Rakbow
  * @since 2023-01-11 10:42
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class BookVO {
+public class BookVO extends ItemVO {
 
-    //基础信息
-    private long id;
-    private String title;
-    private String titleEn;
-    private String titleZh;
     private String isbn10;
-    private String isbn13;
     private Attribute<Integer> bookType;
-    private String publishDate;
     private Attribute<String> region;
     private Attribute<String> lang;
-    private double price;
-    private String currency;
-    private String remark;
+    private String summary;
     private boolean hasBonus;
-
-    private String addedTime;
-    private String editedTime;
-    private String detail;
-    private String bonus;
-    private boolean status;
 
 }

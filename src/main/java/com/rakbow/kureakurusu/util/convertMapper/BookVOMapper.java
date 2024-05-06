@@ -23,17 +23,6 @@ public interface BookVOMapper {
 
     BookVOMapper INSTANCES = Mappers.getMapper(BookVOMapper.class);
 
-    @ToVO
-    @Mapping(source = "currency.value", target = "currency")
-    @Mapping(source = "region.labelKey", target = "region.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "region.value", target = "region.value")
-    @Mapping(source = "lang.labelKey", target = "lang.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "lang.value", target = "lang.value")
-    @Mapping(source = "bookType.labelKey", target = "bookType.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "bookType.value", target = "bookType.value")
-    @Named("toVO")
-    BookVO toVO(Book book);
-
     @Mapping(source = "region.labelKey", target = "region.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "region.value", target = "region.value")
     @Mapping(source = "lang.labelKey", target = "lang.label",qualifiedByName = "getEnumLabel")

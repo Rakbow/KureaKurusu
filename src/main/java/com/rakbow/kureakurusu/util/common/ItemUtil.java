@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.ItemVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
+import com.rakbow.kureakurusu.data.vo.book.BookVO;
 import com.rakbow.kureakurusu.data.vo.test.AlbumListVO;
 import com.rakbow.kureakurusu.data.vo.test.BookListVO;
 import com.rakbow.kureakurusu.data.vo.test.ItemListVO;
@@ -40,6 +41,7 @@ public class ItemUtil {
 
     private final static Map<Integer, Class<? extends ItemVO>> itemDetailVOMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), AlbumVO.class);
+        put(ItemType.BOOK.getValue(), BookVO.class);
     }};
 
     private final static Map<Integer, Class<? extends ItemListQueryDTO>> itemListQryMap = new HashMap<>() {{

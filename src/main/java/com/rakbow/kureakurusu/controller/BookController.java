@@ -1,13 +1,12 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.vo.book.BookDetailVO;
+import com.rakbow.kureakurusu.data.dto.BookCreateDTO;
+import com.rakbow.kureakurusu.data.dto.BookIsbnDTO;
+import com.rakbow.kureakurusu.data.dto.BookUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.service.BookService;
 import com.rakbow.kureakurusu.service.ItemService;
-import com.rakbow.kureakurusu.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -30,17 +29,8 @@ public class BookController {
 
     private final BookService srv;
     private final ItemService itemSrv;
-    private final PersonService personSrv;
-    private final int ENTITY_VALUE = Entity.BOOK.getValue();
 
     // region basic crud
-    @PostMapping("detail")
-    @UniqueVisitor
-    public ApiResult detail(@RequestBody CommonDetailQry qry) {
-        BookDetailVO vo = srv.getDetail(qry);
-        vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
-        return  new ApiResult().load(vo);
-    }
 
     @PostMapping("search")
     public ApiResult search(@RequestBody SearchQry qry) {

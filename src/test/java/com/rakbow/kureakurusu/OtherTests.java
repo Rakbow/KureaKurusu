@@ -405,4 +405,25 @@ public class OtherTests {
         }
     }
 
+    @Test
+    public void updatePersonnel() {
+        List<Item> items = itemMapper.selectList(null);
+        List<PersonRelation> prs = personRelationMapper.selectList(null);
+
+        for (PersonRelation pr : prs) {
+            Optional<Item> result = items.stream()
+                    .filter(a -> a.getType().getValue() == pr.getEntityType() && a.getOrgId() == pr.getEntityId())
+                    .findFirst();
+            pr.setEntityId(result.get().getId());
+
+            personRelationMapper.update(
+                    pr,
+                    new LambdaUpdateWrapper<PersonRelation>()
+                            .set(PersonRelation::getEntityId, pr.getEntityId())
+                            .eq(PersonRelation::getId, pr.getId())
+            );
+            System.out.println(STR."update success ep id: \{pr.getId()}, old related_id: \{result.get().getOrgId()}, new related_id: \{result.get().getId()}");
+        }
+    }
+
 }
