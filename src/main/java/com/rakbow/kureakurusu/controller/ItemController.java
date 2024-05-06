@@ -41,8 +41,7 @@ public class ItemController {
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
-        srv.delete(dto.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.delete.success"));
+        return new ApiResult().ok(srv.delete(dto.getIds()));
     }
 
     @PostMapping("add")
