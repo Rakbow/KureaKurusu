@@ -13,15 +13,18 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ItemCreateDTO;
 import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.entity.SubItem;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.ItemDetailVO;
+import com.rakbow.kureakurusu.data.vo.ItemVO;
 import com.rakbow.kureakurusu.data.vo.test.ItemListVO;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
+import com.rakbow.kureakurusu.util.file.CommonImageUtil;
 import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 /**
@@ -40,9 +44,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
+    private final PersonService personSrv;
+
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
+    private final EntityUtil entityUtil;
 
     private final ItemMapper mapper;
 
@@ -52,13 +59,31 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
+    public ItemDetailVO detail(long id) {
+        SuperItem item = getById(id);
+        if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
+
+        Class<? extends ItemVO> targetVOClass = ItemUtil.getItemDetailVO(item.getType().getValue());
+
+        return ItemDetailVO.builder()
+                .type(item.getType().getValue())
+                .item(converter.convert(item, targetVOClass))
+                .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
+                .options(entityUtil.getDetailOptions(item.getType().getValue()))
+                .itemImageInfo(CommonImageUtil.segmentItemImages(item.getType(), item.getImages()))
+                .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
+                .build();
+    }
+
+    @Transactional
+    @SneakyThrows
     @SuppressWarnings("unchecked")
     public <T extends SuperItem> T getById(long id) {
         ItemTypeRelation relation = getItemTypeRelation(id);
         if (relation == null) return null;
 
-        Class<? extends SubItem> sourceClass = MyBatisUtil.getSubItem(relation.getType());
-        Class<? extends SuperItem> targetClass = MyBatisUtil.getSuperItem(relation.getType());
+        Class<? extends SubItem> sourceClass = ItemUtil.getSubItem(relation.getType());
+        Class<? extends SuperItem> targetClass = ItemUtil.getSuperItem(relation.getType());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
                 .selectAll(sourceClass, "t1")
@@ -69,26 +94,28 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<? extends ItemListVO> list(ItemListQueryDTO dto) {
+    public SearchResult<? extends ItemListVO> list(ListQueryDTO dto) {
 
-        Class<? extends SuperItem> superClass = MyBatisUtil.getSuperItem(dto.getType());
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
-        Class<? extends ItemListVO> itemListVOClass = MyBatisUtil.getItemListVO(dto.getType());
+        ItemListQueryDTO param = ItemUtil.getItemListQueryDTO(dto);
+
+        Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubItem(param.getType());
+        Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
 
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
                 .selectAll(subClass, "t1")
                 .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)} t1 on t1.id = t.id")
-                .eq(Item::getType, dto.getType())
-                .like(StringUtils.isNotBlank(dto.getName()), Item::getName, dto.getName())
-                .like(StringUtils.isNotBlank(dto.getNameZh()), Item::getNameZh, dto.getNameZh())
-                .like(StringUtils.isNotBlank(dto.getNameEn()), Item::getNameEn, dto.getNameEn())
-                .like(StringUtils.isNotBlank(dto.getEan13()), Item::getEan13, dto.getEan13())
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()));
+                .eq(Item::getType, param.getType())
+                .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
+                .like(StringUtils.isNotBlank(param.getNameZh()), Item::getNameZh, param.getNameZh())
+                .like(StringUtils.isNotBlank(param.getNameEn()), Item::getNameEn, param.getNameEn())
+                .like(StringUtils.isNotBlank(param.getEan13()), Item::getEan13, param.getEan13())
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         //private query column to sql
-        MyBatisUtil.itemListQueryWrapper(dto, wrapper);
+        MyBatisUtil.itemListQueryWrapper(param, wrapper);
 
-        IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), superClass, wrapper);
+        IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), superClass, wrapper);
 
         List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
 
@@ -98,7 +125,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public String insert(ItemCreateDTO dto) {
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubItem(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         Item item = converter.convert(dto, Item.class);
@@ -115,7 +142,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public String update(ItemUpdateDTO dto) {
 
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubItem(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         Item item = converter.convert(dto, Item.class);
@@ -141,7 +168,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
         }
         int type = items.getFirst().getType().getValue();
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(type);
+        Class<? extends SubItem> subClass = ItemUtil.getSubItem(type);
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         mapper.delete(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
@@ -156,19 +183,11 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return I18nHelper.getMessage("entity.curd.delete.success");
     }
 
-    @Transactional
-    @SneakyThrows
-    public ItemDetailVO detail(long id) {
-        SuperItem item = getById(id);
-        if (item == null)
-            throw new Exception(I18nHelper.getMessage("item.url.error"));
-        return ItemDetailVO.builder().build();
-    }
-
     @SneakyThrows
     public ItemTypeRelation getItemTypeRelation(long id) {
         String redisKey = STR."item_type_related:\{id}";
         if (!redisUtil.hasKey(redisKey)) return null;
         return redisUtil.get(redisKey, ItemTypeRelation.class);
     }
+
 }

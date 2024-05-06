@@ -66,22 +66,6 @@ public class BookService extends ServiceImpl<BookMapper, Book> {
     }
 
     @Transactional
-    public void deleteBooks(List<Long> ids) {
-        //get original data
-        List<Book> items = mapper.selectBatchIds(ids);
-        for (Book item : items) {
-            //delete all image
-            qiniuImageUtil.deleteAllImage(item.getImages());
-            //delete visit record
-            visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
-        }
-        //delete
-        mapper.delete(new LambdaQueryWrapper<Book>().in(Book::getId, ids));
-        //delete person relation
-        relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityType, ENTITY_VALUE).in(PersonRelation::getEntityId, ids));
-    }
-
-    @Transactional
     public SearchResult<BookMiniVO> searchBooks(SearchQry qry) {
         SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();

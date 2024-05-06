@@ -27,6 +27,8 @@ public class Episode {
 
     @Builder.Default
     private Long id = 0L;//表主键
+    private long relatedType;//关联类型 Album Product
+    private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
     private String title;//标题(原)
     private String titleEn;//标题(英)
     private String premiereDate;//首播日期
@@ -38,7 +40,6 @@ public class Episode {
     private List<File> files = new ArrayList<>();//文件
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
-    private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
 
     @Builder.Default
     private Timestamp addedTime = DateHelper.now();
@@ -49,6 +50,8 @@ public class Episode {
 
     public Episode() {
         id = 0L;
+        relatedType = 0;
+        relatedId = 0;
         title = "";
         titleEn = "";
         premiereDate = "";
@@ -58,7 +61,6 @@ public class Episode {
         files = new ArrayList<>();
         detail = "";
         episodeType = 0;
-        relatedId = 0;
         addedTime = DateHelper.now();
         editedTime = DateHelper.now();
         status = true;

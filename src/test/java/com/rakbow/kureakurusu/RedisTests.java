@@ -1,8 +1,10 @@
 package com.rakbow.kureakurusu;
 
 import com.rakbow.kureakurusu.dao.*;
+import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.entity.EntityStatistic;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.service.ProductService;
@@ -26,29 +28,10 @@ import java.util.List;
 public class RedisTests {
 
     @Resource
-    private UserService userService;
-    @Resource
-    private AlbumService albumService;
-    @Resource
-    private FranchiseService franchiseService;
-    @Resource
-    private ProductService productService;
-    @Resource
-    private AlbumMapper albumMapper;
-    @Resource
-    private BookMapper bookMapper;
-    @Resource
-    private DiscMapper discMapper;
-    @Resource
-    private GameMapper gameMapper;
-    @Resource
-    private GoodsMapper merchMapper;
-    @Resource
-    private ProductMapper productMapper;
+    private ItemMapper itemMapper;
+
     @Resource
     private StatisticMapper statisticMapper;
-    @Resource
-    private FranchiseMapper franchiseMapper;
     @Resource
     private VisitUtil visitUtil;
     @Resource
@@ -102,6 +85,18 @@ public class RedisTests {
 
         System.out.println(t2 - t1);
 
+    }
+
+    @Test
+    public void generateItemTypeRelation() {
+        redisUtil.delete("item_type_related:*");
+        List<Item> items = itemMapper.selectList(null);
+        for (Item item : items) {
+            ItemTypeRelation relation = new ItemTypeRelation(item);
+            String key = STR."item_type_related:\{item.getId()}";
+            redisUtil.set(key, relation);
+            System.out.println(STR."save to redis item id:\{item.getId()}");
+        }
     }
 
 }

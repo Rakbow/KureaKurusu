@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity.common;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.ImageHandler;
@@ -21,6 +22,7 @@ import java.util.List;
 public abstract class SuperItem {
 
     private Long id;
+    private ItemType type;
     @TableField(typeHandler = ImageHandler.class)
     private List<Image> images;//图片列表
     private String detail;//描述

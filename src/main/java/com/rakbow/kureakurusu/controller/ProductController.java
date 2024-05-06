@@ -74,7 +74,7 @@ public class ProductController {
     }
 
     @PostMapping("get-related-products")
-    public ApiResult getRelatedProducts(@RequestBody CommonDetailQty qry) {
+    public ApiResult getRelatedProducts(@RequestBody CommonDetailQry qry) {
         return new ApiResult().load(srv.getRelatedProducts(qry.getId()));
     }
 

@@ -1,10 +1,10 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.vo.album.AlbumDetailVO;
+import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.service.AlbumService;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.PersonService;
@@ -12,7 +12,10 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Rakbow
@@ -26,24 +29,9 @@ public class AlbumController {
     //region inject
     private final AlbumService srv;
     private final ItemService itemSrv;
-    private final PersonService personSrv;
-
-    private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
 
-    // region basic crud
-    @PostMapping("detail")
-    @UniqueVisitor
-    public ApiResult detail(@RequestBody AlbumDetailQry qry) {
-        AlbumDetailVO vo = srv.detail(qry);
-        vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
-        return new ApiResult().load(vo);
-    }
-
-    @PostMapping("list")
-    public ApiResult list(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(itemSrv.list(new AlbumListQueryDTO(qry)));
-    }
+    //region basic crud
 
     @PostMapping("search")
     public ApiResult search(@RequestBody SearchQry qry) {
@@ -78,7 +66,7 @@ public class AlbumController {
 
     @PostMapping("get-track-info")
     public ApiResult getTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
-        return new ApiResult().load(srv.getTrackInfo(srv.getById(qry.getId())));
+        return new ApiResult().load(srv.getTrackInfo(qry.getId()));
     }
 
     //endregion

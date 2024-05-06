@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.util.file;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.ImageProperty;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
@@ -110,6 +111,15 @@ public class CommonImageUtil {
             if (image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50);
         }
         return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
+    }
+
+    public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {
+        if(type == ItemType.ALBUM)
+            return segmentImages(images, 185, Entity.ALBUM, false);
+        else if (type == ItemType.BOOK)
+            return segmentImages(images, 180, Entity.BOOK, false);
+        else
+            return null;
     }
 
     /**

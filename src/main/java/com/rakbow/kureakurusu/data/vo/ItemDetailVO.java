@@ -20,7 +20,8 @@ import java.util.Map;
 @Data
 public class ItemDetailVO {
 
-    private Object item;
+    private ItemVO item;
+    private int type;
     private PageTraffic traffic;
     private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;

@@ -1,20 +1,20 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Book;
-import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.vo.book.BookDetailVO;
 import com.rakbow.kureakurusu.service.BookService;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.PersonService;
-import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.convertMapper.BookVOMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Rakbow
@@ -40,11 +40,6 @@ public class BookController {
         BookDetailVO vo = srv.getDetail(qry);
         vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
         return  new ApiResult().load(vo);
-    }
-
-    @PostMapping("list")
-    public ApiResult list(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(itemSrv.list(new BookListQueryDTO(qry)));
     }
 
     @PostMapping("search")

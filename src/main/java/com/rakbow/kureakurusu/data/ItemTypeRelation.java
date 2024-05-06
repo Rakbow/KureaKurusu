@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
+import com.rakbow.kureakurusu.data.entity.Item;
 import lombok.Data;
 
 /**
@@ -15,6 +16,11 @@ public class ItemTypeRelation {
     public ItemTypeRelation() {
         id = 0L;
         type = 0;
+    }
+
+    public ItemTypeRelation(Item item) {
+        id = item.getId();
+        type = item.getType().getValue();
     }
 
 }

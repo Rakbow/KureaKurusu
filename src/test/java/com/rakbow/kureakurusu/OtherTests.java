@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -26,6 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Rakbow
@@ -50,6 +52,8 @@ public class OtherTests {
     private UserMapper userMapper;
     @Resource
     private ItemMapper itemMapper;
+    @Resource
+    private EpisodeMapper epMapper;
 
     @Test
     public void batchAddRelation() {
@@ -215,12 +219,12 @@ public class OtherTests {
             item.setId(0L);
             item.setType(ItemType.BOOK);
             item.setOrgId(book.getId());
-            item.setName(book.getTitle());
-            item.setNameZh(book.getTitleZh());
-            item.setNameEn(book.getTitleEn());
+            item.setName(book.getName());
+            item.setNameZh(book.getNameZh());
+            item.setNameEn(book.getNameEn());
 
-            item.setEan13(book.getIsbn13());
-            item.setReleaseDate(book.getPublishDate());
+            item.setEan13(book.getEan13());
+            item.setReleaseDate(book.getReleaseDate());
             item.setPrice(book.getPrice());
             item.setCurrency(book.getCurrency());
 
@@ -379,5 +383,26 @@ public class OtherTests {
 //                .eq(Item::getId, album.getId());
 //        itemMapper.updateJoin(item, update);
 //    }
+
+    @Test
+    public void updateEP() {
+        List<Item> items = itemMapper.selectList(null);
+        List<Episode> eps = epMapper.selectList(null);
+
+        for (Episode ep : eps) {
+            Optional<Item> result = items.stream()
+                    .filter(a -> a.getType() == ItemType.ALBUM && a.getOrgId() == ep.getRelatedId())
+                    .findFirst();
+            ep.setRelatedId(result.get().getId());
+
+            epMapper.update(
+                    ep,
+                    new LambdaUpdateWrapper<Episode>()
+                            .set(Episode::getRelatedId, ep.getRelatedId())
+                            .eq(Episode::getId, ep.getId())
+            );
+            System.out.println(STR."update success ep id: \{ep.getId()}, old related_id: \{result.get().getOrgId()}, new related_id: \{result.get().getId()}");
+        }
+    }
 
 }

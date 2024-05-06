@@ -2,35 +2,27 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
-import com.rakbow.kureakurusu.dao.ItemMapper;
-import com.rakbow.kureakurusu.dao.PersonRelationMapper;
+import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.AlbumDetailQry;
-import com.rakbow.kureakurusu.data.dto.AlbumListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
-import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.PersonRelation;
-import com.rakbow.kureakurusu.data.vo.album.*;
-import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.data.entity.ItemAlbum;
+import com.rakbow.kureakurusu.data.vo.album.AlbumDiscVO;
+import com.rakbow.kureakurusu.data.vo.album.AlbumMiniVO;
+import com.rakbow.kureakurusu.data.vo.album.AlbumTrackInfoVO;
+import com.rakbow.kureakurusu.data.vo.album.AlbumTrackVO;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.common.EntityUtil;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
 import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
-import com.rakbow.kureakurusu.util.entity.EpisodeUtil;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
-import com.rakbow.kureakurusu.util.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -54,87 +46,28 @@ import java.util.stream.IntStream;
 public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region inject
-    private final QiniuImageUtil qiniuImageUtil;
-    private final VisitUtil visitUtil;
-    private final EntityUtil entityUtil;
 
     private final AlbumVOMapper VOMapper;
     private final AlbumMapper mapper;
     private final EpisodeMapper epMapper;
-    private final PersonRelationMapper relationMapper;
-    private final ItemMapper itemMapper;
+    private final ItemAlbumMapper itemAlbumMapper;
 
     private final SqlSessionFactory sqlSessionFactory;
 
-    private final int ENTITY_VALUE = Entity.ALBUM.getValue();
     //endregion
 
-    //region crud
-
-    // REQUIRED: 支持当前事务(外部事务),如果不存在则创建新事务.
-    // REQUIRES_NEW: 创建一个新事务,并且暂停当前事务(外部事务).
-    // NESTED: 如果当前存在事务(外部事务),则嵌套在该事务中执行(独立的提交和回滚),否则就会REQUIRED一样.
-
-    @SneakyThrows
     @Transactional
-    public AlbumDetailVO detail(AlbumDetailQry qry) {
-        Album album = getById(qry.getId());
-        if (album == null)
-            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.ALBUM.getName()));
-        String cover = CommonImageUtil.getCoverUrl(album.getImages());
-        List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, qry.getId()));
+    public AlbumTrackInfoVO getTrackInfo(long id) {
 
-        return AlbumDetailVO.builder()
-                .item(buildVO(album))
-                .audios(EpisodeUtil.getAudios(eps, cover))
-                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
-                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
-                .itemImageInfo(CommonImageUtil.segmentImages(album.getImages(), 185, Entity.ALBUM, false))
-                .build();
-    }
-
-    /**
-     * 根据Id删除专辑
-     *
-     * @param ids 专辑ids
-     * @author rakbow
-     */
-    @Transactional
-    public void deleteAlbums(List<Long> ids) {
-        //get original data
-        List<Album> items = mapper.selectBatchIds(ids);
-        for (Album item : items) {
-            //delete all image
-            qiniuImageUtil.deleteAllImage(item.getImages());
-            //delete visit record
-            visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
-        }
-        //delete
-        mapper.delete(new LambdaQueryWrapper<Album>().in(Album::getId, ids));
-        //delete person relation
-        relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityType, ENTITY_VALUE).in(PersonRelation::getEntityId, ids));
-        //delete related episode
-        epMapper.delete(new LambdaQueryWrapper<Episode>().in(Episode::getRelatedId, ids));
-    }
-
-    //endregion
-
-    //region data handle
-
-    @Transactional
-    public AlbumVO buildVO(Album album) {
-        AlbumVO VO = VOMapper.toVO(album);
-        //音轨信息
-        VO.setTrackInfo(getTrackInfo(album));
-        return VO;
-    }
-
-    @Transactional
-    public AlbumTrackInfoVO getTrackInfo(Album album) {
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
+
+        ItemAlbum album = itemAlbumMapper.selectById(id);
+        if(album == null) return res;
+
         //get all episode
         List<Episode> episodes = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
+                        .eq(Episode::getRelatedType, EntityType.ITEM.getValue())
                         .eq(Episode::getRelatedId, album.getId())
                         .orderByAsc(Episode::getDiscNum)
                         .orderByAsc(Episode::getSerial)

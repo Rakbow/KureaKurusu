@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
+import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.test.AlbumListVO;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.IntegerListHandler;
@@ -28,7 +29,8 @@ import java.util.List;
 @ToString(callSuper = true)
 @TableName(value = "album", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false),
+            @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false)
 })
 public class Album extends SuperItem {
 

@@ -38,4 +38,8 @@ public class ListQueryDTO extends QueryDTO {
         return (List<T>) value;
     }
 
+    public int getItemType() {
+        return getVal("itemType");
+    }
+
 }

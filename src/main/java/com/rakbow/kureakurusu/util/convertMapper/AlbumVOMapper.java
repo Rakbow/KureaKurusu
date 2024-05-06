@@ -38,13 +38,13 @@ public interface AlbumVOMapper {
      * @return AlbumVO
      * @author rakbow
      */
-    @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
-    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
-    @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
-    @Mapping(source = "currency.value", target = "currency")
-    @Mapping(target = "trackInfo", ignore = true)
-    @ToVO
-    AlbumVO toVO(Album album);
+//    @Mapping(target = "publishFormat", source = "publishFormat", qualifiedByName = "getPublishFormat")
+//    @Mapping(target = "albumFormat", source = "albumFormat", qualifiedByName = "getAlbumFormat")
+//    @Mapping(target = "mediaFormat", source = "mediaFormat", qualifiedByName = "getMediaFormat")
+//    @Mapping(source = "currency.value", target = "currency")
+//    @Mapping(target = "trackInfo", ignore = true)
+//    @ToVO
+//    AlbumVO toVO(Album album);
 
     @Mapping(target = "cover", source = "images", qualifiedByName = "getThumbCover")
     @Named("toMiniVO")
