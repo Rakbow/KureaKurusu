@@ -69,70 +69,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public void insert(ItemCreateDTO dto) {
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
-        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
-
-        Item item = converter.convert(dto, Item.class);
-        SubItem subItem = converter.convert(dto, subClass);
-
-        mapper.insert(item);
-        subItem.setId(item.getId());
-        subMapper.insert(subItem);
-    }
-
-    @Transactional
-    @SneakyThrows
-    public void update(ItemUpdateDTO dto) {
-
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
-        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
-
-        Item item = converter.convert(dto, Item.class);
-        item.setEditedTime(DateHelper.now());
-        SubItem subItem = converter.convert(dto, subClass);
-
-        mapper.updateById(item);
-        subMapper.updateById(subItem);
-    }
-
-    @Transactional
-    @SneakyThrows
-    public void delete(List<Long> ids) {
-        //get original data
-        List<Item> items = mapper.selectBatchIds(ids);
-        if (items.isEmpty()) return;
-        for (Item item : items) {
-            //delete all image
-            qiniuImageUtil.deleteAllImage(item.getImages());
-            //delete visit record
-            visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
-        }
-        int type = items.getFirst().getType().getValue();
-        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(type);
-        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
-
-        mapper.delete(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
-        subMapper.delete(new LambdaQueryWrapper<SubItem>().in(SubItem::getId, ids));
-
-        relationMapper.delete(
-                new LambdaQueryWrapper<PersonRelation>()
-                        .eq(PersonRelation::getEntityType, EntityType.ITEM.getValue())
-                        .in(PersonRelation::getEntityId, ids)
-        );
-    }
-
-    @Transactional
-    @SneakyThrows
-    public ItemDetailVO detail(long id) {
-        SuperItem item = getById(id);
-        if (item == null)
-            throw new Exception(I18nHelper.getMessage("item.url.error"));
-        return ItemDetailVO.builder().build();
-    }
-
-    @Transactional
-    @SneakyThrows
     public SearchResult<? extends ItemListVO> list(ItemListQueryDTO dto) {
 
         Class<? extends SuperItem> superClass = MyBatisUtil.getSuperItem(dto.getType());
@@ -157,6 +93,76 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
 
         return new SearchResult<>(items, page.getTotal(), page.getCurrent(), page.getSize());
+    }
+
+    @Transactional
+    @SneakyThrows
+    public String insert(ItemCreateDTO dto) {
+        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
+        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
+
+        Item item = converter.convert(dto, Item.class);
+        SubItem subItem = converter.convert(dto, subClass);
+
+        mapper.insert(item);
+        subItem.setId(item.getId());
+        subMapper.insert(subItem);
+
+        return I18nHelper.getMessage("entity.crud.insert.success");
+    }
+
+    @Transactional
+    @SneakyThrows
+    public String update(ItemUpdateDTO dto) {
+
+        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(dto.getType());
+        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
+
+        Item item = converter.convert(dto, Item.class);
+        item.setEditedTime(DateHelper.now());
+        SubItem subItem = converter.convert(dto, subClass);
+
+        mapper.updateById(item);
+        subMapper.updateById(subItem);
+
+        return I18nHelper.getMessage("entity.crud.update.success");
+    }
+
+    @Transactional
+    @SneakyThrows
+    public String delete(List<Long> ids) {
+        //get original data
+        List<Item> items = mapper.selectBatchIds(ids);
+        if (items.isEmpty()) throw new Exception("");
+        for (Item item : items) {
+            //delete all image
+            qiniuImageUtil.deleteAllImage(item.getImages());
+            //delete visit record
+            visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
+        }
+        int type = items.getFirst().getType().getValue();
+        Class<? extends SubItem> subClass = MyBatisUtil.getSubItem(type);
+        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
+
+        mapper.delete(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
+        subMapper.delete(new LambdaQueryWrapper<SubItem>().in(SubItem::getId, ids));
+
+        relationMapper.delete(
+                new LambdaQueryWrapper<PersonRelation>()
+                        .eq(PersonRelation::getEntityType, EntityType.ITEM.getValue())
+                        .in(PersonRelation::getEntityId, ids)
+        );
+
+        return I18nHelper.getMessage("entity.curd.delete.success");
+    }
+
+    @Transactional
+    @SneakyThrows
+    public ItemDetailVO detail(long id) {
+        SuperItem item = getById(id);
+        if (item == null)
+            throw new Exception(I18nHelper.getMessage("item.url.error"));
+        return ItemDetailVO.builder().build();
     }
 
     @SneakyThrows
