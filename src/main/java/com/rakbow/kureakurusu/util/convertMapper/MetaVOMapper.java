@@ -1,11 +1,8 @@
 package com.rakbow.kureakurusu.util.convertMapper;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.emun.Gender;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.Link;
-import com.rakbow.kureakurusu.data.emun.Currency;
-import com.rakbow.kureakurusu.data.emun.Language;
-import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
@@ -14,9 +11,11 @@ import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.common.JsonUtil;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
+import lombok.SneakyThrows;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +27,41 @@ import java.util.Objects;
  */
 @Mapper(componentModel = "spring")
 public interface MetaVOMapper {
+
+    //region album
+
+    @Named("getAlbumFormat")
+    default List<Attribute<Integer>> getAlbumFormat(List<Integer> ids) {
+        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).albumFormatSet, ids);
+    }
+
+    @Named("getPublishFormat")
+    default List<Attribute<Integer>> getPublishFormat(List<Integer> ids) {
+        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet, ids);
+    }
+
+    //endregion
+
+    //region book
+
+    @Named("getBookType")
+    default BookType getBookType(int value) {
+        return BookType.get(value);
+    }
+
+    //endregion
+
+    @Named("toAttribute")
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    default <X, T extends Enum<T>> Attribute<X> toAttribute(T t) {
+        Method getValueMethod = t.getClass().getMethod("getValue");
+        Method getLabelMethod = t.getClass().getMethod("getLabelKey");
+        String labelKey = getLabelMethod.invoke(t).toString();
+        String label = I18nHelper.getMessage(labelKey);
+        X value = (X) getValueMethod.invoke(t);
+        return new Attribute<>(label, value);
+    }
 
     @Named("getEnumLabel")
     default String getEnumLabel(String labelKey) {
