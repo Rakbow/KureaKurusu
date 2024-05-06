@@ -7,6 +7,7 @@ package com.rakbow.kureakurusu.annotation;
 public enum QueryColumnType {
 
     STRING,
+    NUMBER,
     NUMBER_LIST,
     STRING_LIST,
     BOOLEAN

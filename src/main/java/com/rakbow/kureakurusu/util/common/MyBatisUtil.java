@@ -7,9 +7,11 @@ import com.rakbow.kureakurusu.annotation.QueryColumn;
 import com.rakbow.kureakurusu.annotation.QueryColumnType;
 import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.test.AlbumListVO;
+import com.rakbow.kureakurusu.data.vo.test.BookListVO;
 import com.rakbow.kureakurusu.data.vo.test.ItemListVO;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -25,16 +27,17 @@ import java.util.Map;
 public class MyBatisUtil {
 
     private final static Map<Integer, Class<? extends SubItem>> subItemMap = new HashMap<>() {{
-        put(Entity.ALBUM.getValue(), ItemAlbum.class);
-        put(Entity.BOOK.getValue(), ItemBook.class);
+        put(ItemType.ALBUM.getValue(), ItemAlbum.class);
+        put(ItemType.BOOK.getValue(), ItemBook.class);
     }};
     private final static Map<Integer, Class<? extends SuperItem>> SuperItemMap = new HashMap<>() {{
-        put(Entity.ALBUM.getValue(), Album.class);
-        put(Entity.BOOK.getValue(), Book.class);
+        put(ItemType.ALBUM.getValue(), Album.class);
+        put(ItemType.BOOK.getValue(), Book.class);
     }};
 
     private final static Map<Integer, Class<? extends ItemListVO>> itemListVOMap = new HashMap<>() {{
-        put(Entity.ALBUM.getValue(), AlbumListVO.class);
+        put(ItemType.ALBUM.getValue(), AlbumListVO.class);
+        put(ItemType.BOOK.getValue(), BookListVO.class);
     }};
 
     /**
@@ -79,6 +82,8 @@ public class MyBatisUtil {
                 if (value == null || value.toString().isEmpty()) continue;
                 if (column.type() == QueryColumnType.STRING) {
                     wrapper.like(STR."t1.\{colName}", value);
+                } else if (column.type() == QueryColumnType.NUMBER) {
+                    wrapper.eq(STR."t1.\{colName}", value);
                 } else if (column.type() == QueryColumnType.NUMBER_LIST) {
                     wrapper.apply(STR."JSON_CONTAINS(t1.\{colName}, '\{JsonUtil.toJson(value)}')");
                 } else if (column.type() == QueryColumnType.BOOLEAN) {
