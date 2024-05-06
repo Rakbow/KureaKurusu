@@ -8,9 +8,13 @@ import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.vo.test.ItemMiniVO;
 import com.rakbow.kureakurusu.util.common.DateHelper;
 import com.rakbow.kureakurusu.util.handler.ImageHandler;
 import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,11 +29,15 @@ import java.util.List;
 @Data
 @TableName(value = "item", autoResultMap = true)
 @NoArgsConstructor
+@AutoMappers({
+        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false)
+})
 public class Item {
 
     @TableId(type = IdType.AUTO)
     private Long id;
     @TableField(updateStrategy = FieldStrategy.NEVER)
+    @AutoMapping(qualifiedByName = "toAttribute")
     private ItemType type;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private Long orgId;

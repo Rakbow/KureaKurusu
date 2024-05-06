@@ -32,11 +32,6 @@ public class BookController {
 
     // region basic crud
 
-    @PostMapping("search")
-    public ApiResult search(@RequestBody SearchQry qry) {
-        return new ApiResult().load(srv.searchBooks(qry));
-    }
-
     @PostMapping("add")
     public ApiResult add(@Valid @RequestBody BookCreateDTO dto, BindingResult errors) {
         //check

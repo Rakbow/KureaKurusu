@@ -2,27 +2,20 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
-import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDiscVO;
-import com.rakbow.kureakurusu.data.vo.album.AlbumMiniVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumTrackVO;
 import com.rakbow.kureakurusu.util.common.DataFinder;
 import com.rakbow.kureakurusu.util.common.DateHelper;
-import com.rakbow.kureakurusu.util.convertMapper.AlbumVOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -47,8 +40,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
 
     //region inject
 
-    private final AlbumVOMapper VOMapper;
-    private final AlbumMapper mapper;
     private final EpisodeMapper epMapper;
     private final ItemAlbumMapper itemAlbumMapper;
 
@@ -110,25 +101,6 @@ public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
     //endregion
 
     //region advance crud
-
-    @Transactional
-    public SearchResult<AlbumMiniVO> searchAlbums(SearchQry qry) {
-        SimpleSearchParam param = new SimpleSearchParam(qry);
-        if(param.keywordEmpty()) new SearchResult<>();
-
-        LambdaQueryWrapper<Album> wrapper = new LambdaQueryWrapper<Album>()
-                .or().like(Album::getName, param.getKeyword())
-                .or().like(Album::getNameZh, param.getKeyword())
-                .or().like(Album::getNameEn, param.getKeyword())
-                .eq(Album::getStatus, 1)
-                .orderByDesc(Album::getId);
-
-        IPage<Album> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
-        List<AlbumMiniVO> items = VOMapper.toMiniVO(pages.getRecords());
-
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
 
     /**
      * 更新音轨信息

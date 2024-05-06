@@ -33,11 +33,6 @@ public class AlbumController {
 
     //region basic crud
 
-    @PostMapping("search")
-    public ApiResult search(@RequestBody SearchQry qry) {
-        return new ApiResult().load(srv.searchAlbums(qry));
-    }
-
     @PostMapping("add")
     public ApiResult add(@Valid @RequestBody AlbumCreateDTO dto, BindingResult errors) {
         //check

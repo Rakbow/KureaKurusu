@@ -1,9 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
 import com.rakbow.kureakurusu.data.dto.ItemDeleteDTO;
 import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,11 @@ public class ItemController {
     @PostMapping("detail")
     public ApiResult detail(@RequestBody CommonDetailQry qry) {
         return new ApiResult().load(srv.detail(qry.getId()));
+    }
+
+    @PostMapping("search")
+    public ApiResult search(@RequestBody SearchQry qry) {
+        return new ApiResult().load(srv.search(new SimpleSearchParam(qry)));
     }
 
     @DeleteMapping("delete")

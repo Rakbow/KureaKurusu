@@ -10,6 +10,7 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.ItemCreateDTO;
 import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
@@ -22,6 +23,7 @@ import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.ItemVO;
 import com.rakbow.kureakurusu.data.vo.test.ItemListVO;
+import com.rakbow.kureakurusu.data.vo.test.ItemMiniVO;
 import com.rakbow.kureakurusu.util.I18nHelper;
 import com.rakbow.kureakurusu.util.common.*;
 import com.rakbow.kureakurusu.util.file.CommonImageUtil;
@@ -33,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
 /**
@@ -57,23 +58,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     private final Converter converter;
 
-    @Transactional
-    @SneakyThrows
-    public ItemDetailVO detail(long id) {
-        SuperItem item = getById(id);
-        if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
-
-        Class<? extends ItemVO> targetVOClass = ItemUtil.getItemDetailVO(item.getType().getValue());
-
-        return ItemDetailVO.builder()
-                .type(item.getType().getValue())
-                .item(converter.convert(item, targetVOClass))
-                .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
-                .options(entityUtil.getDetailOptions(item.getType().getValue()))
-                .itemImageInfo(CommonImageUtil.segmentItemImages(item.getType(), item.getImages()))
-                .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
-                .build();
-    }
+    //region basic
 
     @Transactional
     @SneakyThrows
@@ -91,37 +76,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .eq(Item::getId, id);
         return (T) mapper.selectJoinOne(targetClass, wrapper);
     }
-
-    @Transactional
-    @SneakyThrows
-    public SearchResult<? extends ItemListVO> list(ListQueryDTO dto) {
-
-        ItemListQueryDTO param = ItemUtil.getItemListQueryDTO(dto);
-
-        Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
-        Class<? extends SubItem> subClass = ItemUtil.getSubItem(param.getType());
-        Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
-
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(subClass, "t1")
-                .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)} t1 on t1.id = t.id")
-                .eq(Item::getType, param.getType())
-                .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
-                .like(StringUtils.isNotBlank(param.getNameZh()), Item::getNameZh, param.getNameZh())
-                .like(StringUtils.isNotBlank(param.getNameEn()), Item::getNameEn, param.getNameEn())
-                .like(StringUtils.isNotBlank(param.getEan13()), Item::getEan13, param.getEan13())
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        //private query column to sql
-        MyBatisUtil.itemListQueryWrapper(param, wrapper);
-
-        IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), superClass, wrapper);
-
-        List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
-
-        return new SearchResult<>(items, page.getTotal(), page.getCurrent(), page.getSize());
-    }
-
     @Transactional
     @SneakyThrows
     public String insert(ItemCreateDTO dto) {
@@ -182,6 +136,76 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         return I18nHelper.getMessage("entity.curd.delete.success");
     }
+
+    //region
+
+    //region query
+    @Transactional
+    @SneakyThrows
+    public ItemDetailVO detail(long id) {
+        SuperItem item = getById(id);
+        if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
+
+        Class<? extends ItemVO> targetVOClass = ItemUtil.getItemDetailVO(item.getType().getValue());
+
+        return ItemDetailVO.builder()
+                .type(item.getType().getValue())
+                .item(converter.convert(item, targetVOClass))
+                .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
+                .options(entityUtil.getDetailOptions(item.getType().getValue()))
+                .itemImageInfo(CommonImageUtil.segmentItemImages(item.getType(), item.getImages()))
+                .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
+                .build();
+    }
+
+    @Transactional
+    public SearchResult<ItemMiniVO> search(SimpleSearchParam param) {
+        if(param.keywordEmpty()) new SearchResult<>();
+
+        LambdaQueryWrapper<Item> wrapper = new LambdaQueryWrapper<Item>()
+                .or().like(Item::getName, param.getKeyword())
+                .or().like(Item::getNameZh, param.getKeyword())
+                .or().like(Item::getNameEn, param.getKeyword())
+                .orderByDesc(Item::getId);
+
+        IPage<Item> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+
+        List<ItemMiniVO> items = converter.convert(pages.getRecords(), ItemMiniVO.class);
+
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
+
+    @Transactional
+    @SneakyThrows
+    public SearchResult<? extends ItemListVO> list(ListQueryDTO dto) {
+
+        ItemListQueryDTO param = ItemUtil.getItemListQueryDTO(dto);
+
+        Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubItem(param.getType());
+        Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
+
+        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                .selectAll(Item.class)
+                .selectAll(subClass, "t1")
+                .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)} t1 on t1.id = t.id")
+                .eq(Item::getType, param.getType())
+                .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
+                .like(StringUtils.isNotBlank(param.getNameZh()), Item::getNameZh, param.getNameZh())
+                .like(StringUtils.isNotBlank(param.getNameEn()), Item::getNameEn, param.getNameEn())
+                .like(StringUtils.isNotBlank(param.getEan13()), Item::getEan13, param.getEan13())
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+        //private query column to sql
+        MyBatisUtil.itemListQueryWrapper(param, wrapper);
+
+        IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), superClass, wrapper);
+
+        List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
+
+        return new SearchResult<>(items, page.getTotal(), page.getCurrent(), page.getSize());
+    }
+
+    //endregion
 
     @SneakyThrows
     public ItemTypeRelation getItemTypeRelation(long id) {
