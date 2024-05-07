@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.emun;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

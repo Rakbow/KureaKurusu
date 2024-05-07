@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.interceptor;
 
-import com.rakbow.kureakurusu.util.common.CookieUtil;
+import com.rakbow.kureakurusu.toolkit.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;

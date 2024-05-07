@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.vo;
 
 import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.emun.LinkType;
-import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.Data;
 
 import java.util.regex.Matcher;
@@ -20,12 +20,6 @@ public class LinkVO {
     private int type;
     private String url;
     private String name;
-
-    public LinkVO() {
-        type = 0;
-        url = "";
-        name = "";
-    }
 
     public LinkVO(Link link) {
         type = link.getType();

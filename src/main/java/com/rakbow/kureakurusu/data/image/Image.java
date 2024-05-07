@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.image;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.toolkit.DateHelper;
 import lombok.Data;
 
 /**

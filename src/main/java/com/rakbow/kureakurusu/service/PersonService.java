@@ -15,8 +15,8 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.PersonDetailQry;
 import com.rakbow.kureakurusu.data.dto.PersonListParams;
 import com.rakbow.kureakurusu.data.dto.PersonnelManageCmd;
-import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
+import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -26,11 +26,11 @@ import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
-import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.ClazzHelper;
-import com.rakbow.kureakurusu.util.common.DataFinder;
-import com.rakbow.kureakurusu.util.common.EntityUtil;
-import com.rakbow.kureakurusu.util.convertMapper.PersonVOMapper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.DataFinder;
+import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.convert.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -82,7 +82,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
                 .like("name_zh", param.getNameZh())
                 .like("name_en", param.getNameEn())
                 .in(CollectionUtils.isNotEmpty(param.getGender()), "gender", param.getGender())
-                .orderBy(param.isSort(), param.asc(), ClazzHelper.getColumnName(param.sortField));
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.sortField));
 
         IPage<Person> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<PersonVOBeta> persons = VOMapper.toBetaVO(pages.getRecords());

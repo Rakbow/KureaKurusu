@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.GetOptionQry;
 import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
@@ -8,19 +9,17 @@ import com.rakbow.kureakurusu.data.dto.UpdateDetailCmd;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
-import com.rakbow.kureakurusu.service.AlbumService;
-import com.rakbow.kureakurusu.service.BookService;
-import com.rakbow.kureakurusu.service.GeneralService;
-import com.rakbow.kureakurusu.service.ProductService;
-import com.rakbow.kureakurusu.util.I18nHelper;
-import com.rakbow.kureakurusu.util.common.CommonUtil;
-import com.rakbow.kureakurusu.util.common.EntityUtil;
-import com.rakbow.kureakurusu.util.common.ExcelUtil;
-import com.rakbow.kureakurusu.util.file.CommonImageUtil;
+import com.rakbow.kureakurusu.service.*;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.ExcelUtil;
+import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -50,6 +47,7 @@ public class GeneralController {
     private final GeneralService srv;
     private final AlbumService albumSrv;
     private final BookService bookSrv;
+    private final ItemService itemSrv;
     private final ProductService productSrv;
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -66,11 +64,9 @@ public class GeneralController {
     @PostMapping("search")
     public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
         ApiResult res = new ApiResult();
-        if(qry.getEntityType() == Entity.ALBUM.getValue())
-            res.load(albumSrv.searchAlbums(qry.getParam()));
-        else if(qry.getEntityType() == Entity.BOOK.getValue())
-            res.load(bookSrv.searchBooks(qry.getParam()));
-        else if(qry.getEntityType() == Entity.PRODUCT.getValue())
+        if(qry.getEntityType() == EntityType.ITEM.getValue())
+            res.load(itemSrv.search(new SimpleSearchParam(qry.getParam())));
+        else if(qry.getEntityType() == EntityType.SUBJECT.getValue())
             res.load(productSrv.searchProducts(qry.getParam()));
         return res;
     }

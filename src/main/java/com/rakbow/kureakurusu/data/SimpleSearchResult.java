@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
-import com.rakbow.kureakurusu.util.common.DateHelper;
+import com.rakbow.kureakurusu.toolkit.DateHelper;
 import lombok.Data;
 
 /**

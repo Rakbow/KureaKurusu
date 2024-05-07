@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.task;
 
 import com.rakbow.kureakurusu.dao.CommonMapper;
-import com.rakbow.kureakurusu.util.common.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;

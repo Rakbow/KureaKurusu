@@ -2,10 +2,9 @@ package com.rakbow.kureakurusu.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
-import com.rakbow.kureakurusu.util.handler.DataStatusPermissionHandler;
+import com.rakbow.kureakurusu.toolkit.support.DataStatusPermissionHandler;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

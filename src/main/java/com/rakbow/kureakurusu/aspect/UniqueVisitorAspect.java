@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.aspect;
 
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.CookieUtil;
 import org.apache.commons.lang3.ObjectUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -38,10 +40,10 @@ public class UniqueVisitorAspect {
         // 获取响应体 response
         HttpServletResponse response = ((ServletRequestAttributes) requestAttributes).getResponse();
 
-        String visitToken = com.rakbow.kureakurusu.util.common.CookieUtil.getValue(request, "visit_token");
+        String visitToken = CookieUtil.getValue(request, "visit_token");
         if (ObjectUtils.isEmpty(visitToken)){
             //生成visitToken,并返回
-            visitToken = com.rakbow.kureakurusu.util.common.CommonUtil.generateUUID();
+            visitToken = CommonUtil.generateUUID();
             Cookie cookie = new Cookie("visit_token", visitToken);
             cookie.setPath(contextPath);
             assert response != null;

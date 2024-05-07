@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

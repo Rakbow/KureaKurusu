@@ -1,9 +1,9 @@
 package com.rakbow.kureakurusu.task;
 
 import com.rakbow.kureakurusu.data.common.Visit;
-import com.rakbow.kureakurusu.util.common.RedisUtil;
-import com.rakbow.kureakurusu.util.common.VisitUtil;
-import com.rakbow.kureakurusu.util.convertMapper.StatisticPOMapper;
+import com.rakbow.kureakurusu.toolkit.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.VisitUtil;
+import com.rakbow.kureakurusu.toolkit.convert.StatisticPOMapper;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;

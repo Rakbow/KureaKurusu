@@ -7,7 +7,7 @@ import com.rakbow.kureakurusu.data.dto.RelationQry;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.service.RelationService;
-import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;

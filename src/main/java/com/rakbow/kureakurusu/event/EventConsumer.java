@@ -1,20 +1,6 @@
 package com.rakbow.kureakurusu.event;
 
-import com.rakbow.kureakurusu.data.CommonConstant;
-import com.rakbow.kureakurusu.data.entity.Event;
-import com.rakbow.kureakurusu.data.entity.Message;
-import com.rakbow.kureakurusu.service.MessageService;
-import com.rakbow.kureakurusu.util.common.JsonUtil;
-import jakarta.annotation.Resource;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Rakbow

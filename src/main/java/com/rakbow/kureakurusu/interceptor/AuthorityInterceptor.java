@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.interceptor;
 import com.rakbow.kureakurusu.annotation.AdminAuthorityRequired;
 import com.rakbow.kureakurusu.data.emun.UserAuthority;
 import com.rakbow.kureakurusu.data.entity.User;
-import com.rakbow.kureakurusu.util.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

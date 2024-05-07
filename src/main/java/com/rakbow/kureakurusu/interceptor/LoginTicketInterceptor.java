@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.interceptor;
 
 import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
-import com.rakbow.kureakurusu.util.common.CookieUtil;
-import com.rakbow.kureakurusu.util.common.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.CookieUtil;
+import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

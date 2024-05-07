@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.rakbow.kureakurusu.util.jackson.BooleanToIntDeserializer;
+import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 
 import java.util.Date;

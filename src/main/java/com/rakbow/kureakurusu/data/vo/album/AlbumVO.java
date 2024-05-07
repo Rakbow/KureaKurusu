@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.album;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.vo.ItemVO;
+import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

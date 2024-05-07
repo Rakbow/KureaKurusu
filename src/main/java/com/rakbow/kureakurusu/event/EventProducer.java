@@ -1,9 +1,5 @@
 package com.rakbow.kureakurusu.event;
 
-import com.rakbow.kureakurusu.data.entity.Event;
-import com.rakbow.kureakurusu.util.common.JsonUtil;
-import jakarta.annotation.Resource;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 /**
