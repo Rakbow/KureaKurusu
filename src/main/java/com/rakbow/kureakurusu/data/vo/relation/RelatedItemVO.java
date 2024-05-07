@@ -11,13 +11,16 @@ import lombok.Data;
 public class RelatedItemVO {
 
     private long id;
-    private String entityTypeName;
-    private long entityId;
     private String cover;
     private String name;
     private String nameZh;
     private String nameEn;
+
+    private String label;//entity type label
+
     private Attribute<Integer> entityType;
+    private long entityId;
+
     private Attribute<Integer> relationType;
 
 }

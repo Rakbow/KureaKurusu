@@ -4,22 +4,22 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EntityRelationMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.RelationDTO;
 import com.rakbow.kureakurusu.data.dto.RelationManageCmd;
 import com.rakbow.kureakurusu.data.dto.RelationQry;
-import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
-import com.rakbow.kureakurusu.data.entity.Album;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.EntityRelation;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedItemVO;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRelation> {
 
     private final EntityRelationMapper mapper;
-    private final AlbumMapper albumMapper;
+    private final ItemMapper itemMapper;
     private final ProductMapper productMapper;
     private final SqlSessionFactory sqlSessionFactory;
 
@@ -62,38 +62,38 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
         for(int entity : relationGroup.keySet()) {
             List<EntityRelation> currentRelations = relationGroup.get(entity);
             List<Long> ids = currentRelations.stream().map(EntityRelation::getRelatedEntityId).toList();
-            if(entity == Entity.ALBUM.getValue()) {
-                List<Album> items = albumMapper.selectList(new LambdaQueryWrapper<Album>().eq(Album::getStatus, 1).in(Album::getId, ids));
+            if(entity == EntityType.ITEM.getValue()) {
+                List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getStatus, 1).in(Item::getId, ids));
                 for (EntityRelation r : currentRelations) {
                     RelatedItemVO vo = new RelatedItemVO();
                     vo.setId(r.getId());
-                    vo.setEntityType(new Attribute<>(Entity.ALBUM.getName(), Entity.ALBUM.getValue()));
-                    vo.setEntityTypeName(Entity.ALBUM.getTableName());
+                    vo.setEntityType(new Attribute<>(I18nHelper.getMessage(EntityType.ITEM.getLabelKey()), EntityType.ITEM.getValue()));
                     vo.setEntityId(r.getRelatedEntityId());
-                    Album item = DataFinder.findAlbumById(r.getRelatedEntityId(), items);
+                    Item item = DataFinder.findItemById(r.getRelatedEntityId(), items);
                     if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());
                     vo.setNameZh(item.getNameZh());
                     vo.setNameEn(item.getNameEn());
+                    vo.setLabel(I18nHelper.getMessage(item.getType().getLabelKey()));
                     vo.setRelationType(new Attribute<>(I18nHelper.getMessage(r.getRelatedType().getLabelKey()), r.getRelatedType().getValue()));
                     res.add(vo);
                 }
             }
-            if(entity == Entity.PRODUCT.getValue()) {
+            if(entity == EntityType.PRODUCT.getValue()) {
                 List<Product> items = productMapper.selectList(new LambdaQueryWrapper<Product>().eq(Product::getStatus, 1).in(Product::getId, ids));
                 for (EntityRelation r : currentRelations) {
                     RelatedItemVO vo = new RelatedItemVO();
                     vo.setId(r.getId());
-                    vo.setEntityType(new Attribute<>(Entity.PRODUCT.getName(), Entity.PRODUCT.getValue()));
-                    vo.setEntityTypeName(Entity.PRODUCT.getTableName());
+                    vo.setEntityType(new Attribute<>(I18nHelper.getMessage(EntityType.PRODUCT.getLabelKey()), EntityType.PRODUCT.getValue()));
                     vo.setEntityId(r.getRelatedEntityId());
                     Product item = DataFinder.findProductById(r.getRelatedEntityId(), items);
                     if(item == null) continue;
                     vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
                     vo.setName(item.getName());
-                    vo.setNameZh(item.getNameZh() + "/(" + I18nHelper.getMessage(item.getCategory().getLabelKey(), Locale.CHINA) + ")");
-                    vo.setNameEn(item.getNameEn() + "/(" + I18nHelper.getMessage(item.getCategory().getLabelKey(), Locale.ENGLISH) + ")");
+                    vo.setNameZh(item.getNameZh());
+                    vo.setNameEn(item.getNameEn());
+                    vo.setLabel(I18nHelper.getMessage(item.getCategory().getLabelKey()));
                     vo.setRelationType(new Attribute<>(I18nHelper.getMessage(r.getRelatedType().getLabelKey()), r.getRelatedType().getValue()));
                     res.add(vo);
                 }

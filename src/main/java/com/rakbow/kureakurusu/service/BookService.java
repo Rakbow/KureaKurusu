@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.BookMapper;
-import com.rakbow.kureakurusu.data.entity.Book;
+import com.rakbow.kureakurusu.dao.ItemBookMapper;
+import com.rakbow.kureakurusu.data.entity.ItemBook;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.BookUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class BookService extends ServiceImpl<BookMapper, Book> {
+public class BookService extends ServiceImpl<ItemBookMapper, ItemBook> {
 
      /**
       * isbn互相转换

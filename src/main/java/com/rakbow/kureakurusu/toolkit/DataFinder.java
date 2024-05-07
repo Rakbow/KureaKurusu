@@ -19,39 +19,30 @@ public class DataFinder {
     public static Person personFinder = new Person();
     public static Franchise franchiseFinder = new Franchise();
     public static Album albumFinder = new Album();
-    public static Book bookFinder = new Book();
+    public static Item itemFinder = new Item();
     public static Product productFinder = new Product();
 
     //region album
 
+    public static Item findItemById(Long id, List<Item> items) {
+        albumFinder.setId(id);
+        int idx = Collections.binarySearch(items, itemFinder, DataSorter.itemIdSorter);
+        if (idx >= 0) return items.get(idx);
+        return null;
+    }
+
     public static Album findAlbumById(Long id, List<Album> albums) {
         albumFinder.setId(id);
         int idx = Collections.binarySearch(albums, albumFinder, DataSorter.albumIdSorter);
-        if (idx >= 0) {
-            return albums.get(idx);
-        }else {
-            return null;
-        }
-    }
-
-    public static Book findBookById(Long id, List<Book> books) {
-        bookFinder.setId(id);
-        int idx = Collections.binarySearch(books, bookFinder, DataSorter.bookIdSorter);
-        if (idx >= 0) {
-            return books.get(idx);
-        }else {
-            return null;
-        }
+        if (idx >= 0) return albums.get(idx);
+        return null;
     }
 
     public static Product findProductById(Long id, List<Product> products) {
         productFinder.setId(id);
         int idx = Collections.binarySearch(products, productFinder, DataSorter.productIdSorter);
-        if (idx >= 0) {
-            return products.get(idx);
-        }else {
-            return null;
-        }
+        if (idx >= 0) return products.get(idx);
+        return null;
     }
 
     //endregion

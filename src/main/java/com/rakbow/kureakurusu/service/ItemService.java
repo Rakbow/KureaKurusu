@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
@@ -143,6 +144,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     //region query
     @Transactional
     @SneakyThrows
+    @UniqueVisitor
     public ItemDetailVO detail(long id) {
         SuperItem item = getById(id);
         if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));

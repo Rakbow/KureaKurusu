@@ -22,6 +22,7 @@ public class DataSorter {
     public static EpisodeSortById episodeIdSorter = new EpisodeSortById();
     public static FranchiseSortById franchiseIdSorter = new FranchiseSortById();
     public static ItemSortByAddedTime itemAddedTimeSorter = new ItemSortByAddedTime();
+    public static ItemSortById itemIdSorter = new ItemSortById();
 
 }
 
@@ -36,6 +37,13 @@ class BookSortById implements Comparator<Book> {
     @Override
     public int compare(Book a, Book b) {
         return Long.compare(a.getId(), b.getId());
+    }
+}
+
+class ItemSortById implements Comparator<Item> {
+    @Override
+    public int compare(Item a, Item b) {
+        return a.getId().compareTo(b.getId());
     }
 }
 

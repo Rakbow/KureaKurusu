@@ -3,12 +3,10 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.AlbumMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.Album;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import com.rakbow.kureakurusu.data.vo.album.AlbumDiscVO;
@@ -36,7 +34,7 @@ import java.util.stream.IntStream;
  */
 @Service
 @RequiredArgsConstructor
-public class AlbumService extends ServiceImpl<AlbumMapper, Album> {
+public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
     //region inject
 

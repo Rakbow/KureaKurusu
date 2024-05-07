@@ -53,9 +53,6 @@ public class GeneralService {
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
     private final FranchiseMapper franchiseMapper;
-    private final ProductMapper productMapper;
-    private final AlbumMapper albumMapper;
-    private final BookMapper bookMapper;
 
     //endregion
 
@@ -74,25 +71,6 @@ public class GeneralService {
     // }
 
     //region common
-
-    @Transactional
-    public List<EntityStatisticInfo> getStatisticInfo() {
-        List<EntityStatisticInfo> res = new ArrayList<>();
-
-        long franchiseCount = franchiseMapper.selectCount(null);
-        long productCount = productMapper.selectCount(null);
-        long personRoleCount = personRoleMapper.selectCount(null);
-        long albumCount = albumMapper.selectCount(null);
-        long bookCount = bookMapper.selectCount(null);
-        long total = franchiseCount + productCount + personRoleCount + albumCount + bookCount;
-        res.add(new EntityStatisticInfo(franchiseCount, total));
-        res.add(new EntityStatisticInfo(productCount, total));
-        res.add(new EntityStatisticInfo(personRoleCount, total));
-        res.add(new EntityStatisticInfo(albumCount, total));
-        res.add(new EntityStatisticInfo(bookCount, total));
-
-        return res;
-    }
 
     @Transactional
     public void loadMetaData() {
@@ -120,8 +98,8 @@ public class GeneralService {
         MetaData.optionsZh.relationTypeSet = EnumHelper.getAttributeOptions(RelatedType.class, "zh");
         MetaData.optionsEn.relationTypeSet = EnumHelper.getAttributeOptions(RelatedType.class, "en");
 
-        MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(Entity.class, "zh");
-        MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(Entity.class, "en");
+        MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "zh");
+        MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "en");
 
         MetaData.optionsZh.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "zh");
         MetaData.optionsEn.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "en");

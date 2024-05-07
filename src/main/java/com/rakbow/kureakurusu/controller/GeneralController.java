@@ -58,7 +58,7 @@ public class GeneralController {
 
     @PostMapping("statistic-info")
     public ApiResult getStatisticInfo() {
-        return new ApiResult().load(srv.getStatisticInfo());
+        return new ApiResult();
     }
 
     @PostMapping("search")
@@ -66,7 +66,7 @@ public class GeneralController {
         ApiResult res = new ApiResult();
         if(qry.getEntityType() == EntityType.ITEM.getValue())
             res.load(itemSrv.search(new SimpleSearchParam(qry.getParam())));
-        else if(qry.getEntityType() == EntityType.SUBJECT.getValue())
+        else if(qry.getEntityType() == EntityType.PRODUCT.getValue())
             res.load(productSrv.searchProducts(qry.getParam()));
         return res;
     }
