@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.service;
+package com.rakbow.kureakurusu.service.item;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

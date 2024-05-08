@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.service.AlbumService;
+import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;

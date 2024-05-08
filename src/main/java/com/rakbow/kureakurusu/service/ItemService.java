@@ -163,7 +163,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     public SearchResult<ItemMiniVO> search(SimpleSearchParam param) {
-        if(param.keywordEmpty()) new SearchResult<>();
+        if (param.keywordEmpty()) new SearchResult<>();
 
         LambdaQueryWrapper<Item> wrapper = new LambdaQueryWrapper<Item>()
                 .or().like(Item::getName, param.getKeyword())
@@ -216,5 +216,33 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         if (!redisUtil.hasKey(redisKey)) return null;
         return redisUtil.get(redisKey, ItemTypeRelation.class);
     }
+
+    //region other
+
+    /**
+     * isbn互相转换
+     *
+     * @param label,isbn 转换方式,isbn
+     * @return isbn
+     * @author rakbow
+     */
+    @SneakyThrows
+    public String getISBN(String label, String isbn) {
+
+        isbn = isbn.replaceAll("-", "");
+
+        if (StringUtils.equals(label, "isbn13")) {
+            if (isbn.length() != 10)
+                throw new Exception(I18nHelper.getMessage("book.crud.isbn10.invalid"));
+            return BookUtil.getISBN13(isbn);
+        } else if (StringUtils.equals(label, "isbn10")) {
+            if (isbn.length() != 13)
+                throw new Exception(I18nHelper.getMessage("book.crud.isbn13.invalid"));
+            return BookUtil.getISBN10(isbn);
+        }
+        return null;
+    }
+
+    //endregion
 
 }

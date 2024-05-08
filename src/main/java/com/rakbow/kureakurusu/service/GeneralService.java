@@ -130,7 +130,7 @@ public class GeneralService {
      */
     @Transactional
     public void updateItemStatus(UpdateStatusCmd cmd) {
-        mapper.updateItemStatus(Entity.getTableName(cmd.getEntity()), cmd.getIds(), cmd.status());
+        mapper.updateItemStatus(EntityType.getTableName(cmd.getEntity()), cmd.getIds(), cmd.status());
     }
 
     /**
@@ -156,7 +156,7 @@ public class GeneralService {
      */
     @Transactional
     public void updateItemDetail(UpdateDetailCmd cmd) {
-        mapper.updateItemDetail(Entity.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
+        mapper.updateItemDetail(EntityType.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
     }
 
     /**
@@ -166,7 +166,7 @@ public class GeneralService {
      */
     @Transactional
     public void updateItemBonus(UpdateDetailCmd cmd) {
-        mapper.updateItemBonus(Entity.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
+        mapper.updateItemBonus(EntityType.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
     }
 
     //endregion

@@ -2,10 +2,8 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.BookCreateDTO;
-import com.rakbow.kureakurusu.data.dto.BookIsbnDTO;
 import com.rakbow.kureakurusu.data.dto.BookUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
-import com.rakbow.kureakurusu.service.BookService;
+import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,14 +44,6 @@ public class BookController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         return  new ApiResult().ok(itemSrv.update(dto));
-    }
-
-    //endregion
-
-    //region other
-    @PostMapping("get-isbn")
-    public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
-        return new ApiResult().load(srv.getISBN(dto.getLabel(), dto.getIsbn()));
     }
 
     //endregion

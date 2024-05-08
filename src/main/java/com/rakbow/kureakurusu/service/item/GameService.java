@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.service;
+package com.rakbow.kureakurusu.service.item;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.GameMapper;

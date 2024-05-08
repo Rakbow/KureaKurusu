@@ -15,6 +15,8 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.*;
+import com.rakbow.kureakurusu.service.item.AlbumService;
+import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
@@ -45,8 +47,6 @@ public class GeneralController {
 
     //region inject
     private final GeneralService srv;
-    private final AlbumService albumSrv;
-    private final BookService bookSrv;
     private final ItemService itemSrv;
     private final ProductService productSrv;
     @Value("${server.servlet.context-path}")

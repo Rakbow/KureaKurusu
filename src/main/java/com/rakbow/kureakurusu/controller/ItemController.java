@@ -2,10 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
-import com.rakbow.kureakurusu.data.dto.ItemDeleteDTO;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +37,13 @@ public class ItemController {
     public ApiResult list(@RequestBody ListQueryDTO dto) {
         return new ApiResult().load(srv.list(dto));
     }
+
+    //region other
+    @PostMapping("get-isbn")
+    public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
+        return new ApiResult().load(srv.getISBN(dto.getLabel(), dto.getIsbn()));
+    }
+
+    //endregion
 
 }
