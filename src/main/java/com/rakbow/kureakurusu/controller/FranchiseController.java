@@ -1,10 +1,9 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.convert.FranchiseVOMapper;
@@ -50,7 +49,7 @@ public class FranchiseController {
         Franchise item = voMapper.build(dto);
         //save
         srv.save(item);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.FRANCHISE.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success"));
     }
 
     @PostMapping("update")
@@ -59,13 +58,13 @@ public class FranchiseController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         srv.updateById(new Franchise(dto));
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.FRANCHISE.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
     }
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody FranchiseDeleteCmd cmd) {
         srv.delete(cmd.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.FRANCHISE.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success"));
     }
 
     //endregion

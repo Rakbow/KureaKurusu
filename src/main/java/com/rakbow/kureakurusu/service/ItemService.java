@@ -155,7 +155,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .type(item.getType().getValue())
                 .item(converter.convert(item, targetVOClass))
                 .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
-                .options(entityUtil.getDetailOptions(item.getType().getValue()))
+                .options(ItemUtil.getOptions(item.getType().getValue()))
                 .itemImageInfo(CommonImageUtil.segmentItemImages(item.getType(), item.getImages()))
                 .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
                 .build();

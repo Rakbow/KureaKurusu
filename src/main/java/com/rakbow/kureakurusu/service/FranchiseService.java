@@ -8,12 +8,12 @@ import com.rakbow.kureakurusu.dao.FranchiseMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.FranchiseDetailQry;
 import com.rakbow.kureakurusu.data.dto.FranchiseListParams;
-import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseDetailVO;
 import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
 import com.rakbow.kureakurusu.toolkit.convert.FranchiseVOMapper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -38,20 +38,20 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final FranchiseVOMapper voMapper;
-    private final int ENTITY_VALUE = Entity.FRANCHISE.getValue();
+    private final int ENTITY_VALUE = EntityType.FRANCHISE.getValue();
 
     @SneakyThrows
     @Transactional
     public FranchiseDetailVO detail(FranchiseDetailQry qry) {
         Franchise item = getById(qry.getId());
         if (item == null)
-            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.FRANCHISE.getName()));
+            throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.FRANCHISE.getLabel()));
 
         return FranchiseDetailVO.builder()
                 .item(voMapper.toVO(item))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
-                .itemImageInfo(CommonImageUtil.segmentImages(item.getImages(), 200, Entity.FRANCHISE, false))
+                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.FRANCHISE, item.getImages()))
                 .build();
     }
 

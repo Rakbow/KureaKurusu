@@ -2,14 +2,11 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.EntityQry;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
+import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
-import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.service.PersonRoleService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
@@ -63,7 +60,7 @@ public class PersonController {
         Person person = VOMapper.build(dto);
         //save
         srv.save(person);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PERSON.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.PERSON.getLabel()));
     }
 
     @PostMapping("update")
@@ -72,7 +69,7 @@ public class PersonController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         srv.updateById(new Person(dto));
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PERSON.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.PERSON.getLabel()));
     }
     //endregion
 
@@ -89,7 +86,7 @@ public class PersonController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.save(role);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.ROLE.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.ROLE.getLabel()));
     }
 
     @PostMapping("update-role")
@@ -98,7 +95,7 @@ public class PersonController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.updateById(role);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ROLE.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.ROLE.getLabel()));
     }
 
     //endregion
@@ -113,7 +110,7 @@ public class PersonController {
     @PostMapping("manage-personnel")
     public ApiResult managePersonnel(@RequestBody PersonnelManageCmd cmd) {
         srv.managePersonnel(cmd);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ENTRY.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
     }
 
     //endregion

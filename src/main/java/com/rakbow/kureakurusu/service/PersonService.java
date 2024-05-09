@@ -16,7 +16,7 @@ import com.rakbow.kureakurusu.data.dto.PersonDetailQry;
 import com.rakbow.kureakurusu.data.dto.PersonListParams;
 import com.rakbow.kureakurusu.data.dto.PersonnelManageCmd;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
-import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -26,10 +26,10 @@ import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.convert.PersonVOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -56,14 +56,14 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     private final PersonRelationMapper relationMapper;
     private final EntityUtil entityUtil;
     private final SqlSessionFactory sqlSessionFactory;
-    private final int ENTITY_VALUE = Entity.PERSON.getValue();
+    private final int ENTITY_VALUE = EntityType.PERSON.getValue();
 
     @SneakyThrows
     @Transactional
     public PersonDetailVO detail(PersonDetailQry qry) {
         Person person = getById(qry.getId());
         if (person == null)
-            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.PERSON.getName()));
+            throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.PERSON.getLabel()));
 
         return PersonDetailVO.builder()
                 .item(VOMapper.toVO(person))

@@ -14,7 +14,7 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.ProductListParams;
 import com.rakbow.kureakurusu.data.dto.SearchQry;
-import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
@@ -23,8 +23,8 @@ import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductMiniVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
 import com.rakbow.kureakurusu.toolkit.convert.EpisodeVOMapper;
 import com.rakbow.kureakurusu.toolkit.convert.ProductVOMapper;
@@ -59,7 +59,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     //endregion
 
     //region const
-    private final int ENTITY_VALUE = Entity.PRODUCT.getValue();
+    private final int ENTITY_VALUE = EntityType.PRODUCT.getValue();
     private static final ProductCategory[] VIDEO_PRODUCT = {
             ProductCategory.ANIME_TV,
             ProductCategory.ANIME_MOVIE,
@@ -114,12 +114,12 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     public ProductDetailVO getDetail(ProductDetailQry qry) {
         Product product = getById(qry.getId());
         if(product == null)
-            throw new Exception(I18nHelper.getMessage("entity.url.error", Entity.PRODUCT.getName()));
+            throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.PRODUCT.getLabel()));
         return ProductDetailVO.builder()
                 .item(VOMapper.toVO(product))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
-                .itemImageInfo(CommonImageUtil.segmentImages(product.getImages(), 100, Entity.PRODUCT, true))
+                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.PRODUCT, product.getImages()))
                 .episodes(getEpisodes(product.getId(), product.getCategory()))
                 .build();
     }

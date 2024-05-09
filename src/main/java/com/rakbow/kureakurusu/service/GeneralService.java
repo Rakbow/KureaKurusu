@@ -180,7 +180,7 @@ public class GeneralService {
      */
     @Transactional
     public segmentImagesResult getEntryImages(int entityType, long entityId) {
-        String tableName = Entity.getTableName(entityType);
+        String tableName = EntityType.getTableName(entityType);
         //original images
         String imageJson = mapper.getEntryImages(tableName, entityId);
         List<Image> images = JsonUtil.toJavaList(imageJson, Image.class);
@@ -225,7 +225,7 @@ public class GeneralService {
      */
     @Transactional
     public void updateEntryImages(int entityType, long entityId, List<Image> images) {
-        mapper.updateEntryImages(Entity.getTableName(entityType), entityId, images, DateHelper.now());
+        mapper.updateEntryImages(EntityType.getTableName(entityType), entityId, images, DateHelper.now());
     }
 
     /**
@@ -237,7 +237,7 @@ public class GeneralService {
      */
     @Transactional
     public void deleteEntryImages(int entityType, long entityId, List<Image> deleteImages) {
-        String tableName = Entity.getTableName(entityType);
+        String tableName = EntityType.getTableName(entityType);
         List<Image> images = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), Image.class);
         List<Image> finalImageJson = qiniuImageUtil.deleteImage(images, deleteImages);
         mapper.updateEntryImages(tableName, entityId, finalImageJson, DateHelper.now());

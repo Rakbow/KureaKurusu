@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -51,18 +52,6 @@ public class RedisTests {
     @Test
     public void redisTest3() {
 
-        List<String> keys = redisUtil.keys("visit:");
-        keys.addAll(redisUtil.keys("like:"));
-        keys.forEach(key-> {
-            redisUtil.delete(key);
-        });
-
-        List<EntityStatistic> statistics = statisticMapper.getAll();
-
-        statistics.forEach(s-> {
-            redisUtil.set(visitUtil.getSingleVisitKey(s.getEntityType(), s.getEntityId()), (int)s.getVisitCount());
-            redisUtil.set(likeUtil.getEntityLikeKey(s.getEntityType(), s.getEntityId()), (int)s.getLikeCount());
-        });
 
     }
 
@@ -93,6 +82,19 @@ public class RedisTests {
             redisUtil.set(key, relation);
             System.out.println(STR."save to redis item id:\{item.getId()}");
         }
+    }
+
+    @Test
+    public void resetRedis() {
+        List<Item> items = itemMapper.selectList(null);
+        String[] tmpSplitKey;
+        List<String> keys = redisUtil.keys("like:*");
+        for (String key : keys) {
+            tmpSplitKey = key.split(":");
+            int orgEntityType = Integer.parseInt(tmpSplitKey[1]);
+            long orgEntityId = Long.parseLong(tmpSplitKey[2]);
+        }
+
     }
 
 }

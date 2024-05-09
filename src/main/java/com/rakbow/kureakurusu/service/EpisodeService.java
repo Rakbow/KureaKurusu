@@ -3,13 +3,13 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
-import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.emun.FileType;
-import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.common.File;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.FileType;
+import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.file.QiniuBaseUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuFileUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static java.lang.StringTemplate.STR;
 
 /**
  * @author Rakbow
@@ -48,7 +46,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         List<File> finalFiles = new ArrayList<>();
 
         //创建存储链接前缀
-        String filePath = STR."file/\{Entity.EPISODE.getTableName()}/\{id}/";
+        String filePath = STR."file/\{EntityType.EPISODE.getTableName()}/\{id}/";
 
         for (int i = 0; i < files.length; i++) {
             ActionResult ar;

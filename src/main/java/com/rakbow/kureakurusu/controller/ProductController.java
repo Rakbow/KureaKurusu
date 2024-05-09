@@ -1,10 +1,10 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.Entity;
-import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.service.ProductService;
@@ -29,7 +29,7 @@ public class ProductController {
     private final ProductService srv;
     private final PersonService personSrv;
     private final ProductVOMapper VOMapper;
-    private final int ENTITY_VALUE = Entity.PRODUCT.getValue();
+    private final int ENTITY_VALUE = EntityType.PRODUCT.getValue();
     //endregion
 
     //region curd
@@ -55,7 +55,7 @@ public class ProductController {
         Product product = VOMapper.build(dto);
         //save
         srv.save(product);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", Entity.PRODUCT.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.PRODUCT.getLabel()));
     }
 
     @PostMapping("update")
@@ -64,13 +64,13 @@ public class ProductController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         srv.updateById(new Product(dto));
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.PRODUCT.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.PRODUCT.getLabel()));
     }
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody DeleteCmd cmd) {
         srv.deleteProducts(cmd.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", Entity.PRODUCT.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", EntityType.PRODUCT.getLabel()));
     }
 
     @PostMapping("get-related-products")

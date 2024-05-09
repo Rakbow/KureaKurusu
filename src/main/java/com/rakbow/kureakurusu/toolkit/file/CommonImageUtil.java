@@ -1,7 +1,8 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
-import com.rakbow.kureakurusu.data.emun.Entity;
+import com.rakbow.kureakurusu.data.ImageConfigValue;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageProperty;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
@@ -15,7 +16,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.rakbow.kureakurusu.data.CommonConstant.*;
 
 /**
  * @author Rakbow
@@ -31,6 +36,16 @@ public class CommonImageUtil {
 
     private static final double STANDARD_BOOK_WIDTH = 180;
     private static final double STANDARD_BOOK_HEIGHT = 254.558;
+
+    private static final Map<ItemType, ImageConfigValue> itemImageConfigMap = new EnumMap<>(ItemType.class) {{
+        put(ItemType.ALBUM, new ImageConfigValue(185, false, DEFAULT_ALBUM_IMAGE_URL));
+        put(ItemType.BOOK, new ImageConfigValue(180, false, DEFAULT_BOOK_IMAGE_URL));
+    }};
+
+    private static final Map<EntityType, ImageConfigValue> entryImageConfigMap = new EnumMap<>(EntityType.class) {{
+        put(EntityType.PRODUCT, new ImageConfigValue(200, false, EMPTY_IMAGE_URL));
+        put(EntityType.FRANCHISE, new ImageConfigValue(100, true, EMPTY_IMAGE_URL));
+    }};
 
     //region ------检测------
 
@@ -114,31 +129,29 @@ public class CommonImageUtil {
     }
 
     public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {
-        if(type == ItemType.ALBUM)
-            return segmentImages(images, 185, Entity.ALBUM, false);
-        else if (type == ItemType.BOOK)
-            return segmentImages(images, 180, Entity.BOOK, false);
-        else
-            return null;
+        return segmentImages(images, itemImageConfigMap.get(type));
+    }
+
+    public static segmentImagesResult segmentEntryImages(EntityType type, List<Image> images) {
+        return segmentImages(images, entryImageConfigMap.get(type));
     }
 
     /**
      * 将图片切分为封面、展示和其他图片
      *
-     * @param orgImages 数据库原图片
-     * @param coverSize 封面图尺寸
+     * @param orgImages,config 数据库原图片, 预设配置
      * @return segmentImagesResult
      * @author rakbow
      */
-    public static segmentImagesResult segmentImages(List<Image> orgImages, int coverSize, Entity entity, boolean isWidth) {
+    private static segmentImagesResult segmentImages(List<Image> orgImages, ImageConfigValue config) {
 
         segmentImagesResult res = new segmentImagesResult();
         res.setImages(VOMapper.toVO(orgImages));
 
-        if (isWidth) {
-            res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, coverSize));
+        if (config.isWidth()) {
+            res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, config.getCoverSize()));
         } else {
-            res.setCoverUrl(QiniuImageUtil.getThumbUrl(getDefaultImageUrl(entity), coverSize));
+            res.setCoverUrl(QiniuImageUtil.getThumbUrl(config.getDefaultUrl(), config.getCoverSize()));
         }
         if (!res.getImages().isEmpty()) {
             for (ImageVO image : res.getImages()) {
@@ -147,10 +160,10 @@ public class CommonImageUtil {
                 image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
                 if (image.isMain()) {
                     //对封面图片进行处理
-                    if (isWidth) {
-                        res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(image.getUrl(), coverSize));
+                    if (config.isWidth()) {
+                        res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(image.getUrl(), config.getCoverSize()));
                     } else {
-                        res.setCoverUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), coverSize));
+                        res.setCoverUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), config.getCoverSize()));
                     }
                     res.getCover().setName(image.getNameEn());
                 }
@@ -183,106 +196,56 @@ public class CommonImageUtil {
         return res;
     }
 
-    /**
-     * 获取各尺寸封面图片
-     *
-     * @param images 数据库原图片
-     * @author rakbow
-     */
-    public static ImageVO generateCover(List<Image> images, Entity entity) {
-        //default image url
-        String defaultImageUrl = getDefaultImageUrl(entity);
-        //对图片封面进行处理
-        ImageVO cover = new ImageVO();
-        cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, DEFAULT_THUMB_SIZE));
-        cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_50));
-        cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_70));
-        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
-        if (!images.isEmpty()) {
-            for (Image image : images) {
-                if (!image.isMain()) continue;
-                cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), DEFAULT_THUMB_SIZE));
-                cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
-                cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50));
-                cover.setName(image.getNameEn());
-            }
-        }
-        return cover;
-    }
+//    /**
+//     * 获取各尺寸封面图片
+//     *
+//     * @param images 数据库原图片
+//     * @author rakbow
+//     */
+//    public static ImageVO generateCover(List<Image> images, Entity entity) {
+//        //default image url
+//        String defaultImageUrl = getDefaultImageUrl(entity);
+//        //对图片封面进行处理
+//        ImageVO cover = new ImageVO();
+//        cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, DEFAULT_THUMB_SIZE));
+//        cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_50));
+//        cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_70));
+//        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
+//        if (!images.isEmpty()) {
+//            for (Image image : images) {
+//                if (!image.isMain()) continue;
+//                cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), DEFAULT_THUMB_SIZE));
+//                cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+//                cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+//                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50));
+//                cover.setName(image.getNameEn());
+//            }
+//        }
+//        return cover;
+//    }
 
-    /**
-     * 获取各尺寸封面图片(标准书本)
-     *
-     * @param orgImages 数据库原图片
-     * @return JSONObject
-     * @author rakbow
-     */
-    public static ImageVO generateBookCover(List<Image> orgImages, Entity entity) {
-        String defaultImageUrl = getDefaultImageUrl(entity);
-        List<ImageVO> images = VOMapper.toVO(orgImages);
-
-        //对图片封面进行处理
-        ImageVO cover = new ImageVO();
-        cover.setUrl(QiniuImageUtil.getBookThumbBackgroundUrl(defaultImageUrl, STANDARD_BOOK_WIDTH, STANDARD_BOOK_HEIGHT));
-        cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_50));
-        cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_70));
-        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
-        if (!images.isEmpty()) {
-            for (Image image : images) {
-                if (!image.isMain()) continue;
-                cover.setUrl(QiniuImageUtil.getBookThumbBackgroundUrl(image.getUrl(), STANDARD_BOOK_WIDTH, STANDARD_BOOK_HEIGHT));
-                cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
-                cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50));
-                cover.setName(image.getNameEn());
-            }
-        }
-        return cover;
-    }
-
-    /**
-     * 获取封面图片缩略图
-     *
-     * @param orgImages 数据库原图片合集
-     * @return JSONObject
-     * @author rakbow
-     */
-    public static ImageVO generateThumbCover(List<Image> orgImages, Entity entity, int size) {
-        String defaultImageUrl = getDefaultImageUrl(entity);
-        ImageVO cover = new ImageVO();
-        List<ImageVO> images = VOMapper.toVO(orgImages);
-        cover.setUrl(QiniuImageUtil.getThumbUrl(defaultImageUrl, size));
-        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
-        if (!images.isEmpty()) {
-            for (Image image : images) {
-                if (!image.isMain()) continue;
-                cover.setUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), size));
-                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), size));
-                cover.setName(image.getNameEn());
-            }
-        }
-        return cover;
-    }
-
-    public static String getDefaultImageUrl(Entity entity) {
-        switch (entity) {
-            case ALBUM -> {
-                return CommonConstant.DEFAULT_ALBUM_IMAGE_URL;
-            }
-            case BOOK -> {
-                return CommonConstant.DEFAULT_BOOK_IMAGE_URL;
-            }
-            case DISC -> {
-                return CommonConstant.DEFAULT_DISC_IMAGE_URL;
-            }
-            case GAME -> {
-                return CommonConstant.DEFAULT_GAME_IMAGE_URL;
-            }
-            default -> {
-                return CommonConstant.EMPTY_IMAGE_URL;
-            }
-        }
-    }
+//    /**
+//     * 获取封面图片缩略图
+//     *
+//     * @param orgImages 数据库原图片合集
+//     * @return JSONObject
+//     * @author rakbow
+//     */
+//    public static ImageVO generateThumbCover(List<Image> orgImages, Entity entity, int size) {
+//        String defaultImageUrl = getDefaultImageUrl(entity);
+//        ImageVO cover = new ImageVO();
+//        List<ImageVO> images = VOMapper.toVO(orgImages);
+//        cover.setUrl(QiniuImageUtil.getThumbUrl(defaultImageUrl, size));
+//        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
+//        if (!images.isEmpty()) {
+//            for (Image image : images) {
+//                if (!image.isMain()) continue;
+//                cover.setUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), size));
+//                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), size));
+//                cover.setName(image.getNameEn());
+//            }
+//        }
+//        return cover;
+//    }
 
 }

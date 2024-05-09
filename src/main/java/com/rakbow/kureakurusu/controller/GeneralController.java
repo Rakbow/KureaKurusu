@@ -8,7 +8,6 @@ import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
-import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.image.Image;
@@ -139,7 +138,7 @@ public class GeneralController {
     @PostMapping("refresh-person-role")
     public ApiResult refreshPersonRole() {
         srv.refreshPersonRoleSet();
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.refresh.success", Entity.ROLE.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.refresh.success"));
     }
 
     //endregion

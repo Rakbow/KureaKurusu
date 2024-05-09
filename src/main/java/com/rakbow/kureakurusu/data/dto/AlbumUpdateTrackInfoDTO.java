@@ -12,7 +12,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AlbumUpdateTrackInfoCmd extends CommonCommand {
+public class AlbumUpdateTrackInfoDTO extends DTO {
 
     private long id;
     private List<AlbumDiscVO> discs;//碟片列表

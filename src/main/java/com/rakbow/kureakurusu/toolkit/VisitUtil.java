@@ -1,11 +1,8 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.emun.Entity;
-import org.springframework.stereotype.Component;
-
 import jakarta.annotation.Resource;
-import java.util.*;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Rakbow
@@ -85,28 +82,6 @@ public class VisitUtil {
         return PREFIX_VISIT + SPLIT + entityType + SPLIT + entityId;
     }
 
-
-
-
-    /**
-     * 获取浏览数排名,并返回指定数量的排名数据
-     * @param entityType 实体类型
-     * @author Rakbow
-     */
-    public LinkedHashMap<Integer, Long> getEntityVisitRanking(int entityType, int limit) {
-        LinkedHashMap<Integer, Long> res = new LinkedHashMap<>();
-        //rankKey
-        String rankKey = getEntityVisitRankingKeyName(entityType);
-        if(redisUtil.hasKey(rankKey)) {
-            //0,-1的参数代表查询该key下的所有value
-            Set<Object> keys = redisUtil.redisTemplate.opsForZSet().reverseRange(rankKey, 0, limit);
-            for (Object key : keys) {
-                res.put(Integer.parseInt(key.toString()), Math.round(redisUtil.redisTemplate.opsForZSet().score(rankKey, key)));
-            }
-        }
-        return res;
-    }
-
     /**
      * 清空所有浏览数据
      * @author Rakbow
@@ -139,47 +114,5 @@ public class VisitUtil {
         }
 
     }
-
-    /**
-     * 更新浏览数排名的set
-     * @param entityType,entityId,visitCount 实体类型,实体id,浏览数
-     * @author Rakbow
-     */
-    public void setEntityVisitRanking(int entityType, int entityId, long visitCount) {
-        String key = String.valueOf(entityId);
-        String rankingKey = getEntityVisitRankingKeyName(entityType);
-        redisUtil.redisTemplate.opsForZSet().add(rankingKey, key, visitCount);
-    }
-
-    public String getEntityVisitRankingKeyName(int entityType) {
-
-        if(entityType == Entity.ALBUM.getValue()) {
-            return RedisKey.ALBUM_VISIT_RANKING;
-        }
-        if(entityType == Entity.BOOK.getValue()) {
-            return RedisKey.BOOK_VISIT_RANKING;
-        }
-        if(entityType == Entity.DISC.getValue()) {
-            return RedisKey.DISC_VISIT_RANKING;
-        }
-        if(entityType == Entity.GAME.getValue()) {
-            return RedisKey.GAME_VISIT_RANKING;
-        }
-//        if(entityType == Entity.MERCH.getId()) {
-//            return RedisCacheConstant.MERCH_VISIT_RANKING;
-//        }
-        if(entityType == Entity.EPISODE.getValue()) {
-            return RedisKey.MUSIC_VISIT_RANKING;
-        }
-//        if(entityType == Entity.PRODUCT.getId()) {
-//            return RedisCacheConstant.PRODUCT_VISIT_RANKING;
-//        }
-//        if(entityType == Entity.FRANCHISE.getId()) {
-//            return RedisCacheConstant.FRANCHISE_VISIT_RANKING;
-//        }
-        return "";
-    }
-
-
 
 }

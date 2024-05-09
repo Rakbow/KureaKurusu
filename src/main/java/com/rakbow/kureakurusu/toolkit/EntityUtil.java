@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,6 @@ import java.util.*;
 @Component
 public class EntityUtil {
 
-    private final RedisUtil redisUtil;
     private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
 
@@ -48,23 +47,13 @@ public class EntityUtil {
 
         Map<String, Object> options = new HashMap<>();
 
-        if (entityType == Entity.ALBUM.getValue()) {
-            options.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
-            options.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
-            options.put("publishFormatSet", Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
-            options.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
-        } else if (entityType == Entity.PRODUCT.getValue()) {
+        if (entityType == EntityType.PRODUCT.getValue()) {
             options.put("franchiseSet", Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
             options.put("productCategorySet", Objects.requireNonNull(MetaData.getOptions()).productCategorySet);
-        } else if (entityType == Entity.PERSON.getValue()) {
+        } else if (entityType == EntityType.PERSON.getValue()) {
             options.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
             options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
-        } else if (entityType == Entity.BOOK.getValue()) {
-            options.put("regionSet", Objects.requireNonNull(MetaData.getOptions()).regionSet);
-            options.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
-            options.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
-            options.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
-        } else if (entityType == 0) {
+        } else if (entityType == -1) {
             options.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
             options.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
             options.put("relationTypeSet", Objects.requireNonNull(MetaData.getOptions()).relationTypeSet);

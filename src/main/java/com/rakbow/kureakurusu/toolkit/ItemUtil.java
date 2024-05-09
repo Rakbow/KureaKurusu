@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
+import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.data.vo.album.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.book.BookVO;
@@ -18,6 +19,7 @@ import lombok.SneakyThrows;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -70,6 +72,22 @@ public class ItemUtil {
         Class<? extends ItemListQueryDTO> queryClass = itemListQryMap.get(qry.getItemType());
         Constructor<? extends ItemListQueryDTO> constructor = queryClass.getConstructor(ListQueryDTO.class);
         return constructor.newInstance(qry);
+    }
+
+    public static Map<String, Object> getOptions(int type) {
+        Map<String, Object> res = new HashMap<>();
+        if(type == ItemType.ALBUM.getValue()) {
+            res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
+            res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
+            res.put("publishFormatSet", Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
+            res.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
+        }else if(type == ItemType.BOOK.getValue()) {
+            res.put("regionSet", Objects.requireNonNull(MetaData.getOptions()).regionSet);
+            res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
+            res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
+            res.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
+        }
+        return res;
     }
 
 }

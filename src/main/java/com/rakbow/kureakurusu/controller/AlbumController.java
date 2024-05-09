@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
@@ -51,9 +50,9 @@ public class AlbumController {
     //region advanced crud
 
     @PostMapping("update-track-info")
-    public ApiResult updateTrackInfo(@RequestBody AlbumUpdateTrackInfoCmd cmd) {
+    public ApiResult updateTrackInfo(@RequestBody AlbumUpdateTrackInfoDTO cmd) {
         srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", Entity.ALBUM.getName()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
     }
 
     @PostMapping("get-track-info")
