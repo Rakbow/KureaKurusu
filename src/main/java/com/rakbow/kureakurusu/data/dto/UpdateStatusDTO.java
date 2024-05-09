@@ -11,7 +11,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UpdateStatusCmd extends CommonCommand {
+public class UpdateStatusDTO extends DTO {
 
     private int entity;
     private List<Long> ids;

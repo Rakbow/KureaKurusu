@@ -4,15 +4,14 @@ import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.emun.LinkType;
-import com.rakbow.kureakurusu.data.dto.UpdateDetailCmd;
-import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
+import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
+import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
-import com.rakbow.kureakurusu.data.result.EntityStatisticInfo;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.toolkit.EnumHelper;
@@ -129,8 +128,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateItemStatus(UpdateStatusCmd cmd) {
-        mapper.updateItemStatus(EntityType.getTableName(cmd.getEntity()), cmd.getIds(), cmd.status());
+    public void updateEntryStatus(UpdateStatusDTO dto) {
+        mapper.updateEntryStatus(EntityType.getTableName(dto.getEntity()), dto.getIds(), dto.status());
     }
 
     /**
@@ -155,8 +154,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateItemDetail(UpdateDetailCmd cmd) {
-        mapper.updateItemDetail(EntityType.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
+    public void updateEntryDetail(UpdateDetailDTO dto) {
+        mapper.updateEntryDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
     }
 
     /**
@@ -165,8 +164,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateItemBonus(UpdateDetailCmd cmd) {
-        mapper.updateItemBonus(EntityType.getTableName(cmd.getEntityType()), cmd.getEntityId(), cmd.getText(), DateHelper.now());
+    public void updateEntryBonus(UpdateDetailDTO dto) {
+        mapper.updateEntryBonus(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
     }
 
     //endregion
@@ -176,13 +175,14 @@ public class GeneralService {
     /**
      * 根据实体类型和实体Id获取图片
      *
-     * @param tableName,entityId 实体表名 实体id
+     * @param entityType,entityId 实体类型 实体id
      * @author rakbow
      */
     @Transactional
-    public segmentImagesResult getItemImages(String tableName, long entityId) {
+    public segmentImagesResult getEntryImages(int entityType, long entityId) {
+        String tableName = Entity.getTableName(entityType);
         //original images
-        String imageJson = mapper.getItemImages(tableName, entityId);
+        String imageJson = mapper.getEntryImages(tableName, entityId);
         List<Image> images = JsonUtil.toJavaList(imageJson, Image.class);
         return CommonImageUtil.segmentImages(images);
     }
@@ -199,10 +199,10 @@ public class GeneralService {
     @SuppressWarnings("unchecked")
     @SneakyThrows
     @Transactional
-    public void addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
-        String tableName = Entity.getTableName(entityType);
+    public void addEntryImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
+        String tableName = EntityType.getTableName(entityType);
         //原始图片信息json数组
-        List<Image> originalImages = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
+        List<Image> originalImages = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), Image.class);
         //新增图片的信息
         List<Image> newImageInfos = JsonUtil.toJavaList(imageInfos, Image.class);
         //检测数据合法性
@@ -210,7 +210,7 @@ public class GeneralService {
         //save
         ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImages, newImageInfos);
         if(ar.state) {
-            mapper.updateItemImages(tableName, entityId, (List<Image>) ar.data, DateHelper.now());
+            mapper.updateEntryImages(tableName, entityId, (List<Image>) ar.data, DateHelper.now());
         }else {
             throw new Exception(ar.message);
         }
@@ -224,22 +224,23 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateItemImages(String tableName, long entityId, List<Image> images) {
-        mapper.updateItemImages(tableName, entityId, images, DateHelper.now());
+    public void updateEntryImages(int entityType, long entityId, List<Image> images) {
+        mapper.updateEntryImages(Entity.getTableName(entityType), entityId, images, DateHelper.now());
     }
 
     /**
      * 删除图片
      *
-     * @param tableName,entityId,images,deleteImages 实体表名,实体id,原图片信息,删除图片
+     * @param entityType,entityId,images,deleteImages 实体类型,实体id,原图片信息,删除图片
      * @param deleteImages 需要删除的图片jsonArray
      * @author rakbow
      */
     @Transactional
-    public void deleteItemImages(String tableName, long entityId, List<Image> deleteImages) {
-        List<Image> images = JsonUtil.toJavaList(mapper.getItemImages(tableName, entityId), Image.class);
+    public void deleteEntryImages(int entityType, long entityId, List<Image> deleteImages) {
+        String tableName = Entity.getTableName(entityType);
+        List<Image> images = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), Image.class);
         List<Image> finalImageJson = qiniuImageUtil.deleteImage(images, deleteImages);
-        mapper.updateItemImages(tableName, entityId, finalImageJson, DateHelper.now());
+        mapper.updateEntryImages(tableName, entityId, finalImageJson, DateHelper.now());
     }
 
     //endregion

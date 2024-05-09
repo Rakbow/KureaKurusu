@@ -8,7 +8,7 @@
 <!--        <result property="images" column="images" typeHandler="com.rakbow.kureakurusu.util.handler.TestHandler" />-->
 <!--    </resultMap>-->
 
-    <update id="updateItemStatus" keyProperty="id">
+    <update id="updateEntryStatus" keyProperty="id">
         update ${param1}
         set
         status = #{status}
@@ -23,45 +23,33 @@
         </where>
     </update>
 
-    <update id="updateItemDetail" keyProperty="id">
+    <update id="updateEntryDetail" keyProperty="id">
         update ${param1}
         set
         detail = #{text}, edited_time = #{editedTime}
         where id = #{entityId}
     </update>
 
-    <update id="updateItemBonus" keyProperty="id">
+    <update id="updateEntryBonus" keyProperty="id">
         update ${param1}
         set
         bonus = #{bonus}, edited_time = #{editedTime}
         where id = #{entityId}
     </update>
 
-    <update id="updateItemSpecs" keyProperty="id">
-        update ${param1}
-        set
-        specs = #{specs}, edited_time = #{editedTime}
-        where id = #{entityId}
-    </update>
-
-    <select id="getItemImages" resultType="string">
+    <select id="getEntryImages" resultType="string">
         select
         images
         from ${param1}
         where id = #{entityId}
     </select>
 
-    <update id="updateItemImages" parameterType="java.util.List">
+    <update id="updateEntryImages" parameterType="java.util.List">
         update ${param1}
         set
         images = #{images, typeHandler=com.rakbow.kureakurusu.util.handler.ImageHandler},
         edited_time = #{editedTime}
         where id = #{entityId}
     </update>
-
-    <select id="getItemAmount" resultType="int">
-        select count(id)
-        from ${param1}
-    </select>
 
 </mapper>

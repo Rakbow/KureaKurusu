@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UpdateDetailCmd extends CommonCommand {
+public class UpdateDetailDTO extends DTO {
 
     private int entityType;
     private long entityId;

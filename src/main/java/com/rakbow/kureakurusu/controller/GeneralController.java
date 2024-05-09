@@ -5,8 +5,8 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.GetOptionQry;
 import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
-import com.rakbow.kureakurusu.data.dto.UpdateDetailCmd;
-import com.rakbow.kureakurusu.data.dto.UpdateStatusCmd;
+import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
+import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.emun.Entity;
 import com.rakbow.kureakurusu.data.emun.EntityType;
@@ -15,8 +15,6 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.*;
-import com.rakbow.kureakurusu.service.item.AlbumService;
-import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
@@ -76,21 +74,21 @@ public class GeneralController {
         return new ApiResult().load(entityUtil.getDetailOptions(qry.getEntityType()));
     }
 
-    @PostMapping("update-items-status")
-    public ApiResult updateItemsStatus(@RequestBody UpdateStatusCmd cmd) {
-        srv.updateItemStatus(cmd);
+    @PostMapping("update-entry-status")
+    public ApiResult updateEntryStatus(@RequestBody UpdateStatusDTO dto) {
+        srv.updateEntryStatus(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.status.update.success"));
     }
 
-    @PostMapping("update-item-detail")
-    public ApiResult updateItemDetail(@RequestBody UpdateDetailCmd cmd) {
-        srv.updateItemDetail(cmd);
+    @PostMapping("update-entry-detail")
+    public ApiResult updateEntryDetail(@RequestBody UpdateDetailDTO dto) {
+        srv.updateEntryDetail(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.description.update.success"));
     }
 
-    @PostMapping("update-item-bonus")
-    public ApiResult updateItemBonus(@RequestBody UpdateDetailCmd cmd) {
-        srv.updateItemBonus(cmd);
+    @PostMapping("update-entry-bonus")
+    public ApiResult updateEntryBonus(@RequestBody UpdateDetailDTO dto) {
+        srv.updateEntryBonus(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.bonus.update.success"));
     }
 
@@ -99,36 +97,34 @@ public class GeneralController {
     //region image
 
     @PostMapping("get-images")
-    public ApiResult getItemImages(@RequestBody EntityQry qry) {
-        String tableName = Entity.getTableName(qry.getEntityType());
-        return new ApiResult().load(srv.getItemImages(tableName, qry.getEntityId()));
+    public ApiResult getEntryImages(@RequestBody EntityQry qry) {
+        return new ApiResult().load(srv.getEntryImages(qry.getEntityType(), qry.getEntityId()));
     }
 
     @PostMapping("add-images")
-    public ApiResult addItemImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
+    public ApiResult addEntryImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
         //check
         if (images == null || images.length == 0) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
         //save
-        srv.addItemImages(entityType, entityId, images, imageInfos);
+        srv.addEntryImages(entityType, entityId, images, imageInfos);
         return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
     }
 
     @PostMapping("update-images")
-    public ApiResult updateItemImages(@RequestBody ImageUpdateCmd cmd) {
+    public ApiResult updateEntryImages(@RequestBody ImageUpdateCmd cmd) {
         ApiResult res = new ApiResult();
         List<Image> images = cmd.getImages();
         if(images.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
-        String tableName = Entity.getTableName(cmd.getEntityType());
         //update
         if (cmd.update()) {
             //check
             CommonImageUtil.checkUpdateImages(images);
             //save
-            srv.updateItemImages(tableName, cmd.getEntityId(), images);
+            srv.updateEntryImages(cmd.getEntityType(), cmd.getEntityId(), images);
             res.ok(I18nHelper.getMessage("image.update.success"));
         }//delete
         else if (cmd.delete()) {
-            srv.deleteItemImages(tableName, cmd.getEntityId(), images);
+            srv.deleteEntryImages(cmd.getEntityType(), cmd.getEntityId(), images);
             res.ok(I18nHelper.getMessage("image.delete.success"));
         }else {
             return res.fail(I18nHelper.getMessage("entity.error.not_action"));
