@@ -27,7 +27,6 @@ public class BookCreateDTO extends ItemCreateDTO {
     private Integer bookType;
     private String region;
     private String lang;
-    private boolean hasBonus;
     private String summary;
 
     public BookCreateDTO() {
@@ -36,7 +35,6 @@ public class BookCreateDTO extends ItemCreateDTO {
         bookType = BookType.NOVEL.getValue();
         region = Region.JAPAN.getValue();
         lang = Language.JAPANESE.getValue();
-        hasBonus = false;
         summary = "";
     }
 

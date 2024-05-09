@@ -17,8 +17,6 @@ public interface CommonMapper {
     void updateEntryStatus(String tableName, List<Long> ids, int status);
     //通用更新描述
     void updateEntryDetail(String tableName, long entityId, String text, Timestamp editedTime);
-    //通用更新特典信息
-    void updateEntryBonus(String tableName, long entityId, String bonus, Timestamp editedTime);
 
     String getEntryImages(String tableName, long entityId);
     //更新图片

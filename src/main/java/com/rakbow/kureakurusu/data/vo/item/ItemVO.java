@@ -24,6 +24,8 @@ public class ItemVO {
     private String editedTime;
 
     private String detail;
+    private boolean hasBonus;
+    private String bonus;
     private boolean status;
 
 }

@@ -1,9 +1,12 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.service.ItemService;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ public class ItemController {
     private final ItemService srv;
 
     //region basic crud
+
     @PostMapping("add")
     public ApiResult add(@Valid @RequestBody ItemCreateDTO dto, BindingResult errors) {
         //check
@@ -60,6 +64,16 @@ public class ItemController {
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQueryDTO dto) {
         return new ApiResult().load(srv.list(dto));
+    }
+
+    //endregion
+
+    //region advance crud
+
+    @PostMapping("update-bonus")
+    public ApiResult updateItemBonus(@RequestBody ItemBonusUpdateDTO dto) {
+        srv.update(new LambdaUpdateWrapper<Item>().eq(Item::getId, dto.getId()).set(Item::getBonus, dto.getBonus()));
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.bonus.update.success"));
     }
 
     //endregion

@@ -39,6 +39,7 @@ public class ItemCreateDTO extends DTO {
     private String currency;
 
     private String remark;
+    private boolean hasBonus;
 
     public ItemCreateDTO() {
         name = "";
@@ -49,6 +50,7 @@ public class ItemCreateDTO extends DTO {
         price = 0;
         currency = Currency.JPY.getValue();
         remark = "";
+        hasBonus = false;
     }
 
 }

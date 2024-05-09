@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +33,13 @@ public class AlbumUpdateDTO extends ItemUpdateDTO {
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
-    private boolean hasBonus;
+
+    public AlbumUpdateDTO() {
+        setType(ItemType.ALBUM.getValue());
+        catalogNo = "";
+        publishFormat = new ArrayList<>();
+        albumFormat = new ArrayList<>();
+        mediaFormat = new ArrayList<>();
+    }
 
 }

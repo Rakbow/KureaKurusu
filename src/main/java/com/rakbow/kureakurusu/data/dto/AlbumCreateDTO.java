@@ -31,7 +31,6 @@ public class AlbumCreateDTO extends ItemCreateDTO {
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
-    private boolean hasBonus;
 
     public AlbumCreateDTO() {
         setType(ItemType.ALBUM.getValue());
@@ -39,7 +38,6 @@ public class AlbumCreateDTO extends ItemCreateDTO {
         publishFormat = new ArrayList<>();
         albumFormat = new ArrayList<>();
         mediaFormat = new ArrayList<>();
-        hasBonus = false;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.annotation.QueryColumn;
+import com.rakbow.kureakurusu.data.entity.QueryColumnType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,7 @@ public class ItemListQueryDTO {
     private String nameZh;
     private String nameEn;
     private String ean13;
+    private Boolean hasBonus;
 
     private int page;
     private int size;
@@ -33,6 +36,7 @@ public class ItemListQueryDTO {
         nameZh = dto.getVal("nameZh");
         nameEn = dto.getVal("nameEn");
         ean13 = dto.getVal("ean13");
+        hasBonus = dto.getVal("hasBonus");
     }
 
     public boolean asc() {

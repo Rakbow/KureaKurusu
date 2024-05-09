@@ -22,8 +22,6 @@ public class BookListQueryDTO extends ItemListQueryDTO {
     private String lang;
     @QueryColumn(type = QueryColumnType.NUMBER)
     private Integer bookType;
-    @QueryColumn(type = QueryColumnType.BOOLEAN)
-    private Boolean hasBonus;
 
     public BookListQueryDTO(ListQueryDTO dto) {
         super(dto);
@@ -32,7 +30,6 @@ public class BookListQueryDTO extends ItemListQueryDTO {
         this.region = dto.getVal("region");
         this.lang = dto.getVal("lang");
         this.bookType = dto.getVal("bookType");
-        this.hasBonus = dto.getVal("hasBonus");
     }
 
 }

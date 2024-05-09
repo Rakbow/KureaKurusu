@@ -197,6 +197,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .like(StringUtils.isNotBlank(param.getNameZh()), Item::getNameZh, param.getNameZh())
                 .like(StringUtils.isNotBlank(param.getNameEn()), Item::getNameEn, param.getNameEn())
                 .like(StringUtils.isNotBlank(param.getEan13()), Item::getEan13, param.getEan13())
+                .like(param.getHasBonus() != null, Item::getHasBonus, Boolean.TRUE.equals(param.getHasBonus()) ? 1 : 0)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         //private query column to sql
         MyBatisUtil.itemListQueryWrapper(param, wrapper);

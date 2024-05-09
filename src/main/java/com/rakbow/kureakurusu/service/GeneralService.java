@@ -158,16 +158,6 @@ public class GeneralService {
         mapper.updateEntryDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
     }
 
-    /**
-     * 更新特典信息
-     *
-     * @author rakbow
-     */
-    @Transactional
-    public void updateEntryBonus(UpdateDetailDTO dto) {
-        mapper.updateEntryBonus(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
-    }
-
     //endregion
 
     //region image operation

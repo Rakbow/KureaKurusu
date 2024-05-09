@@ -54,6 +54,9 @@ public class Item {
     @TableField(typeHandler = ImageHandler.class)
     private List<Image> images;//图片列表
     private String detail;//描述
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean hasBonus;//是否包含特典内容 0-无 1-有
+    private String bonus;//特典信息
     private String remark;//备注
 
     @TableField(updateStrategy = FieldStrategy.NEVER)

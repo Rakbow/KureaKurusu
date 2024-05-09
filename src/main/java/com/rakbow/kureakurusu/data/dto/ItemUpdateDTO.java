@@ -2,6 +2,8 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.rakbow.kureakurusu.data.emun.Currency;
+import com.rakbow.kureakurusu.toolkit.DateHelper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,5 +41,18 @@ public class ItemUpdateDTO extends DTO {
     private String currency;
 
     private String remark;
+    private boolean hasBonus;
+
+    public ItemUpdateDTO() {
+        name = "";
+        nameZh = "";
+        nameEn = "";
+        ean13 = "";
+        releaseDate = DateHelper.DEFAULT_DATE;
+        price = 0;
+        currency = Currency.JPY.getValue();
+        remark = "";
+        hasBonus = false;
+    }
 
 }

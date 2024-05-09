@@ -20,6 +20,5 @@ public class BookVO extends ItemVO {
     private Attribute<String> region;
     private Attribute<String> lang;
     private String summary;
-    private boolean hasBonus;
 
 }

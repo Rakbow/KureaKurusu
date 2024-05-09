@@ -32,20 +32,5 @@ public class ItemBook extends SubItem {
 
     private String summary;//简介
     private String spec;//规格
-    private Boolean hasBonus;//是否包含特典
-    private String bonus;//特典信息
-
-    public ItemBook() {
-        this.id = 0L;
-        this.isbn10 = "";
-        this.bookType = BookType.UNCATEGORIZED;
-        this.region = Region.GLOBAL;
-        this.lang = Language.JAPANESE;
-        this.authors = "[]";
-        this.summary = "";
-        this.spec = "[]";
-        this.hasBonus = false;
-        this.bonus = "";
-    }
 
 }

@@ -30,13 +30,6 @@
         where id = #{entityId}
     </update>
 
-    <update id="updateEntryBonus" keyProperty="id">
-        update ${param1}
-        set
-        bonus = #{bonus}, edited_time = #{editedTime}
-        where id = #{entityId}
-    </update>
-
     <select id="getEntryImages" resultType="string">
         select
         images

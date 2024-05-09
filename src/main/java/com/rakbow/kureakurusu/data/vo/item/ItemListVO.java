@@ -11,6 +11,7 @@ import lombok.Data;
 public class ItemListVO {
 
     private long id;
+    private int type;
     private String name;
     private String nameZh;
     private String nameEn;

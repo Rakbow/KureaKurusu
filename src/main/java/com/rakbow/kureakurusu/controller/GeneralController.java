@@ -85,12 +85,6 @@ public class GeneralController {
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.description.update.success"));
     }
 
-    @PostMapping("update-entry-bonus")
-    public ApiResult updateEntryBonus(@RequestBody UpdateDetailDTO dto) {
-        srv.updateEntryBonus(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.bonus.update.success"));
-    }
-
     //endregion
 
     //region image

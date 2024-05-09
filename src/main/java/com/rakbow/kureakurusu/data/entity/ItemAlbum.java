@@ -30,16 +30,5 @@ public class ItemAlbum extends SubItem {
     private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> mediaFormat;//媒体类型
-    private Boolean hasBonus;//是否包含特典内容 0-无 1-有
-    private String bonus;//特典信息
 
-    public ItemAlbum() {
-        this.id = 0L;
-        this.catalogNo = "";
-        this.publishFormat = new ArrayList<>();
-        this.albumFormat = new ArrayList<>();
-        this.mediaFormat = new ArrayList<>();
-        this.hasBonus = false;
-        this.bonus = "";
-    }
 }

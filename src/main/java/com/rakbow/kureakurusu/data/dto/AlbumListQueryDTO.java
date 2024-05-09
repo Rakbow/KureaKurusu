@@ -24,8 +24,6 @@ public class AlbumListQueryDTO extends ItemListQueryDTO {
     private List<Integer> mediaFormat;
     @QueryColumn(type = QueryColumnType.NUMBER_LIST)
     private List<Integer> publishFormat;
-    @QueryColumn(type = QueryColumnType.BOOLEAN)
-    private Boolean hasBonus;
 
     public AlbumListQueryDTO(ListQueryDTO dto) {
         super(dto);
@@ -34,7 +32,6 @@ public class AlbumListQueryDTO extends ItemListQueryDTO {
         this.albumFormat = dto.getArray("albumFormat");
         this.mediaFormat = dto.getArray("mediaFormat");
         this.publishFormat = dto.getArray("publishFormat");
-        this.hasBonus = dto.getVal("hasBonus");
     }
 
 }
