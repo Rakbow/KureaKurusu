@@ -1,10 +1,12 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.ItemUpdate;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -38,7 +40,8 @@ public class AlbumController {
     }
 
     @PostMapping("update")
-    public ApiResult update(@Valid @RequestBody AlbumUpdateDTO dto, BindingResult errors) {
+    @ItemUpdate
+    public ApiResult update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update

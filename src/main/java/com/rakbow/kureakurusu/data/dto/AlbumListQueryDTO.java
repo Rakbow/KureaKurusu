@@ -1,12 +1,10 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.rakbow.kureakurusu.annotation.QueryColumn;
-import com.rakbow.kureakurusu.annotation.QueryColumnType;
+import com.rakbow.kureakurusu.data.entity.QueryColumnType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.annotation.QueryColumn;
-import com.rakbow.kureakurusu.annotation.QueryColumnType;
+import com.rakbow.kureakurusu.data.entity.QueryColumnType;
 import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.*;
 import lombok.SneakyThrows;
