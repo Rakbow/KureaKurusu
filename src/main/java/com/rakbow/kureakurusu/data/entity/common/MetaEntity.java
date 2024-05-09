@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.ImageHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -25,8 +26,10 @@ public class MetaEntity {
     private String detail;//描述
     private String remark;//备注
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
+    @AutoMapping(qualifiedByName = "getVOTime")
     private Timestamp addedTime;//数据新增时间
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
+    @AutoMapping(qualifiedByName = "getVOTime")
     private Timestamp editedTime;//数据更新时间
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;//激活状态

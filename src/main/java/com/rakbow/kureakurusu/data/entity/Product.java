@@ -6,7 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.ProductUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
+import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,6 +26,10 @@ import java.util.ArrayList;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(value = "product", autoResultMap = true)
+@AutoMappers({
+        @AutoMapper(target = ProductVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = ProductListVO.class, reverseConvertGenerate = false)
+})
 public class Product extends MetaEntity {
 
     private Long id;//主键
@@ -31,7 +40,9 @@ public class Product extends MetaEntity {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;//英文译名
     private String releaseDate;//日期
+    @AutoMapping(qualifiedByName = "getFranchise")
     private long franchise;//所属系列id
+    @AutoMapping(qualifiedByName = "toAttribute")
     private ProductCategory category;//作品分类
 
     public Product() {

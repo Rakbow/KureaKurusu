@@ -1,9 +1,10 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.entity.Franchise;
+import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import jakarta.validation.constraints.NotBlank;
 
 /**
  * @author Rakbow
@@ -11,7 +12,8 @@ import jakarta.validation.constraints.NotBlank;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class FranchiseAddDTO extends DTO {
+@AutoMapper(target = Franchise.class, reverseConvertGenerate = false)
+public class FranchiseCreateDTO extends DTO {
 
     private long id;
     @NotBlank(message = "{entity.crud.name.required_field}")

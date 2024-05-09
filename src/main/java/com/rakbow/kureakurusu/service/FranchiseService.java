@@ -15,9 +15,9 @@ import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
-import com.rakbow.kureakurusu.toolkit.convert.FranchiseVOMapper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
-    private final FranchiseVOMapper voMapper;
+    private final Converter converter;
     private final int ENTITY_VALUE = EntityType.FRANCHISE.getValue();
 
     @SneakyThrows
@@ -48,7 +48,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
             throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.FRANCHISE.getLabel()));
 
         return FranchiseDetailVO.builder()
-                .item(voMapper.toVO(item))
+                .item(converter.convert(item, FranchiseVO.class))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.FRANCHISE, item.getImages()))
@@ -63,7 +63,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
                 .like("name_en", param.getNameEn())
                 .orderBy(param.isSort(), param.asc(), param.sortField);
         IPage<Franchise> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<FranchiseVO> items = voMapper.toVO(pages.getRecords());
+        List<FranchiseVO> items = converter.convert(pages.getRecords(), FranchiseVO.class);
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 

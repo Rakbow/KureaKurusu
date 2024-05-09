@@ -21,15 +21,15 @@ import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
-import com.rakbow.kureakurusu.data.vo.product.ProductMiniVO;
-import com.rakbow.kureakurusu.data.vo.product.ProductVOAlpha;
+import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
+import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
 import com.rakbow.kureakurusu.toolkit.convert.EpisodeVOMapper;
-import com.rakbow.kureakurusu.toolkit.convert.ProductVOMapper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -54,7 +54,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
-    private final ProductVOMapper VOMapper;
+    private final Converter converter;
     private final EpisodeVOMapper epVOMapper;
     //endregion
 
@@ -72,17 +72,17 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     //region ------basic crud------
 
     @Transactional
-    public List<ProductMiniVO> getRelatedProducts(long franchiseId) {
+    public List<ProductListVO> getRelatedProducts(long franchiseId) {
         List<Product> products = mapper.selectList(
                 new LambdaQueryWrapper<Product>()
                         .eq(Product::getFranchise, franchiseId)
                         .eq(Product::getStatus, 1)
         );
-        return VOMapper.toMiniVO(products);
+        return converter.convert(products, ProductListVO.class);
     }
 
     @Transactional
-    public SearchResult<ProductMiniVO> searchProducts(SearchQry qry) {
+    public SearchResult<ProductListVO> searchProducts(SearchQry qry) {
         SimpleSearchParam param = new SimpleSearchParam(qry);
         if(param.keywordEmpty()) new SearchResult<>();
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
@@ -92,12 +92,12 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .eq(Product::getStatus, 1)
                 .orderByDesc(Product::getId);
         IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<ProductMiniVO> items = VOMapper.toMiniVO(pages.getRecords());
+        List<ProductListVO> items = converter.convert(pages.getRecords(), ProductListVO.class);
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
     @Transactional
-    public SearchResult<ProductVOAlpha> getProducts(ProductListParams param) {
+    public SearchResult<ProductListVO> list(ProductListParams param) {
         QueryWrapper<Product> wrapper = new QueryWrapper<Product>()
                 .like("name", param.getName())
                 .like("name_zh", param.getNameZh())
@@ -105,7 +105,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .in(CollectionUtils.isNotEmpty(param.getCategory()), "category", param.getCategory())
                 .orderBy(param.isSort(), param.asc(), param.sortField);
         IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<ProductVOAlpha> items = VOMapper.toVOAlpha(pages.getRecords());
+        List<ProductListVO> items = converter.convert(pages.getRecords(), ProductListVO.class);
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
@@ -116,7 +116,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         if(product == null)
             throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.PRODUCT.getLabel()));
         return ProductDetailVO.builder()
-                .item(VOMapper.toVO(product))
+                .item(converter.convert(product, ProductVO.class))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.PRODUCT, product.getImages()))

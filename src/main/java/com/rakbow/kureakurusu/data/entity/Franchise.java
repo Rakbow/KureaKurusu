@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.FranchiseUpdateDTO;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.vo.franchise.FranchiseVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,6 +23,9 @@ import java.util.ArrayList;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(value = "franchise", autoResultMap = true)
+@AutoMappers({
+        @AutoMapper(target = FranchiseVO.class, reverseConvertGenerate = false)
+})
 public class Franchise extends MetaEntity {
 
     private Long id;//主键

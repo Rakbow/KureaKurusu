@@ -9,7 +9,7 @@ import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.convert.ProductVOMapper;
+import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -28,7 +28,7 @@ public class ProductController {
 
     private final ProductService srv;
     private final PersonService personSrv;
-    private final ProductVOMapper VOMapper;
+    private final Converter converter;
     private final int ENTITY_VALUE = EntityType.PRODUCT.getValue();
     //endregion
 
@@ -44,15 +44,15 @@ public class ProductController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(srv.getProducts(new ProductListParams(qry)));
+        return new ApiResult().load(srv.list(new ProductListParams(qry)));
     }
 
     @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody ProductAddDTO dto, BindingResult errors) {
+    public ApiResult add(@Valid @RequestBody ProductCreateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //build
-        Product product = VOMapper.build(dto);
+        Product product = converter.convert(dto, Product.class);
         //save
         srv.save(product);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.PRODUCT.getLabel()));

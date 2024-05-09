@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.entity.Product;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,7 +13,8 @@ import jakarta.validation.constraints.NotBlank;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ProductAddDTO extends DTO {
+@AutoMapper(target = Product.class, reverseConvertGenerate = false)
+public class ProductCreateDTO extends DTO {
 
     private long id;
     @NotBlank(message = "{entity.crud.name.required_field}")

@@ -6,10 +6,7 @@ import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
-import com.rakbow.kureakurusu.toolkit.EnumHelper;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.SneakyThrows;
 import org.mapstruct.Mapper;
@@ -136,6 +133,11 @@ public interface MetaVOMapper {
             res.add(new LinkVO(link));
         }
         return res;
+    }
+
+    @Named("getFranchise")
+    default Attribute<Long> getFranchise(long value) {
+        return DataFinder.findAttributeByValue(value, Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
     }
 
 }

@@ -8,6 +8,6 @@ import io.github.linpeilie.annotations.MapperConfig;
  * @since 2024/4/29 17:57
  */
 @ComponentModelConfig(componentModel = "spring")
-@MapperConfig(mapperPackage = "com.rakbow.kureakurusu.util.convertMapper")
+@MapperConfig(mapperPackage = "com.rakbow.kureakurusu.toolkit.convert")
 public class MapStructPlusConfig {
 }

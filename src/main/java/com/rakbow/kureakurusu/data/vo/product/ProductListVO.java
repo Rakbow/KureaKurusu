@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2023-01-13 9:42
  */
 @Data
-public class ProductVOAlpha {
+public class ProductListVO {
 
     //基础信息
     private int id;//主键

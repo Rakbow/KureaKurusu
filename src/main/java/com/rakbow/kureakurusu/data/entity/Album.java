@@ -30,7 +30,7 @@ import java.util.List;
 @TableName(value = "album", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false),
-            @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false)
 })
 public class Album extends SuperItem {
 

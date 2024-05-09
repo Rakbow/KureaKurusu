@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.emun;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import io.github.linpeilie.annotations.AutoEnumMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
+@AutoEnumMapper("value")
 public enum ProductCategory {
 
     GAME(0, "enum.product_category.game"),

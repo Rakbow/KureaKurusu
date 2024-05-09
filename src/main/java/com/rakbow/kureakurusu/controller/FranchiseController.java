@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.service.FranchiseService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.convert.FranchiseVOMapper;
+import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -24,7 +24,7 @@ public class FranchiseController {
     //region inject
 
     private final FranchiseService srv;
-    private final FranchiseVOMapper voMapper;
+    private final Converter converter;
 
     //endregion
 
@@ -42,11 +42,11 @@ public class FranchiseController {
     }
 
     @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody FranchiseAddDTO dto, BindingResult errors) {
+    public ApiResult add(@Valid @RequestBody FranchiseCreateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //build
-        Franchise item = voMapper.build(dto);
+        Franchise item = converter.convert(dto, Franchise.class);
         //save
         srv.save(item);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success"));

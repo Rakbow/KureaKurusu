@@ -39,8 +39,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     //region inject
 
     private final EpisodeMapper epMapper;
-    private final ItemAlbumMapper itemAlbumMapper;
-
+    private final ItemAlbumMapper mapper;
     private final SqlSessionFactory sqlSessionFactory;
 
     //endregion
@@ -50,7 +49,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
 
-        ItemAlbum album = itemAlbumMapper.selectById(id);
+        ItemAlbum album = mapper.selectById(id);
         if(album == null) return res;
 
         //get all episode
