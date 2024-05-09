@@ -22,30 +22,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("db/book")
 public class BookController {
-
-    //region inject
-
-    private final BookService srv;
-    private final ItemService itemSrv;
-
-    // region basic crud
-
-    @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody BookCreateDTO dto, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        return new ApiResult().ok(itemSrv.insert(dto));
-    }
-
-    @PostMapping("update")
-    public ApiResult updateBook(@Valid @RequestBody BookUpdateDTO dto, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        return  new ApiResult().ok(itemSrv.update(dto));
-    }
-
-    //endregion
-
 }

@@ -25,9 +25,9 @@ import java.util.List;
 public class AlbumCreateDTO extends ItemCreateDTO {
 
     private String catalogNo;
-    @NotEmpty(message = "{entity.crud.publish_format.required_field}")
+    @NotEmpty(message = "{album.crud.publish_format.required_field}")
     private List<Integer> publishFormat;
-    @NotEmpty(message = "{entity.crud.album_format.required_field}")
+    @NotEmpty(message = "{album.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
@@ -39,7 +39,7 @@ public class AlbumCreateDTO extends ItemCreateDTO {
         publishFormat = new ArrayList<>();
         albumFormat = new ArrayList<>();
         mediaFormat = new ArrayList<>();
-        hasBonus = true;
+        hasBonus = false;
     }
 
 }

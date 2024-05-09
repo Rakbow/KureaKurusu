@@ -70,7 +70,7 @@ public class GeneralController {
 
     @PostMapping("get-option")
     public ApiResult getOption(@RequestBody GetOptionQry qry) {
-        return new ApiResult().load(entityUtil.getDetailOptions(qry.getEntityType()));
+        return new ApiResult().load(entityUtil.getDetailOptions(qry.getType()));
     }
 
     @PostMapping("update-entry-status")

@@ -1,15 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.annotation.ItemUpdate;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.AlbumTrackInfoQry;
+import com.rakbow.kureakurusu.data.dto.AlbumUpdateTrackInfoDTO;
 import com.rakbow.kureakurusu.service.item.AlbumService;
-import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,28 +22,6 @@ public class AlbumController {
 
     //region inject
     private final AlbumService srv;
-    private final ItemService itemSrv;
-    //endregion
-
-    //region basic crud
-
-    @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody AlbumCreateDTO dto, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        return new ApiResult().ok(itemSrv.insert(dto));
-    }
-
-    @PostMapping("update")
-    @ItemUpdate
-    public ApiResult update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //update
-        return new ApiResult().ok(itemSrv.update(dto));
-    }
-
     //endregion
 
     //region advanced crud

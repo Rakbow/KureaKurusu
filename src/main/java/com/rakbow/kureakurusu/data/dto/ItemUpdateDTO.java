@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,6 +12,14 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = AlbumUpdateDTO.class, name = "1"),
+        @JsonSubTypes.Type(value = BookUpdateDTO.class, name = "2")
+})
 public class ItemUpdateDTO extends DTO {
 
     private Long id;

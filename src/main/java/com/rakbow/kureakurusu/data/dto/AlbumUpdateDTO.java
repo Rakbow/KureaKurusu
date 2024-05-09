@@ -25,9 +25,9 @@ import java.util.List;
 public class AlbumUpdateDTO extends ItemUpdateDTO {
 
     private String catalogNo;
-    @NotEmpty(message = "{entity.crud.publish_format.required_field}")
+    @NotEmpty(message = "{album.crud.publish_format.required_field}")
     private List<Integer> publishFormat;
-    @NotEmpty(message = "{entity.crud.album_format.required_field}")
+    @NotEmpty(message = "{album.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;

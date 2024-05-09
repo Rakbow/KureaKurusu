@@ -1,5 +1,9 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.emun.BookType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.emun.Language;
+import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemBook;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -25,5 +29,15 @@ public class BookCreateDTO extends ItemCreateDTO {
     private String lang;
     private boolean hasBonus;
     private String summary;
+
+    public BookCreateDTO() {
+        setType(ItemType.BOOK.getValue());
+        isbn10 = "";
+        bookType = BookType.NOVEL.getValue();
+        region = Region.JAPAN.getValue();
+        lang = Language.JAPANESE.getValue();
+        hasBonus = false;
+        summary = "";
+    }
 
 }

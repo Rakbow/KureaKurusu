@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GetOptionQry extends QueryDTO {
 
-    private int entityType;
+    private int type;
 
 }
