@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo.book;
+package com.rakbow.kureakurusu.data.vo.item;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;

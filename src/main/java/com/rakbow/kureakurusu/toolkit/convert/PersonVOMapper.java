@@ -21,18 +21,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = MetaVOMapper.class)
 public interface PersonVOMapper {
 
-    PersonVOMapper INSTANCES = Mappers.getMapper(PersonVOMapper.class);
-
-    @Mapping(source = "gender", target = "gender", qualifiedByName = "getGender")
-    @Named("build")
-    Person build(PersonAddDTO dto);
-
-    @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
-    @Mapping(source = "gender.value", target = "gender.value")
-    @Mapping(source = "links", target = "links",qualifiedByName = "getLinks")
-    @ToVO
-    PersonVO toVO(Person person);
-
     @Mapping(source = "gender.labelKey", target = "gender.label",qualifiedByName = "getEnumLabel")
     @Mapping(source = "gender.value", target = "gender.value")
     @Named("toMiniVO")

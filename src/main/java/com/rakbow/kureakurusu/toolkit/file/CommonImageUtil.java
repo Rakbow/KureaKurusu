@@ -9,7 +9,8 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.ImageVO;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.convert.GeneralVOMapper;
+import com.rakbow.kureakurusu.toolkit.SpringUtil;
+import io.github.linpeilie.Converter;
 import lombok.SneakyThrows;
 
 import javax.imageio.ImageIO;
@@ -28,7 +29,7 @@ import static com.rakbow.kureakurusu.data.CommonConstant.*;
  */
 public class CommonImageUtil {
 
-    private static final GeneralVOMapper VOMapper = GeneralVOMapper.INSTANCES;
+    private static final Converter converter = SpringUtil.getBean(Converter.class);
 
     private static final int DEFAULT_THUMB_SIZE = 200;
     private static final int THUMB_SIZE_70 = 70;
@@ -146,7 +147,7 @@ public class CommonImageUtil {
     private static segmentImagesResult segmentImages(List<Image> orgImages, ImageConfigValue config) {
 
         segmentImagesResult res = new segmentImagesResult();
-        res.setImages(VOMapper.toVO(orgImages));
+        res.setImages(converter.convert(orgImages, ImageVO.class));
 
         if (config.isWidth()) {
             res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, config.getCoverSize()));
@@ -180,7 +181,7 @@ public class CommonImageUtil {
     public static segmentImagesResult segmentImages(List<Image> orgImages) {
 
         segmentImagesResult res = new segmentImagesResult();
-        res.setImages(VOMapper.toVO(orgImages));
+        res.setImages(converter.convert(orgImages, ImageVO.class));
         if (!res.getImages().isEmpty()) {
             for (ImageVO image : res.getImages()) {
                 //添加缩略图

@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo.album;
+package com.rakbow.kureakurusu.data.vo.item;
 
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;

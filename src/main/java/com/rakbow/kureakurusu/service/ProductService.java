@@ -26,7 +26,6 @@ import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
-import com.rakbow.kureakurusu.toolkit.convert.EpisodeVOMapper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
@@ -55,7 +54,6 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final Converter converter;
-    private final EpisodeVOMapper epVOMapper;
     //endregion
 
     //region const
@@ -148,7 +146,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         List<EpisodeVOAlpha> res = new ArrayList<>();
         if(Arrays.asList(VIDEO_PRODUCT).contains(category)) {
             List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, productId));
-            res.addAll(epVOMapper.toVOAlpha(eps));
+            res.addAll(converter.convert(eps, EpisodeVOAlpha.class));
         }
         return res;
     }

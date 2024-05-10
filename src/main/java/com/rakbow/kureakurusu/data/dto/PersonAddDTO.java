@@ -1,9 +1,12 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.entity.Person;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMapping;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@AutoMapper(target = Person.class, reverseConvertGenerate = false)
 public class PersonAddDTO extends DTO {
 
     @NotBlank(message = "{entity.crud.name.required_field}")
@@ -21,6 +25,7 @@ public class PersonAddDTO extends DTO {
     private String nameEn;
     private List<String> aliases;
     private String birthDate;
+    @AutoMapping(qualifiedByName = "getGender")
     private int gender;
     private String remark;
 

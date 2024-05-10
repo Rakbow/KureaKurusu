@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -51,6 +52,7 @@ public class ItemController {
 
     //region query
 
+    @UniqueVisitor
     @PostMapping("detail")
     public ApiResult detail(@RequestBody CommonDetailQry qry) {
         return new ApiResult().load(srv.detail(qry.getId()));

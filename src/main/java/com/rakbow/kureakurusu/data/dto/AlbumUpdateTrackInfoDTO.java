@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.vo.album.AlbumDiscVO;
+import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

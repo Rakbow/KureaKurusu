@@ -10,7 +10,7 @@ import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.service.PersonRoleService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.convert.PersonVOMapper;
+import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -31,7 +31,7 @@ public class PersonController {
     //region inject
     private final PersonService srv;
     private final PersonRoleService roleSrv;
-    private final PersonVOMapper VOMapper;
+    private final Converter converter;
     //endregion
 
     //region person
@@ -57,7 +57,7 @@ public class PersonController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //build
-        Person person = VOMapper.build(dto);
+        Person person = converter.convert(dto, Person.class);
         //save
         srv.save(person);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.PERSON.getLabel()));

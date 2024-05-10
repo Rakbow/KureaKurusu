@@ -18,23 +18,15 @@ public class DataFinder {
     public static Episode episodeFinder = new Episode();
     public static Person personFinder = new Person();
     public static Franchise franchiseFinder = new Franchise();
-    public static Album albumFinder = new Album();
     public static Item itemFinder = new Item();
     public static Product productFinder = new Product();
 
     //region album
 
     public static Item findItemById(Long id, List<Item> items) {
-        albumFinder.setId(id);
+        itemFinder.setId(id);
         int idx = Collections.binarySearch(items, itemFinder, DataSorter.itemIdSorter);
         if (idx >= 0) return items.get(idx);
-        return null;
-    }
-
-    public static Album findAlbumById(Long id, List<Album> albums) {
-        albumFinder.setId(id);
-        int idx = Collections.binarySearch(albums, albumFinder, DataSorter.albumIdSorter);
-        if (idx >= 0) return albums.get(idx);
         return null;
     }
 

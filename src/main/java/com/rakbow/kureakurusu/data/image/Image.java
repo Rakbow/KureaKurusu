@@ -2,7 +2,10 @@ package com.rakbow.kureakurusu.data.image;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.vo.ImageVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
 
 /**
@@ -12,6 +15,9 @@ import lombok.Data;
  * @since 2023-02-08 18:04
  */
 @Data
+@AutoMappers({
+        @AutoMapper(target = ImageVO.class, reverseConvertGenerate = false)
+})
 public class Image {
 
     private String url;//图片url

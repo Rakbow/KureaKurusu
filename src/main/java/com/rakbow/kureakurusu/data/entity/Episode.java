@@ -3,8 +3,11 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.common.File;
+import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.FileHandler;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +26,9 @@ import java.util.List;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @TableName(value = "episode", autoResultMap = true)
+@AutoMappers({
+        @AutoMapper(target = EpisodeVOAlpha.class, reverseConvertGenerate = false)
+})
 public class Episode {
 
     @Builder.Default

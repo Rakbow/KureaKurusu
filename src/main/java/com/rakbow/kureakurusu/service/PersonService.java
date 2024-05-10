@@ -25,12 +25,14 @@ import com.rakbow.kureakurusu.data.person.PersonnelPair;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.vo.person.PersonDetailVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
+import com.rakbow.kureakurusu.data.vo.person.PersonVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.convert.PersonVOMapper;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +58,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
     private final PersonRelationMapper relationMapper;
     private final EntityUtil entityUtil;
     private final SqlSessionFactory sqlSessionFactory;
+    private final Converter converter;
     private final int ENTITY_VALUE = EntityType.PERSON.getValue();
 
     @SneakyThrows
@@ -66,7 +69,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
             throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.PERSON.getLabel()));
 
         return PersonDetailVO.builder()
-                .item(VOMapper.toVO(person))
+                .item(converter.convert(person, PersonVO.class))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .build();

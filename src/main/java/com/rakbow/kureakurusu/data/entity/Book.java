@@ -8,7 +8,7 @@ import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
-import com.rakbow.kureakurusu.data.vo.book.BookVO;
+import com.rakbow.kureakurusu.data.vo.item.BookVO;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;

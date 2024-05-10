@@ -144,7 +144,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     //region query
     @Transactional
     @SneakyThrows
-    @UniqueVisitor
     public ItemDetailVO detail(long id) {
         SuperItem item = getById(id);
         if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));

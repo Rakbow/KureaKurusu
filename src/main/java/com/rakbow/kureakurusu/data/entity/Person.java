@@ -8,9 +8,14 @@ import com.rakbow.kureakurusu.data.dto.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.vo.person.PersonVO;
+import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.LinkHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +33,9 @@ import java.util.List;
 @Data
 @ToString(callSuper = true)
 @TableName(value = "person", autoResultMap = true)
+@AutoMappers({
+        @AutoMapper(target = PersonVO.class, reverseConvertGenerate = false)
+})
 public class Person extends MetaEntity {
 
     @OrderBy
@@ -42,9 +50,11 @@ public class Person extends MetaEntity {
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases; //别名 json数组
     private String cover; //头像url
+    @AutoMapping(qualifiedByName = "toAttribute")
     private Gender gender; //性别 0-未知 1-男 2-女
     private String birthDate; //生日
     @TableField(typeHandler = LinkHandler.class)
+    @AutoMapping(qualifiedByName = "getLinks")
     private List<Link> links; //链接 json数组
     private String info; //其他信息 json对象
 
