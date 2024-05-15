@@ -87,11 +87,6 @@ public class ItemController {
         return new ApiResult().load(ItemUtil.getOptions(qry.getType()));
     }
 
-    @PostMapping("get-isbn")
-    public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
-        return new ApiResult().load(srv.getISBN(dto.getLabel(), dto.getIsbn()));
-    }
-
     //endregion
 
 }

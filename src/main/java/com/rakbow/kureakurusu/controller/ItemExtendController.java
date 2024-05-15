@@ -3,7 +3,9 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.AlbumTrackInfoQry;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateTrackInfoDTO;
+import com.rakbow.kureakurusu.data.dto.BookIsbnDTO;
 import com.rakbow.kureakurusu.service.item.AlbumService;
+import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,30 +15,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Rakbow
- * @since 2022-08-07 21:53
+ * @since 2024/5/14 16:48
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("db/album")
-public class AlbumController {
+@RequestMapping("db/item")
+public class ItemExtendController {
 
     //region inject
-    private final AlbumService srv;
+    private final AlbumService albumSrv;
+    private final BookService bookSrv;
     //endregion
 
-    //region advanced crud
-
-    @PostMapping("update-track-info")
+    @PostMapping("update-album-track-info")
     public ApiResult updateTrackInfo(@RequestBody AlbumUpdateTrackInfoDTO cmd) {
-        srv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
+        albumSrv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
     }
 
-    @PostMapping("get-track-info")
+    @PostMapping("get-album-track-info")
     public ApiResult getTrackInfo(@RequestBody AlbumTrackInfoQry qry) {
-        return new ApiResult().load(srv.getTrackInfo(qry.getId()));
+        return new ApiResult().load(albumSrv.getTrackInfo(qry.getId()));
     }
 
-    //endregion
+
+    @PostMapping("get-isbn")
+    public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
+        return new ApiResult().load(bookSrv.getISBN(dto.getLabel(), dto.getIsbn()));
+    }
 
 }

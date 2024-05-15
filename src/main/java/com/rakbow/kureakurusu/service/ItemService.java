@@ -217,32 +217,4 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return redisUtil.get(redisKey, ItemTypeRelation.class);
     }
 
-    //region other
-
-    /**
-     * isbn互相转换
-     *
-     * @param label,isbn 转换方式,isbn
-     * @return isbn
-     * @author rakbow
-     */
-    @SneakyThrows
-    public String getISBN(String label, String isbn) {
-
-        isbn = isbn.replaceAll("-", "");
-
-        if (StringUtils.equals(label, "isbn13")) {
-            if (isbn.length() != 10)
-                throw new Exception(I18nHelper.getMessage("book.crud.isbn10.invalid"));
-            return BookUtil.getISBN13(isbn);
-        } else if (StringUtils.equals(label, "isbn10")) {
-            if (isbn.length() != 13)
-                throw new Exception(I18nHelper.getMessage("book.crud.isbn13.invalid"));
-            return BookUtil.getISBN10(isbn);
-        }
-        return null;
-    }
-
-    //endregion
-
 }
