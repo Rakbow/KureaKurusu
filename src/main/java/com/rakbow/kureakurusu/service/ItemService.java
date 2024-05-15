@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
@@ -46,18 +45,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
+    //region inject
     private final PersonService personSrv;
-
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
-
     private final ItemMapper mapper;
-
     private final PersonRelationMapper relationMapper;
-
     private final Converter converter;
+    //endregion
+
+    //region static const
+    private static final String SUB_T_PREFIX = "t1";
+    private static final String SUB_T_CONDITION = " t1 on t1.id = t.id";
+
+    //endregion
 
     //region basic
 
@@ -68,14 +71,14 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         ItemTypeRelation relation = getItemTypeRelation(id);
         if (relation == null) return null;
 
-        Class<? extends SubItem> sourceClass = ItemUtil.getSubItem(relation.getType());
-        Class<? extends SuperItem> targetClass = ItemUtil.getSuperItem(relation.getType());
+        Class<? extends SubItem> s = ItemUtil.getSubItem(relation.getType());
+        Class<? extends SuperItem> t = ItemUtil.getSuperItem(relation.getType());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
-                .selectAll(sourceClass, "t1")
-                .leftJoin(STR."\{MyBatisUtil.getTableName(sourceClass)} t1 on t1.id = t.id")
+                .selectAll(s, SUB_T_PREFIX)
+                .leftJoin(STR."\{MyBatisUtil.getTableName(s)}\{SUB_T_CONDITION}")
                 .eq(Item::getId, id);
-        return (T) mapper.selectJoinOne(targetClass, wrapper);
+        return (T) mapper.selectJoinOne(t, wrapper);
     }
 
     @Transactional
@@ -139,7 +142,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return I18nHelper.getMessage("entity.curd.delete.success");
     }
 
-    //region
+    //endregion
 
     //region query
     @Transactional
@@ -189,8 +192,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
-                .selectAll(subClass, "t1")
-                .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)} t1 on t1.id = t.id")
+                .selectAll(subClass, SUB_T_PREFIX)
+                .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)}\{SUB_T_CONDITION}")
                 .eq(Item::getType, param.getType())
                 .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
                 .like(StringUtils.isNotBlank(param.getNameZh()), Item::getNameZh, param.getNameZh())

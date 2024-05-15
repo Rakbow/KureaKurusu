@@ -1,16 +1,12 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
-import com.rakbow.kureakurusu.annotation.ToVO;
-import com.rakbow.kureakurusu.data.dto.PersonAddDTO;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
-import com.rakbow.kureakurusu.data.vo.person.PersonVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
