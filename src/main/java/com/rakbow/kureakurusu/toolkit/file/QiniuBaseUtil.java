@@ -81,8 +81,7 @@ public class QiniuBaseUtil {
             String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
             // 检测格式是否支持
             if (FileUtil.isFileFormatAllowed(fileExt, fileType)) {
-                ar.setErrorMessage(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
-                return ar;
+                return ar.fail(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
             }
 
             // 通过随机UUID生成唯一文件名 长度：16

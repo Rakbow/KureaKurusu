@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.entity.EntityStatistic;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.LikeUtil;
@@ -17,7 +16,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,11 +33,6 @@ public class RedisTests {
     private LikeUtil likeUtil;
     @Resource
     private RedisUtil redisUtil;
-
-    @Test
-    public void redisTest1() {
-        redisUtil.redisTemplate.opsForZSet().add(RedisKey.ALBUM_VISIT_RANKING, 1, 0);
-    }
 
     @Test
     public void deleteAllCache() {

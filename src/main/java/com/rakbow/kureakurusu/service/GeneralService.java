@@ -143,7 +143,7 @@ public class GeneralService {
         if(likeUtil.isLike(entityType, entityId, likeToken)) {
             return false;
         }else {//没点过赞,自增
-            likeUtil.incLike(entityType, entityId, likeToken);
+            likeUtil.inc(entityType, entityId, likeToken);
             return true;
         }
     }

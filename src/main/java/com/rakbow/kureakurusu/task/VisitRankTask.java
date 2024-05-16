@@ -1,16 +1,9 @@
 package com.rakbow.kureakurusu.task;
 
-import com.rakbow.kureakurusu.data.common.Visit;
-import com.rakbow.kureakurusu.toolkit.RedisUtil;
-import com.rakbow.kureakurusu.toolkit.VisitUtil;
-import com.rakbow.kureakurusu.toolkit.convert.StatisticPOMapper;
 import org.jetbrains.annotations.NotNull;
 import org.quartz.JobExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * 每1小时更新一次，将浏览数排名前十更新
@@ -20,13 +13,6 @@ import java.util.List;
  */
 @Component
 public class VisitRankTask extends QuartzJobBean {
-
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
-    private VisitUtil visitUtil;
-
-    private final StatisticPOMapper statisticPOMapper = StatisticPOMapper.INSTANCES;
 
     @Override
     protected void executeInternal(@NotNull JobExecutionContext context) {

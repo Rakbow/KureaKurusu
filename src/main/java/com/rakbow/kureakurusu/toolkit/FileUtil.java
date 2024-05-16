@@ -17,21 +17,14 @@ public class FileUtil {
     public static String[] TEXT_FILE_FORMATS = new String[]{"lrc"};
 
     public static boolean isFileFormatAllowed(String fileFormat, FileType fileType) {
-        String[] formats;
-        if (fileType == FileType.IMAGE) {
-            formats = IMAGE_FILE_FORMATS;
-        } else if (fileType == FileType.AUDIO) {
-            formats = AUDIO_FILE_FORMATS;
-        } else if (fileType == FileType.TEXT) {
-            formats = TEXT_FILE_FORMATS;
-        } else {
-            formats = new String[]{};
-        }
-        for (String format : formats) {
-            if (format.equals(fileFormat)) {
-                return false;
-            }
-        }
+        String[] formats = switch (fileType) {
+            case FileType.IMAGE -> IMAGE_FILE_FORMATS;
+            case FileType.AUDIO -> AUDIO_FILE_FORMATS;
+            case FileType.TEXT -> TEXT_FILE_FORMATS;
+            default -> new String[]{};
+        };
+        for (String format : formats)
+            if (format.equals(fileFormat)) return false;
         return true;
     }
 

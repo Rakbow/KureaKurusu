@@ -77,7 +77,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
             //delete entity
             mapper.deleteById(item.getId());
             //delete visit record
-            visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
+            visitUtil.del(ENTITY_VALUE, item.getId());
         }
     }
 }

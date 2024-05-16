@@ -16,6 +16,13 @@ public class ActionResult {
         this.data = null;
     }
 
+    public ActionResult fail(String error) {
+        this.state = false;
+        this.message = error;
+        this.data = null;
+        return this;
+    }
+
     public void setErrorMessage(String error) {
         this.state = false;
         this.message = error;

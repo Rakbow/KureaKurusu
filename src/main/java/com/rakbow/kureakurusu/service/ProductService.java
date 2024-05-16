@@ -130,7 +130,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
             //delete all image
             qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
-            visitUtil.deleteVisit(ENTITY_VALUE, item.getId());
+            visitUtil.del(ENTITY_VALUE, item.getId());
         }
         //delete
         mapper.delete(new LambdaQueryWrapper<Product>().in(Product::getId, ids));

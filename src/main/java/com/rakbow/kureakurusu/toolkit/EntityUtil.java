@@ -32,8 +32,8 @@ public class EntityUtil {
         String visitToken = TokenInterceptor.getVisitToken();
         return PageTraffic.builder()
                 .liked(likeUtil.isLike(entityType, entityId, likeToken))
-                .likeCount(likeUtil.getLike(entityType, entityId))
-                .visitCount(visitUtil.incVisit(entityType, entityId, visitToken))
+                .likeCount(likeUtil.get(entityType, entityId))
+                .visitCount(visitUtil.inc(entityType, entityId, visitToken))
                 .build();
     }
 

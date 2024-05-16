@@ -78,20 +78,6 @@ public class EnumHelper {
         return attributes;
     }
 
-    public static List<Attribute<Integer>> getAttributes(List<Attribute<Integer>> attributes, String idsStr) {
-
-        int[] values = JsonUtil.to(idsStr, int[].class);
-        List<Attribute<Integer>> res = new ArrayList<>();
-
-        for (int value : values) {
-            Attribute<Integer> attribute = DataFinder.findAttributeByValue(value, attributes);
-            if(attribute == null) continue;
-            res.add(attribute);
-        }
-
-        return res;
-    }
-
     public static List<Attribute<Integer>> getAttributes(List<Attribute<Integer>> attributes, List<Integer> ids) {
 
         List<Attribute<Integer>> res = new ArrayList<>();

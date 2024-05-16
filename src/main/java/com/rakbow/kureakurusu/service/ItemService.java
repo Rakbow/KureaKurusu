@@ -124,7 +124,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             //delete all image
             qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
-            visitUtil.deleteVisit(EntityType.ITEM.getValue(), item.getId());
+            visitUtil.del(EntityType.ITEM.getValue(), item.getId());
         }
         int type = items.getFirst().getType().getValue();
         Class<? extends SubItem> subClass = ItemUtil.getSubItem(type);

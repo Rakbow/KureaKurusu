@@ -13,11 +13,10 @@ public class CookieUtil {
         if (request == null || name == null)
             throw new IllegalArgumentException(I18nHelper.getMessage("system.illegal_argument"));
         Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
+        if (cookies != null)
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) return cookie.getValue();
             }
-        }
         return null;
     }
 
