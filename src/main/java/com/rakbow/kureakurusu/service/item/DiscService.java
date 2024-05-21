@@ -1,8 +1,5 @@
 package com.rakbow.kureakurusu.service.item;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.DiscMapper;
-import com.rakbow.kureakurusu.data.entity.Disc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,5 +9,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class DiscService extends ServiceImpl<DiscMapper, Disc> {
+public class DiscService {
 }
