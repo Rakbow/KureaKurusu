@@ -34,13 +34,13 @@ public class RedisTests {
     @Resource
     private RedisUtil redisUtil;
 
-    @Test
-    public void deleteAllCache() {
-        List<String> keys = redisUtil.keys("VISIT_*");
-        keys.forEach(key -> {
-            redisUtil.delete(key);
-        });
-    }
+//    @Test
+//    public void deleteAllCache() {
+//        List<String> keys = redisUtil.keys("VISIT_*");
+//        keys.forEach(key -> {
+//            redisUtil.delete(key);
+//        });
+//    }
 
     @Test
     public void redisTest3() {
@@ -77,17 +77,17 @@ public class RedisTests {
         }
     }
 
-    @Test
-    public void resetRedis() {
-        List<Item> items = itemMapper.selectList(null);
-        String[] tmpSplitKey;
-        List<String> keys = redisUtil.keys("like:*");
-        for (String key : keys) {
-            tmpSplitKey = key.split(":");
-            int orgEntityType = Integer.parseInt(tmpSplitKey[1]);
-            long orgEntityId = Long.parseLong(tmpSplitKey[2]);
-        }
-
-    }
+//    @Test
+//    public void resetRedis() {
+//        List<Item> items = itemMapper.selectList(null);
+//        String[] tmpSplitKey;
+//        List<String> keys = redisUtil.keys("like:*");
+//        for (String key : keys) {
+//            tmpSplitKey = key.split(":");
+//            int orgEntityType = Integer.parseInt(tmpSplitKey[1]);
+//            long orgEntityId = Long.parseLong(tmpSplitKey[2]);
+//        }
+//
+//    }
 
 }

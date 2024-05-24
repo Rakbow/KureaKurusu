@@ -14,13 +14,12 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum BookType {
 
-    UNCATEGORIZED(0,"enum.book_type.uncategorized"),
+    OTHER(0,"enum.book_type.other"),
     NOVEL(1,"enum.book_type.novel"),
     COMIC(2,"enum.book_type.manga"),
     ANTHOLOGY(3,"enum.book_type.anthology"),
     ART_BOOK(4,"enum.book_type.art_book"),
-    ELECTRONIC_BOOK(5,"enum.book_type.e_book"),
-    OTHER(6,"enum.book_type.other");
+    ELECTRONIC_BOOK(5,"enum.book_type.e_book");
 
     @EnumValue
     private final int value;
@@ -31,7 +30,7 @@ public enum BookType {
             if(type.value == value)
                 return type;
         }
-        return UNCATEGORIZED;
+        return OTHER;
     }
 
 }

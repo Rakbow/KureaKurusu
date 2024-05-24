@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.data.entity.common;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.ImageHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
@@ -22,7 +22,7 @@ public class MetaEntity {
 
     private Long id;
     @TableField(typeHandler = ImageHandler.class)
-    private List<Image> images;//图片列表
+    private List<TempImage> images;//图片列表
     private String detail;//描述
     private String remark;//备注
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")

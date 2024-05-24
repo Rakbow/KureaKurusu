@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.toolkit.handler;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractJsonTypeHandler;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import lombok.extern.java.Log;
 import org.apache.ibatis.type.JdbcType;
@@ -17,15 +17,15 @@ import java.util.List;
 @MappedTypes({List.class})//java数据类型
 @MappedJdbcTypes({JdbcType.VARCHAR})//数据库数据类型
 @Log
-public class ImageHandler extends AbstractJsonTypeHandler<List<Image>> {
+public class ImageHandler extends AbstractJsonTypeHandler<List<TempImage>> {
 
     public ImageHandler(Class<?> type) {
         super(type);
     }
 
     @Override
-    public List<Image> parse(String json) {
-        return JsonUtil.toJavaList(json, Image.class);
+    public List<TempImage> parse(String json) {
+        return JsonUtil.toJavaList(json, TempImage.class);
     }
 
     @Override

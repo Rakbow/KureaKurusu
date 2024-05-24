@@ -1,51 +1,67 @@
 package com.rakbow.kureakurusu.data.image;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.vo.ImageVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import io.github.linpeilie.annotations.AutoMapper;
-import io.github.linpeilie.annotations.AutoMappers;
+import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
+import lombok.ToString;
+
+import java.sql.Timestamp;
 
 /**
- * 通用图片信息
- *
  * @author Rakbow
- * @since 2023-02-08 18:04
+ * @since 2024/5/24 10:46
  */
 @Data
-@AutoMappers({
-        @AutoMapper(target = ImageVO.class, reverseConvertGenerate = false)
-})
+@ToString(callSuper = true)
+@TableName(value = "image", autoResultMap = true)
 public class Image {
 
-    private String url;//图片url
-    private String nameEn;//图片名(英)
-    private String nameZh;//图片名(中)
-    private int type;//图片类型
-    private String description;//图片描述
-    private String uploadTime;//图片上传时间
-    private String uploadUser;
+    private Long id;
+    private EntityType entityType;
+    private long entityId;
+    private ImageType type;
+    private String name;
+    private String nameZh;
+    private String url;
+    private String detail;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
+    private Timestamp addedTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
+    private Timestamp editedTime;
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean status;//激活状态
 
     public Image() {
-        this.url = "";
-        this.nameEn = "";
-        this.nameZh = "";
-        this.type = ImageType.DISPLAY.getValue();
-        this.description = "";
-        this.uploadTime = DateHelper.nowStr();
-        this.uploadUser = "";
+        id = 0L;
+        entityType = EntityType.ITEM;
+        entityId = 0L;
+        type = ImageType.DEFAULT;
+        name = "";
+        nameZh = "";
+        url = "";
+        detail = "";
+        addedTime = DateHelper.now();
+        editedTime = DateHelper.now();
+        status = Boolean.TRUE;
     }
 
     @JsonIgnore
     public boolean isMain() {
-        return this.type == ImageType.MAIN.getValue();
+        return this.type == ImageType.MAIN;
     }
 
     @JsonIgnore
     public boolean isDisplay() {
-        return this.type == ImageType.MAIN.getValue() || this.type == ImageType.DISPLAY.getValue();
+        return this.type != ImageType.DEFAULT;
     }
 
 }

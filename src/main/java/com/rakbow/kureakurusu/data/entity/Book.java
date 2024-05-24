@@ -70,7 +70,7 @@ public class Book extends SuperItem {
         this.nameZh = "";
         this.isbn10 = "";
         this.ean13 = "";
-        this.bookType = BookType.UNCATEGORIZED;
+        this.bookType = BookType.OTHER;
         this.region = Region.GLOBAL;
         this.lang = Language.JAPANESE;
         this.authors = "[]";

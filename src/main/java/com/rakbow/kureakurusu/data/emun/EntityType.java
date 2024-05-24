@@ -32,6 +32,12 @@ public enum EntityType {
         return I18nHelper.getMessage(this.labelKey);
     }
 
+    public static EntityType get(int value) {
+        for (EntityType type : EntityType.values())
+            if (type.getValue() == value) return type;
+        return ITEM;
+    }
+
     public static String getTableName(int value) {
         return Arrays.stream(EntityType.values())
                 .filter(entity -> entity.getValue() == value)

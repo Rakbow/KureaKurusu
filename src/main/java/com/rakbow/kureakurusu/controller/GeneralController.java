@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.*;
@@ -90,21 +91,21 @@ public class GeneralController {
     //region image
 
     @PostMapping("get-images")
-    public ApiResult getEntryImages(@RequestBody EntityQry qry) {
-        return new ApiResult().load(srv.getEntryImages(qry.getEntityType(), qry.getEntityId()));
+    public ApiResult getEntityImages(@RequestBody EntityQry qry) {
+        return new ApiResult().load(srv.getEntityImages(qry.getEntityType(), qry.getEntityId()));
     }
 
     @PostMapping("add-images")
-    public ApiResult addEntryImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
+    public ApiResult addEntityImages(int entityType, long entityId, MultipartFile[] files, List<Image> images) {
         //check
-        if (images == null || images.length == 0) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
+        if (files == null || files.length == 0) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
         //save
-        srv.addEntryImages(entityType, entityId, images, imageInfos);
+        srv.addEntityImages(entityType, entityId, files, images);
         return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
     }
 
     @PostMapping("update-images")
-    public ApiResult updateEntryImages(@RequestBody ImageUpdateCmd cmd) {
+    public ApiResult updateEntityImages(@RequestBody ImageUpdateCmd cmd) {
         ApiResult res = new ApiResult();
         List<Image> images = cmd.getImages();
         if(images.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));

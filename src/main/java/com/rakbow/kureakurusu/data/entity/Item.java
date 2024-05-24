@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.ImageHandler;
@@ -52,7 +52,7 @@ public class Item {
     private Currency currency;//货币单位
 
     @TableField(typeHandler = ImageHandler.class)
-    private List<Image> images;//图片列表
+    private List<TempImage> images;//图片列表
     private String detail;//描述
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean hasBonus;//是否包含特典内容 0-无 1-有

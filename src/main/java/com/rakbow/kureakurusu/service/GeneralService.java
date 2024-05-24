@@ -1,7 +1,11 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.dto.ImageInfoDTO;
 import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.emun.LinkType;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
@@ -10,6 +14,7 @@ import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
@@ -24,6 +29,7 @@ import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -52,6 +58,8 @@ public class GeneralService {
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
     private final FranchiseMapper franchiseMapper;
+    private final ImageMapper imageMapper;
+    private final SqlSessionFactory sqlSessionFactory;
 
     //endregion
 
@@ -169,11 +177,11 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public segmentImagesResult getEntryImages(int entityType, long entityId) {
+    public segmentImagesResult getEntityImages(int entityType, long entityId) {
         String tableName = EntityType.getTableName(entityType);
         //original images
         String imageJson = mapper.getEntryImages(tableName, entityId);
-        List<Image> images = JsonUtil.toJavaList(imageJson, Image.class);
+        List<TempImage> images = JsonUtil.toJavaList(imageJson, TempImage.class);
         return CommonImageUtil.segmentImages(images);
     }
 
@@ -182,25 +190,36 @@ public class GeneralService {
      *
      * @param entityType 实体类型
      * @param entityId   实体id
-     * @param images     新增图片文件数组
-     * @param imageInfos 新增图片json数据
+     * @param files     新增图片文件数组
+     * @param images 新增图片json数据
      * @author rakbow
      */
-    @SuppressWarnings("unchecked")
     @SneakyThrows
     @Transactional
-    public void addEntryImages(int entityType, int entityId, MultipartFile[] images, String imageInfos) {
+    public void addEntityImages(int entityType, long entityId, MultipartFile[] files, List<Image> images) {
         String tableName = EntityType.getTableName(entityType);
-        //原始图片信息json数组
-        List<Image> originalImages = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), Image.class);
-        //新增图片的信息
-        List<Image> newImageInfos = JsonUtil.toJavaList(imageInfos, Image.class);
-        //检测数据合法性
-        CommonImageUtil.checkAddImages(newImageInfos, originalImages);
-        //save
-        ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, images, originalImages, newImageInfos);
+        //original main images
+        long mainImageCnt = imageMapper.selectCount(
+                new LambdaQueryWrapper<Image>()
+                        .eq(Image::getEntityType, entityType)
+                        .eq(Image::getEntityId, entityId)
+                        .eq(Image::getType, ImageType.MAIN)
+        );
+        //total main count check
+        mainImageCnt += images.stream().filter(Image::isMain).count();
+        if (mainImageCnt > 1)
+            throw new Exception(I18nHelper.getMessage("image.error.only_one_cover"));
+        //upload to qiniu server
+        ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, files, images);
         if(ar.state) {
-            mapper.updateEntryImages(tableName, entityId, (List<Image>) ar.data, DateHelper.now());
+            for (Image image : images) {
+                image.setEntityType(EntityType.get(entityType));
+                image.setEntityId(entityId);
+            }
+            //batch insert
+            MybatisBatch.Method<Image> method = new MybatisBatch.Method<>(ImageMapper.class);
+            MybatisBatch<Image> batchInsert = new MybatisBatch<>(sqlSessionFactory, images);
+            batchInsert.execute(method.insert());
         }else {
             throw new Exception(ar.message);
         }
@@ -214,7 +233,7 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateEntryImages(int entityType, long entityId, List<Image> images) {
+    public void updateEntryImages(int entityType, long entityId, List<TempImage> images) {
         mapper.updateEntryImages(EntityType.getTableName(entityType), entityId, images, DateHelper.now());
     }
 
@@ -226,10 +245,10 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void deleteEntryImages(int entityType, long entityId, List<Image> deleteImages) {
+    public void deleteEntryImages(int entityType, long entityId, List<TempImage> deleteImages) {
         String tableName = EntityType.getTableName(entityType);
-        List<Image> images = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), Image.class);
-        List<Image> finalImageJson = qiniuImageUtil.deleteImage(images, deleteImages);
+        List<TempImage> images = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), TempImage.class);
+        List<TempImage> finalImageJson = qiniuImageUtil.deleteImage(images, deleteImages);
         mapper.updateEntryImages(tableName, entityId, finalImageJson, DateHelper.now());
     }
 

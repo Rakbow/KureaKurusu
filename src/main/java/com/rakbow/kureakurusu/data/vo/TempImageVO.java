@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.vo;
 
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import lombok.*;
 
 /**
@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ImageVO extends Image {
+public class TempImageVO extends TempImage {
 
     private String name;
     private String thumbUrl70;//缩略图url(70px)

@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.toolkit.file;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.emun.FileType;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,37 +35,24 @@ public class QiniuImageUtil {
      *
      * @param entityId                 实体id
      * @param entityName               实体表名
-     * @param images             新增图片文件数组
-     * @param originalImagesJson 数据库中现存的图片json数据
-     * @param newImageInfos         新增图片json数据
+     * @param files             新增图片文件数组
+     * @param addImages         新增图片json数据
      * @return finalImageJson 最终保存到数据库的json信息
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult commonAddImages(long entityId, String entityName, MultipartFile[] images,
-                                        List<Image> originalImagesJson, List<Image> newImageInfos) {
+    public ActionResult commonAddImages(long entityId, String entityName, MultipartFile[] files, List<Image> addImages) {
         ActionResult res = new ActionResult();
         try{
-
-            //新增图片信息json
-            List<Image> addImageJson = new ArrayList<>();
-
             //创建存储链接前缀
             String filePath = STR."\{entityName}/\{entityId}/";
-
-            for (int i = 0; i < images.length; i++) {
+            for (int i = 0; i < files.length; i++) {
                 //上传图片
-                ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(images[i], filePath, FileType.IMAGE);
+                ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.IMAGE);
                 if (!ar.state) throw new Exception(ar.message);
-                Image image = newImageInfos.get(i);
+                Image image = addImages.get(i);
                 image.setUrl(ar.data.toString());
-                addImageJson.add(image);
             }
-
-            //汇总
-            originalImagesJson.addAll(addImageJson);
-
-            res.data = originalImagesJson;
         }catch(Exception ex) {
             res.setErrorMessage(ex.getMessage());
         }
@@ -74,7 +62,7 @@ public class QiniuImageUtil {
     @SuppressWarnings("unchecked")
     @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public List<Image> deleteImage(List<Image> images, List<Image> deleteImages) {
+    public List<TempImage> deleteImage(List<TempImage> images, List<TempImage> deleteImages) {
 
         //从七牛云上删除
         //删除结果
@@ -111,7 +99,7 @@ public class QiniuImageUtil {
      * @param images delete images
      * @author Rakbow
      */
-    public void deleteAllImage(List<Image> images) {
+    public void deleteAllImage(List<TempImage> images) {
         String[] deleteImageKeyList = new String[images.size()];
         for (int i = 0; i < images.size(); i++) {
             deleteImageKeyList[i] = images.get(i).getUrl();
@@ -160,9 +148,9 @@ public class QiniuImageUtil {
         return fullImageUrl.replace(FILE_DOMAIN, "");
     }
 
-    public static String getThumb70Url(List<Image> images) {
+    public static String getThumb70Url(List<TempImage> images) {
         if (!images.isEmpty()) {
-            for (Image image : images) {
+            for (TempImage image : images) {
                 if(image.isMain())
                     return getThumbBackgroundUrl(image.getUrl(), 70);
             }

@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.toolkit.convert;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.Link;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -116,7 +116,7 @@ public interface MetaVOMapper {
     }
 
     @Named("getThumbCover")
-    default String getThumbCover(List<Image> images) {
+    default String getThumbCover(List<TempImage> images) {
         return CommonImageUtil.getThumbCoverUrl(images);
     }
 
