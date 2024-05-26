@@ -25,11 +25,14 @@ import java.sql.Timestamp;
 public class Image {
 
     private Long id;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     private EntityType entityType;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     private long entityId;
-    private ImageType type;
+    private int type;
     private String name;
     private String nameZh;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     private String url;
     private String detail;
     @TableField(updateStrategy = FieldStrategy.NEVER)
@@ -37,14 +40,23 @@ public class Image {
     private Timestamp addedTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     private Timestamp editedTime;
+    @JsonIgnore
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean status;//激活状态
+    private Boolean status;
+
+    @TableField(exist = false)
+    private String thumbUrl70;//缩略图url(70px)
+    @TableField(exist = false)
+    private String thumbUrl50;//缩略图url(50px)
+    @TableField(exist = false)
+    private String blackUrl;//缩略图url(黑背景)
 
     public Image() {
         id = 0L;
         entityType = EntityType.ITEM;
         entityId = 0L;
-        type = ImageType.DEFAULT;
+        type = ImageType.DEFAULT.getValue();
         name = "";
         nameZh = "";
         url = "";
@@ -56,12 +68,12 @@ public class Image {
 
     @JsonIgnore
     public boolean isMain() {
-        return this.type == ImageType.MAIN;
+        return this.type == ImageType.MAIN.getValue();
     }
 
     @JsonIgnore
     public boolean isDisplay() {
-        return this.type != ImageType.DEFAULT;
+        return this.type != ImageType.OTHER.getValue();
     }
 
 }

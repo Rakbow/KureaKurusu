@@ -1,6 +1,4 @@
 package com.rakbow.kureakurusu.data.vo.item;
-
-import com.rakbow.kureakurusu.data.vo.TempImageVO;
 import lombok.Data;
 
 /**
@@ -20,8 +18,6 @@ public class ItemListVO {
     private double price;
     private String currency;
     private String remark;
-
-    private TempImageVO cover;
 
     private String addedTime;
     private String editedTime;

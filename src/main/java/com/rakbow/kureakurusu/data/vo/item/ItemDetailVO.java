@@ -23,8 +23,9 @@ public class ItemDetailVO {
     private ItemVO item;
     private int type;
     private PageTraffic traffic;
-    private segmentImagesResult itemImageInfo;
     private PersonnelStruct personnel;
     private Map<String, Object> options;
+
+    private String cover;
 
 }

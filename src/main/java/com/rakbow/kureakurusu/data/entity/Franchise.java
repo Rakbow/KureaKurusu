@@ -13,8 +13,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-
 /**
  * @author Rakbow
  * @since 2022-08-20 0:50 系列实体类
@@ -45,7 +43,6 @@ public class Franchise extends MetaEntity {
         this.setEditedTime(DateHelper.now());
         this.setDetail("");
         this.setRemark("");
-        this.setImages(new ArrayList<>());
         this.setStatus(true);
     }
 

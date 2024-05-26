@@ -1,13 +1,12 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
-import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.CommonConstant;
-import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.image.TempImage;
+import com.rakbow.kureakurusu.data.common.ActionResult;
+import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.FileType;
+import com.rakbow.kureakurusu.data.image.Image;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -33,17 +32,13 @@ public class QiniuImageUtil {
     /**
      * 通用新增图片
      *
-     * @param entityId                 实体id
-     * @param entityName               实体表名
-     * @param files             新增图片文件数组
-     * @param addImages         新增图片json数据
-     * @return finalImageJson 最终保存到数据库的json信息
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult commonAddImages(long entityId, String entityName, MultipartFile[] files, List<Image> addImages) {
+    public ActionResult commonAddImages(int entityType, long entityId, MultipartFile[] files, List<Image> addImages) {
         ActionResult res = new ActionResult();
         try{
+            String entityName = EntityType.getTableName(entityType);
             //创建存储链接前缀
             String filePath = STR."\{entityName}/\{entityId}/";
             for (int i = 0; i < files.length; i++) {
@@ -62,35 +57,21 @@ public class QiniuImageUtil {
     @SuppressWarnings("unchecked")
     @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public List<TempImage> deleteImage(List<TempImage> images, List<TempImage> deleteImages) {
+    public List<Image> deleteImage(List<Image> deleteImages) {
 
-        //从七牛云上删除
-        //删除结果
+        //delete image from qiniu server
         List<String> deleteResult = new ArrayList<>();
         //若删除的文件只有一个，调用单张删除方法
         if (deleteImages.size() == 1) {
             ActionResult ar = qiniuBaseUtil.deleteFileFromQiniu(deleteImages.getFirst().getUrl());
-            if (ar.fail())
-                throw new Exception(ar.message);
+            if (ar.fail()) throw new Exception(ar.message);
             deleteResult.add(deleteImages.getFirst().getUrl());
         } else {
-            String[] fullFileUrlList = new String[deleteImages.size()];
-            for (int i = 0; i < deleteImages.size(); i++) {
-                fullFileUrlList[i] = deleteImages.get(i).getUrl();
-            }
+            String[] fullFileUrlList = deleteImages.stream().map(Image::getUrl).toArray(String[]::new);
             ActionResult ar = qiniuBaseUtil.deleteFilesFromQiniu(fullFileUrlList);
-            deleteResult = (List<String>) ar.data;
+            deleteResult.addAll((List<String>) ar.data);
         }
-
-        //根据删除结果循环删除文件信息json数组
-        // 迭代器
-
-        for (String s : deleteResult) {
-            // 删除数组元素
-            images.removeIf(image -> StringUtils.equals(image.getUrl(), s));
-        }
-
-        return images;
+        return deleteImages.stream().filter(i -> deleteResult.contains(i.getUrl())).toList();
     }
 
     /**
@@ -99,11 +80,8 @@ public class QiniuImageUtil {
      * @param images delete images
      * @author Rakbow
      */
-    public void deleteAllImage(List<TempImage> images) {
-        String[] deleteImageKeyList = new String[images.size()];
-        for (int i = 0; i < images.size(); i++) {
-            deleteImageKeyList[i] = images.get(i).getUrl();
-        }
+    public void deleteAllImage(List<Image> images) {
+        String[] deleteImageKeyList = images.stream().map(Image::getUrl).toArray(String[]::new);
         qiniuBaseUtil.deleteFilesFromQiniu(deleteImageKeyList);
     }
 
@@ -148,9 +126,9 @@ public class QiniuImageUtil {
         return fullImageUrl.replace(FILE_DOMAIN, "");
     }
 
-    public static String getThumb70Url(List<TempImage> images) {
+    public static String getThumb70Url(List<Image> images) {
         if (!images.isEmpty()) {
-            for (TempImage image : images) {
+            for (Image image : images) {
                 if(image.isMain())
                     return getThumbBackgroundUrl(image.getUrl(), 70);
             }

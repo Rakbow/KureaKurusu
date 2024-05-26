@@ -20,7 +20,6 @@ import com.rakbow.kureakurusu.data.vo.relation.RelatedItemVO;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -44,6 +42,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
     private final ItemMapper itemMapper;
     private final ProductMapper productMapper;
     private final SqlSessionFactory sqlSessionFactory;
+    private final ResourceService resourceSrv;
 
     @Transactional
     public List<RelatedItemVO> getRelations(RelationQry qry) {
@@ -71,7 +70,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
                     vo.setEntityId(r.getRelatedEntityId());
                     Item item = DataFinder.findItemById(r.getRelatedEntityId(), items);
                     if(item == null) continue;
-                    vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
+                    vo.setCover(resourceSrv.getThumbCover(EntityType.ITEM, item.getId()));
                     vo.setName(item.getName());
                     vo.setNameZh(item.getNameZh());
                     vo.setNameEn(item.getNameEn());
@@ -89,7 +88,7 @@ public class RelationService extends ServiceImpl<EntityRelationMapper, EntityRel
                     vo.setEntityId(r.getRelatedEntityId());
                     Product item = DataFinder.findProductById(r.getRelatedEntityId(), items);
                     if(item == null) continue;
-                    vo.setCover(CommonImageUtil.getThumbCoverUrl(item.getImages()));
+                    vo.setCover(resourceSrv.getThumbCover(EntityType.PRODUCT, item.getId()));
                     vo.setName(item.getName());
                     vo.setNameZh(item.getNameZh());
                     vo.setNameEn(item.getNameEn());

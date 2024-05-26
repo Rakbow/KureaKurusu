@@ -1,18 +1,14 @@
 package com.rakbow.kureakurusu.data.entity.common;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.handler.ImageHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -23,8 +19,6 @@ public abstract class SuperItem {
 
     private Long id;
     private ItemType type;
-    @TableField(typeHandler = ImageHandler.class)
-    private List<TempImage> images;//图片列表
     private String detail;//描述
     private String remark;//备注
     @AutoMapping(qualifiedByName = "getVOTime")

@@ -1,40 +1,22 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.rakbow.kureakurusu.dao.*;
+import com.rakbow.kureakurusu.dao.CommonMapper;
+import com.rakbow.kureakurusu.dao.FranchiseMapper;
+import com.rakbow.kureakurusu.dao.PersonRoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.dto.ImageInfoDTO;
-import com.rakbow.kureakurusu.data.emun.Gender;
-import com.rakbow.kureakurusu.data.emun.LinkType;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
-import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
-import com.rakbow.kureakurusu.data.segmentImagesResult;
-import com.rakbow.kureakurusu.data.common.ActionResult;
-import com.rakbow.kureakurusu.toolkit.EnumHelper;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.DataSorter;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.JsonUtil;
-import com.rakbow.kureakurusu.toolkit.LikeUtil;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
-import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,15 +33,12 @@ public class GeneralService {
 
     //region util resource
     private final LikeUtil likeUtil;
-    private final QiniuImageUtil qiniuImageUtil;
     //endregion
 
     //region mapper
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
     private final FranchiseMapper franchiseMapper;
-    private final ImageMapper imageMapper;
-    private final SqlSessionFactory sqlSessionFactory;
 
     //endregion
 
@@ -164,92 +143,6 @@ public class GeneralService {
     @Transactional
     public void updateEntryDetail(UpdateDetailDTO dto) {
         mapper.updateEntryDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
-    }
-
-    //endregion
-
-    //region image operation
-
-    /**
-     * 根据实体类型和实体Id获取图片
-     *
-     * @param entityType,entityId 实体类型 实体id
-     * @author rakbow
-     */
-    @Transactional
-    public segmentImagesResult getEntityImages(int entityType, long entityId) {
-        String tableName = EntityType.getTableName(entityType);
-        //original images
-        String imageJson = mapper.getEntryImages(tableName, entityId);
-        List<TempImage> images = JsonUtil.toJavaList(imageJson, TempImage.class);
-        return CommonImageUtil.segmentImages(images);
-    }
-
-    /**
-     * 新增图片
-     *
-     * @param entityType 实体类型
-     * @param entityId   实体id
-     * @param files     新增图片文件数组
-     * @param images 新增图片json数据
-     * @author rakbow
-     */
-    @SneakyThrows
-    @Transactional
-    public void addEntityImages(int entityType, long entityId, MultipartFile[] files, List<Image> images) {
-        String tableName = EntityType.getTableName(entityType);
-        //original main images
-        long mainImageCnt = imageMapper.selectCount(
-                new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, entityType)
-                        .eq(Image::getEntityId, entityId)
-                        .eq(Image::getType, ImageType.MAIN)
-        );
-        //total main count check
-        mainImageCnt += images.stream().filter(Image::isMain).count();
-        if (mainImageCnt > 1)
-            throw new Exception(I18nHelper.getMessage("image.error.only_one_cover"));
-        //upload to qiniu server
-        ActionResult ar = qiniuImageUtil.commonAddImages(entityId, tableName, files, images);
-        if(ar.state) {
-            for (Image image : images) {
-                image.setEntityType(EntityType.get(entityType));
-                image.setEntityId(entityId);
-            }
-            //batch insert
-            MybatisBatch.Method<Image> method = new MybatisBatch.Method<>(ImageMapper.class);
-            MybatisBatch<Image> batchInsert = new MybatisBatch<>(sqlSessionFactory, images);
-            batchInsert.execute(method.insert());
-        }else {
-            throw new Exception(ar.message);
-        }
-    }
-
-    /**
-     * 更新图片
-     *
-     * @param entityId     图书id
-     * @param images 需要更新的图片json数据
-     * @author rakbow
-     */
-    @Transactional
-    public void updateEntryImages(int entityType, long entityId, List<TempImage> images) {
-        mapper.updateEntryImages(EntityType.getTableName(entityType), entityId, images, DateHelper.now());
-    }
-
-    /**
-     * 删除图片
-     *
-     * @param entityType,entityId,images,deleteImages 实体类型,实体id,原图片信息,删除图片
-     * @param deleteImages 需要删除的图片jsonArray
-     * @author rakbow
-     */
-    @Transactional
-    public void deleteEntryImages(int entityType, long entityId, List<TempImage> deleteImages) {
-        String tableName = EntityType.getTableName(entityType);
-        List<TempImage> images = JsonUtil.toJavaList(mapper.getEntryImages(tableName, entityId), TempImage.class);
-        List<TempImage> finalImageJson = qiniuImageUtil.deleteImage(images, deleteImages);
-        mapper.updateEntryImages(tableName, entityId, finalImageJson, DateHelper.now());
     }
 
     //endregion

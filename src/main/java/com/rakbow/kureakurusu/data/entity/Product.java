@@ -16,8 +16,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
-
 /**
  * @author Rakbow
  * @since 2022-08-20 1:43
@@ -53,7 +51,6 @@ public class Product extends MetaEntity {
         this.releaseDate = "";
         this.franchise = 0L;
         this.category = ProductCategory.MISC;
-        this.setImages(new ArrayList<>());
         this.setDetail("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());

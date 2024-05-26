@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.rakbow.kureakurusu.data.image.TempImage;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Timestamp;
@@ -17,9 +16,5 @@ public interface CommonMapper {
     void updateEntryStatus(String tableName, List<Long> ids, int status);
     //通用更新描述
     void updateEntryDetail(String tableName, long entityId, String text, Timestamp editedTime);
-
-    String getEntryImages(String tableName, long entityId);
-    //更新图片
-    void updateEntryImages(String tableName, long entityId, List<TempImage> images, Timestamp editedTime);
 
 }

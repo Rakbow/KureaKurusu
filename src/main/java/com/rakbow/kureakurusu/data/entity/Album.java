@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
-import com.rakbow.kureakurusu.data.vo.item.AlbumVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumListVO;
+import com.rakbow.kureakurusu.data.vo.item.AlbumVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -78,7 +78,6 @@ public class Album extends SuperItem {
         this.bonus = "";
         this.setDetail("");
         this.setRemark("");
-        this.setImages(new ArrayList<>());
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);

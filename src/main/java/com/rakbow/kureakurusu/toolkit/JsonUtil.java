@@ -20,6 +20,11 @@ public class JsonUtil {
     }
 
     @SneakyThrows
+    public static <T> List<T> toJavaList(Object obj, Class<T> clazz) {
+        return mapper.readValue(obj.toString(), mapper.getTypeFactory().constructParametricType(List.class, clazz));
+    }
+
+    @SneakyThrows
     public static <T> T to(String json, Class<T> clazz) {
         return mapper.readValue(json, clazz);
     }

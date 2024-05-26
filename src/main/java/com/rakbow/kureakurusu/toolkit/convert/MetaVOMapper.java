@@ -1,13 +1,11 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.Link;
-import com.rakbow.kureakurusu.data.image.TempImage;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
 import com.rakbow.kureakurusu.toolkit.*;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.SneakyThrows;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
@@ -113,11 +111,6 @@ public interface MetaVOMapper {
     @Named("getMediaFormat")
     default List<Attribute<Integer>> getMediaFormat(List<Integer> ids) {
         return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet, ids);
-    }
-
-    @Named("getThumbCover")
-    default String getThumbCover(List<TempImage> images) {
-        return CommonImageUtil.getThumbCoverUrl(images);
     }
 
     @Named("updateEditedTime")

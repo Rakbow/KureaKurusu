@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -52,7 +51,6 @@ public class Game extends MetaEntity {
         this.organizations = "[]";
         this.staffs = "[]";
         this.bonus = "";
-        this.setImages(new ArrayList<>());
         this.setDetail("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;

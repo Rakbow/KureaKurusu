@@ -117,7 +117,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
                 .item(converter.convert(product, ProductVO.class))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
-                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.PRODUCT, product.getImages()))
+//                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.PRODUCT, product.getImages()))
                 .episodes(getEpisodes(product.getId(), product.getCategory()))
                 .build();
     }
@@ -128,7 +128,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         List<Product> items = mapper.selectBatchIds(ids);
         for (Product item : items) {
             //delete all image
-            qiniuImageUtil.deleteAllImage(item.getImages());
+//            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
             visitUtil.del(ENTITY_VALUE, item.getId());
         }

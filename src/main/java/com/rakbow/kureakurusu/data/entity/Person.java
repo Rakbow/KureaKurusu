@@ -4,21 +4,19 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.dto.PersonUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.Gender;
-import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.data.vo.person.PersonVO;
-import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.LinkHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
-import lombok.Data;
-
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -71,7 +69,6 @@ public class Person extends MetaEntity {
         info = "{}";
         setDetail("");
         setRemark("");
-        setImages(new ArrayList<>());
         setAddedTime(DateHelper.now());
         setEditedTime(DateHelper.now());
         setStatus(true);

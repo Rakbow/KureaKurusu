@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.handler.ImageHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -17,7 +15,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -51,8 +48,6 @@ public class Item {
     private double price;//发行价格
     private Currency currency;//货币单位
 
-    @TableField(typeHandler = ImageHandler.class)
-    private List<TempImage> images;//图片列表
     private String detail;//描述
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean hasBonus;//是否包含特典内容 0-无 1-有

@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -51,7 +50,6 @@ public class Goods extends MetaEntity {
         this.notForSale = 0;
         this.spec = "[]";
         this.setDetail("");
-        this.setImages(new ArrayList<>());
         this.setRemark("");
         this.setAddedTime(DateHelper.now());;
         this.setEditedTime(DateHelper.now());;

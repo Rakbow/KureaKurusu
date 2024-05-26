@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,7 +52,6 @@ public class Disc extends SuperItem {
         this.spec = "[]";
         this.hasBonus = 0;
         this.bonus = "";
-        this.setImages(new ArrayList<>());
         this.setDetail("");
         this.setRemark("");
         this.setAddedTime(DateHelper.now());

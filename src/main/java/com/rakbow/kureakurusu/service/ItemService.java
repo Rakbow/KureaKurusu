@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
@@ -20,12 +21,12 @@ import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.entity.SubItem;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
-import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.toolkit.*;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
@@ -47,11 +48,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     //region inject
     private final PersonService personSrv;
+    private final ResourceService resourceSrv;
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final ItemMapper mapper;
+    private final ImageMapper imageMapper;
     private final PersonRelationMapper relationMapper;
     private final Converter converter;
     //endregion
@@ -119,10 +122,15 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     public String delete(List<Long> ids) {
         //get original data
         List<Item> items = mapper.selectBatchIds(ids);
+        List<Image> images = imageMapper.selectList(
+                new LambdaQueryWrapper<Image>()
+                        .eq(Image::getEntityType, EntityType.ITEM)
+                        .in(Image::getEntityId, ids)
+        );
         if (items.isEmpty()) throw new Exception("");
         for (Item item : items) {
             //delete all image
-            qiniuImageUtil.deleteAllImage(item.getImages());
+            qiniuImageUtil.deleteAllImage(images);
             //delete visit record
             visitUtil.del(EntityType.ITEM.getValue(), item.getId());
         }
@@ -150,7 +158,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     public ItemDetailVO detail(long id) {
         SuperItem item = getById(id);
         if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
-
         Class<? extends ItemVO> targetVOClass = ItemUtil.getItemDetailVO(item.getType().getValue());
 
         return ItemDetailVO.builder()
@@ -158,8 +165,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .item(converter.convert(item, targetVOClass))
                 .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
                 .options(ItemUtil.getOptions(item.getType().getValue()))
-                .itemImageInfo(CommonImageUtil.segmentItemImages(item.getType(), item.getImages()))
                 .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
+                .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
                 .build();
     }
 

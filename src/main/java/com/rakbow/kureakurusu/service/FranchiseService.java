@@ -51,7 +51,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
                 .item(converter.convert(item, FranchiseVO.class))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
-                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.FRANCHISE, item.getImages()))
+//                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.FRANCHISE, item.getImages()))
                 .build();
     }
 
@@ -73,7 +73,7 @@ public class FranchiseService extends ServiceImpl<FranchiseMapper, Franchise> {
         List<Franchise> items = mapper.selectBatchIds(ids);
         for (Franchise item : items) {
             //delete image
-            qiniuImageUtil.deleteAllImage(item.getImages());
+//            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete entity
             mapper.deleteById(item.getId());
             //delete visit record

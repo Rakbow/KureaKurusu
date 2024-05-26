@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
-import com.rakbow.kureakurusu.data.vo.TempImageVO;
+import com.rakbow.kureakurusu.data.image.Image;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -14,34 +14,27 @@ import java.util.List;
 public class segmentImagesResult {
 
     //添加了缩略图的images
-    private List<TempImageVO> images;
-    //封面图片
-    private TempImageVO cover;
+    private List<Image> images;
     //展示图片
-    private List<TempImageVO> displayImages;
+    private List<Image> displayImages;
     //其他图片
-    private List<TempImageVO> otherImages;
+    private List<Image> otherImages;
 
     public segmentImagesResult() {
         this.images = new ArrayList<>();
-        this.cover = new TempImageVO();
         this.displayImages = new ArrayList<>();
         this.otherImages = new ArrayList<>();
     }
 
-    public void setCoverUrl(String url) {
-        this.cover.setUrl(url);
-    }
-
-    public void addDisplayImage(TempImageVO image) {
+    public void addDisplayImage(Image image) {
         this.displayImages.add(image);
     }
 
-    public void addImage(TempImageVO image) {
+    public void addImage(Image image) {
         this.images.add(image);
     }
 
-    public void addOtherImage(TempImageVO image) {
+    public void addOtherImage(Image image) {
         this.otherImages.add(image);
     }
 

@@ -3,13 +3,13 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
-import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
-import com.rakbow.kureakurusu.data.vo.item.BookVO;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
+import com.rakbow.kureakurusu.data.vo.item.BookVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -17,8 +17,6 @@ import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.util.ArrayList;
 
 /**
  * @author Rakbow
@@ -81,7 +79,6 @@ public class Book extends SuperItem {
         this.hasBonus = false;
         this.bonus = "";
         this.setDetail("");
-        this.setImages(new ArrayList<>());
         this.setRemark("");
         this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());

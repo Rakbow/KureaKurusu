@@ -6,14 +6,8 @@ import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageProperty;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.image.TempImage;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
-import com.rakbow.kureakurusu.data.vo.TempImageVO;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.SpringUtil;
-import io.github.linpeilie.Converter;
 import lombok.SneakyThrows;
-import org.apache.poi.ss.formula.functions.Count;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -30,8 +24,6 @@ import static com.rakbow.kureakurusu.data.CommonConstant.*;
  * @since 2022-12-31 1:18
  */
 public class CommonImageUtil {
-
-    private static final Converter converter = SpringUtil.getBean(Converter.class);
 
     private static final int DEFAULT_THUMB_SIZE = 200;
     private static final int THUMB_SIZE_70 = 70;
@@ -52,23 +44,6 @@ public class CommonImageUtil {
 
     //region ------检测------
 
-    /**
-     * 对更新图片信息合法性进行检测，图片英文名和图片类型
-     *
-     * @param images 图片json数组
-     * @author rakbow
-     */
-    @SneakyThrows
-    public static void checkUpdateImages(List<Image> images) {
-        //封面类型的图片个数
-        long coverCount = 0;
-        coverCount += images.stream().filter(Image::isMain).count();
-        for (Image image : images)
-            if (image.isMain()) coverCount++;
-        if (coverCount > 1)
-            throw new Exception(I18nHelper.getMessage("image.error.only_one_cover"));
-    }
-
     //endregion
 
     /**
@@ -88,92 +63,66 @@ public class CommonImageUtil {
                 .build();
     }
 
-    /**
-     * 通过遍历通用图片信息json数组获取封面url
-     *
-     * @param images 图片
-     * @return coverUrl
-     * @author rakbow
-     */
-    public static String getCoverUrl(List<TempImage> images) {
-        for (TempImage image : images) {
-            if (image.isMain()) return image.getUrl();
-        }
-        return CommonConstant.EMPTY_IMAGE_URL;
+    public static String getItemCover(ItemType type, Image image) {
+        ImageConfigValue config = itemImageConfigMap.get(type);
+        String url = image == null ? config.getDefaultUrl() : image.getUrl();
+        return QiniuImageUtil.getThumbUrl(url, config.getCoverSize());
     }
 
-    public static String getThumbCoverUrl(List<TempImage> images) {
-        for (TempImage image : images) {
-            if (image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50);
-        }
+    public static String getEntityCover(EntityType type, Image image) {
+        ImageConfigValue config = entryImageConfigMap.get(type);
+        String url = image == null ? config.getDefaultUrl() : image.getUrl();
+        return QiniuImageUtil.getThumbUrl(url, config.getCoverSize());
+    }
+
+    public static String getThumbCover(Image image) {
+        if (image != null && image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50);
         return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
     }
 
-    public static segmentImagesResult segmentItemImages(ItemType type, List<TempImage> images) {
+    public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {
         return segmentImages(images, itemImageConfigMap.get(type));
     }
 
-    public static segmentImagesResult segmentEntryImages(EntityType type, List<TempImage> images) {
+    public static segmentImagesResult segmentEntryImages(EntityType type, List<Image> images) {
         return segmentImages(images, entryImageConfigMap.get(type));
     }
 
     /**
      * 将图片切分为封面、展示和其他图片
      *
-     * @param orgImages,config 数据库原图片, 预设配置
-     * @return segmentImagesResult
      * @author rakbow
      */
-    private static segmentImagesResult segmentImages(List<TempImage> orgImages, ImageConfigValue config) {
-
+    private static segmentImagesResult segmentImages(List<Image> images, ImageConfigValue config) {
         segmentImagesResult res = new segmentImagesResult();
-        res.setImages(converter.convert(orgImages, TempImageVO.class));
-
-        if (config.isWidth()) {
-            res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(CommonConstant.EMPTY_IMAGE_WIDTH_URL, config.getCoverSize()));
-        } else {
-            res.setCoverUrl(QiniuImageUtil.getThumbUrl(config.getDefaultUrl(), config.getCoverSize()));
+        if (images.isEmpty()) return res;
+        for (Image image : images) {
+            //添加缩略图
+            image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+            image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+            if (!image.isDisplay())
+                res.addOtherImage(image);
+            else
+                res.addDisplayImage(image);
         }
-        if (!res.getImages().isEmpty()) {
-            for (TempImageVO image : res.getImages()) {
-                //添加缩略图
-                image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-                image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
-                if (image.isMain()) {
-                    //对封面图片进行处理
-                    if (config.isWidth()) {
-                        res.setCoverUrl(QiniuImageUtil.getThumbUrlWidth(image.getUrl(), config.getCoverSize()));
-                    } else {
-                        res.setCoverUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), config.getCoverSize()));
-                    }
-                    res.getCover().setName(image.getNameEn());
-                }
-                if (image.isDisplay()) {
-                    res.addDisplayImage(image);
-                } else {
-                    res.addOtherImage(image);
-                }
-            }
-        }
+        res.setImages(images);
         return res;
     }
 
-    public static segmentImagesResult segmentImages(List<TempImage> orgImages) {
+    public static segmentImagesResult segmentImages(List<Image> images) {
 
         segmentImagesResult res = new segmentImagesResult();
-        res.setImages(converter.convert(orgImages, TempImageVO.class));
-        if (!res.getImages().isEmpty()) {
-            for (TempImageVO image : res.getImages()) {
-                //添加缩略图
-                image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-                image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
-                if (image.isDisplay()) {
-                    res.addDisplayImage(image);
-                } else {
-                    res.addOtherImage(image);
-                }
-            }
+        if (images.isEmpty()) return res;
+        for (Image image : images) {
+            //generate thumb image
+            image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
+            image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+            if (image.isDisplay())
+                res.addDisplayImage(image);
+            else
+                res.addOtherImage(image);
         }
+        res.setImages(images);
         return res;
     }
 
