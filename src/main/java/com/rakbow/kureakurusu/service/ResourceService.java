@@ -2,13 +2,18 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.ImageMapper;
+import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
+import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +44,13 @@ public class ResourceService {
      * @author rakbow
      */
     @Transactional
-    public segmentImagesResult getEntityImages(int entityType, long entityId) {
-        List<Image> images = imageMapper.selectList(
-                new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, entityType)
-                        .eq(Image::getEntityId, entityId)
-        );
-        return CommonImageUtil.segmentImages(images);
+    public SearchResult<Image> getEntityImages(int entityType, long entityId, int page, int size) {
+        LambdaQueryWrapper<Image> wrapper = new LambdaQueryWrapper<Image>()
+                .eq(Image::getEntityType, entityType)
+                .eq(Image::getEntityId, entityId);
+        IPage<Image> pages = imageMapper.selectPage(new Page<>(page, size), wrapper);
+        CommonImageUtil.generateThumb(pages.getRecords());
+        return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
 
     /**

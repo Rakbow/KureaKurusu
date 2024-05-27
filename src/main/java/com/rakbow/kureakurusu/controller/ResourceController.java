@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntityQry;
+import com.rakbow.kureakurusu.data.dto.ImageQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.service.ResourceService;
@@ -30,8 +31,10 @@ public class ResourceController {
     //region image
 
     @PostMapping("get-images")
-    public ApiResult getEntityImages(@RequestBody EntityQry qry) {
-        return new ApiResult().load(srv.getEntityImages(qry.getEntityType(), qry.getEntityId()));
+    public ApiResult getEntityImages(@RequestBody ImageQueryDTO dto) {
+        return new ApiResult().load(
+                srv.getEntityImages(dto.getEntityType(), dto.getEntityId(), dto.getPage(), dto.getSize())
+        );
     }
 
     @PostMapping("add-images")

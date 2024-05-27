@@ -126,6 +126,13 @@ public class CommonImageUtil {
         return res;
     }
 
+    public static void generateThumb(List<Image> images) {
+        images.forEach(i -> {
+            i.setThumbUrl70(QiniuImageUtil.getThumbUrl(i.getUrl(), THUMB_SIZE_70));
+            i.setThumbUrl50(QiniuImageUtil.getThumbUrl(i.getUrl(), THUMB_SIZE_50));
+        });
+    }
+
 //    /**
 //     * 获取各尺寸封面图片
 //     *
