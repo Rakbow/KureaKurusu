@@ -1,7 +1,5 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.annotation.QueryColumn;
-import com.rakbow.kureakurusu.data.entity.QueryColumnType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

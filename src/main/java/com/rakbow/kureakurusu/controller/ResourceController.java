@@ -1,18 +1,19 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.EntityQry;
+import com.rakbow.kureakurusu.data.dto.ImageListParams;
 import com.rakbow.kureakurusu.data.dto.ImageQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ImageUpdateCmd;
+import com.rakbow.kureakurusu.data.dto.ImageUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import io.github.linpeilie.Converter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,18 +28,19 @@ import java.util.List;
 public class ResourceController {
 
     private final ResourceService srv;
+    private final Converter converter;
 
     //region image
 
     @PostMapping("get-images")
-    public ApiResult getEntityImages(@RequestBody ImageQueryDTO dto) {
+    public ApiResult getEntityImages(@RequestBody ListQueryDTO dto) {
         return new ApiResult().load(
-                srv.getEntityImages(dto.getEntityType(), dto.getEntityId(), dto.getPage(), dto.getSize())
+                srv.getEntityImages(new ImageListParams(dto))
         );
     }
 
-    @PostMapping("add-images")
-    public ApiResult addEntityImages(int entityType, long entityId, MultipartFile[] files, String infos) {
+    @PostMapping("add-image")
+    public ApiResult addEntityImage(int entityType, long entityId, MultipartFile[] files, String infos) {
         //check
         if (files == null || files.length == 0) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
         //save
@@ -47,24 +49,19 @@ public class ResourceController {
         return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
     }
 
-    @PostMapping("update-images")
-    public ApiResult updateEntityImages(@RequestBody ImageUpdateCmd cmd) {
-        ApiResult res = new ApiResult();
-        List<Image> images = cmd.getImages();
-        if (images.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
+    @PostMapping("update-image")
+    public ApiResult updateEntityImage(@Valid @RequestBody ImageUpdateDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
-        if (cmd.update()) {
-            //save
-            srv.updateEntityImage(images);
-            res.ok(I18nHelper.getMessage("image.update.success"));
-        }//delete
-        else if (cmd.delete()) {
-            srv.deleteEntityImage(images);
-            res.ok(I18nHelper.getMessage("image.delete.success"));
-        } else {
-            return res.fail(I18nHelper.getMessage("entity.error.not_action"));
-        }
-        return res;
+        srv.updateEntityImage(converter.convert(dto, Image.class));
+        return new ApiResult().ok(I18nHelper.getMessage("image.update.success"));
+    }
+
+    @DeleteMapping("delete-images")
+    public ApiResult deleteEntityImages(@RequestBody List<Image> images) {
+        srv.deleteEntityImage(images);
+        return new ApiResult().ok(I18nHelper.getMessage("image.delete.success"));
     }
 
     //endregion
