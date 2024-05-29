@@ -21,9 +21,9 @@ public class FranchiseListParams extends ListQueryParams {
 
     public FranchiseListParams(ListQueryDTO qry) {
         super(qry);
-        this.name = super.getStr("name");
-        this.nameZh = super.getStr("nameZh");
-        this.nameEn = super.getStr("nameEn");
+        this.name = super.getVal("name");
+        this.nameZh = super.getVal("nameZh");
+        this.nameEn = super.getVal("nameEn");
     }
 
 }

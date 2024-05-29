@@ -46,33 +46,17 @@ public class ListQueryParams {
         filters = qry.getFilters();
     }
 
-    public String getStr(String key) {
-        Object value = this.filters.get(key).get(VALUE_KEY);
-        if(value == null)
-            return EMPTY;
-        return value.toString();
-    }
-
-    public Boolean getBool(String key) {
-        Object value = this.filters.get(key).get(VALUE_KEY);
-        if(value == null)
-            return null;
-        return (Boolean) value;
-    }
-
-    public Integer getInteger(String key) {
-        Object value = this.filters.get(key).get(VALUE_KEY);
-        if(value == null)
-            return null;
-        return (Integer) value;
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> List<T> getArray(String key) {
-        Object value = this.filters.get(key).get(VALUE_KEY);
+    public <T> T getVal(String key) {
+        if(!filters.containsKey(key))
+            return null;
+        Object value = this.filters.get(key);
         if(value == null)
             return null;
-        return (List<T>) value;
+        Object finVal = this.filters.get(key).get(VALUE_KEY);
+        if(finVal == null)
+            return null;
+        return (T) finVal;
     }
 
 }

@@ -24,10 +24,10 @@ public class ProductListParams extends ListQueryParams {
 
     public ProductListParams(ListQueryDTO qry) {
         super(qry);
-        this.name = super.getStr("name");
-        this.nameZh = super.getStr("nameZh");
-        this.nameEn = super.getStr("nameEn");
-        this.category = super.getArray("category");
+        this.name = super.getVal("name");
+        this.nameZh = super.getVal("nameZh");
+        this.nameEn = super.getVal("nameEn");
+        this.category = super.getVal("category");
     }
 
 }

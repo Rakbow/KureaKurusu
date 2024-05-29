@@ -25,13 +25,13 @@ public class BookListParams extends ListQueryParams {
 
     public BookListParams(ListQueryDTO qry) {
         super(qry);
-        this.title = super.getStr("title");
-        this.isbn10 = super.getStr("isbn10");
-        this.isbn13 = super.getStr("isbn13");
-        this.region = super.getStr("region");
-        this.lang = super.getStr("lang");
-        this.bookType = super.getInteger("bookType");
-        this.hasBonus = super.getBool("hasBonus");
+        this.title = super.getVal("title");
+        this.isbn10 = super.getVal("isbn10");
+        this.isbn13 = super.getVal("isbn13");
+        this.region = super.getVal("region");
+        this.lang = super.getVal("lang");
+        this.bookType = super.getVal("bookType");
+        this.hasBonus = super.getVal("hasBonus");
     }
 
 }

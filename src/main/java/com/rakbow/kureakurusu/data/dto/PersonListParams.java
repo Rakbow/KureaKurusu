@@ -25,11 +25,11 @@ public class PersonListParams extends ListQueryParams {
 
     public PersonListParams(ListQueryDTO qry) {
         super(qry);
-        this.name = super.getStr("name");
-        this.nameZh = super.getStr("nameZh");
-        this.nameEn = super.getStr("nameEn");
-        this.aliases = super.getStr("aliases");
-        this.gender = super.getArray("gender");
+        this.name = super.getVal("name");
+        this.nameZh = super.getVal("nameZh");
+        this.nameEn = super.getVal("nameEn");
+        this.aliases = super.getVal("aliases");
+        this.gender = super.getVal("gender");
     }
 
 }

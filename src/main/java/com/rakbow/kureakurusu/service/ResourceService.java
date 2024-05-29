@@ -47,11 +47,11 @@ public class ResourceService {
      */
     @Transactional
     public SearchResult<Image> getEntityImages(ImageListParams param) {
-        LambdaQueryWrapper<Image> wrapper = new LambdaQueryWrapper<Image>()
-                .eq(Image::getEntityType, param.getEntityType())
-                .eq(Image::getEntityId, param.getEntityId())
-                .eq(param.getType() != -1, Image::getType, param.getType())
-                .orderByAsc(Image::getId);
+        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
+                .eq("entity_type", param.getEntityType())
+                .eq("entity_id", param.getEntityId())
+                .eq(param.getType() != null && param.getType() != -1, "type", param.getType())
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         IPage<Image> pages = imageMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         CommonImageUtil.generateThumb(pages.getRecords());
         return new SearchResult<>(pages.getRecords(), pages.getTotal());

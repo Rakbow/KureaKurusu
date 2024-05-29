@@ -15,15 +15,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ImageListParams extends ListQueryParams {
 
-    private int type;
-    private int entityType;
-    private long entityId;
+    private Integer type;
+    private Integer entityType;
+    private Integer entityId;
 
     public ImageListParams(ListQueryDTO qry) {
         super(qry);
-        this.type = super.getInteger("type");
-        this.entityType = super.getInteger("entityType");
-        this.entityId = super.getInteger("entityId");
+        this.type = super.getVal("type");
+        this.entityType = super.getVal("entityType");
+        this.entityId = super.getVal("entityId");
     }
 
 }
