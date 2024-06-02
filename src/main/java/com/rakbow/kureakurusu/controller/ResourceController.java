@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.ImageListParams;
-import com.rakbow.kureakurusu.data.dto.ImageQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.image.Image;

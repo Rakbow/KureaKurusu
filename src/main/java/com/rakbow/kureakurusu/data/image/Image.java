@@ -29,7 +29,7 @@ public class Image {
     private EntityType entityType;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private long entityId;
-    private ImageType type;
+    private int type;
     private String name;
     private String nameZh;
     @TableField(updateStrategy = FieldStrategy.NEVER)
@@ -56,7 +56,7 @@ public class Image {
         id = 0L;
         entityType = EntityType.ITEM;
         entityId = 0L;
-        type = ImageType.DEFAULT;
+        type = ImageType.DEFAULT.getValue();
         name = "";
         nameZh = "";
         url = "";
@@ -68,12 +68,12 @@ public class Image {
 
     @JsonIgnore
     public boolean isMain() {
-        return this.type == ImageType.MAIN;
+        return this.type == ImageType.MAIN.getValue();
     }
 
     @JsonIgnore
     public boolean isDisplay() {
-        return this.type != ImageType.OTHER;
+        return this.type != ImageType.OTHER.getValue();
     }
 
 }
