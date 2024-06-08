@@ -5,6 +5,8 @@ import io.github.linpeilie.annotations.AutoEnumMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Locale;
+
 /**
  * @author Rakbow
  * @since 2022-12-29 21:00

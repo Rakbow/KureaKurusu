@@ -9,11 +9,13 @@ import com.rakbow.kureakurusu.toolkit.*;
 import lombok.SneakyThrows;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
+import java.util.Currency;
 
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -56,6 +58,13 @@ public interface MetaVOMapper {
         String label = I18nHelper.getMessage(labelKey);
         X value = (X) getValueMethod.invoke(t);
         return new Attribute<>(label, value);
+    }
+
+    @Named("getCurrency")
+    default String getCurrency(String region) {
+        if(region.equals("global")) return "JPY";
+        if(region.equals("eu")) return "EUR";
+        return Currency.getInstance(Locale.of("", region)).getCurrencyCode();
     }
 
     @Named("getEnumLabel")
@@ -101,11 +110,6 @@ public interface MetaVOMapper {
     @Named("getLanguage")
     default Language getLanguage(String value) {
         return Language.get(value);
-    }
-
-    @Named("getCurrency")
-    default Currency getCurrency(String value) {
-        return Currency.get(value);
     }
 
     @Named("getMediaFormat")

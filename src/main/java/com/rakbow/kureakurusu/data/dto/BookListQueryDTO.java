@@ -17,8 +17,6 @@ public class BookListQueryDTO extends ItemListQueryDTO {
     @QueryColumn
     private String isbn10;
     @QueryColumn
-    private String region;
-    @QueryColumn
     private String lang;
     @QueryColumn(type = QueryColumnType.NUMBER)
     private Integer bookType;
@@ -27,7 +25,6 @@ public class BookListQueryDTO extends ItemListQueryDTO {
         super(dto);
         super.setType(ItemType.BOOK.getValue());
         this.isbn10 = dto.getVal("isbn10");
-        this.region = dto.getVal("region");
         this.lang = dto.getVal("lang");
         this.bookType = dto.getVal("bookType");
     }

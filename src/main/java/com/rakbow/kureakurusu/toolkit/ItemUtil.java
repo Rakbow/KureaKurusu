@@ -79,14 +79,11 @@ public class ItemUtil {
         if(type == ItemType.ALBUM.getValue()) {
             res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
             res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
-            res.put("publishFormatSet", Objects.requireNonNull(MetaData.getOptions()).publishFormatSet);
-            res.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
         }else if(type == ItemType.BOOK.getValue()) {
-            res.put("regionSet", Objects.requireNonNull(MetaData.getOptions()).regionSet);
             res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
             res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
-            res.put("currencySet", Objects.requireNonNull(MetaData.getOptions()).currencySet);
         }
+        res.put("releaseTypeSet", Objects.requireNonNull(MetaData.getOptions()).releaseTypeSet);
         return res;
     }
 

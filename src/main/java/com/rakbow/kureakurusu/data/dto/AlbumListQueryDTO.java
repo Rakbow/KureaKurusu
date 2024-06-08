@@ -22,8 +22,6 @@ public class AlbumListQueryDTO extends ItemListQueryDTO {
     private List<Integer> albumFormat;
     @QueryColumn(type = QueryColumnType.NUMBER_LIST)
     private List<Integer> mediaFormat;
-    @QueryColumn(type = QueryColumnType.NUMBER_LIST)
-    private List<Integer> publishFormat;
 
     public AlbumListQueryDTO(ListQueryDTO dto) {
         super(dto);
@@ -31,7 +29,6 @@ public class AlbumListQueryDTO extends ItemListQueryDTO {
         this.catalogNo = dto.getVal("catalogNo");
         this.albumFormat = dto.getArray("albumFormat");
         this.mediaFormat = dto.getArray("mediaFormat");
-        this.publishFormat = dto.getArray("publishFormat");
     }
 
 }

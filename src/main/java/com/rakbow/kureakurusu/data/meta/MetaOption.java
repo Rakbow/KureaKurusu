@@ -27,7 +27,7 @@ public class MetaOption {
     public List<Attribute<Integer>> bookTypeSet;
     public List<Attribute<String>> currencySet;
     public List<Attribute<String>> languageSet;
-    public List<Attribute<String>> regionSet;
+    public List<Attribute<Integer>> releaseTypeSet;
 
     public MetaOption() {
         genderSet = new ArrayList<>();
@@ -45,7 +45,7 @@ public class MetaOption {
         bookTypeSet = new ArrayList<>();
         currencySet = new ArrayList<>();
         languageSet = new ArrayList<>();
-        regionSet = new ArrayList<>();
+        releaseTypeSet = new ArrayList<>();
     }
 
 }

@@ -15,9 +15,7 @@ import java.util.List;
 public class AlbumListVO extends ItemListVO {
 
     private String catalogNo;
-    private boolean hasBonus;
 
-    private List<Attribute<Integer>> publishFormat;
     private List<Attribute<Integer>> albumFormat;
     private List<Attribute<Integer>> mediaFormat;
 

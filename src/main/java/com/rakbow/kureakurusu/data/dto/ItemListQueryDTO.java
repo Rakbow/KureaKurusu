@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/5/4 9:04
@@ -16,8 +18,10 @@ public class ItemListQueryDTO {
     private String name;
     private String nameZh;
     private String nameEn;
-    private String ean13;
-    private Boolean hasBonus;
+    private String barcode;
+    private Boolean bonus;
+    private String region;
+    private Integer releaseType;
 
     private int page;
     private int size;
@@ -33,8 +37,10 @@ public class ItemListQueryDTO {
         name = dto.getVal("name");
         nameZh = dto.getVal("nameZh");
         nameEn = dto.getVal("nameEn");
-        ean13 = dto.getVal("ean13");
-        hasBonus = dto.getVal("hasBonus");
+        barcode = dto.getVal("barcode");
+        region = dto.getVal("region");
+        bonus = dto.getVal("bonus");
+        releaseType = dto.getVal("releaseType");
     }
 
     public boolean asc() {

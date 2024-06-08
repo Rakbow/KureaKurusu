@@ -25,8 +25,6 @@ public class ItemAlbum extends SubItem {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String catalogNo;//专辑编号
     @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> publishFormat;//出版形式 在mysql中以数组字符串形式存储
-    @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> mediaFormat;//媒体类型

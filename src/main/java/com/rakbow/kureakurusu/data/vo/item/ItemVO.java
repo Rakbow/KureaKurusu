@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
+import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 /**
@@ -11,21 +12,25 @@ public class ItemVO {
 
     private long id;
     private int type;
+
     private String name;
     private String nameZh;
     private String nameEn;
-    private String ean13;
+
+    private Attribute<Integer> releaseType;
+    private String barcode;
     private String releaseDate;
     private double price;
     private String currency;
+    private String region;
+    private boolean bonus;
+
     private String remark;
+    private String detail;
 
     private String addedTime;
     private String editedTime;
 
-    private String detail;
-    private boolean hasBonus;
-    private String bonus;
     private boolean status;
 
 }

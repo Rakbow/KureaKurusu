@@ -28,7 +28,6 @@ public class BookUpdateDTO extends ItemUpdateDTO {
 
     private String isbn10;
     private int bookType;
-    private String region;
     private String lang;
     private String summary;
 
@@ -36,7 +35,6 @@ public class BookUpdateDTO extends ItemUpdateDTO {
         setType(ItemType.BOOK.getValue());
         isbn10 = "";
         bookType = BookType.NOVEL.getValue();
-        region = Region.JAPAN.getValue();
         lang = Language.JAPANESE.getValue();
         summary = "";
 

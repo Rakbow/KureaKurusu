@@ -72,9 +72,6 @@ public class GeneralService {
         MetaData.optionsZh.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "zh");
         MetaData.optionsEn.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "en");
 
-        MetaData.optionsZh.publishFormatSet = EnumHelper.getAttributeOptions(PublishFormat.class, "zh");
-        MetaData.optionsEn.publishFormatSet = EnumHelper.getAttributeOptions(PublishFormat.class, "en");
-
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
@@ -90,14 +87,11 @@ public class GeneralService {
         MetaData.optionsZh.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "zh");
         MetaData.optionsEn.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "en");
 
-        MetaData.optionsZh.regionSet = EnumHelper.getAttributeStrOptions(Region.class, "zh");
-        MetaData.optionsEn.regionSet = EnumHelper.getAttributeStrOptions(Region.class, "en");
+        MetaData.optionsZh.releaseTypeSet = EnumHelper.getAttributeOptions(ReleaseType.class, "zh");
+        MetaData.optionsEn.releaseTypeSet = EnumHelper.getAttributeOptions(ReleaseType.class, "en");
 
         MetaData.optionsZh.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "zh");
         MetaData.optionsEn.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "en");
-
-        MetaData.optionsZh.currencySet = EnumHelper.getAttributeStrOptions(Currency.class, "zh");
-        MetaData.optionsEn.currencySet = EnumHelper.getAttributeStrOptions(Currency.class, "en");
 
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);

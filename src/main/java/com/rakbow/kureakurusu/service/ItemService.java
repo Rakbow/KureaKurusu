@@ -166,6 +166,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .options(ItemUtil.getOptions(item.getType().getValue()))
                 .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
                 .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
+                .images(resourceSrv.getDefaultImages(EntityType.ITEM.getValue(), id))
                 .build();
     }
 
@@ -202,10 +203,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)}\{SUB_T_CONDITION}")
                 .eq(Item::getType, param.getType())
                 .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
-                .like(StringUtils.isNotBlank(param.getNameZh()), Item::getNameZh, param.getNameZh())
-                .like(StringUtils.isNotBlank(param.getNameEn()), Item::getNameEn, param.getNameEn())
-                .like(StringUtils.isNotBlank(param.getEan13()), Item::getEan13, param.getEan13())
-                .like(param.getHasBonus() != null, Item::getHasBonus, Boolean.TRUE.equals(param.getHasBonus()) ? 1 : 0)
+                .like(StringUtils.isNotBlank(param.getName()), Item::getNameZh, param.getName())
+                .like(StringUtils.isNotBlank(param.getName()), Item::getNameEn, param.getName())
+                .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
+                .like(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
+                .eq(param.getBonus() != null, Item::getBonus, Boolean.TRUE.equals(param.getBonus()) ? 1 : 0)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         //private query column to sql
         MyBatisUtil.itemListQueryWrapper(param, wrapper);

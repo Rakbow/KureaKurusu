@@ -27,7 +27,6 @@ public class ItemBook extends SubItem {
 
     private String authors;//作者（译者，插画，原作者等，json）
 
-    private Region region;//地区
     private Language lang;//语言
 
     private String summary;//简介

@@ -22,41 +22,41 @@ import java.util.List;
 @TableName(value = "disc", autoResultMap = true)
 public class Disc extends SuperItem {
 
-    private Long id;
-    private String catalogNo;
-    private String name;
-    private String nameZh;
-    private String nameEn;
-    private String ean13;
-    private String releaseDate;
-    private double price;//发行价格（含税）
-    private Currency currency;
-    private List<Integer> mediaFormat;
-    private Version version;
-    private String spec;
-    private int hasBonus;
-    private String bonus;
-
-    public Disc () {
-        this.id = 0L;
-        this.catalogNo = "";
-        this.name = "";
-        this.nameZh = "";
-        this.nameEn = "";
-        this.ean13 = "";
-        this.releaseDate = null;
-        this.price = 0;
-        this.currency = Currency.JPY;
-        this.mediaFormat = new ArrayList<>();
-        this.version = Version.REGULAR_EDITION;
-        this.spec = "[]";
-        this.hasBonus = 0;
-        this.bonus = "";
-        this.setDetail("");
-        this.setRemark("");
-        this.setAddedTime(DateHelper.now());
-        this.setEditedTime(DateHelper.now());
-        this.setStatus(true);
-    }
+//    private Long id;
+//    private String catalogNo;
+//    private String name;
+//    private String nameZh;
+//    private String nameEn;
+//    private String ean13;
+//    private String releaseDate;
+//    private double price;//发行价格（含税）
+//    private Currency currency;
+//    private List<Integer> mediaFormat;
+//    private Version version;
+//    private String spec;
+//    private int hasBonus;
+//    private String bonus;
+//
+//    public Disc () {
+//        this.id = 0L;
+//        this.catalogNo = "";
+//        this.name = "";
+//        this.nameZh = "";
+//        this.nameEn = "";
+//        this.ean13 = "";
+//        this.releaseDate = null;
+//        this.price = 0;
+//        this.currency = Currency.JPY;
+//        this.mediaFormat = new ArrayList<>();
+//        this.version = Version.REGULAR_EDITION;
+//        this.spec = "[]";
+//        this.hasBonus = 0;
+//        this.bonus = "";
+//        this.setDetail("");
+//        this.setRemark("");
+//        this.setAddedTime(DateHelper.now());
+//        this.setEditedTime(DateHelper.now());
+//        this.setStatus(true);
+//    }
 
 }

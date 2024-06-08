@@ -3,8 +3,8 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
@@ -43,24 +43,24 @@ public class Item {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn;
 
-    private String ean13;//EAN-13
-    private String releaseDate;//发售日期
-    private double price;//发行价格
-    private Currency currency;//货币单位
-
-    private String detail;//描述
+    private String barcode;//EAN-13/JAN/ISBN-13
+    private String releaseDate;
+    private double price;
+    private String region;//ISO-3166 region code
+    private ReleaseType releaseType;//release type
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean hasBonus;//是否包含特典内容 0-无 1-有
-    private String bonus;//特典信息
-    private String remark;//备注
+    private Boolean bonus;//has prize
+
+    private String detail;
+    private String remark;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp addedTime = DateHelper.now();//数据新增时间
+    private Timestamp addedTime = DateHelper.now();
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp editedTime = DateHelper.now();//数据更新时间
+    private Timestamp editedTime = DateHelper.now();
 
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean status;//激活状态
+    private Boolean status;
 
 }

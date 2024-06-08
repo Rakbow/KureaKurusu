@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
 import com.rakbow.kureakurusu.data.PageTraffic;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.person.PersonnelStruct;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,5 +29,5 @@ public class ItemDetailVO {
     private Map<String, Object> options;
 
     private String cover;
-
+    private List<Image> images;
 }

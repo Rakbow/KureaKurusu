@@ -13,9 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Rakbow
@@ -38,6 +36,17 @@ public class OtherTests {
     private ItemMapper itemMapper;
     @Resource
     private EpisodeMapper epMapper;
+
+    @Test
+    public void javaTest() {
+        System.out.println(Currency.getInstance(Locale.of("", "jp")));
+        System.out.println(Currency.getInstance(Locale.of("", "cn")));
+        System.out.println(Currency.getInstance(Locale.of("", "tw")));
+        System.out.println(Currency.getInstance(Locale.of("", "gb")));
+        System.out.println(Currency.getInstance(Locale.of("", "us")));
+        System.out.println(Currency.getInstance(Locale.of("", "eu")));
+    }
+
 
 //    @Test
 //    public void batchAddRelation() {

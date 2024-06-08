@@ -16,7 +16,6 @@ public class BookVO extends ItemVO {
 
     private String isbn10;
     private Attribute<Integer> bookType;
-    private Attribute<String> region;
     private Attribute<String> lang;
     private String summary;
 

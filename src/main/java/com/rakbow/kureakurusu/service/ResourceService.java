@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -39,6 +41,11 @@ public class ResourceService {
     private final ImageMapper imageMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
+
+    private final static List<Integer> defaultImageType = Arrays.asList(
+            ImageType.MAIN.getValue(),
+            ImageType.DEFAULT.getValue()
+    );
 
     /**
      * 根据实体类型和实体Id获取图片
@@ -137,6 +144,17 @@ public class ResourceService {
                         .eq(Image::getType, ImageType.MAIN)
         );
         return CommonImageUtil.getThumbCover(cover);
+    }
+
+    public List<Image> getDefaultImages(int entityType, long entityId) {
+        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
+                .eq("entity_type", entityType)
+                .eq("entity_id", entityId)
+                .in("type", defaultImageType)
+                .orderByAsc("id");
+        IPage<Image> pages = imageMapper.selectPage(new Page<>(1, 10), wrapper);
+        CommonImageUtil.generateThumb(pages.getRecords());
+        return pages.getRecords();
     }
 
 }

@@ -17,10 +17,8 @@ import java.util.List;
 public class AlbumVO extends ItemVO {
 
     private String catalogNo;//专辑编号
-    private String releaseDate;//发行日期
 
     //规格信息
-    private List<Attribute<Integer>> publishFormat;//出版形式 在mysql中以数组字符串形式存储
     private List<Attribute<Integer>> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
     private List<Attribute<Integer>> mediaFormat;//媒体类型
 

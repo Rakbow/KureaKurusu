@@ -1,10 +1,8 @@
 package com.rakbow.kureakurusu.data.entity.common;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
@@ -19,15 +17,43 @@ public abstract class SuperItem {
 
     private Long id;
     private ItemType type;
-    private String detail;//描述
-    private String remark;//备注
+
+    private String name;
+    private String nameZh;
+    private String nameEn;
+
+    private String releaseDate;
+    @AutoMapping(qualifiedByName = "toAttribute")
+    private ReleaseType releaseType;
+    private double price;
+    @AutoMapping(target = "currency", qualifiedByName = "getCurrency")
+    private String region;
+    private String barcode;
+
+    private Boolean bonus;
+    private String detail;
+    private String remark;
     @AutoMapping(qualifiedByName = "getVOTime")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp addedTime;//数据新增时间
+    private Timestamp addedTime;
     @AutoMapping(qualifiedByName = "getVOTime")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp editedTime;//数据更新时间
-    @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean status;//激活状态
+    private Timestamp editedTime;
+    private Boolean status;
+
+    public SuperItem() {
+        id = 0L;
+        name = "";
+        nameZh = "";
+        nameEn = "";
+        releaseDate = "-";
+        releaseType = ReleaseType.STANDARD;
+        region = "jp";
+        barcode = "";
+        bonus = true;
+        detail = "";
+        remark = "";
+        addedTime = DateHelper.now();
+        editedTime = DateHelper.now();
+        status = true;
+    }
 
 }
