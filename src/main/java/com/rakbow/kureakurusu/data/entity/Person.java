@@ -42,9 +42,9 @@ public class Person extends MetaEntity {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name; //原名
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String nameZh; //简体中文名
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String nameEn; //英文名
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
+    private String nameZh; //简体中文名
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases; //别名 json数组
     private String cover; //头像url
@@ -59,8 +59,8 @@ public class Person extends MetaEntity {
     public Person() {
         id = 0L;
         name = "";
-        nameZh = "";
         nameEn = "";
+        nameZh = "";
         aliases = new ArrayList<>();
         cover = "";
         gender = Gender.UNKNOWN;

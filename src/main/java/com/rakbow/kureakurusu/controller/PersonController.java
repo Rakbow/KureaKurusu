@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
@@ -14,10 +13,7 @@ import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Rakbow
@@ -40,11 +36,6 @@ public class PersonController {
     @UniqueVisitor
     public ApiResult detail(@RequestBody PersonDetailQry qry) {
         return new ApiResult().load(srv.detail(qry));
-    }
-
-    @PostMapping("search")
-    public ApiResult search(@RequestBody SearchQry qry) {
-        return new ApiResult().load(srv.searchPersons(new SimpleSearchParam(qry)));
     }
 
     @PostMapping("list")
@@ -107,11 +98,21 @@ public class PersonController {
         return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
     }
 
-    @PostMapping("manage-personnel")
-    public ApiResult managePersonnel(@RequestBody PersonnelManageCmd cmd) {
-        srv.managePersonnel(cmd);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
+    @PostMapping("add-personnel")
+    public ApiResult getPersonnel(@RequestBody PersonnelCreateDTO dto) {
+        srv.addPersonnel(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success"));
     }
+
+//    @PostMapping("update-personnel")
+//    public ApiResult getPersonnel(@RequestBody EntityQry qry) {
+//        return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
+//    }
+//
+//    @DeleteMapping("delete-personnel")
+//    public ApiResult getPersonnel(@RequestBody EntityQry qry) {
+//        return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
+//    }
 
     //endregion
 
