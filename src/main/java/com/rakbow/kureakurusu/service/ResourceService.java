@@ -57,7 +57,8 @@ public class ResourceService {
         QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
                 .eq("entity_type", param.getEntityType())
                 .eq("entity_id", param.getEntityId())
-                .eq(param.getType() != null && param.getType() != -1, "type", param.getType())
+                .eq(param.getType() != null && param.getType() != -1 && param.getType() != -2, "type", param.getType())
+                .in(param.getType() != null && param.getType() == -2, "type", defaultImageType)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         IPage<Image> pages = imageMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         CommonImageUtil.generateThumb(pages.getRecords());
@@ -152,9 +153,18 @@ public class ResourceService {
                 .eq("entity_id", entityId)
                 .in("type", defaultImageType)
                 .orderByAsc("id");
-        IPage<Image> pages = imageMapper.selectPage(new Page<>(1, 10), wrapper);
+        IPage<Image> pages = imageMapper.selectPage(new Page<>(1, 6), wrapper);
         CommonImageUtil.generateThumb(pages.getRecords());
         return pages.getRecords();
+    }
+
+    public int getDefaultImagesCount(int entityType, long entityId) {
+        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
+                .eq("entity_type", entityType)
+                .eq("entity_id", entityId)
+                .in("type", defaultImageType)
+                .orderByAsc("id");
+        return imageMapper.selectCount(wrapper).intValue();
     }
 
 }
