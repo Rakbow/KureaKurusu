@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.GeneralService;
-import com.rakbow.kureakurusu.service.ItemService;
-import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.ExcelUtil;
@@ -39,8 +36,7 @@ public class GeneralController {
 
     //region inject
     private final GeneralService srv;
-    private final ItemService itemSrv;
-    private final ProductService productSrv;
+
     @Value("${server.servlet.context-path}")
     private String contextPath;
     private final EntityUtil entityUtil;
@@ -55,12 +51,7 @@ public class GeneralController {
 
     @PostMapping("search")
     public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
-        ApiResult res = new ApiResult();
-        if (qry.getEntityType() == EntityType.ITEM.getValue())
-            res.load(itemSrv.search(new SimpleSearchParam(qry.getParam())));
-        else if (qry.getEntityType() == EntityType.PRODUCT.getValue())
-            res.load(productSrv.searchProducts(qry.getParam()));
-        return res;
+        return new ApiResult().load(srv.search(qry.getEntityType(), new SimpleSearchParam(qry.getParam())));
     }
 
     @PostMapping("get-option")

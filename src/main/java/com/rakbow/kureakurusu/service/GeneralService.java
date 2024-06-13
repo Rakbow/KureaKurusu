@@ -1,16 +1,24 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.FranchiseMapper;
+import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.dao.PersonRoleMapper;
-import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.*;
+import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Franchise;
+import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.PersonRole;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
+import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
+import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -39,6 +47,7 @@ public class GeneralService {
     private final CommonMapper mapper;
     private final PersonRoleMapper personRoleMapper;
     private final FranchiseMapper franchiseMapper;
+    private final PersonMapper personMapper;
 
     //endregion
 
@@ -167,5 +176,36 @@ public class GeneralService {
         return res;
     }
     //endregion
+
+    public SearchResult<EntityMiniVO> search(int entityType, SimpleSearchParam param) {
+        List<EntityMiniVO> res = new ArrayList<>();
+        if (entityType == EntityType.PERSON.getValue()) {
+            LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
+                    .eq(Person::getStatus, 1)
+                    .orderByDesc(Person::getId);
+            if(!param.keywordEmpty()) {
+                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
+                        .or().like(Person::getName, param.getKeyword())
+                        .or().like(Person::getNameZh, param.getKeyword())
+                        .or().like(Person::getNameEn, param.getKeyword());
+            }
+
+            IPage<Person> pages = personMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+            pages.getRecords()
+                    .forEach(i -> {
+                        res.add(new EntityMiniVO(
+                                i.getCover().isEmpty() ? CommonConstant.EMPTY_IMAGE_URL : i.getCover(),
+                                entityType,
+                                i.getId(),
+                                i.getName(),
+                                STR."\{i.getNameEn()}/\{i.getNameZh()}",
+                                ""
+                        ));
+                    });
+            return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        }
+
+        return null;
+    }
 
 }
