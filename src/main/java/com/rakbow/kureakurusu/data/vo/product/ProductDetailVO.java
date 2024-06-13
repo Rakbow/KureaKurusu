@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.product;
 
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.person.PersonnelStruct;
+import com.rakbow.kureakurusu.data.person.Personnel;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class ProductDetailVO {
 
     private PageTraffic traffic;
     private segmentImagesResult itemImageInfo;
-    private PersonnelStruct personnel;
+    private List<Personnel> personnel;
     private Map<String, Object> options;
 
     private List<EpisodeVOAlpha> episodes;

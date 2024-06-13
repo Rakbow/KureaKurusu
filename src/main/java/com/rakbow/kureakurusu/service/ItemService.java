@@ -167,6 +167,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
                 .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
                 .images(resourceSrv.getDefaultImages(EntityType.ITEM.getValue(), id))
+                .imageCount(resourceSrv.getDefaultImagesCount(EntityType.ITEM.getValue(), id))
                 .build();
     }
 
