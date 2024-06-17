@@ -3,6 +3,8 @@ package com.rakbow.kureakurusu.data.vo.item;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/5/6 12:59
@@ -14,8 +16,7 @@ public class ItemVO {
     private int type;
 
     private String name;
-    private String nameZh;
-    private String nameEn;
+    private List<String> aliases;
 
     private Attribute<Integer> releaseType;
     private String barcode;

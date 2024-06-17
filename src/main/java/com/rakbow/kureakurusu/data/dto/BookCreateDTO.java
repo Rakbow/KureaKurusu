@@ -25,7 +25,6 @@ public class BookCreateDTO extends ItemCreateDTO {
 
     private String isbn10;
     private Integer bookType;
-    private String region;
     private String lang;
     private String summary;
 
@@ -33,7 +32,6 @@ public class BookCreateDTO extends ItemCreateDTO {
         setType(ItemType.BOOK.getValue());
         isbn10 = "";
         bookType = BookType.NOVEL.getValue();
-        region = Region.JAPAN.getValue();
         lang = Language.JAPANESE.getValue();
         summary = "";
     }

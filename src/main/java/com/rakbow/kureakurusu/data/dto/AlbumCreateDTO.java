@@ -25,8 +25,6 @@ import java.util.List;
 public class AlbumCreateDTO extends ItemCreateDTO {
 
     private String catalogNo;
-    @NotEmpty(message = "{album.crud.publish_format.required_field}")
-    private List<Integer> publishFormat;
     @NotEmpty(message = "{album.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
@@ -35,7 +33,6 @@ public class AlbumCreateDTO extends ItemCreateDTO {
     public AlbumCreateDTO() {
         setType(ItemType.ALBUM.getValue());
         catalogNo = "";
-        publishFormat = new ArrayList<>();
         albumFormat = new ArrayList<>();
         mediaFormat = new ArrayList<>();
     }

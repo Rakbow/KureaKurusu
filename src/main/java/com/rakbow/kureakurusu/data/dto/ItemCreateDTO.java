@@ -2,11 +2,14 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.rakbow.kureakurusu.data.emun.Currency;
+import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -29,28 +32,27 @@ public class ItemCreateDTO extends DTO {
 
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;
-    private String nameZh;
-    private String nameEn;
+    private List<String> aliases;
 
-    private String ean13;
+    private String barcode;
     private String releaseDate;
-
+    private int releaseType;
     private double price;
-    private String currency;
+    private String region;
 
+    private boolean bonus;
     private String remark;
-    private boolean hasBonus;
 
     public ItemCreateDTO() {
         name = "";
-        nameZh = "";
-        nameEn = "";
-        ean13 = "";
+        aliases = new ArrayList<>();
+        barcode = "";
         releaseDate = DateHelper.DEFAULT_DATE;
+        releaseType = ReleaseType.STANDARD.getValue();
+        region = "";
         price = 0;
-        currency = Currency.JPY.getValue();
+        bonus = false;
         remark = "";
-        hasBonus = false;
     }
 
 }

@@ -34,8 +34,6 @@ public class ItemUpdateDTO extends DTO {
 
     private int releaseType;
     private String barcode;
-
-    @NotBlank(message = "{entity.crud.release_date.required_field}")
     private String releaseDate;
 
     private double price;

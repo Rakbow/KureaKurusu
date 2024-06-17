@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -15,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -38,12 +40,10 @@ public class Item {
 
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String nameZh;
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String nameEn;
+    @TableField(typeHandler = StrListHandler.class)
+    private List<String> aliases;
 
-    private String barcode;//EAN-13/JAN/ISBN-13
+    private String barcode;// EAN/JAN/ISBN-13
     private String releaseDate;
     private double price;
     private String region;//ISO-3166 region code

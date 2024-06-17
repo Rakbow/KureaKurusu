@@ -16,8 +16,7 @@ public class ItemListQueryDTO {
 
     private int type;
     private String name;
-    private String nameZh;
-    private String nameEn;
+    private String aliases;
     private String barcode;
     private Boolean bonus;
     private String region;
@@ -35,8 +34,7 @@ public class ItemListQueryDTO {
         sortOrder = dto.getSortOrder();
 
         name = dto.getVal("name");
-        nameZh = dto.getVal("nameZh");
-        nameEn = dto.getVal("nameEn");
+        aliases = dto.getVal("aliases");
         barcode = dto.getVal("barcode");
         region = dto.getVal("region");
         bonus = dto.getVal("bonus");

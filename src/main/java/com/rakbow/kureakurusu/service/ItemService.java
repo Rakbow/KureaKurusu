@@ -177,8 +177,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         LambdaQueryWrapper<Item> wrapper = new LambdaQueryWrapper<Item>()
                 .or().like(Item::getName, param.getKeyword())
-                .or().like(Item::getNameZh, param.getKeyword())
-                .or().like(Item::getNameEn, param.getKeyword())
+                .and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')",
+                        param.getKeyword()))
                 .orderByDesc(Item::getId);
 
         IPage<Item> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
@@ -204,8 +204,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)}\{SUB_T_CONDITION}")
                 .eq(Item::getType, param.getType())
                 .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
-                .like(StringUtils.isNotBlank(param.getName()), Item::getNameZh, param.getName())
-                .like(StringUtils.isNotBlank(param.getName()), Item::getNameEn, param.getName())
+                .like(StringUtils.isNotBlank(param.getAliases()),
+                        "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getAliases()}%")
                 .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
                 .like(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
                 .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())

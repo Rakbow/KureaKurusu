@@ -7,6 +7,8 @@ import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -19,8 +21,7 @@ public abstract class SuperItem {
     private ItemType type;
 
     private String name;
-    private String nameZh;
-    private String nameEn;
+    private List<String> aliases;
 
     private String releaseDate;
     @AutoMapping(qualifiedByName = "toAttribute")
@@ -42,8 +43,7 @@ public abstract class SuperItem {
     public SuperItem() {
         id = 0L;
         name = "";
-        nameZh = "";
-        nameEn = "";
+        aliases = new ArrayList<>();
         releaseDate = "-";
         releaseType = ReleaseType.STANDARD;
         region = "jp";
