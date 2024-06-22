@@ -29,7 +29,7 @@ public class FileHandler extends AbstractJsonTypeHandler<List<File>> {
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(List<File> obj) {
         return JsonUtil.toJson(obj);
     }
 }

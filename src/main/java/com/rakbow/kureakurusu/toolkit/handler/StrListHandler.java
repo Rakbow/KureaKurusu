@@ -28,7 +28,7 @@ public class StrListHandler extends AbstractJsonTypeHandler<List<String>> {
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(List<String> obj) {
         return JsonUtil.toJson(obj);
     }
 }

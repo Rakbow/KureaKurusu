@@ -28,7 +28,7 @@ public class IntegerListHandler extends AbstractJsonTypeHandler<List<Integer>> {
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(List<Integer> obj) {
         return JsonUtil.toJson(obj);
     }
 }

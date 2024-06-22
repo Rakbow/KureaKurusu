@@ -28,7 +28,7 @@ public class LongListHandler extends AbstractJsonTypeHandler<List<Long>> {
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(List<Long> obj) {
         return JsonUtil.toJson(obj);
     }
 }

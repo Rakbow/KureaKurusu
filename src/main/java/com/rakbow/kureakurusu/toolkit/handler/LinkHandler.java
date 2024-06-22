@@ -29,7 +29,7 @@ public class LinkHandler extends AbstractJsonTypeHandler<List<Link>> {
     }
 
     @Override
-    public String toJson(Object obj) {
+    public String toJson(List<Link> obj) {
         return JsonUtil.toJson(obj);
     }
 }
