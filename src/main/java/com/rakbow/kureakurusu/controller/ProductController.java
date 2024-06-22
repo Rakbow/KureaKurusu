@@ -38,7 +38,6 @@ public class ProductController {
     @UniqueVisitor
     public ApiResult detail(@RequestBody ProductDetailQry qry) {
         ProductDetailVO vo = srv.getDetail(qry);
-        vo.setPersonnel(personSrv.getPersonnel(ENTITY_VALUE, qry.getId()));
         return new ApiResult().load(vo);
     }
 
