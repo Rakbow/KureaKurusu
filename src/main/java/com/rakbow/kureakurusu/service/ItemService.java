@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
-import com.rakbow.kureakurusu.dao.PersonRelationMapper;
+import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
@@ -18,7 +18,7 @@ import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.data.entity.PersonRelation;
+import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.SubItem;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.image.Image;
@@ -46,7 +46,6 @@ import java.util.List;
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     //region inject
-    private final PersonService personSrv;
     private final ResourceService resourceSrv;
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
@@ -54,7 +53,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final EntityUtil entityUtil;
     private final ItemMapper mapper;
     private final ImageMapper imageMapper;
-    private final PersonRelationMapper relationMapper;
+    private final RelationMapper relationMapper;
     private final Converter converter;
     //endregion
 
@@ -141,9 +140,9 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         subMapper.delete(new LambdaQueryWrapper<SubItem>().in(SubItem::getId, ids));
 
         relationMapper.delete(
-                new LambdaQueryWrapper<PersonRelation>()
-                        .eq(PersonRelation::getEntityType, EntityType.ITEM.getValue())
-                        .in(PersonRelation::getEntityId, ids)
+                new LambdaQueryWrapper<Relation>()
+                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                        .in(Relation::getEntityId, ids)
         );
 
         return I18nHelper.getMessage("entity.curd.delete.success");
@@ -164,7 +163,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .item(converter.convert(item, targetVOClass))
                 .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
                 .options(ItemUtil.getOptions(item.getType().getValue()))
-                .personnel(personSrv.getPersonnel(EntityType.ITEM.getValue(), id))
                 .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
                 .images(resourceSrv.getDefaultImages(EntityType.ITEM.getValue(), id))
                 .imageCount(resourceSrv.getDefaultImagesCount(EntityType.ITEM.getValue(), id))

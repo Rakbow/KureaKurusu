@@ -6,19 +6,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.FranchiseMapper;
 import com.rakbow.kureakurusu.dao.PersonMapper;
-import com.rakbow.kureakurusu.dao.PersonRoleMapper;
+import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.*;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Franchise;
 import com.rakbow.kureakurusu.data.entity.Person;
-import com.rakbow.kureakurusu.data.entity.PersonRole;
+import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
-import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -45,7 +43,7 @@ public class GeneralService {
 
     //region mapper
     private final CommonMapper mapper;
-    private final PersonRoleMapper personRoleMapper;
+    private final RoleMapper roleMapper;
     private final FranchiseMapper franchiseMapper;
     private final PersonMapper personMapper;
 
@@ -162,7 +160,7 @@ public class GeneralService {
     private List<Attribute<Long>> getPersonRoleSet() {
         List<Attribute<Long>> res = new ArrayList<>();
         //获取所有role数据
-        List<PersonRole> items = personRoleMapper.selectList(null);
+        List<Role> items = roleMapper.selectList(null);
         items.forEach(i -> res.add(new Attribute<>(i.getNameZh() + SLASH + i.getNameEn(), i.getId())));
         return res;
     }

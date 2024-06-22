@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
-import com.rakbow.kureakurusu.dao.PersonRelationMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
+import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.ProductDetailQry;
@@ -17,8 +17,8 @@ import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ProductCategory;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.PersonRelation;
 import com.rakbow.kureakurusu.data.entity.Product;
+import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
@@ -26,8 +26,6 @@ import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
-import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -49,8 +47,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     //region ------inject------
     private final ProductMapper mapper;
     private final EpisodeMapper epMapper;
-    private final PersonRelationMapper relationMapper;
-    private final QiniuImageUtil qiniuImageUtil;
+    private final RelationMapper relationMapper;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final Converter converter;
@@ -135,7 +132,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         //delete
         mapper.delete(new LambdaQueryWrapper<Product>().in(Product::getId, ids));
         //delete person relation
-        relationMapper.delete(new LambdaQueryWrapper<PersonRelation>().eq(PersonRelation::getEntityType, ENTITY_VALUE).in(PersonRelation::getEntityId, ids));
+        relationMapper.delete(new LambdaQueryWrapper<Relation>().eq(Relation::getEntityType, ENTITY_VALUE).in(Relation::getEntityId, ids));
     }
 
     //endregion
