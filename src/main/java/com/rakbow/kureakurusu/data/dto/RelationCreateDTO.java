@@ -7,15 +7,17 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2024/6/12 11:26
+ * @since 2024/2/28 15:27
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PersonnelCreateDTO extends DTO{
+public class RelationCreateDTO extends DTO {
 
     private int entityType;
     private long entityId;
+    private int relatedEntityType;
+    private List<Long> relatedEntityIds;
+    private int roleGroup;
     private long roleId;
-    private List<Long> personIds;
 
 }

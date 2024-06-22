@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.PersonRoleMapper;
+import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.PersonRoleListParams;
-import com.rakbow.kureakurusu.data.entity.PersonRole;
+import com.rakbow.kureakurusu.data.dto.RoleListParams;
+import com.rakbow.kureakurusu.data.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,20 +18,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class PersonRoleService extends ServiceImpl<PersonRoleMapper, PersonRole> {
+public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
-    private final PersonRoleMapper mapper;
+    private final RoleMapper mapper;
 
     @Transactional
-    public SearchResult<PersonRole> getRoles(PersonRoleListParams param) {
+    public SearchResult<Role> getRoles(RoleListParams param) {
 
-        QueryWrapper<PersonRole> wrapper = new QueryWrapper<PersonRole>()
+        QueryWrapper<Role> wrapper = new QueryWrapper<Role>()
                 .like("name", param.getName())
                 .like("name_zh", param.getNameZh())
                 .like("name_en", param.getNameEn())
                 .orderBy(param.isSort(), param.asc(), param.sortField);
 
-        IPage<PersonRole> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Role> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         return new SearchResult<>(pages);
     }
 

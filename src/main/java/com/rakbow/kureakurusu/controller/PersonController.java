@@ -5,8 +5,8 @@ import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Person;
-import com.rakbow.kureakurusu.data.entity.PersonRole;
-import com.rakbow.kureakurusu.service.PersonRoleService;
+import com.rakbow.kureakurusu.data.entity.Role;
+import com.rakbow.kureakurusu.service.RoleService;
 import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import io.github.linpeilie.Converter;
@@ -26,7 +26,7 @@ public class PersonController {
 
     //region inject
     private final PersonService srv;
-    private final PersonRoleService roleSrv;
+    private final RoleService roleSrv;
     private final Converter converter;
     //endregion
 
@@ -68,11 +68,11 @@ public class PersonController {
 
     @PostMapping("get-roles")
     public ApiResult getPersonRoles(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(roleSrv.getRoles(new PersonRoleListParams(qry)));
+        return new ApiResult().load(roleSrv.getRoles(new RoleListParams(qry)));
     }
 
     @PostMapping("add-role")
-    public ApiResult addPersonRole(@Valid @RequestBody PersonRole role, BindingResult errors) {
+    public ApiResult addPersonRole(@Valid @RequestBody Role role, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
@@ -81,38 +81,13 @@ public class PersonController {
     }
 
     @PostMapping("update-role")
-    public ApiResult updateRole(@Valid @RequestBody PersonRole role, BindingResult errors) {
+    public ApiResult updateRole(@Valid @RequestBody Role role, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.updateById(role);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.ROLE.getLabel()));
     }
-
-    //endregion
-
-    //region relation
-
-    @PostMapping("get-personnel")
-    public ApiResult getPersonnel(@RequestBody EntityQry qry) {
-        return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
-    }
-
-    @PostMapping("add-personnel")
-    public ApiResult getPersonnel(@RequestBody PersonnelCreateDTO dto) {
-        srv.addPersonnel(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success"));
-    }
-
-//    @PostMapping("update-personnel")
-//    public ApiResult getPersonnel(@RequestBody EntityQry qry) {
-//        return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
-//    }
-//
-//    @DeleteMapping("delete-personnel")
-//    public ApiResult getPersonnel(@RequestBody EntityQry qry) {
-//        return new ApiResult().load(srv.getPersonnel(qry.getEntityType(), qry.getEntityId()));
-//    }
 
     //endregion
 
