@@ -17,6 +17,7 @@ public class ItemListVO {
 
     private Attribute<Integer> releaseType;
     private String barcode;
+    private String catalogId;
     private String releaseDate;
     private double price;
     private String currency;

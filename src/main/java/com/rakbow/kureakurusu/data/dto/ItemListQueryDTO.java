@@ -18,6 +18,7 @@ public class ItemListQueryDTO {
     private String name;
     private String aliases;
     private String barcode;
+    private String catalogId;
     private Boolean bonus;
     private String region;
     private Integer releaseType;
@@ -36,6 +37,7 @@ public class ItemListQueryDTO {
         name = dto.getVal("name");
         aliases = dto.getVal("aliases");
         barcode = dto.getVal("barcode");
+        catalogId = dto.getVal("catalogId");
         region = dto.getVal("region");
         bonus = dto.getVal("bonus");
         releaseType = dto.getVal("releaseType");

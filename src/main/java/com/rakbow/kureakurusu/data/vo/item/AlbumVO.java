@@ -16,7 +16,9 @@ import java.util.List;
 @Data
 public class AlbumVO extends ItemVO {
 
-    private String catalogNo;//专辑编号
+    private int discs;
+    private int tracks;
+    private int runTime;
 
     //规格信息
     private List<Attribute<Integer>> albumFormat;//专辑分类 在mysql中以数组字符串形式存储

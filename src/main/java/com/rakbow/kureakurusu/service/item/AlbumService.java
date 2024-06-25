@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemAlbum;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
@@ -40,6 +42,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
     private final EpisodeMapper epMapper;
     private final ItemAlbumMapper mapper;
+    private final ItemMapper itemMapper;
     private final SqlSessionFactory sqlSessionFactory;
 
     //endregion
@@ -49,14 +52,14 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
 
-        ItemAlbum album = mapper.selectById(id);
-        if(album == null) return res;
+        Item item = itemMapper.selectById(id);
+        if(item == null) return res;
 
         //get all episode
         List<Episode> episodes = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, EntityType.ITEM.getValue())
-                        .eq(Episode::getRelatedId, album.getId())
+                        .eq(Episode::getRelatedId, item.getId())
                         .orderByAsc(Episode::getDiscNum)
                         .orderByAsc(Episode::getSerial)
         );
@@ -73,7 +76,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             discDuration = 0;
             AlbumDiscVO disc = new AlbumDiscVO();
             disc.setSerial(discNum);
-            disc.generateCode(album.getCatalogNo(), discNum);
+            disc.generateCode(item.getCatalogId(), discNum);
             for (Episode ep : episodeGroup.get(discNum)) {
                 AlbumTrackVO track = AlbumTrackVO.builder()
                         .serial(ep.getSerial())

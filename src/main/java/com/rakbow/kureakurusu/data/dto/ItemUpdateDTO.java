@@ -34,6 +34,7 @@ public class ItemUpdateDTO extends DTO {
 
     private int releaseType;
     private String barcode;
+    private String catalogId;
     private String releaseDate;
 
     private double price;
@@ -47,6 +48,7 @@ public class ItemUpdateDTO extends DTO {
         nameZh = "";
         nameEn = "";
         barcode = "";
+        catalogId = "";
         releaseType = ReleaseType.STANDARD.getValue();
         releaseDate = DateHelper.DEFAULT_DATE;
         price = 0;

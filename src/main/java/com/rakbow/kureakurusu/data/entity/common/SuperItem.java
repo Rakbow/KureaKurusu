@@ -1,8 +1,10 @@
 package com.rakbow.kureakurusu.data.entity.common;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
@@ -30,6 +32,11 @@ public abstract class SuperItem {
     @AutoMapping(target = "currency", qualifiedByName = "getCurrency")
     private String region;
     private String barcode;
+    private String CatalogId;
+
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> dimensions;// W L H mm
+    private int weight;// g
 
     private Boolean bonus;
     private String detail;
@@ -48,6 +55,7 @@ public abstract class SuperItem {
         releaseType = ReleaseType.STANDARD;
         region = "jp";
         barcode = "";
+        CatalogId = "";
         bonus = true;
         detail = "";
         remark = "";

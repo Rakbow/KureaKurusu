@@ -26,7 +26,6 @@ import java.util.List;
 })
 public class AlbumUpdateDTO extends ItemUpdateDTO {
 
-    private String catalogNo;
     @NotEmpty(message = "{album.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
@@ -34,7 +33,6 @@ public class AlbumUpdateDTO extends ItemUpdateDTO {
 
     public AlbumUpdateDTO() {
         setType(ItemType.ALBUM.getValue());
-        catalogNo = "";
         albumFormat = new ArrayList<>();
         mediaFormat = new ArrayList<>();
     }

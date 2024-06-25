@@ -21,12 +21,14 @@ import java.util.List;
 @TableName(value = "item_album", autoResultMap = true)
 public class ItemAlbum extends SubItem {
 
-    private Long id;//表主键
+    private Long id;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String catalogNo;//专辑编号
+    private int discs;
+    private int tracks;
+    private int runTime;
     @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
+    private List<Integer> albumFormat;//album type
     @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> mediaFormat;//媒体类型
+    private List<Integer> mediaFormat;//media format
 
 }

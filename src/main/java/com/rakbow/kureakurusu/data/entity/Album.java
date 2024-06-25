@@ -1,15 +1,11 @@
 package com.rakbow.kureakurusu.data.entity;
 
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.Currency;
-import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.item.AlbumListVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumVO;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -35,8 +31,6 @@ import java.util.List;
 })
 public class Album extends SuperItem {
 
-    private String catalogNo;
-
     @AutoMapping(qualifiedByName = "getAlbumFormat")
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> albumFormat;//专辑分类 在mysql中以数组字符串形式存储
@@ -44,9 +38,12 @@ public class Album extends SuperItem {
     @TableField(typeHandler = IntegerListHandler.class)
     private List<Integer> mediaFormat;//媒体类型
 
+    private int discs;
+    private int tracks;
+    private int runTime;
+
     public Album() {
         super();
-        this.catalogNo = "";
         this.albumFormat = new ArrayList<>();
         this.mediaFormat = new ArrayList<>();
     }

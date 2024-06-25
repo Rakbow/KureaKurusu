@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -44,6 +45,7 @@ public class Item {
     private List<String> aliases;
 
     private String barcode;// EAN/JAN/ISBN-13
+    private String catalogId;// album game disc catalog id
     private String releaseDate;
     private double price;
     private String region;//ISO-3166 region code
@@ -52,6 +54,11 @@ public class Item {
     private Boolean bonus;//has prize
 
     private String detail;
+
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> dimensions;// W L H mm
+    private int weight;// g
+
     private String remark;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)

@@ -35,6 +35,7 @@ public class ItemCreateDTO extends DTO {
     private List<String> aliases;
 
     private String barcode;
+    private String catalogId;
     private String releaseDate;
     private int releaseType;
     private double price;
@@ -47,6 +48,7 @@ public class ItemCreateDTO extends DTO {
         name = "";
         aliases = new ArrayList<>();
         barcode = "";
+        catalogId = "";
         releaseDate = DateHelper.DEFAULT_DATE;
         releaseType = ReleaseType.STANDARD.getValue();
         region = "";

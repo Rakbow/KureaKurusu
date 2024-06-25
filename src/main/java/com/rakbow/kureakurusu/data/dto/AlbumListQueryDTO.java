@@ -16,8 +16,6 @@ import java.util.List;
 @Data
 public class AlbumListQueryDTO extends ItemListQueryDTO {
 
-    @QueryColumn
-    private String catalogNo;
     @QueryColumn(type = QueryColumnType.NUMBER_LIST)
     private List<Integer> albumFormat;
     @QueryColumn(type = QueryColumnType.NUMBER_LIST)
@@ -26,7 +24,6 @@ public class AlbumListQueryDTO extends ItemListQueryDTO {
     public AlbumListQueryDTO(ListQueryDTO dto) {
         super(dto);
         super.setType(ItemType.ALBUM.getValue());
-        this.catalogNo = dto.getVal("catalogNo");
         this.albumFormat = dto.getArray("albumFormat");
         this.mediaFormat = dto.getArray("mediaFormat");
     }
