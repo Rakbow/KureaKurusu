@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Timestamp;
 
@@ -74,6 +77,11 @@ public class Image {
     @JsonIgnore
     public boolean isDisplay() {
         return this.type != ImageType.OTHER.getValue();
+    }
+
+    public String getUrl() {
+        if(StringUtils.isBlank(this.url)) return Constant.EMPTY;
+        return STR."\{Constant.FILE_DOMAIN}\{this.url}";
     }
 
 }

@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.common.ActionResult;
-import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.FileType;
 import com.rakbow.kureakurusu.data.image.Image;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +37,8 @@ public class QiniuImageUtil {
     public ActionResult commonAddImages(int entityType, long entityId, MultipartFile[] files, List<Image> addImages) {
         ActionResult res = new ActionResult();
         try{
-            String entityName = EntityType.getTableName(entityType);
             //创建存储链接前缀
-            String filePath = STR."\{entityName}/\{entityId}/";
+            String filePath = STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_";
             for (int i = 0; i < files.length; i++) {
                 //上传图片
                 ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.IMAGE);
