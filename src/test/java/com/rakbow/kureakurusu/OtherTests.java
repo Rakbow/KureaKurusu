@@ -1,10 +1,9 @@
 package com.rakbow.kureakurusu;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.rakbow.kureakurusu.dao.*;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.EntityRelation;
-import com.rakbow.kureakurusu.data.entity.Item;
+import com.rakbow.kureakurusu.dao.EpisodeMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
+import com.rakbow.kureakurusu.dao.RelationMapper;
+import com.rakbow.kureakurusu.dao.UserMapper;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
@@ -13,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * @author Rakbow
@@ -25,9 +25,7 @@ import java.util.*;
 public class OtherTests {
 
     @Resource
-    private EntityRelationMapper relationMapper;
-    @Resource
-    private PersonRelationMapper personRelationMapper;
+    private RelationMapper relationMapper;
     @Resource
     private SqlSessionFactory sqlSessionFactory;
     @Resource
@@ -39,12 +37,6 @@ public class OtherTests {
 
     @Test
     public void javaTest() {
-        System.out.println(Currency.getInstance(Locale.of("", "jp")));
-        System.out.println(Currency.getInstance(Locale.of("", "cn")));
-        System.out.println(Currency.getInstance(Locale.of("", "tw")));
-        System.out.println(Currency.getInstance(Locale.of("", "gb")));
-        System.out.println(Currency.getInstance(Locale.of("", "us")));
-        System.out.println(Currency.getInstance(Locale.of("", "eu")));
     }
 
 
@@ -419,40 +411,6 @@ public class OtherTests {
 //        }
 //    }
 
-    @Test
-    public void updateRelation() {
-        List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getType, 1));
-        List<EntityRelation> rs = relationMapper.selectList(null);
-        List<EntityRelation> updates = new ArrayList<>();
-        for (EntityRelation r : rs) {
-            if(r.getEntityType() == 99 && r.getRelatedEntityType() == 99) continue;
 
-            if(r.getEntityType() != 99 && r.getEntityType() != 0) {
-                Optional<Item> aResult = items.stream()
-                        .filter(a -> a.getOrgId() == r.getEntityId())
-                        .findFirst();
-                if(aResult.isEmpty())
-                    continue;
-                Item a = aResult.get();
-                r.setEntityType(EntityType.ITEM.getValue());
-                r.setEntityId(a.getId());
-            }
-
-            if(r.getRelatedEntityType() != 99 && r.getRelatedEntityType() != 0) {
-                Optional<Item> bResult = items.stream()
-                        .filter(b -> b.getOrgId() == r.getRelatedEntityId())
-                        .findFirst();
-                if(bResult.isEmpty())
-                    continue;
-                Item b = bResult.get();
-                r.setRelatedEntityType(EntityType.ITEM.getValue());
-                r.setRelatedEntityId(b.getId());
-            }
-            updates.add(r);
-        }
-        for (EntityRelation update : updates) {
-            relationMapper.updateById(update);
-        }
-    }
 
 }

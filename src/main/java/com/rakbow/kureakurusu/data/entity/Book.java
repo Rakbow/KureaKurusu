@@ -4,13 +4,10 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.BookType;
-import com.rakbow.kureakurusu.data.emun.Currency;
 import com.rakbow.kureakurusu.data.emun.Language;
-import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
 import com.rakbow.kureakurusu.data.vo.item.BookVO;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
@@ -38,11 +35,14 @@ public class Book extends SuperItem {
     @AutoMapping(qualifiedByName = "toAttribute")
     private BookType bookType;//书籍类型
 
-    private String authors;//作者（译者，插画，原作者等，json）
+    private int pages;
+    private String size;
 
     @AutoMapping(qualifiedByName = "toAttribute")
     private Language lang;//语言
     private String summary;//简介
+
+    private String authors;//作者（译者，插画，原作者等，json）
     private String spec;//规格
 
     public Book() {

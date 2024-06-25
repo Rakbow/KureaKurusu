@@ -38,7 +38,7 @@ public class CommonImageUtil {
     }};
 
     private static final Map<EntityType, ImageConfigValue> entryImageConfigMap = new EnumMap<>(EntityType.class) {{
-        put(EntityType.PRODUCT, new ImageConfigValue(200, false, EMPTY_IMAGE_URL));
+        put(EntityType.PRODUCT, new ImageConfigValue(180, false, EMPTY_IMAGE_URL));
         put(EntityType.FRANCHISE, new ImageConfigValue(100, true, EMPTY_IMAGE_URL));
     }};
 

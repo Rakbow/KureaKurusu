@@ -14,6 +14,8 @@ import lombok.EqualsAndHashCode;
 @Data
 public class BookVO extends ItemVO {
 
+    private int pages;
+    private String size;
     private String isbn10;
     private Attribute<Integer> bookType;
     private Attribute<String> lang;

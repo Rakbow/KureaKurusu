@@ -1,10 +1,14 @@
 package com.rakbow.kureakurusu.data.common;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * @author Rakbow
  * @since 2023-12-26 16:22
  */
 public interface Constant {
+
+    String FILE_DOMAIN = "https://static.rakbow.com/";
 
     String TAB = "\t";
     String CARRIAGE_RETURN = "\r";
