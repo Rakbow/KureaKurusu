@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RelationQry extends QueryDTO {
 
-    private int roleGroup;
+    private int relatedGroup;
     private int entityType;
     private long entityId;
 

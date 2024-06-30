@@ -1,13 +1,15 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.CommonDeleteDTO;
-import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
-import com.rakbow.kureakurusu.data.dto.RelationQry;
-import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.service.RelationService;
+import com.rakbow.kureakurusu.service.RoleService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -20,10 +22,16 @@ import org.springframework.web.bind.annotation.*;
 public class RelationController {
 
     private final RelationService srv;
+    private final RoleService roleSrv;
+
+    @PostMapping("get-related-entity")
+    public ApiResult getRelatedEntity(@RequestBody RelationQry qry) {
+        return new ApiResult().load(srv.getRelatedEntity(qry.getRelatedGroup(), qry.getEntityType(), qry.getEntityId()));
+    }
 
     @PostMapping("get-relations")
-    public ApiResult getRelations(@RequestBody RelationQry qry) {
-        return new ApiResult().load(srv.getRelations(qry.getRoleGroup(), qry.getEntityType(), qry.getEntityId()));
+    public ApiResult getRelations(@RequestBody ListQueryDTO qry) {
+        return new ApiResult().load(srv.getRelations(new RelationListParams(qry)));
     }
 
     @PostMapping("add-relations")
@@ -44,4 +52,26 @@ public class RelationController {
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success"));
     }
 
+    @PostMapping("get-roles")
+    public ApiResult getRoles(@RequestBody ListQueryDTO qry) {
+        return new ApiResult().load(roleSrv.getRoles(new RoleListParams(qry)));
+    }
+
+    @PostMapping("add-role")
+    public ApiResult addRole(@Valid @RequestBody Role role, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        roleSrv.save(role);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.ROLE.getLabel()));
+    }
+
+    @PostMapping("update-role")
+    public ApiResult updateRole(@Valid @RequestBody Role role, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        roleSrv.updateById(role);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.ROLE.getLabel()));
+    }
 }
