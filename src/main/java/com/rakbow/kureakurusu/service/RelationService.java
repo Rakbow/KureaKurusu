@@ -17,6 +17,7 @@ import com.rakbow.kureakurusu.data.dto.RelationListParams;
 import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
+import com.rakbow.kureakurusu.data.emun.UserAuthority;
 import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
@@ -26,6 +27,7 @@ import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,12 +161,21 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @Transactional
     public void addRelations(RelationCreateDTO dto) {
         List<Relation> res = new ArrayList<>();
+        RelatedGroup group;
+        switch (EntityType.get(dto.getRelatedEntityType())) {
+            case EntityType.PERSON -> group = RelatedGroup.RELATED_PERSON;
+            case EntityType.SUBJECT -> group = RelatedGroup.RELATED_ENTRY;
+            case EntityType.ITEM -> group = RelatedGroup.RELATED_ITEM;
+            case EntityType.CHARACTER -> group = RelatedGroup.RELATED_CHAR;
+            case EntityType.PRODUCT -> group = RelatedGroup.RELATED_PRODUCT;
+            default -> group = RelatedGroup.DEFAULT;
+        }
         for (Long targetId : dto.getRelatedEntityIds()) {
             Relation relation = new Relation();
             relation.setEntityType(dto.getEntityType());
             relation.setEntityId(dto.getEntityId());
             relation.setRoleId(dto.getRoleId());
-            relation.setRelatedGroup(RelatedGroup.get(dto.getRoleGroup()));
+            relation.setRelatedGroup(group);
             relation.setRelatedEntityType(dto.getRelatedEntityType());
             relation.setRelatedEntityId(targetId);
             res.add(relation);
@@ -179,6 +190,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public void updateRelation(RelationUpdateDTO dto) {
         mapper.update(
                 new LambdaUpdateWrapper<Relation>()
+                        .set(Relation::getRoleId, dto.getRoleId())
+                        .set(Relation::getReverseRoleId, dto.getReverseRoleId())
                         .set(Relation::getRemark, dto.getRemark())
                         .eq(Relation::getId, dto.getId())
         );

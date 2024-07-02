@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import lombok.Data;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 
 public class Relation {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
     private RelatedGroup relatedGroup;
     private Long roleId;

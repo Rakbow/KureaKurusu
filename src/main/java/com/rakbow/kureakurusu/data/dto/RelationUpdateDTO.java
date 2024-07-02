@@ -14,6 +14,8 @@ import java.util.List;
 public class RelationUpdateDTO extends DTO {
 
     private long id;
+    private long roleId;
+    private long reverseRoleId;
     private String remark;
 
 }

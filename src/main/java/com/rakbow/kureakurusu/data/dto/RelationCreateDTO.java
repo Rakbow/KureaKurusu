@@ -17,7 +17,6 @@ public class RelationCreateDTO extends DTO {
     private long entityId;
     private int relatedEntityType;
     private List<Long> relatedEntityIds;
-    private int roleGroup;
     private long roleId;
 
 }
