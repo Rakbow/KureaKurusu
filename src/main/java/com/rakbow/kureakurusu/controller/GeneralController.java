@@ -75,9 +75,9 @@ public class GeneralController {
 
     //region person role
 
-    @PostMapping("refresh-person-role")
+    @PostMapping("refresh-role")
     public ApiResult refreshPersonRole() {
-        srv.refreshPersonRoleSet();
+        srv.refreshRoleSet();
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.refresh.success"));
     }
 

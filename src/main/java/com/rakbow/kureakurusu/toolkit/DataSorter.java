@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.toolkit;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.Item;
+import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 
 import java.util.Comparator;
 
@@ -18,9 +19,16 @@ public class DataSorter {
     public static AttributesSortByStringValue attributesStringValueSorter = new AttributesSortByStringValue();
     public static PersonSortById personIdSorter = new PersonSortById();
     public static EpisodeSortById episodeIdSorter = new EpisodeSortById();
-    public static FranchiseSortById franchiseIdSorter = new FranchiseSortById();
     public static ItemSortById itemIdSorter = new ItemSortById();
+    public static EntitySortById entitySortById = new EntitySortById();
 
+}
+
+class EntitySortById implements Comparator<MetaEntity> {
+    @Override
+    public int compare(MetaEntity a, MetaEntity b) {
+        return a.getId().compareTo(b.getId());
+    }
 }
 
 class ItemSortById implements Comparator<Item> {
@@ -68,13 +76,6 @@ class PersonSortById implements Comparator<Person> {
 class EpisodeSortById implements Comparator<Episode> {
     @Override
     public int compare(Episode a, Episode b) {
-        return Long.compare(a.getId(), b.getId());
-    }
-}
-
-class FranchiseSortById implements Comparator<Franchise> {
-    @Override
-    public int compare(Franchise a, Franchise b) {
         return Long.compare(a.getId(), b.getId());
     }
 }

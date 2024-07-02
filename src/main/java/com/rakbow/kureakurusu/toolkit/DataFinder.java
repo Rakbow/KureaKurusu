@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,11 +18,18 @@ public class DataFinder {
 
     public static Episode episodeFinder = new Episode();
     public static Person personFinder = new Person();
-    public static Franchise franchiseFinder = new Franchise();
     public static Item itemFinder = new Item();
     public static Product productFinder = new Product();
+    public static MetaEntity entityFinder = new MetaEntity();
 
     //region album
+
+    public static MetaEntity findEntityById(Long id, List<MetaEntity> items) {
+        entityFinder.setId(id);
+        int idx = Collections.binarySearch(items, entityFinder, DataSorter.entitySortById);
+        if (idx >= 0) return items.get(idx);
+        return null;
+    }
 
     public static Item findItemById(Long id, List<Item> items) {
         itemFinder.setId(id);
@@ -98,12 +106,6 @@ public class DataFinder {
         episodeFinder.setId(id);
         int idx = Collections.binarySearch(episodes, episodeFinder, DataSorter.episodeIdSorter);
         return idx >= 0 ? episodes.get(idx) : null;
-    }
-
-    public static Franchise findFranchiseById(long id, List<Franchise> franchises) {
-        franchiseFinder.setId(id);
-        int idx = Collections.binarySearch(franchises, franchiseFinder, DataSorter.franchiseIdSorter);
-        return idx >= 0 ? franchises.get(idx) : null;
     }
 
 }
