@@ -7,7 +7,6 @@ import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -55,8 +54,9 @@ public class Item {
 
     private String detail;
 
-    @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> dimensions;// W L H mm
+    private int width;// mm
+    private int length;// mm
+    private int height;// mm
     private int weight;// g
 
     private String remark;

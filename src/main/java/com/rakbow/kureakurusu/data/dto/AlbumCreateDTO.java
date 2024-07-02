@@ -24,6 +24,9 @@ import java.util.List;
 })
 public class AlbumCreateDTO extends ItemCreateDTO {
 
+    private int discs;
+    private int tracks;
+    private int runTime;
     @NotEmpty(message = "{album.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")

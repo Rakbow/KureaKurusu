@@ -29,9 +29,6 @@ import lombok.ToString;
 })
 public class Book extends SuperItem {
 
-    @TableField(value = "isbn_10", whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String isbn10;
-
     @AutoMapping(qualifiedByName = "toAttribute")
     private BookType bookType;//书籍类型
 
@@ -47,7 +44,6 @@ public class Book extends SuperItem {
 
     public Book() {
         super();
-        this.isbn10 = "";
         this.bookType = BookType.OTHER;
         this.lang = Language.JAPANESE;
         this.authors = "[]";

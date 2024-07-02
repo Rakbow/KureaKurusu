@@ -41,6 +41,11 @@ public class ItemCreateDTO extends DTO {
     private double price;
     private String region;
 
+    private int width;// mm
+    private int length;// mm
+    private int height;// mm
+    private int weight;// g
+
     private boolean bonus;
     private String remark;
 

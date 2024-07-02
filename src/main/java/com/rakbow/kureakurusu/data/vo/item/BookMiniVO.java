@@ -14,7 +14,6 @@ public class BookMiniVO {
     private String title;
     private String titleZh;
     private String titleEn;
-    private String isbn10;
     private String isbn13;
     private String cover;
     private Attribute<Integer> bookType;

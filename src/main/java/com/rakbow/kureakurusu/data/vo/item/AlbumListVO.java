@@ -14,6 +14,9 @@ import java.util.List;
 @Data
 public class AlbumListVO extends ItemListVO {
 
+    private int discs;
+    private int tracks;
+    private int runTime;
     private List<Attribute<Integer>> albumFormat;
     private List<Attribute<Integer>> mediaFormat;
 

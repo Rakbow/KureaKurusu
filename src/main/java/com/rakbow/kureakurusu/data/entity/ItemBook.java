@@ -22,7 +22,6 @@ public class ItemBook extends SubItem {
 
     private Long id;//主键编号
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String isbn10;//国际标准书号（10位）
     private BookType bookType;//书籍类型
 
     private String summary;//简介

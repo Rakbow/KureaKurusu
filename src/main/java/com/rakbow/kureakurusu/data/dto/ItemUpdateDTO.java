@@ -8,6 +8,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/4/25 14:42
@@ -29,13 +32,17 @@ public class ItemUpdateDTO extends DTO {
 
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;
-    private String nameZh;
-    private String nameEn;
+    private List<String> aliases;
 
     private int releaseType;
     private String barcode;
     private String catalogId;
     private String releaseDate;
+
+    private int width;// mm
+    private int length;// mm
+    private int height;// mm
+    private int weight;// g
 
     private double price;
     private String region;
@@ -45,8 +52,7 @@ public class ItemUpdateDTO extends DTO {
 
     public ItemUpdateDTO() {
         name = "";
-        nameZh = "";
-        nameEn = "";
+        aliases = new ArrayList<>();
         barcode = "";
         catalogId = "";
         releaseType = ReleaseType.STANDARD.getValue();

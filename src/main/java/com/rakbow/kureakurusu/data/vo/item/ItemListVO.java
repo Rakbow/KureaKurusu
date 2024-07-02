@@ -12,8 +12,6 @@ public class ItemListVO {
     private long id;
     private int type;
     private String name;
-    private String nameZh;
-    private String nameEn;
 
     private Attribute<Integer> releaseType;
     private String barcode;
@@ -24,6 +22,11 @@ public class ItemListVO {
     private String region;
     private boolean bonus;
     private String remark;
+
+    private int width;
+    private int length;
+    private int height;
+    private int weight;
 
     private String addedTime;
     private String editedTime;
