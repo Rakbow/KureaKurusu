@@ -18,16 +18,12 @@ import java.util.List;
 public class ProductListParams extends ListQueryParams {
 
     private String name;
-    private String nameZh;
-    private String nameEn;
-    private List<Integer> category;
+    private List<Integer> type;
 
     public ProductListParams(ListQueryDTO qry) {
         super(qry);
         this.name = super.getVal("name");
-        this.nameZh = super.getVal("nameZh");
-        this.nameEn = super.getVal("nameEn");
-        this.category = super.getVal("category");
+        this.type = super.getVal("type");
     }
 
 }

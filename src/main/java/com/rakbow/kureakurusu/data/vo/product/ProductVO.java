@@ -3,6 +3,8 @@ package com.rakbow.kureakurusu.data.vo.product;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 转换量最大的VO，一般用于详情页面
  *
@@ -13,19 +15,18 @@ import lombok.Data;
 public class ProductVO {
 
     //基础信息
-    private int id;//主键
-    private String name;//原名
-    private String nameZh;//中文译名
-    private String nameEn;//英文译名
-    private String releaseDate;//发售日期
-    private Attribute<Integer> category;//作品分类
-    private String remark;//备注
-
-    private Attribute<Long> franchise;//所属系列
-    private String addedTime;
-    private String editedTime;
+    private int id;
+    private Attribute<Integer> type;
+    private String name;
+    private String nameZh;
+    private String nameEn;
+    private List<String> aliases;
+    private String date;
 
     private String detail;
+    private String remark;
+    private String addedTime;
+    private String editedTime;
     private boolean status;
 
 }

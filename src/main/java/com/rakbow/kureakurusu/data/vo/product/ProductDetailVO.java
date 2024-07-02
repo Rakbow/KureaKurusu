@@ -1,8 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.product;
 
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.segmentImagesResult;
-import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
+import com.rakbow.kureakurusu.data.image.Image;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,11 +21,11 @@ import java.util.Map;
 public class ProductDetailVO {
 
     private ProductVO item;
-
     private PageTraffic traffic;
-    private segmentImagesResult itemImageInfo;
     private Map<String, Object> options;
 
-    private List<EpisodeVOAlpha> episodes;
+    private String cover;
+    private List<Image> images;
+    private int imageCount;
 
 }

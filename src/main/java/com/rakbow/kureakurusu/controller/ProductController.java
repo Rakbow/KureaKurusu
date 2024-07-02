@@ -36,8 +36,8 @@ public class ProductController {
 
     @PostMapping("detail")
     @UniqueVisitor
-    public ApiResult detail(@RequestBody ProductDetailQry qry) {
-        ProductDetailVO vo = srv.getDetail(qry);
+    public ApiResult detail(@RequestBody CommonDetailQry qry) {
+        ProductDetailVO vo = srv.getDetail(qry.getId());
         return new ApiResult().load(vo);
     }
 
@@ -61,8 +61,10 @@ public class ProductController {
     public ApiResult update(@Valid @RequestBody ProductUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //build
+        Product product = converter.convert(dto, Product.class);
         //save
-        srv.updateById(new Product(dto));
+        srv.updateById(product);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.PRODUCT.getLabel()));
     }
 
@@ -70,11 +72,6 @@ public class ProductController {
     public ApiResult delete(@RequestBody DeleteCmd cmd) {
         srv.deleteProducts(cmd.getIds());
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", EntityType.PRODUCT.getLabel()));
-    }
-
-    @PostMapping("get-related-products")
-    public ApiResult getRelatedProducts(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(srv.getRelatedProducts(qry.getId()));
     }
 
     //endregion

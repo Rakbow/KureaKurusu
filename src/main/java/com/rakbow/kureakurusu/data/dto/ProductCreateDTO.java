@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/01/17 21:26
@@ -17,14 +19,13 @@ import jakarta.validation.constraints.NotBlank;
 public class ProductCreateDTO extends DTO {
 
     private long id;
+    private int type;
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;
     private String nameZh;
     private String nameEn;
-    @NotBlank(message = "{entity.crud.date.required_field}")
-    private String releaseDate;
-    private int franchise;
-    private int category;
+    private List<String> aliases;
+    private String date;
     private String remark;
 
 }

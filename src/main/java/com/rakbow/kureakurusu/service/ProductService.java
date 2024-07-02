@@ -3,23 +3,15 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.ProductDetailQry;
 import com.rakbow.kureakurusu.data.dto.ProductListParams;
-import com.rakbow.kureakurusu.data.dto.SearchQry;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.ProductCategory;
-import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVO;
@@ -29,11 +21,10 @@ import com.rakbow.kureakurusu.toolkit.VisitUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,58 +37,24 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
 
     //region ------inject------
     private final ProductMapper mapper;
-    private final EpisodeMapper epMapper;
     private final RelationMapper relationMapper;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
     private final Converter converter;
+
+    private final ResourceService resourceSrv;
     //endregion
 
     //region const
-    private final int ENTITY_VALUE = EntityType.PRODUCT.getValue();
-    private static final ProductCategory[] VIDEO_PRODUCT = {
-            ProductCategory.ANIME_TV,
-            ProductCategory.ANIME_MOVIE,
-            ProductCategory.LIVE_ACTION_MOVIE,
-            ProductCategory.TV_SERIES, ProductCategory.OVA_OAD
-    };
+    private final EntityType ENTITY_VALUE = EntityType.PRODUCT;
 
     //endregion
-
-    //region ------basic crud------
-
-    @Transactional
-    public List<ProductListVO> getRelatedProducts(long franchiseId) {
-        List<Product> products = mapper.selectList(
-                new LambdaQueryWrapper<Product>()
-                        .eq(Product::getFranchise, franchiseId)
-                        .eq(Product::getStatus, 1)
-        );
-        return converter.convert(products, ProductListVO.class);
-    }
-
-    @Transactional
-    public SearchResult<ProductListVO> searchProducts(SearchQry qry) {
-        SimpleSearchParam param = new SimpleSearchParam(qry);
-        if(param.keywordEmpty()) new SearchResult<>();
-        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
-                .or().like(Product::getName, param.getKeyword())
-                .or().like(Product::getNameZh, param.getKeyword())
-                .or().like(Product::getNameEn, param.getKeyword())
-                .eq(Product::getStatus, 1)
-                .orderByDesc(Product::getId);
-        IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<ProductListVO> items = converter.convert(pages.getRecords(), ProductListVO.class);
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
 
     @Transactional
     public SearchResult<ProductListVO> list(ProductListParams param) {
         QueryWrapper<Product> wrapper = new QueryWrapper<Product>()
                 .like("name", param.getName())
-                .like("name_zh", param.getNameZh())
-                .like("name_en", param.getNameEn())
-                .in(CollectionUtils.isNotEmpty(param.getCategory()), "category", param.getCategory())
+                .in(CollectionUtils.isNotEmpty(param.getType()), "type", param.getType())
                 .orderBy(param.isSort(), param.asc(), param.sortField);
         IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<ProductListVO> items = converter.convert(pages.getRecords(), ProductListVO.class);
@@ -106,16 +63,17 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
 
     @SneakyThrows
     @Transactional
-    public ProductDetailVO getDetail(ProductDetailQry qry) {
-        Product product = getById(qry.getId());
+    public ProductDetailVO getDetail(long id) {
+        Product product = getById(id);
         if(product == null)
             throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.PRODUCT.getLabel()));
         return ProductDetailVO.builder()
                 .item(converter.convert(product, ProductVO.class))
-                .options(entityUtil.getDetailOptions(ENTITY_VALUE))
-                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
-//                .itemImageInfo(CommonImageUtil.segmentEntryImages(EntityType.PRODUCT, product.getImages()))
-                .episodes(getEpisodes(product.getId(), product.getCategory()))
+                .options(entityUtil.getDetailOptions(ENTITY_VALUE.getValue()))
+                .traffic(entityUtil.getPageTraffic(ENTITY_VALUE.getValue(), id))
+                .cover(resourceSrv.getEntityCover(ENTITY_VALUE, id))
+                .images(resourceSrv.getDefaultImages(ENTITY_VALUE.getValue(), id))
+                .imageCount(resourceSrv.getDefaultImagesCount(ENTITY_VALUE.getValue(), id))
                 .build();
     }
 
@@ -127,25 +85,12 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
             //delete all image
 //            qiniuImageUtil.deleteAllImage(item.getImages());
             //delete visit record
-            visitUtil.del(ENTITY_VALUE, item.getId());
+            visitUtil.del(ENTITY_VALUE.getValue(), item.getId());
         }
         //delete
         mapper.delete(new LambdaQueryWrapper<Product>().in(Product::getId, ids));
         //delete person relation
         relationMapper.delete(new LambdaQueryWrapper<Relation>().eq(Relation::getEntityType, ENTITY_VALUE).in(Relation::getEntityId, ids));
-    }
-
-    //endregion
-
-    //region other
-
-    private List<EpisodeVOAlpha> getEpisodes(long productId, ProductCategory category) {
-        List<EpisodeVOAlpha> res = new ArrayList<>();
-        if(Arrays.asList(VIDEO_PRODUCT).contains(category)) {
-            List<Episode> eps = epMapper.selectList(new LambdaQueryWrapper<Episode>().eq(Episode::getRelatedId, productId));
-            res.addAll(converter.convert(eps, EpisodeVOAlpha.class));
-        }
-        return res;
     }
 
     //endregion
