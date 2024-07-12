@@ -1,6 +1,9 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.PageTraffic;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -19,6 +22,14 @@ public class EntityUtil {
 
     private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
+    private final static Map<Integer, Class<? extends MetaEntity>> subEntityMap = new HashMap<>() {{
+        put(EntityType.PERSON.getValue(), Person.class);
+        put(EntityType.PRODUCT.getValue(), Product.class);
+    }};
+
+    public Class<? extends MetaEntity> getSubEntity(int type) {
+        return subEntityMap.get(type);
+    }
 
     /**
      * 获取页面数据
@@ -48,8 +59,7 @@ public class EntityUtil {
         Map<String, Object> options = new HashMap<>();
 
         if (entityType == EntityType.PRODUCT.getValue()) {
-            options.put("franchiseSet", Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
-            options.put("productCategorySet", Objects.requireNonNull(MetaData.getOptions()).productCategorySet);
+            options.put("productTypeSet", Objects.requireNonNull(MetaData.getOptions()).productTypeSet);
         } else if (entityType == EntityType.PERSON.getValue()) {
             options.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
             options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);

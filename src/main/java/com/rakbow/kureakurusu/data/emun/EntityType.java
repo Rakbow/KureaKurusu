@@ -16,12 +16,14 @@ import java.util.Arrays;
 public enum EntityType {
 
     ITEM(0, "enum.entity.item", "item"),
-    SUBJECT(1, "enum.entity.subject", "subject"),
+    ENTRY(1, "enum.entity.subject", "subject"),
     PERSON(2, "enum.entity.person", "person"),
-    ROLE(3, "enum.entity.role", "person_role"),
+    ROLE(3, "enum.entity.role", "role"),
     EPISODE(4, "enum.entity.episode", "episode"),
+    CHARACTER(5, "enum.entity.character", "character"),
     PRODUCT(99, "enum.entity.product", "product"),
-    FRANCHISE(100, "enum.entity.franchise", "franchise");
+    FRANCHISE(100, "enum.entity.franchise", "franchise"),
+    USER(101, "enum.entity.user", "user");
 
     @EnumValue
     private final Integer value;

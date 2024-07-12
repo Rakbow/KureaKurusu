@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @since 2024/6/9 23:38
  */
 @Data
+@Builder
 @AllArgsConstructor
 public class EntityMiniVO {
 
