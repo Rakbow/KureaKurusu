@@ -6,7 +6,6 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
-import com.rakbow.kureakurusu.service.PersonService;
 import com.rakbow.kureakurusu.service.ProductService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import io.github.linpeilie.Converter;
@@ -24,15 +23,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("db/product")
 public class ProductController {
 
-    //region inject
-
     private final ProductService srv;
-    private final PersonService personSrv;
     private final Converter converter;
-    private final int ENTITY_VALUE = EntityType.PRODUCT.getValue();
-    //endregion
-
-    //region curd
 
     @PostMapping("detail")
     @UniqueVisitor
@@ -73,7 +65,5 @@ public class ProductController {
         srv.deleteProducts(cmd.getIds());
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", EntityType.PRODUCT.getLabel()));
     }
-
-    //endregion
 
 }
