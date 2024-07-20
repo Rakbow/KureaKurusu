@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RelationQry extends QueryDTO {
 
+    private int direction;// 1-positive -1-negative
     private int relatedGroup;
     private int entityType;
     private long entityId;

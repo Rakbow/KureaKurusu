@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.PersonMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
@@ -17,8 +16,6 @@ import com.rakbow.kureakurusu.data.dto.RelationListParams;
 import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
-import com.rakbow.kureakurusu.data.emun.UserAuthority;
-import com.rakbow.kureakurusu.data.entity.Person;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
@@ -27,7 +24,6 @@ import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +45,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final EntityUtil entityUtil;
     private final ResourceService resourceSrv;
 
-    public List<RelationVO> getRelatedEntity(int relatedGroup, int entityType, long entityId) {
+    public List<RelationVO> getRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
         int relatedEntity;
         String remark;
         List<RelationVO> res = new ArrayList<>();
@@ -58,9 +54,9 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<Relation> relations = mapper.selectList(
                 new LambdaQueryWrapper<Relation>()
                         .eq(Relation::getRelatedGroup, relatedGroup)
-                        .eq(Relation::getEntityType, entityType)
-                        .eq(Relation::getEntityId, entityId)
-                        .orderByAsc(Relation::getRoleId)
+                        .eq(direction == 1 ? Relation::getEntityType : Relation::getRelatedEntityType, entityType)
+                        .eq(direction == 1 ? Relation::getEntityId : Relation::getRelatedEntityId, entityId)
+                        .orderByAsc(direction == 1 ? Relation::getRoleId : Relation::getReverseRoleId)
         );
         if (relations.isEmpty())
             return res;
@@ -71,19 +67,19 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         }else {
             relatedEntity = EntityType.ITEM.getValue();
         }
-        List<Long> targetIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
+        List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
         Class<? extends MetaEntity> subClass = entityUtil.getSubEntity(relatedEntity);
         BaseMapper<MetaEntity> subMapper = MyBatisUtil.getMapper(subClass);
         List<MetaEntity> targets = subMapper.selectBatchIds(targetIds);
         for (Relation r : relations) {
-            MetaEntity entity = DataFinder.findEntityById(r.getRelatedEntityId(), targets);
+            MetaEntity entity = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
             if (entity == null) continue;
             if (entity instanceof Product) {
                 remark = I18nHelper.getMessage(((Product)entity).getType().getLabelKey());
             }else {
                 remark = r.getRemark();
             }
-            Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
+            Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
             if (role == null) continue;
             res.add(
                     RelationVO.builder()
@@ -92,7 +88,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                             .target(new Attribute<>(entity.getName(), entity.getId()))
                             .remark(remark)
                             .relatedTypeName(EntityType.getTableName(relatedEntity))
-                            .cover(resourceSrv.getThumbCover(relatedEntity, r.getRelatedEntityId()))
+                            .cover(resourceSrv.getThumbCover(relatedEntity, direction == 1 ? r.getRelatedEntityId() : r.getEntityId()))
                             .build()
             );
         }
@@ -164,7 +160,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         RelatedGroup group;
         switch (EntityType.get(dto.getRelatedEntityType())) {
             case EntityType.PERSON -> group = RelatedGroup.RELATED_PERSON;
-            case EntityType.SUBJECT -> group = RelatedGroup.RELATED_ENTRY;
+            case EntityType.ENTRY -> group = RelatedGroup.RELATED_ENTRY;
             case EntityType.ITEM -> group = RelatedGroup.RELATED_ITEM;
             case EntityType.CHARACTER -> group = RelatedGroup.RELATED_CHAR;
             case EntityType.PRODUCT -> group = RelatedGroup.RELATED_PRODUCT;

@@ -12,7 +12,7 @@ import java.nio.file.Path;
 public class FileUtil {
 
     // 允许的后缀扩展名
-    public static String[] IMAGE_FILE_FORMATS = new String[]{"png", "bmp", "jpg", "jpeg"};
+    public static String[] IMAGE_FILE_FORMATS = new String[]{"png", "bmp", "jpg", "jpeg", "webp", "gif"};
     public static String[] AUDIO_FILE_FORMATS = new String[]{"mp3"};
     public static String[] TEXT_FILE_FORMATS = new String[]{"lrc"};
 

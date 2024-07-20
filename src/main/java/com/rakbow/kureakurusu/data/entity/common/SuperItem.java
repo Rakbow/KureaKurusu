@@ -34,8 +34,9 @@ public abstract class SuperItem {
     private String barcode;
     private String CatalogId;
 
-    @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> dimensions;// W L H mm
+    private int width;// mm
+    private int length;// mm
+    private int height;// mm
     private int weight;// g
 
     private Boolean bonus;
@@ -56,6 +57,12 @@ public abstract class SuperItem {
         region = "jp";
         barcode = "";
         CatalogId = "";
+
+        width = 0;
+        length = 0;
+        height = 0;
+        weight = 0;
+
         bonus = true;
         detail = "";
         remark = "";

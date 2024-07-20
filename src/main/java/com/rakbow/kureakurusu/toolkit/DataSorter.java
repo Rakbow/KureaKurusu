@@ -14,6 +14,7 @@ import java.util.Comparator;
 public class DataSorter {
 
     public static ProductSortById productIdSorter = new ProductSortById();
+    public static ProductSortByDate productDateSorter = new ProductSortByDate();
     public static AttributesSortByIntValue attributesIntValueSorter = new AttributesSortByIntValue();
     public static AttributesSortByLongValue attributesLongValueSorter = new AttributesSortByLongValue();
     public static AttributesSortByStringValue attributesStringValueSorter = new AttributesSortByStringValue();
@@ -42,6 +43,13 @@ class ProductSortById implements Comparator<Product> {
     @Override
     public int compare(Product a, Product b) {
         return Long.compare(a.getId(), b.getId());
+    }
+}
+
+class ProductSortByDate implements Comparator<Product> {
+    @Override
+    public int compare(Product a, Product b) {
+        return a.getDate().compareTo(b.getDate());
     }
 }
 

@@ -26,7 +26,7 @@ public class RelationController {
 
     @PostMapping("get-related-entity")
     public ApiResult getRelatedEntity(@RequestBody RelationQry qry) {
-        return new ApiResult().load(srv.getRelatedEntity(qry.getRelatedGroup(), qry.getEntityType(), qry.getEntityId()));
+        return new ApiResult().load(srv.getRelatedEntity(qry.getDirection(), qry.getRelatedGroup(), qry.getEntityType(), qry.getEntityId()));
     }
 
     @PostMapping("get-relations")

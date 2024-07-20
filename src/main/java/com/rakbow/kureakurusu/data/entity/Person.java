@@ -37,24 +37,31 @@ import java.util.List;
 public class Person extends MetaEntity {
 
     @OrderBy
-    private Long id; //主键
+    private Long id;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private Long mfcEntryId;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private Long bgmPersonId;
     @NotBlank(message = "{entity.crud.name.required_field}")
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String name; //原名
+    private String name;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String nameEn; //英文名
+    private String nameEn;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String nameZh; //简体中文名
+    private String nameZh;
     @TableField(typeHandler = StrListHandler.class)
-    private List<String> aliases; //别名 json数组
-    private String cover; //头像url
+    private List<String> aliases;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private String cover;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    private String image;
     @AutoMapping(qualifiedByName = "toAttribute")
-    private Gender gender; //性别 0-未知 1-男 2-女
-    private String birthDate; //生日
+    private Gender gender;
+    private String birthDate;
     @TableField(typeHandler = LinkHandler.class)
     @AutoMapping(qualifiedByName = "getLinks")
-    private List<Link> links; //链接 json数组
-    private String info; //其他信息 json对象
+    private List<Link> links;
+    private String info;
 
     public Person() {
         id = 0L;
@@ -63,6 +70,7 @@ public class Person extends MetaEntity {
         nameZh = "";
         aliases = new ArrayList<>();
         cover = "";
+        image = "";
         gender = Gender.UNKNOWN;
         birthDate = "";
         links = new ArrayList<>();

@@ -64,31 +64,4 @@ public class PersonController {
     }
     //endregion
 
-    //region role
-
-    @PostMapping("get-roles")
-    public ApiResult getPersonRoles(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(roleSrv.getRoles(new RoleListParams(qry)));
-    }
-
-    @PostMapping("add-role")
-    public ApiResult addPersonRole(@Valid @RequestBody Role role, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        roleSrv.save(role);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.ROLE.getLabel()));
-    }
-
-    @PostMapping("update-role")
-    public ApiResult updateRole(@Valid @RequestBody Role role, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        roleSrv.updateById(role);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.ROLE.getLabel()));
-    }
-
-    //endregion
-
 }

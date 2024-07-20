@@ -97,7 +97,7 @@ public class QiniuBaseUtil {
             if (res.isOK() && res.isJson()) {
                 // 返回存储文件的地址
                 HashMap<String, String> resDic = JsonUtil.toMap(res.bodyString(), String.class, String.class);
-                ar.data = FILE_DOMAIN + resDic.get("key");
+                ar.data = resDic.get("key");
             } else {
                 ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
             }

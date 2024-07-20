@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.image;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -29,7 +30,7 @@ public class Image {
 
     private Long id;
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    private EntityType entityType;
+    private int entityType;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private long entityId;
     private int type;
@@ -57,7 +58,7 @@ public class Image {
 
     public Image() {
         id = 0L;
-        entityType = EntityType.ITEM;
+        entityType = EntityType.ITEM.getValue();
         entityId = 0L;
         type = ImageType.DEFAULT.getValue();
         name = "";
@@ -80,8 +81,9 @@ public class Image {
     }
 
     public String getUrl() {
-        if(StringUtils.isBlank(this.url)) return Constant.EMPTY;
-        return STR."\{Constant.FILE_DOMAIN}\{this.url}";
+        if (url.contains(Constant.FILE_DOMAIN))
+            return url;
+        return STR."\{Constant.FILE_DOMAIN}\{url}";
     }
 
 }

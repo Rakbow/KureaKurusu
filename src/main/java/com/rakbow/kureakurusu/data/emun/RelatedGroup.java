@@ -17,7 +17,9 @@ public enum RelatedGroup {
     RELATED_ENTRY(2),
     RELATED_ITEM(3),
     RELATED_CHAR(4),
-    RELATED_PRODUCT(5);
+    RELATED_PRODUCT(5),
+    MATERIAL(6),
+    EVENT(7);
 
     @EnumValue
     private final Integer value;

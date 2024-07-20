@@ -15,7 +15,7 @@ public enum ReleaseType {
     EXCLUSIVE(2, "enum.release_type.exclusive"),
     LIMITED_EXCLUSIVE(3, "enum.release_type.limited_exclusive"),
     PRIZE(4, "enum.release_type.prize"),
-    INITIAL_PRESS(4, "enum.release_type.initial_press"),
+    INITIAL_PRESS(5, "enum.release_type.initial_press"),
     UNKNOWN(99, "enum.release_type.unknown");
 
     @EnumValue

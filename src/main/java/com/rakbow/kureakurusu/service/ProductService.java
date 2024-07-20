@@ -2,22 +2,26 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ProductListParams;
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.product.ProductDetailVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
 import com.rakbow.kureakurusu.data.vo.product.ProductVO;
-import com.rakbow.kureakurusu.toolkit.EntityUtil;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.VisitUtil;
+import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
+import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,6 +29,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +42,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
 
     //region ------inject------
     private final ProductMapper mapper;
+    private final RelationMapper relatedMapper;
     private final RelationMapper relationMapper;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
@@ -91,6 +97,26 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         mapper.delete(new LambdaQueryWrapper<Product>().in(Product::getId, ids));
         //delete person relation
         relationMapper.delete(new LambdaQueryWrapper<Relation>().eq(Relation::getEntityType, ENTITY_VALUE).in(Relation::getEntityId, ids));
+    }
+
+    @Transactional
+    public List<ProductListVO> getSubProducts(long id) {
+        List<ProductListVO> res = new ArrayList<>();
+        if (MetaData.optionsZh.roleSet.isEmpty())
+            return res;
+        List<Relation> relations = relatedMapper.selectList(
+                new LambdaQueryWrapper<Relation>()
+                        .eq(Relation::getRelatedGroup, RelatedGroup.RELATED_PRODUCT)
+                        .eq(Relation::getRelatedEntityType, EntityType.PRODUCT)
+                        .eq(Relation::getRelatedEntityId, id)
+        );
+        if (relations.isEmpty())
+            return res;
+        List<Long> targetIds = relations.stream().map(Relation::getEntityId).distinct().toList();
+        List<Product> targets = mapper.selectBatchIds(targetIds);
+        targets.sort(DataSorter.productDateSorter);
+        res = converter.convert(targets, ProductListVO.class);
+        return res;
     }
 
     //endregion

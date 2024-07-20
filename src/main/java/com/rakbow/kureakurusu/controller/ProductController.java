@@ -66,4 +66,9 @@ public class ProductController {
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success", EntityType.PRODUCT.getLabel()));
     }
 
+    @PostMapping("get-sub-product")
+    public ApiResult getSubProduct(@RequestBody CommonDetailQry qry) {
+        return new ApiResult().load(srv.getSubProducts(qry.getId()));
+    }
+
 }

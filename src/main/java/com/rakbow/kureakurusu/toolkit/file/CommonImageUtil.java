@@ -2,12 +2,14 @@ package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ImageConfigValue;
+import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageProperty;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -76,8 +78,16 @@ public class CommonImageUtil {
     }
 
     public static String getThumbCover(Image image) {
-        if (image != null && image.isMain()) return QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50);
+        if (image != null) return QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50);
         return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
+    }
+
+    public static String getEntryThumbCover(String orgUrl) {
+        if(StringUtils.isBlank(orgUrl))
+            return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
+        int dotIndex = orgUrl.lastIndexOf('.');
+        String newUrl = STR."\{Constant.FILE_DOMAIN}\{orgUrl.substring(0, dotIndex)}_1\{orgUrl.substring(dotIndex)}";
+        return QiniuImageUtil.getThumbUrl(newUrl, THUMB_SIZE_50);
     }
 
     public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {

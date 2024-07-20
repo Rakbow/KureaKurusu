@@ -12,10 +12,7 @@ import com.rakbow.kureakurusu.data.dto.ImageListParams;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.segmentImagesResult;
-import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
@@ -26,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,6 +41,11 @@ public class ResourceService {
     private final static List<Integer> defaultImageType = Arrays.asList(
             ImageType.MAIN.getValue(),
             ImageType.DEFAULT.getValue()
+    );
+
+    private final static List<Integer> defaultImageCoverType = Arrays.asList(
+            ImageType.MAIN.getValue(),
+            ImageType.THUMB.getValue()
     );
 
     /**
@@ -82,7 +83,7 @@ public class ResourceService {
         if(ar.state) {
             //set image info
             for (Image image : images) {
-                image.setEntityType(EntityType.get(entityType));
+                image.setEntityType(entityType);
                 image.setEntityId(entityId);
             }
             //batch insert
@@ -114,7 +115,7 @@ public class ResourceService {
         //delete from qiniu server
         List<Image> deleteImages = qiniuImageUtil.deleteImage(images);
         //delete from database
-        imageMapper.deleteBatchIds(deleteImages.stream().map(Image::getId).toList());
+        imageMapper.deleteByIds(deleteImages.stream().map(Image::getId).toList());
     }
 
     public String getItemCover(ItemType type, long itemId) {
@@ -137,12 +138,12 @@ public class ResourceService {
         return CommonImageUtil.getEntityCover(type, cover);
     }
 
-    public String getThumbCover(EntityType type, long entityId) {
+    public String getThumbCover(int entityType, long entityId) {
         Image cover = imageMapper.selectOne(
                 new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, type)
+                        .eq(Image::getEntityType, entityType)
                         .eq(Image::getEntityId, entityId)
-                        .eq(Image::getType, ImageType.MAIN)
+                        .eq(Image::getType, ImageType.THUMB)
         );
         return CommonImageUtil.getThumbCover(cover);
     }

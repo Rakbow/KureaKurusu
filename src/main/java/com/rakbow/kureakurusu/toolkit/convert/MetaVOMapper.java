@@ -32,11 +32,6 @@ public interface MetaVOMapper {
         return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).albumFormatSet, ids);
     }
 
-    @Named("getPublishFormat")
-    default List<Attribute<Integer>> getPublishFormat(List<Integer> ids) {
-        return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).publishFormatSet, ids);
-    }
-
     //endregion
 
     //region book
@@ -130,11 +125,6 @@ public interface MetaVOMapper {
             res.add(new LinkVO(link));
         }
         return res;
-    }
-
-    @Named("getFranchise")
-    default Attribute<Long> getFranchise(long value) {
-        return DataFinder.findAttributeByValue(value, Objects.requireNonNull(MetaData.getOptions()).franchiseSet);
     }
 
 }
