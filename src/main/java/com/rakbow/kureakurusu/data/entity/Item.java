@@ -40,6 +40,8 @@ public class Item {
 
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
+    private String nameEn;
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases;
 

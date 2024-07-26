@@ -15,7 +15,6 @@ public class ItemMiniVO {
     private long id;
     private String name;
     private List<String> aliases;
-    private String nameZh;
     private String nameEn;
     private Attribute<Integer> type;
 
