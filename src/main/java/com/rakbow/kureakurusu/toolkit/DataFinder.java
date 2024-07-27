@@ -21,12 +21,20 @@ public class DataFinder {
     public static Item itemFinder = new Item();
     public static Product productFinder = new Product();
     public static MetaEntity entityFinder = new MetaEntity();
+    public static Entry entryFinder = new Entry();
 
     //region album
 
     public static MetaEntity findEntityById(Long id, List<MetaEntity> items) {
         entityFinder.setId(id);
         int idx = Collections.binarySearch(items, entityFinder, DataSorter.entitySortById);
+        if (idx >= 0) return items.get(idx);
+        return null;
+    }
+
+    public static Entry findEntryById(Long id, List<Entry> items) {
+        entryFinder.setId(id);
+        int idx = Collections.binarySearch(items, entryFinder, DataSorter.entryIdSorter);
         if (idx >= 0) return items.get(idx);
         return null;
     }

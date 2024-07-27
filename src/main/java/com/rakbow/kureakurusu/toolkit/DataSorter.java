@@ -22,7 +22,15 @@ public class DataSorter {
     public static EpisodeSortById episodeIdSorter = new EpisodeSortById();
     public static ItemSortById itemIdSorter = new ItemSortById();
     public static EntitySortById entitySortById = new EntitySortById();
+    public static EntrySortById entryIdSorter = new EntrySortById();
 
+}
+
+class EntrySortById implements Comparator<Entry> {
+    @Override
+    public int compare(Entry a, Entry b) {
+        return a.getId().compareTo(b.getId());
+    }
 }
 
 class EntitySortById implements Comparator<MetaEntity> {

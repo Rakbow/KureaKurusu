@@ -23,6 +23,7 @@ public abstract class SuperItem {
     private ItemType type;
 
     private String name;
+    private String nameEn;
     private List<String> aliases;
 
     private String releaseDate;
@@ -51,6 +52,7 @@ public abstract class SuperItem {
     public SuperItem() {
         id = 0L;
         name = "";
+        nameEn = "";
         aliases = new ArrayList<>();
         releaseDate = "-";
         releaseType = ReleaseType.STANDARD;

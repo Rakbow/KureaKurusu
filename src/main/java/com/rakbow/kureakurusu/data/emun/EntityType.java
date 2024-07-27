@@ -16,7 +16,7 @@ import java.util.Arrays;
 public enum EntityType {
 
     ITEM(0, "enum.entity.item", "item"),
-    ENTRY(1, "enum.entity.subject", "subject"),
+    ENTRY(1, "enum.entity.subject", "entry"),
     PERSON(2, "enum.entity.person", "person"),
     ROLE(3, "enum.entity.role", "role"),
     EPISODE(4, "enum.entity.episode", "episode"),

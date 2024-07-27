@@ -16,6 +16,7 @@ public class ItemVO {
     private int type;
 
     private String name;
+    private String nameEn;
     private List<String> aliases;
 
     private Attribute<Integer> releaseType;

@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.meta.MetaData;
@@ -9,15 +11,19 @@ import com.rakbow.kureakurusu.data.vo.item.*;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Rakbow
  * @since 2024/4/26 17:04
  */
 public class ItemUtil {
+
+    public final static List<Integer> ItemExcRelatedGroups = Arrays.asList(
+            RelatedGroup.RELATED_ENTRY.getValue(),
+            RelatedGroup.EVENT.getValue(),
+            RelatedGroup.MATERIAL.getValue()
+    );
 
     private final static Map<Integer, Class<? extends SubItem>> subItemMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), ItemAlbum.class);

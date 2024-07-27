@@ -4,6 +4,8 @@ import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.AlbumTrackInfoQry;
 import com.rakbow.kureakurusu.data.dto.AlbumUpdateTrackInfoDTO;
 import com.rakbow.kureakurusu.data.dto.BookIsbnDTO;
+import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
+import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
@@ -25,6 +27,7 @@ public class ItemExtendController {
     //region inject
     private final AlbumService albumSrv;
     private final BookService bookSrv;
+    private final RelationService reSrv;
     //endregion
 
     @PostMapping("update-album-track-info")
@@ -42,6 +45,11 @@ public class ItemExtendController {
     @PostMapping("get-isbn")
     public ApiResult getISBN(@RequestBody BookIsbnDTO dto) {
         return new ApiResult().load(bookSrv.getISBN(dto.getLabel(), dto.getIsbn()));
+    }
+
+    @PostMapping("get-exc-related-entries")
+    public ApiResult getRelatedEntries(@RequestBody CommonDetailQry qry) {
+        return new ApiResult().load(reSrv.getItemRelatedEntry(qry.getId()));
     }
 
 }

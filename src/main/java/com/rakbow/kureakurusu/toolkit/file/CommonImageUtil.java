@@ -37,6 +37,8 @@ public class CommonImageUtil {
     private static final Map<ItemType, ImageConfigValue> itemImageConfigMap = new EnumMap<>(ItemType.class) {{
         put(ItemType.ALBUM, new ImageConfigValue(185, false, DEFAULT_ALBUM_IMAGE_URL));
         put(ItemType.BOOK, new ImageConfigValue(180, false, DEFAULT_BOOK_IMAGE_URL));
+        put(ItemType.GOODS, new ImageConfigValue(185, false, EMPTY_IMAGE_URL));
+        put(ItemType.FIGURE, new ImageConfigValue(185, false, EMPTY_IMAGE_URL));
     }};
 
     private static final Map<EntityType, ImageConfigValue> entryImageConfigMap = new EnumMap<>(EntityType.class) {{

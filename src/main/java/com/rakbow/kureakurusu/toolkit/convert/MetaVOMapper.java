@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import java.util.Currency;
@@ -57,7 +58,9 @@ public interface MetaVOMapper {
 
     @Named("getCurrency")
     default String getCurrency(String region) {
+        if(StringUtils.isBlank(region)) return "JPY";
         if(region.equals("global")) return "JPY";
+        if(region.equals("un")) return "JPY";
         if(region.equals("eu")) return "EUR";
         return Currency.getInstance(Locale.of("", region)).getCurrencyCode();
     }

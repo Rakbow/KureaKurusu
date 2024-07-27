@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
@@ -25,6 +24,7 @@ public class EntityUtil {
     private final static Map<Integer, Class<? extends MetaEntity>> subEntityMap = new HashMap<>() {{
         put(EntityType.PERSON.getValue(), Person.class);
         put(EntityType.PRODUCT.getValue(), Product.class);
+        put(EntityType.ENTRY.getValue(), com.rakbow.kureakurusu.data.entity.Entry.class);
     }};
 
     public Class<? extends MetaEntity> getSubEntity(int type) {

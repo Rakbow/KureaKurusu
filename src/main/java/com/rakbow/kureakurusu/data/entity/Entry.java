@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
-import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
-import com.rakbow.kureakurusu.data.vo.product.ProductVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
@@ -26,12 +24,13 @@ import java.util.List;
  * @since 2024/6/18 18:12
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName(value = "entry", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = EntryVO.class, reverseConvertGenerate = false)
 })
-public class Entry {
+public class Entry extends MetaEntity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -42,6 +41,7 @@ public class Entry {
     private Long mfcEntryId;// myFigureCollection entry id
     private String name;
     private String nameEn;
+    private String nameZh;
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases;
     private String date;// event-date

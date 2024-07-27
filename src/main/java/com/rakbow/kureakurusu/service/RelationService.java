@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
@@ -15,11 +16,14 @@ import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
 import com.rakbow.kureakurusu.data.dto.RelationListParams;
 import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
+import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
 import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +48,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final SqlSessionFactory sqlSessionFactory;
     private final EntityUtil entityUtil;
     private final ResourceService resourceSrv;
+    private final EntryMapper entryMapper;
 
     public List<RelationVO> getRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
         int relatedEntity;
@@ -60,11 +65,11 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         );
         if (relations.isEmpty())
             return res;
-        if(relatedGroup == RelatedGroup.RELATED_PERSON.getValue()) {
+        if (relatedGroup == RelatedGroup.RELATED_PERSON.getValue()) {
             relatedEntity = EntityType.PERSON.getValue();
-        }else if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
+        } else if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
             relatedEntity = EntityType.PRODUCT.getValue();
-        }else {
+        } else {
             relatedEntity = EntityType.ITEM.getValue();
         }
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
@@ -75,8 +80,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             MetaEntity entity = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
             if (entity == null) continue;
             if (entity instanceof Product) {
-                remark = I18nHelper.getMessage(((Product)entity).getType().getLabelKey());
-            }else {
+                remark = I18nHelper.getMessage(((Product) entity).getType().getLabelKey());
+            } else {
                 remark = r.getRemark();
             }
             Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
@@ -123,6 +128,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         Map<Integer, List<Relation>> groups = pages.getRecords().stream()
                 .collect(Collectors.groupingBy(param.getDirection() == 1 ? Relation::getRelatedEntityType : Relation::getEntityType));
         for (int entityType : groups.keySet()) {
+            if (entityType == EntityType.CHARACTER.getValue())
+                continue;
             currentRelations = groups.get(entityType);
             targetIds = currentRelations.stream()
                     .map(param.getDirection() == 1 ? Relation::getRelatedEntityId : Relation::getEntityId)
@@ -196,6 +203,37 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @Transactional
     public void deleteRelations(List<Long> ids) {
         mapper.deleteByIds(ids);
+    }
+
+    @Transactional
+    public ItemExcRelatedEntries getItemRelatedEntry(long entityId) {
+        ItemExcRelatedEntries res = new ItemExcRelatedEntries();
+        List<Relation> relations = mapper.selectList(
+                new LambdaQueryWrapper<Relation>()
+                        .in(Relation::getRelatedGroup, ItemUtil.ItemExcRelatedGroups)
+                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                        .eq(Relation::getEntityId, entityId)
+        );
+        if (relations.isEmpty())
+            return res;
+        List<Long> targetIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
+        List<Entry> targets = entryMapper.selectBatchIds(targetIds);
+        for (Relation r : relations) {
+            Entry entry = DataFinder.findEntryById(r.getRelatedEntityId(), targets);
+            if (entry == null) continue;
+            RelationVO re = RelationVO.builder()
+                    .target(new Attribute<>(entry.getName(), entry.getId()))
+                    .remark(r.getRemark())
+                    .build();
+            if (entry.getType() == EntryType.CLASSIFICATION) {
+                res.getClassifications().add(re);
+            } else if (entry.getType() == EntryType.EVENT) {
+                res.getEvents().add(re);
+            } else if (entry.getType() == EntryType.MATERIAL) {
+                res.getMaterials().add(re);
+            }
+        }
+        return res;
     }
 
 }
