@@ -8,24 +8,30 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.EntryMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
 import com.rakbow.kureakurusu.data.dto.RelationListParams;
 import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.EntryType;
-import com.rakbow.kureakurusu.data.emun.RelatedGroup;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
+import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
@@ -49,6 +55,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final EntityUtil entityUtil;
     private final ResourceService resourceSrv;
     private final EntryMapper entryMapper;
+    private final ItemMapper itemMapper;
+    private final Converter converter;
 
     public List<RelationVO> getRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
         int relatedEntity;
@@ -234,6 +242,34 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             }
         }
         return res;
+    }
+
+    @Transactional
+    public SearchResult<ItemMiniVO> getRelatedItems(int entityType, long entityId, int page, int size) {
+        SearchResult<ItemMiniVO> res = new SearchResult<>();
+        IPage<Item> pages = itemMapper.selectJoinPage(new Page<>(page, size), Item.class,
+                new MPJLambdaWrapper<Item>()
+                        .selectAll(Item.class)
+                        .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
+                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                        .eq(Relation::getRelatedEntityType, entityType)
+                        .eq(Relation::getRelatedEntityId, entityId)
+                        .orderByDesc(Item::getReleaseDate));
+        if (pages.getRecords().isEmpty())
+            return res;
+        List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
+        List<Long> ids = items.stream().map(ItemMiniVO::getId).toList();
+        List<Image> images = resourceSrv.getItemThumbAndCover(ids);
+        images.sort(DataSorter.imageEntityTypeEntityIdTypeSorter);
+        for (ItemMiniVO item : items) {
+            Image thumb = DataFinder.findImageByEntityTypeEntityIdType(EntityType.ITEM.getValue(),
+                    item.getId(), ImageType.THUMB.getValue(), images);
+            item.setThumb(CommonImageUtil.getItemThumb(thumb));
+            Image cover = DataFinder.findImageByEntityTypeEntityIdType(EntityType.ITEM.getValue(),
+                    item.getId(), ImageType.MAIN.getValue(), images);
+            item.setCover(CommonImageUtil.getItemCover(ItemType.get(item.getType().getValue()), cover));
+        }
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
 }

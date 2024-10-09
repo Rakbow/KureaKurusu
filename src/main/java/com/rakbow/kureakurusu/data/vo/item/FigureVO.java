@@ -4,6 +4,8 @@ import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/7/26 17:34
@@ -14,5 +16,6 @@ public class FigureVO extends ItemVO {
 
     private Attribute<Integer> figureType;
     private String scale;
+    private List<String> versions;
 
 }

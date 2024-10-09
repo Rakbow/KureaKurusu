@@ -32,7 +32,7 @@ public class Image {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private int entityType;
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    private long entityId;
+    private Long entityId;
     private int type;
     private String name;
     private String nameZh;

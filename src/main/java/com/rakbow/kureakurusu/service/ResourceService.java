@@ -168,4 +168,13 @@ public class ResourceService {
         return imageMapper.selectCount(wrapper).intValue();
     }
 
+    public List<Image> getItemThumbAndCover(List<Long> ids) {
+        return imageMapper.selectList(
+                new LambdaQueryWrapper<Image>()
+                        .eq(Image::getEntityType, EntityType.ITEM.getValue())
+                        .in(Image::getEntityId, ids)
+                        .in(Image::getType, defaultImageCoverType)
+        );
+    }
+
 }

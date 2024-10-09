@@ -4,6 +4,7 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.image.Image;
 
 import java.util.Comparator;
 
@@ -23,7 +24,18 @@ public class DataSorter {
     public static ItemSortById itemIdSorter = new ItemSortById();
     public static EntitySortById entitySortById = new EntitySortById();
     public static EntrySortById entryIdSorter = new EntrySortById();
+    public static ImageSortByEntityTypeEntityIdType imageEntityTypeEntityIdTypeSorter = new ImageSortByEntityTypeEntityIdType();
 
+}
+
+class ImageSortByEntityTypeEntityIdType implements Comparator<Image> {
+    @Override
+    public int compare(Image a, Image b) {
+        return Comparator.comparing(Image::getEntityType)
+                .thenComparing(Image::getEntityId)
+                .thenComparing(Image::getType)
+                .compare(a, b);
+    }
 }
 
 class EntrySortById implements Comparator<Entry> {

@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.toolkit;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.image.Image;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class DataFinder {
     public static Product productFinder = new Product();
     public static MetaEntity entityFinder = new MetaEntity();
     public static Entry entryFinder = new Entry();
+    public static Image imageFinder = new Image();
 
     //region album
 
@@ -36,6 +38,15 @@ public class DataFinder {
         entryFinder.setId(id);
         int idx = Collections.binarySearch(items, entryFinder, DataSorter.entryIdSorter);
         if (idx >= 0) return items.get(idx);
+        return null;
+    }
+
+    public static Image findImageByEntityTypeEntityIdType(int entityType, long entityId, int type, List<Image> images) {
+        imageFinder.setEntityType(entityType);
+        imageFinder.setEntityId(entityId);
+        imageFinder.setType(type);
+        int idx = Collections.binarySearch(images, imageFinder, DataSorter.imageEntityTypeEntityIdTypeSorter);
+        if (idx >= 0) return images.get(idx);
         return null;
     }
 
@@ -89,13 +100,13 @@ public class DataFinder {
 
         List<Attribute<Integer>> res = new ArrayList<>();
 
-        if(values.length == 0) return res;
+        if (values.length == 0) return res;
 
         Attribute<Integer> finder = new Attribute<>();
-        for(int value : values) {
+        for (int value : values) {
             finder.setValue(value);
             int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesIntValueSorter);
-            if(idx >= 0) {
+            if (idx >= 0) {
                 res.add(attributes.get(idx));
             }
         }

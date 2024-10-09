@@ -1,10 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.AlbumTrackInfoQry;
-import com.rakbow.kureakurusu.data.dto.AlbumUpdateTrackInfoDTO;
-import com.rakbow.kureakurusu.data.dto.BookIsbnDTO;
-import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.item.BookService;
@@ -50,6 +47,12 @@ public class ItemExtendController {
     @PostMapping("get-exc-related-entries")
     public ApiResult getRelatedEntries(@RequestBody CommonDetailQry qry) {
         return new ApiResult().load(reSrv.getItemRelatedEntry(qry.getId()));
+    }
+
+    @PostMapping("related-items")
+    public ApiResult getRelatedItems(@RequestBody RelatedItemQueryDTO qry) {
+        return new ApiResult().load(reSrv.getRelatedItems(qry.getEntityType(),
+                qry.getEntityId(), qry.getPage(), qry.getSize()));
     }
 
 }
