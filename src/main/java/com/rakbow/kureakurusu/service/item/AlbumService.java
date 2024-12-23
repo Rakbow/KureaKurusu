@@ -106,6 +106,36 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
      * 更新音轨信息
      *
      * @param id    专辑id
+     * @param serial 专辑碟片序号
+     * @param tracks 音轨信息
+     * @author rakbow
+     */
+    @SneakyThrows
+    @Transactional
+    public void quickCreateAlbumDisc(long id, int serial, List<AlbumTrackVO> tracks) {
+
+        List<Episode> eps = new ArrayList<>();
+        for (AlbumTrackVO track : tracks) {
+            Episode ep = new Episode();
+            ep.setRelatedType(0);
+            ep.setRelatedId(id);
+            ep.setTitle(track.getTitle());
+            ep.setSerial(track.getSerial());
+            ep.setDuration(DateHelper.getDuration(track.getDuration()));
+            ep.setDiscNum(serial);
+            ep.setEpisodeType(0);
+            eps.add(ep);
+        }
+        //save
+        MybatisBatch.Method<Episode> method = new MybatisBatch.Method<>(EpisodeMapper.class);
+        MybatisBatch<Episode> batchInsert = new MybatisBatch<>(sqlSessionFactory, eps);
+        batchInsert.execute(method.insert());
+    }
+
+    /**
+     * 更新音轨信息
+     *
+     * @param id    专辑id
      * @param discs 专辑的音轨信息
      * @author rakbow
      */
