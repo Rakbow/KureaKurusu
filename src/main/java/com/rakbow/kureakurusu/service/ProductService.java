@@ -86,7 +86,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     @Transactional
     public void deleteProducts(List<Long> ids) {
         //get original data
-        List<Product> items = mapper.selectBatchIds(ids);
+        List<Product> items = mapper.selectByIds(ids);
         for (Product item : items) {
             //delete all image
 //            qiniuImageUtil.deleteAllImage(item.getImages());
@@ -113,7 +113,7 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
         if (relations.isEmpty())
             return res;
         List<Long> targetIds = relations.stream().map(Relation::getEntityId).distinct().toList();
-        List<Product> targets = mapper.selectBatchIds(targetIds);
+        List<Product> targets = mapper.selectByIds(targetIds);
         targets.sort(DataSorter.productDateSorter);
         res = converter.convert(targets, ProductListVO.class);
         return res;
