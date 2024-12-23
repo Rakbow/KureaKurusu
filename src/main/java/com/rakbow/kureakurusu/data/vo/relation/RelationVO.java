@@ -14,7 +14,7 @@ public class RelationVO {
 
     private long id;//relation id
     private String cover;
-    private int relatedGroup;
+    private Attribute<Integer> relatedGroup;
     private Attribute<Long> role;
     private Attribute<Long> reverseRole;
     private Attribute<Long> target;

@@ -27,7 +27,6 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
-import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -83,7 +82,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
         Class<? extends MetaEntity> subClass = entityUtil.getSubEntity(relatedEntity);
         BaseMapper<MetaEntity> subMapper = MyBatisUtil.getMapper(subClass);
-        List<MetaEntity> targets = subMapper.selectBatchIds(targetIds);
+        List<MetaEntity> targets = subMapper.selectByIds(targetIds);
         for (Relation r : relations) {
             MetaEntity entity = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
             if (entity == null) continue;
@@ -144,18 +143,19 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     .distinct().toList();
             subClass = entityUtil.getSubEntity(entityType);
             subMapper = MyBatisUtil.getMapper(subClass);
-            targets = subMapper.selectBatchIds(targetIds);
+            targets = subMapper.selectByIds(targetIds);
             for (Relation r : currentRelations) {
                 MetaEntity entity = DataFinder.findEntityById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
                 if (entity == null) continue;
                 Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
                 Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.optionsZh.roleSet);
+                Attribute<Integer> relatedGroup = DataFinder.findAttributeByValue(r.getRelatedGroup().getValue(), MetaData.optionsZh.relatedGroupSet);
                 if (role == null) role = new Attribute<>("-", 0L);
                 if (reverseRole == null) reverseRole = new Attribute<>("-", 0L);
                 res.add(
                         RelationVO.builder()
                                 .id(r.getId())
-                                .relatedGroup(r.getRelatedGroup().getValue())
+                                .relatedGroup(relatedGroup)
                                 .role(role)
                                 .reverseRole(reverseRole)
                                 .target(new Attribute<>(entity.getName(), entity.getId()))
@@ -225,7 +225,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         if (relations.isEmpty())
             return res;
         List<Long> targetIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
-        List<Entry> targets = entryMapper.selectBatchIds(targetIds);
+        List<Entry> targets = entryMapper.selectByIds(targetIds);
         for (Relation r : relations) {
             Entry entry = DataFinder.findEntryById(r.getRelatedEntityId(), targets);
             if (entry == null) continue;

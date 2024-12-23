@@ -112,6 +112,9 @@ public class GeneralService {
         MetaData.optionsZh.figureTypeSet = EnumHelper.getAttributeOptions(FigureType.class, "zh");
         MetaData.optionsEn.figureTypeSet = EnumHelper.getAttributeOptions(FigureType.class, "en");
 
+        MetaData.optionsZh.relatedGroupSet = EnumHelper.getAttributeOptions(RelatedGroup.class, "zh");
+        MetaData.optionsEn.relatedGroupSet = EnumHelper.getAttributeOptions(RelatedGroup.class, "en");
+
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
