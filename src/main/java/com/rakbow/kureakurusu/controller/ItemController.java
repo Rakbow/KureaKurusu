@@ -82,9 +82,9 @@ public class ItemController {
 
     //region other
 
-    @PostMapping("get-option")
-    public ApiResult getOption(@RequestBody GetOptionQry qry) {
-        return new ApiResult().load(ItemUtil.getOptions(qry.getType()));
+    @GetMapping("get-option")
+    public ApiResult getOption() {
+        return new ApiResult().load(ItemUtil.getOptions());
     }
 
     //endregion

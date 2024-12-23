@@ -95,6 +95,11 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         subItem.setId(item.getId());
         subMapper.insert(subItem);
 
+        //add redis ItemTypeRelation key
+        ItemTypeRelation relation = new ItemTypeRelation(item);
+        String key = STR."item_type_related:\{item.getId()}";
+        redisUtil.set(key, relation);
+
         return I18nHelper.getMessage("entity.crud.insert.success");
     }
 
@@ -119,7 +124,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public String delete(List<Long> ids) {
         //get original data
-        List<Item> items = mapper.selectBatchIds(ids);
+        List<Item> items = mapper.selectByIds(ids);
         List<Image> images = imageMapper.selectList(
                 new LambdaQueryWrapper<Image>()
                         .eq(Image::getEntityType, EntityType.ITEM)
@@ -162,7 +167,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .type(item.getType().getValue())
                 .item(converter.convert(item, targetVOClass))
                 .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
-                .options(ItemUtil.getOptions(item.getType().getValue()))
+                // .options(ItemUtil.getOptions(item.getType().getValue()))
                 .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
                 .images(resourceSrv.getDefaultImages(EntityType.ITEM.getValue(), id))
                 .imageCount(resourceSrv.getDefaultImagesCount(EntityType.ITEM.getValue(), id))
