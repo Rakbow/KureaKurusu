@@ -15,6 +15,7 @@ public class MetaOption {
     public List<Attribute<Integer>> genderSet;
     public List<Attribute<Integer>> linkTypeSet;
     public List<Attribute<Long>> roleSet;
+    public List<Attribute<Integer>> relatedGroupSet;
 
     //album
     public List<Attribute<Integer>> albumFormatSet;
