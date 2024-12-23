@@ -82,19 +82,14 @@ public class ItemUtil {
         return constructor.newInstance(qry);
     }
 
-    public static Map<String, Object> getOptions(int type) {
+    public static Map<String, Object> getOptions() {
         Map<String, Object> res = new HashMap<>();
-        if(type == ItemType.ALBUM.getValue()) {
-            res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
-            res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
-        }else if(type == ItemType.BOOK.getValue()) {
-            res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
-            res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
-        }else if(type == ItemType.GOODS.getValue()) {
-            res.put("goodsTypeSet", Objects.requireNonNull(MetaData.getOptions()).goodsTypeSet);
-        }else if(type == ItemType.FIGURE.getValue()) {
-            res.put("figureTypeSet", Objects.requireNonNull(MetaData.getOptions()).figureTypeSet);
-        }
+        res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
+        res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
+        res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
+        res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
+        res.put("goodsTypeSet", Objects.requireNonNull(MetaData.getOptions()).goodsTypeSet);
+        res.put("figureTypeSet", Objects.requireNonNull(MetaData.getOptions()).figureTypeSet);
         res.put("releaseTypeSet", Objects.requireNonNull(MetaData.getOptions()).releaseTypeSet);
         return res;
     }

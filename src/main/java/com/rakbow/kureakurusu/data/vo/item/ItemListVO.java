@@ -2,6 +2,8 @@ package com.rakbow.kureakurusu.data.vo.item;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/5/5 7:50
@@ -12,6 +14,7 @@ public class ItemListVO {
     private long id;
     private int type;
     private String name;
+    private List<String> aliases;
 
     private Attribute<Integer> releaseType;
     private String barcode;
@@ -23,10 +26,10 @@ public class ItemListVO {
     private boolean bonus;
     private String remark;
 
-    private int width;
-    private int length;
-    private int height;
-    private int weight;
+    private double width;
+    private double length;
+    private double height;
+    private double weight;
 
     private String addedTime;
     private String editedTime;

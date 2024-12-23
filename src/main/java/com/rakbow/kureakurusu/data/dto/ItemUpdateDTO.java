@@ -39,10 +39,10 @@ public class ItemUpdateDTO extends DTO {
     private String catalogId;
     private String releaseDate;
 
-    private int width;// mm
-    private int length;// mm
-    private int height;// mm
-    private int weight;// g
+    private double width;// mm
+    private double length;// mm
+    private double height;// mm
+    private double weight;// g
 
     private double price;
     private String region;

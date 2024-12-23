@@ -35,10 +35,10 @@ public abstract class SuperItem {
     private String barcode;
     private String CatalogId;
 
-    private int width;// mm
-    private int length;// mm
-    private int height;// mm
-    private int weight;// g
+    private double width;// mm
+    private double length;// mm
+    private double height;// mm
+    private double weight;// g
 
     private Boolean bonus;
     private String detail;

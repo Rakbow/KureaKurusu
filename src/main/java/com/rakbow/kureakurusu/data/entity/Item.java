@@ -56,10 +56,10 @@ public class Item {
 
     private String detail;
 
-    private int width;// mm
-    private int length;// mm
-    private int height;// mm
-    private int weight;// g
+    private double width;// mm
+    private double length;// mm
+    private double height;// mm
+    private double weight;// g
 
     private String remark;
 

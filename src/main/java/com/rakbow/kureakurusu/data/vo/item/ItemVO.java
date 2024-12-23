@@ -28,10 +28,10 @@ public class ItemVO {
     private String region;
     private boolean bonus;
 
-    private int width;// mm
-    private int length;// mm
-    private int height;// mm
-    private int weight;
+    private double width;// mm
+    private double length;// mm
+    private double height;// mm
+    private double weight;
 
     private String remark;
     private String detail;
