@@ -28,6 +28,7 @@ import static com.rakbow.kureakurusu.data.CommonConstant.*;
 public class CommonImageUtil {
 
     private static final int DEFAULT_THUMB_SIZE = 200;
+    private static final int DEFAULT_COVER_SIZE = 180;
     private static final int THUMB_SIZE_64 = 64;
     private static final int THUMB_SIZE_70 = 70;
     private static final int THUMB_SIZE_50 = 50;
@@ -83,6 +84,12 @@ public class CommonImageUtil {
         ImageConfigValue config = entryImageConfigMap.get(type);
         String url = image == null ? config.getDefaultUrl() : image.getUrl();
         return QiniuImageUtil.getThumbUrl(url, config.getCoverSize());
+    }
+
+    //TODO
+    public static String getEntryCover(String orgUrl) {
+        String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
+        return QiniuImageUtil.getThumbUrl(url, DEFAULT_COVER_SIZE);
     }
 
     public static String getThumbCover(Image image) {

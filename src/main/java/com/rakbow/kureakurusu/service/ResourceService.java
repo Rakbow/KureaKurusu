@@ -177,4 +177,14 @@ public class ResourceService {
         );
     }
 
+    @Transactional
+    public List<Image> getEntityThumbs(int entityType, List<Long> entityIds) {
+        return imageMapper.selectList(
+                new LambdaQueryWrapper<Image>()
+                        .eq(Image::getEntityType, entityType)
+                        .in(Image::getEntityId, entityIds)
+                        .in(Image::getType, ImageType.THUMB)
+        );
+    }
+
 }
