@@ -14,12 +14,21 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum ImageType {
 
-    DEFAULT(0),
-    THUMB(1),
-    MAIN(2),
-    OTHER(99);
+    DEFAULT(0, "enum.image_type.default"),
+    THUMB(1, "enum.image_type.thumb"),
+    MAIN(2, "enum.image_type.main"),
+    OTHER(99, "enum.image_type.other");
 
     @EnumValue
     private final Integer value;
+    private final String labelKey;
+
+    public static ImageType get(int value) {
+        for (ImageType type : ImageType.values()) {
+            if (type.value == value)
+                return type;
+        }
+        return DEFAULT;
+    }
 
 }

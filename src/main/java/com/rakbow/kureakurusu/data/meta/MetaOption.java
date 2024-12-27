@@ -30,6 +30,7 @@ public class MetaOption {
     public List<Attribute<Integer>> releaseTypeSet;
     public List<Attribute<Integer>> goodsTypeSet;
     public List<Attribute<Integer>> figureTypeSet;
+    public List<Attribute<Integer>> imageTypeSet;
 
     public MetaOption() {
         genderSet = new ArrayList<>();
