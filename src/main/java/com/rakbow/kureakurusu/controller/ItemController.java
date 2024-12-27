@@ -80,13 +80,4 @@ public class ItemController {
 
     //endregion
 
-    //region other
-
-    @GetMapping("get-option")
-    public ApiResult getOption() {
-        return new ApiResult().load(ItemUtil.getOptions());
-    }
-
-    //endregion
-
 }

@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -51,12 +48,12 @@ public class GeneralController {
 
     @PostMapping("search")
     public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
-        return new ApiResult().load(srv.search(qry.getEntityType(), new SimpleSearchParam(qry.getParam())));
+        return new ApiResult().load(srv.search(qry.getEntrySearchType(), new SimpleSearchParam(qry.getParam())));
     }
 
-    @PostMapping("get-option")
-    public ApiResult getOption(@RequestBody GetOptionQry qry) {
-        return new ApiResult().load(entityUtil.getDetailOptions(qry.getType()));
+    @GetMapping("get-options")
+    public ApiResult getOption() {
+        return new ApiResult().load(srv.getOptions());
     }
 
     @PostMapping("update-entry-status")

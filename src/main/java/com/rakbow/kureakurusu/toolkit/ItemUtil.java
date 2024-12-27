@@ -82,16 +82,4 @@ public class ItemUtil {
         return constructor.newInstance(qry);
     }
 
-    public static Map<String, Object> getOptions() {
-        Map<String, Object> res = new HashMap<>();
-        res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
-        res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
-        res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
-        res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
-        res.put("goodsTypeSet", Objects.requireNonNull(MetaData.getOptions()).goodsTypeSet);
-        res.put("figureTypeSet", Objects.requireNonNull(MetaData.getOptions()).figureTypeSet);
-        res.put("releaseTypeSet", Objects.requireNonNull(MetaData.getOptions()).releaseTypeSet);
-        return res;
-    }
-
 }
