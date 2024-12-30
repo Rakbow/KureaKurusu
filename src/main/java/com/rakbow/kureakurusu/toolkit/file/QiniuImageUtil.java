@@ -93,6 +93,10 @@ public class QiniuImageUtil {
         return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x\{size}";
     }
 
+    public static String getNoHeightLimitThumbUrl(String imageUrl, int size) {
+        return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";
+    }
+
     public static String getCustomThumbUrl(String imageUrl, int size, int lengthLabel) {
         if(lengthLabel == 0) {
             return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";

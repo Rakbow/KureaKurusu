@@ -44,7 +44,9 @@ public class CommonImageUtil {
     }};
 
     private static final Map<EntityType, ImageConfigValue> entryImageConfigMap = new EnumMap<>(EntityType.class) {{
-        put(EntityType.PRODUCT, new ImageConfigValue(180, false, EMPTY_IMAGE_URL));
+        put(EntityType.PERSON, new ImageConfigValue(200, false, EMPTY_IMAGE_URL));
+        put(EntityType.PRODUCT, new ImageConfigValue(200, false, EMPTY_IMAGE_URL));
+        put(EntityType.CHARACTER, new ImageConfigValue(200, false, EMPTY_IMAGE_URL));
         put(EntityType.FRANCHISE, new ImageConfigValue(100, true, EMPTY_IMAGE_URL));
     }};
 
@@ -83,7 +85,13 @@ public class CommonImageUtil {
     public static String getEntityCover(EntityType type, Image image) {
         ImageConfigValue config = entryImageConfigMap.get(type);
         String url = image == null ? config.getDefaultUrl() : image.getUrl();
-        return QiniuImageUtil.getThumbUrl(url, config.getCoverSize());
+        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, config.getCoverSize());
+    }
+
+    public static String getPersonCover(String orgUrl) {
+        ImageConfigValue config = entryImageConfigMap.get(EntityType.PERSON);
+        String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
+        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, config.getCoverSize());
     }
 
     //TODO

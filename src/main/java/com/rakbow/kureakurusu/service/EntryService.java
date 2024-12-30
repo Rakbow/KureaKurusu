@@ -8,6 +8,7 @@ import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -35,9 +36,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
             throw new Exception(I18nHelper.getMessage("entity.url.error", EntityType.ENTRY.getLabel()));
         return EntryDetailVO.builder()
                 .item(converter.convert(entry, EntryVO.class))
-                .options(entityUtil.getDetailOptions(ENTITY_VALUE.getValue()))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE.getValue(), id))
-                .cover(entry.getImage())
+                .cover(CommonImageUtil.getEntryCover(entry.getImage()))
                 .build();
     }
 
