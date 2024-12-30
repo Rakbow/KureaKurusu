@@ -24,6 +24,7 @@ public class EntityUtil {
     private final static Map<Integer, Class<? extends MetaEntity>> subEntityMap = new HashMap<>() {{
         put(EntityType.PERSON.getValue(), Person.class);
         put(EntityType.PRODUCT.getValue(), Product.class);
+        put(EntityType.CHARACTER.getValue(), Chara.class);
         put(EntityType.ENTRY.getValue(), com.rakbow.kureakurusu.data.entity.Entry.class);
     }};
 

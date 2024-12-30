@@ -1,20 +1,20 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.Link;
 import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.data.vo.entry.CharacterVO;
+import com.rakbow.kureakurusu.toolkit.handler.LinkHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
-import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -25,6 +25,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @TableName(value = "chara", autoResultMap = true)
 @NoArgsConstructor
+@AutoMappers({
+        @AutoMapper(target = CharacterVO.class, reverseConvertGenerate = false)
+})
 public class Chara extends MetaEntity {
 
     private Long id;
@@ -33,10 +36,12 @@ public class Chara extends MetaEntity {
     private String nameEn;
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases;
+    @AutoMapping(qualifiedByName = "toAttribute")
     private Gender gender;
-    private String birthday;
-    @TableField(typeHandler = StrListHandler.class)
-    private List<String> links;
+    private String birthDate;
+    @TableField(typeHandler = LinkHandler.class)
+    @AutoMapping(qualifiedByName = "getLinks")
+    private List<Link> links;
 
     // private String favorites;
     // private String hates;

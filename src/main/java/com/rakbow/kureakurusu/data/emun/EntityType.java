@@ -20,7 +20,7 @@ public enum EntityType {
     PERSON(2, "enum.entity.person", "person"),
     ROLE(3, "enum.entity.role", "role"),
     EPISODE(4, "enum.entity.episode", "episode"),
-    CHARACTER(5, "enum.entity.character", "character"),
+    CHARACTER(5, "enum.entity.character", "chara"),
     PRODUCT(99, "enum.entity.product", "product"),
     FRANCHISE(100, "enum.entity.franchise", "franchise"),
     USER(101, "enum.entity.user", "user");
