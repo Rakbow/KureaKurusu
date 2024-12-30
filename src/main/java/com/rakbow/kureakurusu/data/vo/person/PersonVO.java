@@ -17,7 +17,6 @@ public class PersonVO {
     private String name;
     private String nameZh;
     private String nameEn;
-    private String cover;
     private String birthDate;
     private Attribute<Integer> gender;
     private List<LinkVO> links;

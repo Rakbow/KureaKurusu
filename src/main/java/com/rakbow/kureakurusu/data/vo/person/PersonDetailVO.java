@@ -20,6 +20,7 @@ import java.util.Map;
 public class PersonDetailVO {
 
     private PersonVO item;
+    private String cover;
     private PageTraffic traffic;
     private Map<String, Object> options;
 

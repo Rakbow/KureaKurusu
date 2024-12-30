@@ -18,6 +18,7 @@ import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.convert.PersonVOMapper;
+import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -50,6 +51,7 @@ public class PersonService extends ServiceImpl<PersonMapper, Person> {
 
         return PersonDetailVO.builder()
                 .item(converter.convert(person, PersonVO.class))
+                .cover(CommonImageUtil.getPersonCover(person.getImage()))
                 .traffic(entityUtil.getPageTraffic(ENTITY_VALUE, qry.getId()))
                 .options(entityUtil.getDetailOptions(ENTITY_VALUE))
                 .build();
