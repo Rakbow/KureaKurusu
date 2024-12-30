@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
@@ -35,6 +36,10 @@ public class Item {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @AutoMapping(qualifiedByName = "toAttribute")
     private ItemType type;
+    @TableField(updateStrategy = FieldStrategy.NEVER)
+    @AutoMapping(qualifiedByName = "toAttribute")
+    private ItemSubType subType;
+
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private Long orgId;
 

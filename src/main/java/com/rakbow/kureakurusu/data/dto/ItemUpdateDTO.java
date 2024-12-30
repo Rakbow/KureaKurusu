@@ -29,6 +29,7 @@ public class ItemUpdateDTO extends DTO {
 
     private Long id;
     private Integer type;
+    private Integer subType;
 
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;

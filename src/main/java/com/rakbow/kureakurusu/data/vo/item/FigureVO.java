@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 public class FigureVO extends ItemVO {
 
-    private Attribute<Integer> figureType;
     private String scale;
     private List<String> versions;
 

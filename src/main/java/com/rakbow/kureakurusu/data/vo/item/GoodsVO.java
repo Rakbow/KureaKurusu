@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 public class GoodsVO extends ItemVO {
 
-    private Attribute<Integer> goodsType;
     private String scale;
     private List<String> versions;
 

@@ -35,15 +35,6 @@ public interface MetaVOMapper {
 
     //endregion
 
-    //region book
-
-    @Named("getBookType")
-    default BookType getBookType(int value) {
-        return BookType.get(value);
-    }
-
-    //endregion
-
     @Named("toAttribute")
     @SneakyThrows
     @SuppressWarnings("unchecked")

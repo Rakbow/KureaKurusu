@@ -1,9 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.FigureType;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,8 +20,6 @@ import java.util.List;
 public class ItemFigure extends SubItem {
 
     private Long id;
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private FigureType figureType;
     private String scale;
     private String various;
     private String title;

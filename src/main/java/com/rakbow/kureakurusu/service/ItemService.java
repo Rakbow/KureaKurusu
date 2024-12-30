@@ -167,7 +167,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .type(item.getType().getValue())
                 .item(converter.convert(item, targetVOClass))
                 .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
-                // .options(ItemUtil.getOptions(item.getType().getValue()))
                 .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
                 .images(resourceSrv.getDefaultImages(EntityType.ITEM.getValue(), id))
                 .imageCount(resourceSrv.getDefaultImagesCount(EntityType.ITEM.getValue(), id))

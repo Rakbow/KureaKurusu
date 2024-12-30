@@ -1,15 +1,12 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.Language;
-import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.ItemBook;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,13 +25,11 @@ public class BookUpdateDTO extends ItemUpdateDTO {
 
     private int pages;
     private String size;
-    private int bookType;
     private String lang;
     private String summary;
 
     public BookUpdateDTO() {
         setType(ItemType.BOOK.getValue());
-        bookType = BookType.NOVEL.getValue();
         lang = Language.JAPANESE.getValue();
         summary = "";
 

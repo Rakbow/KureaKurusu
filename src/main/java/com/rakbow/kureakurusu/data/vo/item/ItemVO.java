@@ -14,6 +14,7 @@ public class ItemVO {
 
     private long id;
     private int type;
+    private Attribute<Integer> subType;
 
     private String name;
     private String nameEn;

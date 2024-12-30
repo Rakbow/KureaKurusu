@@ -28,7 +28,8 @@ import java.util.List;
 public class ItemCreateDTO extends DTO {
 
     private long id;
-    private int type;
+    private Integer type;
+    private Integer subType;
 
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;

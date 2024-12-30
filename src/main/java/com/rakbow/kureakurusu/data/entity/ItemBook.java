@@ -1,11 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.BookType;
 import com.rakbow.kureakurusu.data.emun.Language;
-import com.rakbow.kureakurusu.data.emun.Region;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,16 +17,11 @@ import lombok.ToString;
 public class ItemBook extends SubItem {
 
     private Long id;//主键编号
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private BookType bookType;//书籍类型
 
     private String summary;//简介
     private Language lang;//语言
 
     private int pages;
     private String size;
-
-    private String authors;//作者（译者，插画，原作者等，json）
-    private String spec;//规格
 
 }

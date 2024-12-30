@@ -1,15 +1,12 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.rakbow.kureakurusu.data.emun.FigureType;
 import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.item.FigureListVO;
 import com.rakbow.kureakurusu.data.vo.item.FigureVO;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
-import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -30,9 +27,6 @@ import java.util.List;
 })
 public class Figure extends SuperItem {
 
-    @AutoMapping(qualifiedByName = "toAttribute")
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private FigureType figureType;
     private String scale;
     private String various;
     private String title;
@@ -44,7 +38,6 @@ public class Figure extends SuperItem {
 
     public Figure() {
         super();
-        figureType = FigureType.PREPAINTED;
         scale = "";
         various = "";
         title = "";

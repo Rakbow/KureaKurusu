@@ -1,10 +1,9 @@
 package com.rakbow.kureakurusu.data.entity.common;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 
@@ -21,6 +20,8 @@ public abstract class SuperItem {
 
     private Long id;
     private ItemType type;
+    @AutoMapping(qualifiedByName = "toAttribute")
+    private ItemSubType subType;
 
     private String name;
     private String nameEn;

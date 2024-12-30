@@ -13,6 +13,7 @@ public class ItemListVO {
 
     private long id;
     private int type;
+    private Attribute<Integer> subType;
     private String name;
     private List<String> aliases;
 
