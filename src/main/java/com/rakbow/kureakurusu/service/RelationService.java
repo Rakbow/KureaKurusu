@@ -76,6 +76,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             relatedEntity = EntityType.PERSON.getValue();
         } else if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
             relatedEntity = EntityType.PRODUCT.getValue();
+        } else if (relatedGroup == RelatedGroup.RELATED_CHAR.getValue()) {
+            relatedEntity = EntityType.CHARACTER.getValue();
         } else {
             relatedEntity = EntityType.ITEM.getValue();
         }
