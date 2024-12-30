@@ -5,29 +5,27 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
-import com.rakbow.kureakurusu.data.entity.Entry;
-import com.rakbow.kureakurusu.data.entity.Person;
-import com.rakbow.kureakurusu.data.entity.Product;
-import com.rakbow.kureakurusu.data.entity.Role;
+import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.rakbow.kureakurusu.data.common.Constant.SLASH;
 
@@ -50,6 +48,7 @@ public class GeneralService {
     private final PersonMapper personMapper;
     private final ProductMapper productMapper;
     private final EntryMapper entryMapper;
+    private final CharaMapper charMapper;
 
     //endregion
 
@@ -97,23 +96,26 @@ public class GeneralService {
         MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "zh");
         MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "en");
 
-        MetaData.optionsZh.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "zh");
-        MetaData.optionsEn.bookTypeSet = EnumHelper.getAttributeOptions(BookType.class, "en");
-
         MetaData.optionsZh.releaseTypeSet = EnumHelper.getAttributeOptions(ReleaseType.class, "zh");
         MetaData.optionsEn.releaseTypeSet = EnumHelper.getAttributeOptions(ReleaseType.class, "en");
 
         MetaData.optionsZh.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "zh");
         MetaData.optionsEn.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "en");
 
-        MetaData.optionsZh.goodsTypeSet = EnumHelper.getAttributeOptions(GoodsType.class, "zh");
-        MetaData.optionsEn.goodsTypeSet = EnumHelper.getAttributeOptions(GoodsType.class, "en");
+        MetaData.optionsZh.bookTypeSet = ItemSubType.getItemSubTypeSet(ItemType.BOOK.getValue(), "zh");
+        MetaData.optionsEn.bookTypeSet = ItemSubType.getItemSubTypeSet(ItemType.BOOK.getValue(), "en");
 
-        MetaData.optionsZh.figureTypeSet = EnumHelper.getAttributeOptions(FigureType.class, "zh");
-        MetaData.optionsEn.figureTypeSet = EnumHelper.getAttributeOptions(FigureType.class, "en");
+        MetaData.optionsZh.goodsTypeSet = ItemSubType.getItemSubTypeSet(ItemType.GOODS.getValue(), "zh");
+        MetaData.optionsEn.goodsTypeSet = ItemSubType.getItemSubTypeSet(ItemType.GOODS.getValue(), "en");
+
+        MetaData.optionsZh.figureTypeSet = ItemSubType.getItemSubTypeSet(ItemType.FIGURE.getValue(), "zh");
+        MetaData.optionsEn.figureTypeSet = ItemSubType.getItemSubTypeSet(ItemType.FIGURE.getValue(), "en");
 
         MetaData.optionsZh.relatedGroupSet = EnumHelper.getAttributeOptions(RelatedGroup.class, "zh");
         MetaData.optionsEn.relatedGroupSet = EnumHelper.getAttributeOptions(RelatedGroup.class, "en");
+
+        MetaData.optionsZh.imageTypeSet = EnumHelper.getAttributeOptions(ImageType.class, "zh");
+        MetaData.optionsEn.imageTypeSet = EnumHelper.getAttributeOptions(ImageType.class, "en");
 
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);
@@ -180,34 +182,14 @@ public class GeneralService {
     }
     //endregion
 
-    public SearchResult<EntityMiniVO> search(int entityType, SimpleSearchParam param) {
+    public SearchResult<EntityMiniVO> search(int entrySearchType, SimpleSearchParam param) {
         List<EntityMiniVO> res = new ArrayList<>();
-        if (entityType == EntityType.PERSON.getValue()) {
-            LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
-                    .eq(Person::getStatus, 1)
-                    .orderByDesc(Person::getId);
-            if (!param.keywordEmpty()) {
-                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
-                        .or().like(Person::getName, param.getKeyword())
-                        .or().like(Person::getNameZh, param.getKeyword())
-                        .or().like(Person::getNameEn, param.getKeyword());
-            }
-
-            IPage<Person> pages = personMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-            pages.getRecords()
-                    .forEach(i -> res.add(new EntityMiniVO(
-                            CommonImageUtil.getEntryThumbCover(i.getImage()),
-                            entityType,
-                            i.getId(),
-                            i.getName(),
-                            STR."\{i.getNameEn()}/\{i.getNameZh()}",
-                            ""
-                    )));
-            return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
-        } else if (entityType == EntityType.PRODUCT.getValue()) {
+        List<Image> images;
+        IPage<? extends MetaEntity> pages;
+        if (entrySearchType == EntrySearchType.PRODUCT.getValue()) {
             LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
                     .eq(Product::getStatus, 1)
-                    .orderByDesc(Product::getId);
+                    .orderByAsc(Product::getId);
             if (!param.keywordEmpty()) {
                 wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
                         .or().like(Product::getName, param.getKeyword())
@@ -215,41 +197,124 @@ public class GeneralService {
                         .or().like(Product::getNameEn, param.getKeyword());
             }
 
-            IPage<Product> pages = productMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+            pages = productMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
             pages.getRecords()
+                    .stream()
+                    .map(Product.class::cast)
                     .forEach(i -> res.add(new EntityMiniVO(
                             resourceSrv.getEntityCover(EntityType.PRODUCT, i.getId()),
-                            entityType,
+                            EntityType.PRODUCT.getValue(),
                             i.getId(),
                             i.getName(),
                             STR."\{i.getNameEn()}/\{i.getNameZh()}",
                             I18nHelper.getMessage(i.getType().getLabelKey())
                     )));
-            return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
-        } else if (entityType == EntityType.ENTRY.getValue()) {
+        } else if (entrySearchType == EntrySearchType.PERSON.getValue()) {
+            LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
+                    .eq(Person::getStatus, 1)
+                    .orderByAsc(Person::getId);
+            if (!param.keywordEmpty()) {
+                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
+                        .or().like(Person::getName, param.getKeyword())
+                        .or().like(Person::getNameZh, param.getKeyword())
+                        .or().like(Person::getNameEn, param.getKeyword());
+            }
+
+            pages = personMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+            pages.getRecords()
+                    .stream()
+                    .map(Person.class::cast)
+                    .forEach(i -> res.add(new EntityMiniVO(
+                            CommonImageUtil.getEntryThumbCover(i.getImage()),
+                            EntityType.PERSON.getValue(),
+                            i.getId(),
+                            i.getName(),
+                            STR."\{i.getNameEn()}/\{i.getNameZh()}",
+                            ""
+                    )));
+        } else if (entrySearchType == EntrySearchType.CHARACTER.getValue()) {
+            LambdaQueryWrapper<Chara> wrapper = new LambdaQueryWrapper<Chara>()
+                    .eq(Chara::getStatus, 1)
+                    .orderByAsc(Chara::getId);
+            if (!param.keywordEmpty()) {
+                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
+                        .or().like(Chara::getName, param.getKeyword())
+                        .or().like(Chara::getNameZh, param.getKeyword())
+                        .or().like(Chara::getNameEn, param.getKeyword());
+            }
+            pages = charMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+            pages.getRecords()
+                    .forEach(i -> res.add(new EntityMiniVO(
+                            CommonImageUtil.getEntryThumbCover(StringUtils.EMPTY),
+                            EntityType.CHARACTER.getValue(),
+                            i.getId(),
+                            i.getName(),
+                            STR."\{i.getNameZh()} / \{i.getNameEn()}",
+                            StringUtils.EMPTY
+                    )));
+        } else {
             LambdaQueryWrapper<Entry> wrapper = new LambdaQueryWrapper<Entry>()
                     .eq(Entry::getStatus, 1)
-                    .orderByDesc(Entry::getId);
+                    .orderByAsc(Entry::getId);
+
+            if (entrySearchType == EntrySearchType.CLASSIFICATION.getValue()) {
+                wrapper.eq(Entry::getType, EntryType.CLASSIFICATION);
+            } else if (entrySearchType == EntrySearchType.MATERIAL.getValue()) {
+                wrapper.eq(Entry::getType, EntryType.MATERIAL);
+            } else if (entrySearchType == EntrySearchType.EVENT.getValue()) {
+                wrapper.eq(Entry::getType, EntryType.EVENT);
+            }
             if (!param.keywordEmpty()) {
                 wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
                         .or().like(Entry::getName, param.getKeyword())
                         .or().like(Entry::getNameEn, param.getKeyword());
             }
 
-            IPage<Entry> pages = entryMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+            pages = entryMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
             pages.getRecords()
+                    .stream()
+                    .map(Entry.class::cast)
                     .forEach(i -> res.add(new EntityMiniVO(
                             CommonImageUtil.getEntryThumbCover(i.getImage()),
-                            entityType,
+                            EntityType.ENTRY.getValue(),
                             i.getId(),
                             i.getName(),
                             i.getNameEn(),
-                            I18nHelper.getMessage(i.getType().getLabelKey())
+                            StringUtils.EMPTY
                     )));
-            return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
         }
 
-        return null;
+        if (entrySearchType == EntrySearchType.CHARACTER.getValue() && !res.isEmpty()) {
+            List<Long> entityIds = pages.getRecords().stream().map(MetaEntity::getId).toList();
+            images = resourceSrv.getEntityThumbs(EntityType.CHARACTER.getValue(), entityIds);
+            for (EntityMiniVO e : res) {
+                Image image = DataFinder.findImageByEntityTypeEntityIdType(EntityType.CHARACTER.getValue()
+                        , e.getId(), ImageType.THUMB.getValue(), images);
+                if (image == null) continue;
+                e.setCover(CommonImageUtil.getThumbCover(image));
+            }
+        }
+
+        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
+
+    public Map<String, Object> getOptions() {
+        Map<String, Object> res = new HashMap<>();
+        res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
+        res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
+        res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
+        res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
+        res.put("goodsTypeSet", Objects.requireNonNull(MetaData.getOptions()).goodsTypeSet);
+        res.put("figureTypeSet", Objects.requireNonNull(MetaData.getOptions()).figureTypeSet);
+        res.put("releaseTypeSet", Objects.requireNonNull(MetaData.getOptions()).releaseTypeSet);
+        res.put("relatedGroupSet", Objects.requireNonNull(MetaData.getOptions()).relatedGroupSet);
+        res.put("productTypeSet", Objects.requireNonNull(MetaData.getOptions()).productTypeSet);
+        res.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
+        res.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
+        res.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
+        res.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
+        res.put("imageTypeSet", Objects.requireNonNull(MetaData.getOptions()).imageTypeSet);
+        return res;
     }
 
 }

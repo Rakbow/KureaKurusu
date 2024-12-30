@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GeneralSearchQry extends QueryDTO {
 
-    private int entityType;
+    private int entrySearchType;
     private SearchQry param;
 
 }
