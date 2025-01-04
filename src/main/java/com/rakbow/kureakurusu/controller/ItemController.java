@@ -32,7 +32,8 @@ public class ItemController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        return new ApiResult().ok(srv.insert(dto));
+        srv.insert(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
     }
 
     @PostMapping("update")
@@ -72,10 +73,12 @@ public class ItemController {
 
     //region advance crud
 
-    @PostMapping("update-bonus")
-    public ApiResult updateItemBonus(@RequestBody ItemBonusUpdateDTO dto) {
-        srv.update(new LambdaUpdateWrapper<Item>().eq(Item::getId, dto.getId()).set(Item::getBonus, dto.getBonus()));
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.bonus.update.success"));
+    @PostMapping("advance-create")
+    public ApiResult advanceCreate(@Valid @RequestBody ItemSuperCreateDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        return new ApiResult().load(srv.advanceCreate(dto.getItem(), dto.getImages(), dto.getRelatedEntities()));
     }
 
     //endregion

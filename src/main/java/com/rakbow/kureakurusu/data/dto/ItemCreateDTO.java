@@ -48,6 +48,7 @@ public class ItemCreateDTO extends DTO {
     private double weight;// g
 
     private boolean bonus;
+    private String detail;
     private String remark;
 
     public ItemCreateDTO() {
@@ -60,6 +61,7 @@ public class ItemCreateDTO extends DTO {
         region = "";
         price = 0;
         bonus = false;
+        detail = "";
         remark = "";
     }
 

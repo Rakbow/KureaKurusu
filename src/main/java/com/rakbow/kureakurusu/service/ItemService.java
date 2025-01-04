@@ -12,10 +12,7 @@ import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.ItemCreateDTO;
-import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.Relation;
@@ -47,6 +44,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     //region inject
     private final ResourceService resourceSrv;
+    private final RelationService relationSrv;
+
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
@@ -84,7 +83,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public String insert(ItemCreateDTO dto) {
+    public long insert(ItemCreateDTO dto) {
         Class<? extends SubItem> subClass = ItemUtil.getSubItem(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
@@ -100,7 +99,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         String key = STR."item_type_related:\{item.getId()}";
         redisUtil.set(key, relation);
 
-        return I18nHelper.getMessage("entity.crud.insert.success");
+        return item.getId();
     }
 
     @Transactional
@@ -230,6 +229,20 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         String redisKey = STR."item_type_related:\{id}";
         if (!redisUtil.hasKey(redisKey)) return null;
         return redisUtil.get(redisKey, ItemTypeRelation.class);
+    }
+
+    @Transactional
+    @SneakyThrows
+    public long advanceCreate(ItemCreateDTO item, List<ImageMiniDTO> images,
+                              List<RelatedEntityMiniDTO> relatedEntities) {
+        //save item
+        long id = insert(item);
+        //save related entities
+        relationSrv.batchCreate(EntityType.ITEM.getValue(), id, relatedEntities);
+        //save image
+        resourceSrv.addEntityImage(EntityType.ITEM.getValue(), id,  images);
+
+        return id;
     }
 
 }
