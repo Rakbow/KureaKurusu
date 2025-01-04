@@ -14,9 +14,8 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
-import com.rakbow.kureakurusu.data.dto.RelationListParams;
-import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Item;
@@ -27,6 +26,7 @@ import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.data.vo.relation.RelatedEntityVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -57,7 +57,54 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final ItemMapper itemMapper;
     private final Converter converter;
 
-    public List<RelationVO> getRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
+    public SearchResult<RelatedEntityVO> getRelatedEntities(RelationQry qry) {
+        int relatedGroup = qry.getRelatedGroup();
+        int relatedEntity;
+        int direction = qry.getDirection();
+        List<RelatedEntityVO> res = new ArrayList<>();
+        SimpleSearchParam param = new SimpleSearchParam(qry.getParam());
+        IPage<Relation> pages = mapper.selectPage(
+                new Page<>(param.getPage(), param.getSize()),
+                new LambdaQueryWrapper<Relation>()
+                        .eq(Relation::getRelatedGroup, qry.getRelatedGroup())
+                        .eq(direction == 1 ? Relation::getEntityType : Relation::getRelatedEntityType, qry.getEntityType())
+                        .eq(direction == 1 ? Relation::getEntityId : Relation::getRelatedEntityId, qry.getEntityId())
+                        .orderByAsc(param.getSize() == -1 ? Relation::getId : (direction == 1 ? Relation::getRoleId : Relation::getReverseRoleId))
+        );
+        if (pages.getRecords().isEmpty()) return new SearchResult<>();
+        List<Relation> relations = pages.getRecords();
+        if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
+            relatedEntity = EntityType.PRODUCT.getValue();
+        } else if (relatedGroup == RelatedGroup.RELATED_CHAR.getValue()) {
+            relatedEntity = EntityType.CHARACTER.getValue();
+        } else {
+            relatedEntity = EntityType.ITEM.getValue();
+        }
+        List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
+        Class<? extends MetaEntity> subClass = entityUtil.getSubEntity(relatedEntity);
+        BaseMapper<MetaEntity> subMapper = MyBatisUtil.getMapper(subClass);
+        List<MetaEntity> targets = subMapper.selectByIds(targetIds);
+        for (Relation r : relations) {
+            MetaEntity entity = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+            if (entity == null) continue;
+            Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
+            if (role == null) continue;
+            res.add(
+                    RelatedEntityVO
+                            .builder()
+                            .type(relatedEntity)
+                            .id(entity.getId())
+                            .name(entity.getName())
+                            .subName(entity.getNameZh())
+                            .cover(resourceSrv.getThumbCover(relatedEntity, direction == 1 ? r.getRelatedEntityId() : r.getEntityId()))
+                            .role(role)
+                            .build()
+            );
+        }
+        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
+
+    public List<RelationVO> getSimpleRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
         int relatedEntity;
         String remark;
         List<RelationVO> res = new ArrayList<>();
@@ -196,6 +243,19 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         //batch insert
         MybatisBatch.Method<Relation> method = new MybatisBatch.Method<>(RelationMapper.class);
         MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, res);
+        batchInsert.execute(method.insert());
+    }
+
+    @Transactional
+    public void batchCreate(int entityType, long entityId, List<RelatedEntityMiniDTO> relatedEntities) {
+        List<Relation> relations = converter.convert(relatedEntities, Relation.class);
+        relations.forEach(r -> {
+            r.setEntityType(entityType);
+            r.setEntityId(entityId);
+        });
+        //batch insert
+        MybatisBatch.Method<Relation> method = new MybatisBatch.Method<>(RelationMapper.class);
+        MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, relations);
         batchInsert.execute(method.insert());
     }
 

@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.emun;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import io.github.linpeilie.annotations.AutoEnumMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
+@AutoEnumMapper("value")
 public enum RelatedGroup {
 
     DEFAULT(0, "enum.related_group.default"),

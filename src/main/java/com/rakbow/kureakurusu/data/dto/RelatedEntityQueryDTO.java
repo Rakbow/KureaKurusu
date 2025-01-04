@@ -7,18 +7,18 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author Rakbow
- * @since 2024/2/28 16:24
+ * @since 2024/12/30 20:11
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelationQry extends QueryDTO {
+public class RelatedEntityQueryDTO extends QueryDTO {
 
     private int relatedGroup;
     private int entityType;
     private long entityId;
-    private int direction;// 1-positive -1-negative
-    private SearchQry param;
+    private int first;
+    private int row;
 
 }

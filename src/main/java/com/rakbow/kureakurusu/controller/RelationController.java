@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
@@ -26,7 +27,12 @@ public class RelationController {
 
     @PostMapping("get-related-entity")
     public ApiResult getRelatedEntity(@RequestBody RelationQry qry) {
-        return new ApiResult().load(srv.getRelatedEntity(qry.getDirection(), qry.getRelatedGroup(), qry.getEntityType(), qry.getEntityId()));
+        return new ApiResult().load(srv.getSimpleRelatedEntity(qry.getDirection(), qry.getRelatedGroup(), qry.getEntityType(), qry.getEntityId()));
+    }
+
+    @PostMapping("get-related-entities")
+    public ApiResult getRelatedEntities(@RequestBody RelationQry qry) {
+        return new ApiResult().load(srv.getRelatedEntities(qry));
     }
 
     @PostMapping("get-relations")
