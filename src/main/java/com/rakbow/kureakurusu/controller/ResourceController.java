@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.dto.ImageCreateDTO;
 import com.rakbow.kureakurusu.data.dto.ImageListParams;
 import com.rakbow.kureakurusu.data.dto.ImageUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
@@ -39,12 +40,11 @@ public class ResourceController {
     }
 
     @PostMapping("add-image")
-    public ApiResult addEntityImage(int entityType, long entityId, MultipartFile[] files, String infos) {
+    public ApiResult addEntityImage(@RequestBody ImageCreateDTO dto) {
         //check
-        if (files == null || files.length == 0) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
+        if (dto.getImages().isEmpty()) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
         //save
-        List<Image> images = JsonUtil.toJavaList(infos, Image.class);
-        srv.addEntityImage(entityType, entityId, files, images);
+        srv.addEntityImage(dto.getEntityType(), dto.getEntityId(), dto.getImages());
         return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
     }
 

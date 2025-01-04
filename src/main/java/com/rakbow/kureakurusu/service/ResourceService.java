@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.dto.ImageListParams;
+import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
@@ -66,33 +67,15 @@ public class ResourceService {
         return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
 
-    /**
-     * 新增图片
-     *
-     * @param entityType 实体类型
-     * @param entityId   实体id
-     * @param files     新增图片文件数组
-     * @param images 新增图片json数据
-     * @author rakbow
-     */
     @SneakyThrows
     @Transactional
-    public void addEntityImage(int entityType, long entityId, MultipartFile[] files, List<Image> images) {
+    public void addEntityImage(int entityType, long entityId, List<ImageMiniDTO> images) {
         //upload to qiniu server
-        ActionResult ar = qiniuImageUtil.commonAddImages(entityType, entityId, files, images);
-        if(ar.state) {
-            //set image info
-            for (Image image : images) {
-                image.setEntityType(entityType);
-                image.setEntityId(entityId);
-            }
-            //batch insert
-            MybatisBatch.Method<Image> method = new MybatisBatch.Method<>(ImageMapper.class);
-            MybatisBatch<Image> batchInsert = new MybatisBatch<>(sqlSessionFactory, images);
-            batchInsert.execute(method.insert());
-        }else {
-            throw new Exception(ar.message);
-        }
+        List<Image> addImages = qiniuImageUtil.commonAddImages(entityType, entityId, images);
+        //batch insert
+        MybatisBatch.Method<Image> method = new MybatisBatch.Method<>(ImageMapper.class);
+        MybatisBatch<Image> batchInsert = new MybatisBatch<>(sqlSessionFactory, addImages);
+        batchInsert.execute(method.insert());
     }
 
     /**

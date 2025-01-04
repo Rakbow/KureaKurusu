@@ -2,10 +2,12 @@ package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.common.ActionResult;
+import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.FileType;
 import com.rakbow.kureakurusu.data.image.Image;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -50,6 +53,45 @@ public class QiniuImageUtil {
             res.setErrorMessage(ex.getMessage());
         }
         return res;
+    }
+
+    /**
+     * 通用新增图片
+     *
+     * @author rakbow
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @SneakyThrows
+    public List<Image> commonAddImages(int entityType, long entityId, List<ImageMiniDTO> addImages) {
+        List<Image> images = new ArrayList<>();
+        //generate upload file pre-fix
+        String filePath = STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_";
+        for (ImageMiniDTO miniImage : addImages) {
+
+            // 提取文件类型（例如 "jpeg"）
+            String[] parts = miniImage.getBase64Code().split(";base64,");
+            String dataType = parts[0];  // "data:image/jpeg"
+            String base64code = parts[1];  // Base64编码部分
+
+            // 提取文件后缀（例如 "jpeg"）
+            String extension = dataType.split("/")[1];  // "jpeg"
+            if(StringUtils.equals(extension, "jpeg")) extension = "jpg";
+
+            // encode Base64
+            byte[] fileData = Base64.getDecoder().decode(base64code);
+            //upload image
+            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(fileData, extension,  filePath, FileType.IMAGE);
+            if (!ar.state) throw new Exception(ar.message);
+            Image image = new Image();
+            image.setUrl(ar.data.toString());
+            image.setEntityType(entityType);
+            image.setEntityId(entityId);
+            image.setType(miniImage.getType());
+            image.setName(miniImage.getName());
+            image.setDetail(miniImage.getDetail());
+            images.add(image);
+        }
+        return images;
     }
 
     @SuppressWarnings("unchecked")
