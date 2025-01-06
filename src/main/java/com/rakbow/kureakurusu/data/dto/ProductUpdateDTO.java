@@ -1,15 +1,12 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.data.entity.Product;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.entry.Product;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import jakarta.validation.constraints.NotBlank;
-
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -17,17 +14,19 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AutoMapper(target = Product.class, reverseConvertGenerate = false)
-public class ProductUpdateDTO extends DTO {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@AutoMappers({
+        @AutoMapper(target = Product.class, reverseConvertGenerate = false)
+})
+public class ProductUpdateDTO extends EntryUpdateDTO {
 
-    private long id;
-    private int type;
-    @NotBlank(message = "{entity.crud.name.required_field}")
-    private String name;
-    private String nameZh;
-    private String nameEn;
-    private List<String> aliases;
-    private String date;
-    private String remark;
+    private Integer type;
+    private String date;// event-date
+
+    public ProductUpdateDTO() {
+        setEntityType(EntityType.PRODUCT.getValue());
+        type = 0;
+        date = "";
+    }
 
 }

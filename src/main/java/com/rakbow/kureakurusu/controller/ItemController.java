@@ -1,14 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -54,9 +51,9 @@ public class ItemController {
     //region query
 
     @UniqueVisitor
-    @PostMapping("detail")
-    public ApiResult detail(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(srv.detail(qry.getId()));
+    @PostMapping("detail/{id}")
+    public ApiResult detail(@PathVariable("id") long id) {
+        return new ApiResult().load(srv.detail(id));
     }
 
     @PostMapping("search")

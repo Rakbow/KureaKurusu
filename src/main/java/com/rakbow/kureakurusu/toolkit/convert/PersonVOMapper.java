@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
-import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.data.vo.person.PersonMiniVO;
 import com.rakbow.kureakurusu.data.vo.person.PersonVOBeta;
 import org.mapstruct.IterableMapping;

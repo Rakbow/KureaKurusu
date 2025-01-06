@@ -6,11 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-
 /**
  * @author Rakbow
- * @since 2024/7/2 21:46
+ * @since 2025/1/7 0:37
  */
 @Builder
 @AllArgsConstructor
@@ -18,10 +16,8 @@ import java.util.Map;
 @Data
 public class EntryDetailVO {
 
-    private EntryVO item;
+    private EntryVO entry;
     private PageTraffic traffic;
-    private Map<String, Object> options;
-
     private String cover;
 
 }

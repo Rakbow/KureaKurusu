@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.entity;
+package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,13 +11,13 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2024/7/12 15:09
+ * @since 2024/7/26 17:28
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-@TableName(value = "item_goods", autoResultMap = true)
-public class ItemGoods extends SubItem {
+@TableName(value = "item_figure", autoResultMap = true)
+public class ItemFigure extends SubItem {
 
     private Long id;
     private String scale;

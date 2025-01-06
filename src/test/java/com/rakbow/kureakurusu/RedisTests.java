@@ -2,8 +2,7 @@ package com.rakbow.kureakurusu;
 
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
-import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.entity.Item;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.LikeUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;

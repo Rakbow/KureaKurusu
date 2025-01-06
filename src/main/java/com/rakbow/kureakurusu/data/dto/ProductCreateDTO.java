@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.entity.Product;
+import com.rakbow.kureakurusu.data.entity.entry.Product;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

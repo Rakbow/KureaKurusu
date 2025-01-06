@@ -1,7 +1,6 @@
-package com.rakbow.kureakurusu.data.entity;
+package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -1,11 +1,13 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.entity.entry.Entry;
+import com.rakbow.kureakurusu.data.entity.entry.Chara;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
+import com.rakbow.kureakurusu.data.entity.entry.Product;
+import com.rakbow.kureakurusu.data.entity.entry.Subject;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.meta.MetaData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,14 +23,14 @@ public class EntityUtil {
 
     private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
-    private final static Map<Integer, Class<? extends MetaEntity>> subEntityMap = new HashMap<>() {{
+    private final static Map<Integer, Class<? extends Entry>> subEntityMap = new HashMap<>() {{
         put(EntityType.PERSON.getValue(), Person.class);
         put(EntityType.PRODUCT.getValue(), Product.class);
         put(EntityType.CHARACTER.getValue(), Chara.class);
-        put(EntityType.ENTRY.getValue(), com.rakbow.kureakurusu.data.entity.Entry.class);
+        put(EntityType.SUBJECT.getValue(), Subject.class);
     }};
 
-    public Class<? extends MetaEntity> getSubEntity(int type) {
+    public Class<? extends Entry> getSubEntity(int type) {
         return subEntityMap.get(type);
     }
 
@@ -47,29 +49,5 @@ public class EntityUtil {
                 .likeCount(likeUtil.get(entityType, entityId))
                 .visitCount(visitUtil.inc(entityType, entityId, visitToken))
                 .build();
-    }
-
-    /**
-     * 获取页面选项数据
-     *
-     * @param entityType,entityId,addedTime,editedTime 实体类型，实体id,收录时间,编辑时间
-     * @author Rakbow
-     */
-    public Map<String, Object> getDetailOptions(int entityType) {
-
-        Map<String, Object> options = new HashMap<>();
-
-        if (entityType == EntityType.PRODUCT.getValue()) {
-            options.put("productTypeSet", Objects.requireNonNull(MetaData.getOptions()).productTypeSet);
-        } else if (entityType == EntityType.PERSON.getValue()) {
-            options.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
-            options.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
-        } else if (entityType == -1) {
-            options.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
-            options.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
-            options.put("relationTypeSet", Objects.requireNonNull(MetaData.getOptions()).relationTypeSet);
-        }
-
-        return options;
     }
 }

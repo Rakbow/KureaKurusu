@@ -14,10 +14,10 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.Item;
 import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.entity.SubItem;
-import com.rakbow.kureakurusu.data.entity.common.SuperItem;
+import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.entity.item.SubItem;
+import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
@@ -71,7 +71,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         ItemTypeRelation relation = getItemTypeRelation(id);
         if (relation == null) return null;
 
-        Class<? extends SubItem> s = ItemUtil.getSubItem(relation.getType());
+        Class<? extends SubItem> s = ItemUtil.getSubClass(relation.getType());
         Class<? extends SuperItem> t = ItemUtil.getSuperItem(relation.getType());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
@@ -84,7 +84,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public long insert(ItemCreateDTO dto) {
-        Class<? extends SubItem> subClass = ItemUtil.getSubItem(dto.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         Item item = converter.convert(dto, Item.class);
@@ -106,7 +106,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public String update(ItemUpdateDTO dto) {
 
-        Class<? extends SubItem> subClass = ItemUtil.getSubItem(dto.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         Item item = converter.convert(dto, Item.class);
@@ -137,7 +137,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             visitUtil.del(EntityType.ITEM.getValue(), item.getId());
         }
         int type = items.getFirst().getType().getValue();
-        Class<? extends SubItem> subClass = ItemUtil.getSubItem(type);
+        Class<? extends SubItem> subClass = ItemUtil.getSubClass(type);
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         mapper.delete(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
@@ -160,7 +160,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     public ItemDetailVO detail(long id) {
         SuperItem item = getById(id);
         if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
-        Class<? extends ItemVO> targetVOClass = ItemUtil.getItemDetailVO(item.getType().getValue());
+        Class<? extends ItemVO> targetVOClass = ItemUtil.getDetailVO(item.getType().getValue());
 
         return ItemDetailVO.builder()
                 .type(item.getType().getValue())
@@ -196,7 +196,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         ItemListQueryDTO param = ItemUtil.getItemListQueryDTO(dto);
 
         Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
-        Class<? extends SubItem> subClass = ItemUtil.getSubItem(param.getType());
+        Class<? extends SubItem> subClass = ItemUtil.getSubClass(param.getType());
         Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
 
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()

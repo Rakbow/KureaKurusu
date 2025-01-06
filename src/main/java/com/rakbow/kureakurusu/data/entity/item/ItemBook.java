@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.entity;
+package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.Language;

@@ -6,7 +6,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.annotation.QueryColumn;
 import com.rakbow.kureakurusu.data.entity.QueryColumnType;
 import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
-import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 

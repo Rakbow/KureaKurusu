@@ -1,12 +1,10 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
-import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.entity.common.SuperItem;
-import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.entity.item.SuperItem;
+import com.rakbow.kureakurusu.data.entity.item.*;
 import com.rakbow.kureakurusu.data.vo.item.*;
 import lombok.SneakyThrows;
 
@@ -20,7 +18,7 @@ import java.util.*;
 public class ItemUtil {
 
     public final static List<Integer> ItemExcRelatedGroups = Arrays.asList(
-            RelatedGroup.RELATED_ENTRY.getValue(),
+            RelatedGroup.RELATED_SUBJECT.getValue(),
             RelatedGroup.EVENT.getValue(),
             RelatedGroup.MATERIAL.getValue()
     );
@@ -59,7 +57,7 @@ public class ItemUtil {
         put(ItemType.FIGURE.getValue(), FigureListQueryDTO.class);
     }};
 
-    public static Class<? extends SubItem> getSubItem(int type) {
+    public static Class<? extends SubItem> getSubClass(int type) {
         return subItemMap.get(type);
     }
 
@@ -71,7 +69,7 @@ public class ItemUtil {
         return itemListVOMap.get(type);
     }
 
-    public static Class<? extends ItemVO> getItemDetailVO(int type) {
+    public static Class<? extends ItemVO> getDetailVO(int type) {
         return itemDetailVOMap.get(type);
     }
 

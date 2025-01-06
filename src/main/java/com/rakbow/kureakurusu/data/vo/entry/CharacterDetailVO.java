@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class CharacterDetailVO {
 
-    private CharacterVO target;
+    private CharaVO target;
     private PageTraffic traffic;
     private String cover;
 

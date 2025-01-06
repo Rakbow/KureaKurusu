@@ -1,7 +1,6 @@
-package com.rakbow.kureakurusu.data.entity;
+package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.item.FigureListVO;
 import com.rakbow.kureakurusu.data.vo.item.FigureVO;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;

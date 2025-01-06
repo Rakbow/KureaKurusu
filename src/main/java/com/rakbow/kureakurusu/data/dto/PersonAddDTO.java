@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMapping;
 import jakarta.validation.constraints.NotBlank;

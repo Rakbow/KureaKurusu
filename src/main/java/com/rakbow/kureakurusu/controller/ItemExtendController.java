@@ -52,7 +52,7 @@ public class ItemExtendController {
 
     @PostMapping("get-exc-related-entries")
     public ApiResult getRelatedEntries(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(reSrv.getItemRelatedEntry(qry.getId()));
+        return new ApiResult().load(reSrv.getItemRelatedSubject(qry.getId()));
     }
 
     @PostMapping("related-items")

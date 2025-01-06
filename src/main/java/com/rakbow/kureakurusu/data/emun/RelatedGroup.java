@@ -16,7 +16,7 @@ public enum RelatedGroup {
 
     DEFAULT(0, "enum.related_group.default"),
     RELATED_PERSON(1, "enum.related_group.related_person"),
-    RELATED_ENTRY(2, "enum.related_group.related_entry"),
+    RELATED_SUBJECT(2, "enum.related_group.related_subject"),
     RELATED_ITEM(3, "enum.related_group.related_item"),
     RELATED_CHAR(4, "enum.related_group.related_char"),
     RELATED_PRODUCT(5, "enum.related_group.related_product"),

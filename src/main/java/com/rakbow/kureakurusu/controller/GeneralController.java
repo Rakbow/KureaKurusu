@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.entity.Person;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
@@ -56,13 +56,13 @@ public class GeneralController {
         return new ApiResult().load(srv.getOptions());
     }
 
-    @PostMapping("update-entry-status")
+    @PostMapping("update-entity-status")
     public ApiResult updateEntryStatus(@RequestBody UpdateStatusDTO dto) {
         srv.updateEntryStatus(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.status.update.success"));
     }
 
-    @PostMapping("update-entry-detail")
+    @PostMapping("update-entity-detail")
     public ApiResult updateEntryDetail(@RequestBody UpdateDetailDTO dto) {
         srv.updateEntryDetail(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.description.update.success"));

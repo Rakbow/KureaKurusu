@@ -2,7 +2,11 @@ package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.entity.entry.Entry;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
+import com.rakbow.kureakurusu.data.entity.entry.Product;
+import com.rakbow.kureakurusu.data.entity.entry.Subject;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.image.Image;
 
 import java.util.ArrayList;
@@ -21,22 +25,22 @@ public class DataFinder {
     public static Person personFinder = new Person();
     public static Item itemFinder = new Item();
     public static Product productFinder = new Product();
-    public static MetaEntity entityFinder = new MetaEntity();
-    public static Entry entryFinder = new Entry();
+    public static Entry entityFinder = new Entry();
+    public static Subject subjectFinder = new Subject();
     public static Image imageFinder = new Image();
 
     //region album
 
-    public static MetaEntity findEntityById(Long id, List<MetaEntity> items) {
+    public static Entry findEntityById(Long id, List<Entry> items) {
         entityFinder.setId(id);
         int idx = Collections.binarySearch(items, entityFinder, DataSorter.entitySortById);
         if (idx >= 0) return items.get(idx);
         return null;
     }
 
-    public static Entry findEntryById(Long id, List<Entry> items) {
-        entryFinder.setId(id);
-        int idx = Collections.binarySearch(items, entryFinder, DataSorter.entryIdSorter);
+    public static Subject findEntryById(Long id, List<Subject> items) {
+        subjectFinder.setId(id);
+        int idx = Collections.binarySearch(items, subjectFinder, DataSorter.entryIdSorter);
         if (idx >= 0) return items.get(idx);
         return null;
     }

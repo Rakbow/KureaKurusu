@@ -1,23 +1,13 @@
 package com.rakbow.kureakurusu;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Rakbow

@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.data.entity.ItemAlbum;
+import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotEmpty;

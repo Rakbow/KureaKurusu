@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.service.item;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.GameMapper;
-import com.rakbow.kureakurusu.data.entity.Game;
+import com.rakbow.kureakurusu.data.entity.item.Game;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

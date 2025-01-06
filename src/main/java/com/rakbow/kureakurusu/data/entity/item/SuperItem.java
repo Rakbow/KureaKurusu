@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.entity.common;
+package com.rakbow.kureakurusu.data.entity.item;
 
 import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;

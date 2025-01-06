@@ -32,6 +32,7 @@ public class CommonImageUtil {
     private static final int THUMB_SIZE_64 = 64;
     private static final int THUMB_SIZE_70 = 70;
     private static final int THUMB_SIZE_50 = 50;
+    private static final int THUMB_SIZE_35 = 35;
 
     private static final double STANDARD_BOOK_WIDTH = 180;
     private static final double STANDARD_BOOK_HEIGHT = 254.558;
@@ -88,29 +89,20 @@ public class CommonImageUtil {
         return QiniuImageUtil.getNoHeightLimitThumbUrl(url, config.getCoverSize());
     }
 
-    public static String getPersonCover(String orgUrl) {
-        ImageConfigValue config = entryImageConfigMap.get(EntityType.PERSON);
-        String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
-        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, config.getCoverSize());
-    }
-
     //TODO
     public static String getEntryCover(String orgUrl) {
         String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
         return QiniuImageUtil.getThumbUrl(url, DEFAULT_COVER_SIZE);
     }
 
+    public static String getEntryThumb(String orgUrl) {
+        String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
+        return QiniuImageUtil.getThumbUrl(url, THUMB_SIZE_35);
+    }
+
     public static String getThumbCover(Image image) {
         if (image != null) return QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50);
         return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
-    }
-
-    public static String getEntryThumbCover(String orgUrl) {
-        if(StringUtils.isBlank(orgUrl))
-            return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
-        int dotIndex = orgUrl.lastIndexOf('.');
-        String newUrl = STR."\{Constant.FILE_DOMAIN}\{orgUrl.substring(0, dotIndex)}_1\{orgUrl.substring(dotIndex)}";
-        return QiniuImageUtil.getThumbUrl(newUrl, THUMB_SIZE_50);
     }
 
     public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {

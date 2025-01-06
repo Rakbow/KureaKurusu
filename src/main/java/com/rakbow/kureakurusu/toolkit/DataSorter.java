@@ -2,8 +2,11 @@ package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.entity.Item;
-import com.rakbow.kureakurusu.data.entity.common.MetaEntity;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
+import com.rakbow.kureakurusu.data.entity.entry.Product;
+import com.rakbow.kureakurusu.data.entity.entry.Subject;
+import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.image.Image;
 
 import java.util.Comparator;
@@ -38,16 +41,16 @@ class ImageSortByEntityTypeEntityIdType implements Comparator<Image> {
     }
 }
 
-class EntrySortById implements Comparator<Entry> {
+class EntrySortById implements Comparator<Subject> {
     @Override
-    public int compare(Entry a, Entry b) {
+    public int compare(Subject a, Subject b) {
         return a.getId().compareTo(b.getId());
     }
 }
 
-class EntitySortById implements Comparator<MetaEntity> {
+class EntitySortById implements Comparator<Entry> {
     @Override
-    public int compare(MetaEntity a, MetaEntity b) {
+    public int compare(Entry a, Entry b) {
         return a.getId().compareTo(b.getId());
     }
 }

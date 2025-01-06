@@ -1,8 +1,7 @@
-package com.rakbow.kureakurusu.data.entity;
+package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.Language;
-import com.rakbow.kureakurusu.data.entity.common.SuperItem;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
 import com.rakbow.kureakurusu.data.vo.item.BookVO;
 import io.github.linpeilie.annotations.AutoMapper;

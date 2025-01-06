@@ -1,19 +1,22 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.PersonAddDTO;
+import com.rakbow.kureakurusu.data.dto.PersonListParams;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.Person;
-import com.rakbow.kureakurusu.data.entity.Role;
-import com.rakbow.kureakurusu.service.RoleService;
+import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.service.PersonService;
+import com.rakbow.kureakurusu.service.RoleService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Rakbow
@@ -32,12 +35,6 @@ public class PersonController {
 
     //region person
 
-    @PostMapping("detail")
-    @UniqueVisitor
-    public ApiResult detail(@RequestBody PersonDetailQry qry) {
-        return new ApiResult().load(srv.detail(qry));
-    }
-
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQueryDTO qry) {
         return new ApiResult().load(srv.getPersons(new PersonListParams(qry)));
@@ -53,15 +50,5 @@ public class PersonController {
         srv.save(person);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.PERSON.getLabel()));
     }
-
-    @PostMapping("update")
-    public ApiResult update(@Valid @RequestBody PersonUpdateDTO dto, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        srv.updateById(new Person(dto));
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.PERSON.getLabel()));
-    }
-    //endregion
 
 }

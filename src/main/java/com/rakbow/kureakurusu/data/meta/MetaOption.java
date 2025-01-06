@@ -21,8 +21,7 @@ public class MetaOption {
     public List<Attribute<Integer>> albumFormatSet;
     public List<Attribute<Integer>> mediaFormatSet;
     public List<Attribute<Integer>> productTypeSet;
-    public List<Attribute<Integer>> entryTypeSet;
-    public List<Attribute<Integer>> relationTypeSet;
+    public List<Attribute<Integer>> subjectTypeSet;
     public List<Attribute<Integer>> entityTypeSet;
     public List<Attribute<Integer>> bookTypeSet;
     public List<Attribute<String>> currencySet;
@@ -40,9 +39,8 @@ public class MetaOption {
         albumFormatSet = new ArrayList<>();
         mediaFormatSet = new ArrayList<>();
         productTypeSet = new ArrayList<>();
-        relationTypeSet = new ArrayList<>();
         entityTypeSet = new ArrayList<>();
-        entryTypeSet = new ArrayList<>();
+        subjectTypeSet = new ArrayList<>();
 
         bookTypeSet = new ArrayList<>();
         currencySet = new ArrayList<>();
