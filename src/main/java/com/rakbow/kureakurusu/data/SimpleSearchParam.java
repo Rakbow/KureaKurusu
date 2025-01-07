@@ -11,12 +11,17 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 public class SimpleSearchParam {
 
+    private boolean strict;
     private String keyword;
     private long page;
     private long size;
 
     public boolean keywordEmpty() {
         return StringUtils.isBlank(keyword);
+    }
+
+    public boolean strict() {
+        return strict;
     }
 
     public SimpleSearchParam() {
@@ -32,6 +37,7 @@ public class SimpleSearchParam {
     }
 
     public SimpleSearchParam(SearchQry qry) {
+        this.strict = qry.getStrict() == 1;
         this.keyword = qry.getKeyword();
         this.size = qry.getRow();
         this.page = qry.getFirst()/size + 1;

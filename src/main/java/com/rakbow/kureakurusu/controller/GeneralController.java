@@ -36,7 +36,6 @@ public class GeneralController {
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    private final EntityUtil entityUtil;
     //endregion
 
     //region common
@@ -44,11 +43,6 @@ public class GeneralController {
     @PostMapping("statistic-info")
     public ApiResult getStatisticInfo() {
         return new ApiResult();
-    }
-
-    @PostMapping("search")
-    public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
-        return new ApiResult().load(srv.search(qry.getEntrySearchType(), new SimpleSearchParam(qry.getParam())));
     }
 
     @GetMapping("get-options")

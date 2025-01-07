@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchQry extends QueryDTO {
 
+    private int strict;
     private String keyword;
     private int first;
     private int row;

@@ -1,28 +1,16 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rakbow.kureakurusu.dao.*;
+import com.rakbow.kureakurusu.dao.CommonMapper;
+import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
-import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.entity.entry.Entry;
-import com.rakbow.kureakurusu.data.entity.entry.Chara;
-import com.rakbow.kureakurusu.data.entity.entry.Person;
-import com.rakbow.kureakurusu.data.entity.entry.Product;
-import com.rakbow.kureakurusu.data.entity.entry.Subject;
+import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
-import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.toolkit.*;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,13 +33,8 @@ public class GeneralService {
     //endregion
 
     //region mapper
-    private final ResourceService resourceSrv;
     private final CommonMapper mapper;
     private final RoleMapper roleMapper;
-    private final PersonMapper personMapper;
-    private final ProductMapper productMapper;
-    private final SubjectMapper subjectMapper;
-    private final CharaMapper charMapper;
 
     //endregion
 
@@ -181,110 +164,6 @@ public class GeneralService {
         return res;
     }
     //endregion
-
-    public SearchResult<EntityMiniVO> search(int entrySearchType, SimpleSearchParam param) {
-        List<EntityMiniVO> res = new ArrayList<>();
-        IPage<? extends Entry> pages;
-        if (entrySearchType == EntrySearchType.PRODUCT.getValue()) {
-            LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<Product>()
-                    .eq(Product::getStatus, 1)
-                    .orderByAsc(Product::getId);
-            if (!param.keywordEmpty()) {
-                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
-                        .or().like(Product::getName, param.getKeyword())
-                        .or().like(Product::getNameZh, param.getKeyword())
-                        .or().like(Product::getNameEn, param.getKeyword());
-            }
-
-            pages = productMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-            pages.getRecords()
-                    .stream()
-                    .map(Product.class::cast)
-                    .forEach(i -> res.add(new EntityMiniVO(
-                            resourceSrv.getEntityCover(EntityType.PRODUCT, i.getId()),
-                            EntityType.PRODUCT.getValue(),
-                            i.getId(),
-                            i.getName(),
-                            STR."\{i.getNameEn()}/\{i.getNameZh()}",
-                            I18nHelper.getMessage(i.getType().getLabelKey())
-                    )));
-        } else if (entrySearchType == EntrySearchType.PERSON.getValue()) {
-            LambdaQueryWrapper<Person> wrapper = new LambdaQueryWrapper<Person>()
-                    .eq(Person::getStatus, 1)
-                    .orderByAsc(Person::getId);
-            if (!param.keywordEmpty()) {
-                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
-                        .or().like(Person::getName, param.getKeyword())
-                        .or().like(Person::getNameZh, param.getKeyword())
-                        .or().like(Person::getNameEn, param.getKeyword());
-            }
-
-            pages = personMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-            pages.getRecords()
-                    .stream()
-                    .map(Person.class::cast)
-                    .forEach(i -> res.add(new EntityMiniVO(
-                            CommonImageUtil.getEntryThumb(i.getThumb()),
-                            EntityType.PERSON.getValue(),
-                            i.getId(),
-                            i.getName(),
-                            STR."\{i.getNameEn()}/\{i.getNameZh()}",
-                            ""
-                    )));
-        } else if (entrySearchType == EntrySearchType.CHARACTER.getValue()) {
-            LambdaQueryWrapper<Chara> wrapper = new LambdaQueryWrapper<Chara>()
-                    .eq(Chara::getStatus, 1)
-                    .orderByAsc(Chara::getId);
-            if (!param.keywordEmpty()) {
-                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
-                        .or().like(Chara::getName, param.getKeyword())
-                        .or().like(Chara::getNameZh, param.getKeyword())
-                        .or().like(Chara::getNameEn, param.getKeyword());
-            }
-            pages = charMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-            pages.getRecords()
-                    .forEach(i -> res.add(new EntityMiniVO(
-                            CommonImageUtil.getEntryThumb(i.getThumb()),
-                            EntityType.CHARACTER.getValue(),
-                            i.getId(),
-                            i.getName(),
-                            STR."\{i.getNameZh()} / \{i.getNameEn()}",
-                            StringUtils.EMPTY
-                    )));
-        } else {
-            LambdaQueryWrapper<Subject> wrapper = new LambdaQueryWrapper<Subject>()
-                    .eq(Subject::getStatus, 1)
-                    .orderByAsc(Subject::getId);
-
-            if (entrySearchType == EntrySearchType.CLASSIFICATION.getValue()) {
-                wrapper.eq(Subject::getType, SubjectType.CLASSIFICATION);
-            } else if (entrySearchType == EntrySearchType.MATERIAL.getValue()) {
-                wrapper.eq(Subject::getType, SubjectType.MATERIAL);
-            } else if (entrySearchType == EntrySearchType.EVENT.getValue()) {
-                wrapper.eq(Subject::getType, SubjectType.EVENT);
-            }
-            if (!param.keywordEmpty()) {
-                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword()))
-                        .or().like(Subject::getName, param.getKeyword())
-                        .or().like(Subject::getNameEn, param.getKeyword());
-            }
-
-            pages = subjectMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-            pages.getRecords()
-                    .stream()
-                    .map(Subject.class::cast)
-                    .forEach(i -> res.add(new EntityMiniVO(
-                            CommonImageUtil.getEntryThumb(i.getThumb()),
-                            EntityType.SUBJECT.getValue(),
-                            i.getId(),
-                            i.getName(),
-                            i.getNameEn(),
-                            StringUtils.EMPTY
-                    )));
-        }
-
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
 
     public Map<String, Object> getOptions() {
         Map<String, Object> res = new HashMap<>();

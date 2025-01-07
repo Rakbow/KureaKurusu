@@ -1,8 +1,10 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
 import com.rakbow.kureakurusu.service.EntryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,11 @@ public class EntryController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         return new ApiResult().ok(srv.update(dto));
+    }
+
+    @PostMapping("search")
+    public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
+        return new ApiResult().load(srv.search(qry.getEntrySearchType(), new SimpleSearchParam(qry.getParam())));
     }
 
 }

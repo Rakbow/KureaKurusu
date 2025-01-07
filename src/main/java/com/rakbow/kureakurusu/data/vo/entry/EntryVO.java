@@ -17,6 +17,10 @@ public class EntryVO {
     private String nameEn;
     private List<String> aliases;
     private List<String> links;
+
+    private String cover;
+    private String thumb;
+
     private String detail;
     private String remark;
     private String addedTime;
