@@ -111,16 +111,6 @@ public class ResourceService {
         return CommonImageUtil.getItemCover(type, cover);
     }
 
-    public String getEntityCover(EntityType type, long entityId) {
-        Image cover = imageMapper.selectOne(
-                new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, type)
-                        .eq(Image::getEntityId, entityId)
-                        .eq(Image::getType, ImageType.MAIN)
-        );
-        return CommonImageUtil.getEntityCover(type, cover);
-    }
-
     public String getThumbCover(int entityType, long entityId) {
         Image cover = imageMapper.selectOne(
                 new LambdaQueryWrapper<Image>()

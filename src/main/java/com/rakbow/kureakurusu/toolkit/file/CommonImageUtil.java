@@ -83,12 +83,6 @@ public class CommonImageUtil {
         return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_64);
     }
 
-    public static String getEntityCover(EntityType type, Image image) {
-        ImageConfigValue config = entryImageConfigMap.get(type);
-        String url = image == null ? config.getDefaultUrl() : image.getUrl();
-        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, config.getCoverSize());
-    }
-
     //TODO
     public static String getEntryCover(String orgUrl) {
         String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
@@ -157,57 +151,5 @@ public class CommonImageUtil {
             i.setThumbUrl50(QiniuImageUtil.getThumbUrl(i.getUrl(), THUMB_SIZE_50));
         });
     }
-
-//    /**
-//     * 获取各尺寸封面图片
-//     *
-//     * @param images 数据库原图片
-//     * @author rakbow
-//     */
-//    public static ImageVO generateCover(List<Image> images, Entity entity) {
-//        //default image url
-//        String defaultImageUrl = getDefaultImageUrl(entity);
-//        //对图片封面进行处理
-//        ImageVO cover = new ImageVO();
-//        cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, DEFAULT_THUMB_SIZE));
-//        cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_50));
-//        cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(defaultImageUrl, THUMB_SIZE_70));
-//        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, THUMB_SIZE_50));
-//        if (!images.isEmpty()) {
-//            for (Image image : images) {
-//                if (!image.isMain()) continue;
-//                cover.setUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), DEFAULT_THUMB_SIZE));
-//                cover.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
-//                cover.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-//                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50));
-//                cover.setName(image.getNameEn());
-//            }
-//        }
-//        return cover;
-//    }
-
-//    /**
-//     * 获取封面图片缩略图
-//     *
-//     * @param orgImages 数据库原图片合集
-//     * @return JSONObject
-//     * @author rakbow
-//     */
-//    public static ImageVO generateThumbCover(List<Image> orgImages, Entity entity, int size) {
-//        String defaultImageUrl = getDefaultImageUrl(entity);
-//        ImageVO cover = new ImageVO();
-//        List<ImageVO> images = VOMapper.toVO(orgImages);
-//        cover.setUrl(QiniuImageUtil.getThumbUrl(defaultImageUrl, size));
-//        cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(defaultImageUrl, size));
-//        if (!images.isEmpty()) {
-//            for (Image image : images) {
-//                if (!image.isMain()) continue;
-//                cover.setUrl(QiniuImageUtil.getThumbUrl(image.getUrl(), size));
-//                cover.setBlackUrl(QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), size));
-//                cover.setName(image.getNameEn());
-//            }
-//        }
-//        return cover;
-//    }
 
 }
