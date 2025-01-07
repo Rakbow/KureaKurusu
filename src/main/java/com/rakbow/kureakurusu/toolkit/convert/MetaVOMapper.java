@@ -1,20 +1,22 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.Link;
-import com.rakbow.kureakurusu.data.emun.*;
+import com.rakbow.kureakurusu.data.emun.Gender;
+import com.rakbow.kureakurusu.data.emun.Language;
+import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.data.vo.LinkVO;
-import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.EnumHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
-import java.util.Currency;
 
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -109,16 +111,6 @@ public interface MetaVOMapper {
     @Named("updateEditedTime")
     default String updateEditedTime() {
         return DateHelper.nowStr();
-    }
-
-    @Named("getLinks")
-    default List<LinkVO> getLinks(List<Link> links) {
-        List<LinkVO> res = new ArrayList<>();
-        if(links.isEmpty()) return res;
-        for (Link link : links) {
-            res.add(new LinkVO(link));
-        }
-        return res;
     }
 
 }
