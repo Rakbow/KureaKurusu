@@ -6,15 +6,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.dao.ImageMapper;
+import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.dto.ImageListParams;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.vo.ImageDisplayVO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,6 @@ import lombok.SneakyThrows;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,7 @@ public class ResourceService {
     private final ImageMapper imageMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
+    private final RedisUtil redisUtil;
 
     private final static List<Integer> defaultImageType = Arrays.asList(
             ImageType.MAIN.getValue(),
@@ -102,12 +104,7 @@ public class ResourceService {
     }
 
     public String getItemCover(ItemType type, long itemId) {
-        Image cover = imageMapper.selectOne(
-                new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, EntityType.ITEM)
-                        .eq(Image::getEntityId, itemId)
-                        .eq(Image::getType, ImageType.MAIN)
-        );
+        String cover = getCoverRedisCache(EntityType.ITEM.getValue(), itemId);
         return CommonImageUtil.getItemCover(type, cover);
     }
 
@@ -121,7 +118,7 @@ public class ResourceService {
         return CommonImageUtil.getThumbCover(cover);
     }
 
-    public List<Image> getDefaultImages(int entityType, long entityId) {
+    public ImageDisplayVO getEntityDisplayImages(int entityType, long entityId) {
         QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
                 .eq("entity_type", entityType)
                 .eq("entity_id", entityId)
@@ -129,16 +126,7 @@ public class ResourceService {
                 .orderByAsc("id");
         IPage<Image> pages = imageMapper.selectPage(new Page<>(1, 6), wrapper);
         CommonImageUtil.generateThumb(pages.getRecords());
-        return pages.getRecords();
-    }
-
-    public int getDefaultImagesCount(int entityType, long entityId) {
-        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
-                .eq("entity_type", entityType)
-                .eq("entity_id", entityId)
-                .in("type", defaultImageType)
-                .orderByAsc("id");
-        return imageMapper.selectCount(wrapper).intValue();
+        return new ImageDisplayVO(pages.getRecords(), imageMapper.selectCount(wrapper).intValue());
     }
 
     public List<Image> getItemThumbAndCover(List<Long> ids) {
@@ -158,6 +146,21 @@ public class ResourceService {
                         .in(Image::getEntityId, entityIds)
                         .in(Image::getType, ImageType.THUMB)
         );
+    }
+
+    public String getCoverRedisCache(int entityType, long entityId) {
+        String key = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{entityType}:\{entityId}";
+        if (redisUtil.hasKey(key)) return redisUtil.get(key, String.class);
+        Image image = imageMapper.selectOne(
+                new LambdaQueryWrapper<Image>()
+                        .eq(Image::getEntityType, entityType)
+                        .eq(Image::getEntityId, entityId)
+                        .eq(Image::getType, ImageType.MAIN)
+        );
+        String cover = CommonConstant.EMPTY_IMAGE_URL;
+        if(image != null) cover = image.getUrl();
+        redisUtil.set(key, cover);
+        return cover;
     }
 
 }

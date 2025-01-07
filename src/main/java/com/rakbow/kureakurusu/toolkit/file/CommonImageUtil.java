@@ -72,10 +72,9 @@ public class CommonImageUtil {
                 .build();
     }
 
-    public static String getItemCover(ItemType type, Image image) {
+    public static String getItemCover(ItemType type, String cover) {
         ImageConfigValue config = itemImageConfigMap.get(type);
-        String url = image == null ? config.getDefaultUrl() : image.getUrl();
-        return QiniuImageUtil.getThumbUrl(url, config.getCoverSize());
+        return QiniuImageUtil.getThumbUrl(cover, config.getCoverSize());
     }
 
     public static String getItemThumb(Image image) {
@@ -86,7 +85,7 @@ public class CommonImageUtil {
     //TODO
     public static String getEntryCover(String orgUrl) {
         String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
-        return QiniuImageUtil.getThumbUrl(url, DEFAULT_COVER_SIZE);
+        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, DEFAULT_COVER_SIZE);
     }
 
     public static String getEntryThumb(String orgUrl) {

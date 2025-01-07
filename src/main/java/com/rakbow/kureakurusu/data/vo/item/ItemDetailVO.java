@@ -26,6 +26,4 @@ public class ItemDetailVO {
     private Map<String, Object> options;
 
     private String cover;
-    private List<Image> images;
-    private int imageCount;
 }

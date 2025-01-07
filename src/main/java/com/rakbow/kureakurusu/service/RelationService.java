@@ -13,6 +13,7 @@ import com.rakbow.kureakurusu.dao.SubjectMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -329,7 +330,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             item.setThumb(CommonImageUtil.getItemThumb(thumb));
             Image cover = DataFinder.findImageByEntityTypeEntityIdType(EntityType.ITEM.getValue(),
                     item.getId(), ImageType.MAIN.getValue(), images);
-            item.setCover(CommonImageUtil.getItemCover(ItemType.get(item.getType().getValue()), cover));
+            item.setCover(CommonImageUtil.getItemCover(ItemType.get(item.getType().getValue()),
+                    cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl()));
         }
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }

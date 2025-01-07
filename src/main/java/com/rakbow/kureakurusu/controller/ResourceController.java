@@ -1,20 +1,15 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.ImageCreateDTO;
-import com.rakbow.kureakurusu.data.dto.ImageListParams;
-import com.rakbow.kureakurusu.data.dto.ImageUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,6 +32,11 @@ public class ResourceController {
         return new ApiResult().load(
                 srv.getEntityImages(new ImageListParams(dto))
         );
+    }
+
+    @PostMapping("get-display-images")
+    public ApiResult getEntityImages(@RequestBody EntityQry qry) {
+        return new ApiResult().load(srv.getEntityDisplayImages(qry.getEntityType(), qry.getEntityId()));
     }
 
     @PostMapping("add-image")
