@@ -21,6 +21,12 @@ import java.util.stream.Collectors;
  */
 public class CommonUtil {
 
+    public static String getSubName(String nameEn, String nameZh) {
+        return (nameEn != null && !nameEn.isBlank() && nameZh != null && !nameZh.isBlank())
+                ? STR."\{nameEn} / \{nameZh}"
+                : (nameEn != null && !nameEn.isBlank() ? nameEn : (nameZh != null && !nameZh.isBlank() ? nameZh : ""));
+    }
+
     public static String camelToUnderline(String s) {
         return com.baomidou.mybatisplus.core.toolkit.StringUtils.camelToUnderline(s);
     }

@@ -44,10 +44,10 @@ public class Person extends Entry {
 
     public Person() {
         id = 0L;
-        this.setName("");
-        this.setNameZh("");
-        this.setNameEn("");
-        this.setAliases(new ArrayList<>());
+        setName("");
+        setNameZh("");
+        setNameEn("");
+        setAliases(new ArrayList<>());
         gender = Gender.UNKNOWN;
         birthDate = "";
         setLinks(new ArrayList<>());
