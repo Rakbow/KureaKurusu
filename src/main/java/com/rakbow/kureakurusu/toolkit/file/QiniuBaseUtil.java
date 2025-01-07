@@ -181,11 +181,11 @@ public class QiniuBaseUtil {
     /**
      * 统一上传文件方法，单个
      *
-     * @param file,filePath,fileType 文件，路径，文件类型
+     * @param file,filePath,fileExt 文件，路径，文件类型
      * @return ActionResult
      */
     @SneakyThrows
-    public ActionResult uploadFileToQiniu(byte[] file, String fileExt, String filePath, FileType fileType) {
+    public ActionResult uploadFileToQiniu(byte[] file, String fileExt, String filePath) {
         ActionResult ar = new ActionResult();
         try {
             // 构造一个带指定Zone对象的配置类,不同的七云牛存储区域调用不同的zone
@@ -193,17 +193,6 @@ public class QiniuBaseUtil {
             Configuration cfg = new Configuration(Region.autoRegion());
             // 创建上传对象
             UploadManager uploadManager = new UploadManager(cfg);
-
-            // 检测文件是否为空
-            if (file.length == 0) {
-                ar.setErrorMessage(I18nHelper.getMessage("file.empty"));
-                return ar;
-            }
-
-            // 检测格式是否支持
-            if (FileUtil.isFileFormatAllowed(fileExt, fileType)) {
-                return ar.fail(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
-            }
 
             // 通过随机UUID生成唯一文件名 长度：16
             String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8)}.\{fileExt}";
@@ -218,7 +207,8 @@ public class QiniuBaseUtil {
             if (res.isOK() && res.isJson()) {
                 // 返回存储文件的地址
                 HashMap<String, String> resDic = JsonUtil.toMap(res.bodyString(), String.class, String.class);
-                ar.data = resDic.get("key");
+                // ar.data = resDic.get("key");
+                ar.data = fullFileName;
             } else {
                 ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", res.bodyString()));
             }

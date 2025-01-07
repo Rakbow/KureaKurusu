@@ -5,6 +5,9 @@ import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.FileType;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.toolkit.FileUtil;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -64,23 +67,11 @@ public class QiniuImageUtil {
     @SneakyThrows
     public List<Image> commonAddImages(int entityType, long entityId, List<ImageMiniDTO> addImages) {
         List<Image> images = new ArrayList<>();
-        //generate upload file pre-fix
-        String filePath = STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_";
         for (ImageMiniDTO miniImage : addImages) {
-
-            // 提取文件类型（例如 "jpeg"）
-            String[] parts = miniImage.getBase64Code().split(";base64,");
-            String dataType = parts[0];  // "data:image/jpeg"
-            String base64code = parts[1];  // Base64编码部分
-
-            // 提取文件后缀（例如 "jpeg"）
-            String extension = dataType.split("/")[1];  // "jpeg"
-            if(StringUtils.equals(extension, "jpeg")) extension = "jpg";
-
-            // encode Base64
-            byte[] fileData = Base64.getDecoder().decode(base64code);
+            //handle image
+            uploadImage img = handleImage(entityType, entityId, miniImage);
             //upload image
-            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(fileData, extension,  filePath, FileType.IMAGE);
+            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(),  img.getPrefixKey());
             if (!ar.state) throw new Exception(ar.message);
             Image image = new Image();
             image.setUrl(ar.data.toString());
@@ -180,4 +171,58 @@ public class QiniuImageUtil {
         return getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70);
     }
 
+    @SneakyThrows
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    public void deleteEntryImage(String key) {
+        ActionResult ar = qiniuBaseUtil.deleteFileFromQiniu(key);
+        if (ar.fail()) throw new Exception(ar.message);
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
+    @SneakyThrows
+    public String uploadEntryImage(int entityType, long entityId, ImageMiniDTO image) {
+        //handle image
+        uploadImage img = handleImage(entityType, entityId, image);
+        //upload image
+        ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(),  img.getPrefixKey());
+        if (!ar.state) throw new Exception(ar.message);
+        return ar.data.toString();
+    }
+
+    @SneakyThrows
+    private uploadImage handleImage(int entityType, long entityId, ImageMiniDTO image) {
+        uploadImage res = new uploadImage();
+        //generate upload file pre-fix
+        res.setPrefixKey(STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_");
+
+        // 提取文件类型（例如 "jpeg"）
+        String[] parts = image.getBase64Code().split(";base64,");
+        String dataType = parts[0];  // "data:image/jpeg"
+        String base64code = parts[1];  // Base64编码部分
+
+        // 提取文件后缀（例如 "jpeg"）
+        String extension = dataType.split("/")[1];  // "jpeg"
+        if(StringUtils.equals(extension, "jpeg")) extension = "jpg";
+        // 检测格式是否支持
+        if (FileUtil.isFileFormatAllowed(extension, FileType.IMAGE)) {
+            throw new Exception(I18nHelper.getMessage("file.format.unsupported", FileType.IMAGE.getNameZh()));
+        }
+        res.setExtension(extension);
+
+        // encode Base64
+        byte[] fileData = Base64.getDecoder().decode(base64code);
+        // 检测文件是否为空
+        if (fileData.length == 0) throw new Exception(I18nHelper.getMessage("file.empty"));
+        res.setData(fileData);
+
+        return res;
+    }
+
+}
+
+@Data
+class uploadImage {
+    private String prefixKey;
+    private byte[] data;
+    private String extension;
 }

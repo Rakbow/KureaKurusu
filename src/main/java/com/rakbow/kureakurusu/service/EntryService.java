@@ -1,21 +1,26 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntrySearchType;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
 import com.rakbow.kureakurusu.data.entity.entry.*;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
+import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -37,12 +42,13 @@ public class EntryService {
     private final Converter converter;
     private final EntityUtil entityUtil;
 
+    private final QiniuImageUtil qiniuImageUtil;
+
     @SneakyThrows
     @Transactional
     public EntryDetailVO detail(int type, long id) {
 
-        Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
-        BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
+        BaseMapper<Entry> subMapper = getSubMapper(type);
         Entry entry = subMapper.selectById(id);
         if (entry == null) throw new Exception(I18nHelper.getMessage("entry.url.error"));
         Class<? extends EntryVO> targetVOClass = EntryUtil.getDetailVO(type);
@@ -73,8 +79,7 @@ public class EntryService {
     public SearchResult<EntryMiniVO> search(int entrySearchType, SimpleSearchParam param) {
         IPage<? extends Entry> pages;
         Integer entityType = EntryUtil.getEntityTypeByEntrySearchType(entrySearchType);
-        Class<? extends Entry> subClass = EntryUtil.getSubClass(entityType);
-        BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
+        BaseMapper<Entry> subMapper = getSubMapper(entityType);
         QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>()
                 .eq("status", 1)
                 .orderByAsc("id");
@@ -104,6 +109,42 @@ public class EntryService {
         );
 
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
+
+
+    @SneakyThrows
+    @Transactional
+    public String uploadImage(int entityType, long entityId, ImageMiniDTO image) {
+
+        //get original entry
+        BaseMapper<Entry> subMapper = getSubMapper(entityType);
+        Entry entry = subMapper.selectById(entityId);
+        String finalUrl;
+        String fieldName;
+        if(image.getType() == ImageType.MAIN.getValue()) {
+            fieldName = "cover";
+            if (StringUtils.isNotBlank(entry.getCover())) {
+                qiniuImageUtil.deleteEntryImage(entry.getCover());
+            }
+        }else if (image.getType() == ImageType.THUMB.getValue()) {
+            fieldName = "thumb";
+            if (StringUtils.isNotBlank(entry.getThumb())) {
+                qiniuImageUtil.deleteEntryImage(entry.getThumb());
+            }
+        }else {
+            throw new Exception();
+        }
+        finalUrl = qiniuImageUtil.uploadEntryImage(entityType, entityId, image);
+
+        UpdateWrapper<Entry> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", entityId).set(fieldName, finalUrl);
+        subMapper.update(null, wrapper);
+        return finalUrl;
+    }
+
+    private BaseMapper<Entry> getSubMapper(int type) {
+        Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
+        return MyBatisUtil.getMapper(subClass);
     }
 
 }

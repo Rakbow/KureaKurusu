@@ -5,7 +5,9 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
+import com.rakbow.kureakurusu.data.dto.ImageCreateDTO;
 import com.rakbow.kureakurusu.service.EntryService;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -39,6 +41,15 @@ public class EntryController {
     @PostMapping("search")
     public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
         return new ApiResult().load(srv.search(qry.getEntrySearchType(), new SimpleSearchParam(qry.getParam())));
+    }
+
+    @PostMapping("upload-image")
+    public ApiResult uploadImage(@RequestBody ImageCreateDTO dto) {
+        ApiResult res = new ApiResult();
+        //check
+        if (dto.getImages().isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
+        res.load(srv.uploadImage(dto.getEntityType(), dto.getEntityId(), dto.getImages().getFirst()));
+        return res.ok(I18nHelper.getMessage("image.update.success"));
     }
 
 }

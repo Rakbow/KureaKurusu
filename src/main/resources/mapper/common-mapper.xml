@@ -30,19 +30,4 @@
         where id = #{entityId}
     </update>
 
-    <select id="getEntryImages" resultType="string">
-        select
-        images
-        from ${param1}
-        where id = #{entityId}
-    </select>
-
-    <update id="updateEntryImages" parameterType="java.util.List">
-        update ${param1}
-        set
-        images = #{images, typeHandler=com.rakbow.kureakurusu.util.handler.ImageHandler},
-        edited_time = #{editedTime}
-        where id = #{entityId}
-    </update>
-
 </mapper>
