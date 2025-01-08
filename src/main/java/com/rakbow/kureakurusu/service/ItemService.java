@@ -165,7 +165,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return ItemDetailVO.builder()
                 .type(item.getType().getValue())
                 .item(converter.convert(item, targetVOClass))
-                .traffic(entityUtil.getPageTraffic(EntityType.ITEM.getValue(), id))
+                .traffic(entityUtil.buildTraffic(EntityType.ITEM.getValue(), id))
                 .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
                 .build();
     }

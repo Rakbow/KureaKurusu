@@ -7,7 +7,6 @@ import com.rakbow.kureakurusu.data.dto.PersonListParams;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.service.PersonService;
-import com.rakbow.kureakurusu.service.RoleService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
@@ -29,7 +28,6 @@ public class PersonController {
 
     //region inject
     private final PersonService srv;
-    private final RoleService roleSrv;
     private final Converter converter;
     //endregion
 

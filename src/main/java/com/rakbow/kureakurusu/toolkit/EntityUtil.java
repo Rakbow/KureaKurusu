@@ -23,6 +23,7 @@ public class EntityUtil {
 
     private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
+    private final PopularUtil popularUtil;
     private final static Map<Integer, Class<? extends Entry>> subEntityMap = new HashMap<>() {{
         put(EntityType.PERSON.getValue(), Person.class);
         put(EntityType.PRODUCT.getValue(), Product.class);
@@ -40,14 +41,17 @@ public class EntityUtil {
      * @param entityType,entityId 实体类型，实体id
      * @author Rakbow
      */
-    public PageTraffic getPageTraffic(int entityType, long entityId) {
+    public PageTraffic buildTraffic(int entityType, long entityId) {
         // 从cookie中获取点赞token和访问token
         String likeToken = TokenInterceptor.getLikeToken();
         String visitToken = TokenInterceptor.getVisitToken();
-        return PageTraffic.builder()
+        PageTraffic traffic = PageTraffic.builder()
                 .liked(likeUtil.isLike(entityType, entityId, likeToken))
                 .likeCount(likeUtil.get(entityType, entityId))
                 .visitCount(visitUtil.inc(entityType, entityId, visitToken))
                 .build();
+        //update entity popularity
+        popularUtil.updatePopularity(entityType, entityId);
+        return traffic;
     }
 }

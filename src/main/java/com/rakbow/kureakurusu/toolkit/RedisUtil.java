@@ -4,18 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -156,6 +150,7 @@ public class RedisUtil {
         return result != null ? result : 0L;
     }
 
+    @SuppressWarnings({"deprecation"})
     public List<String> searchTokenFirst(String key) {
         List<String> res = new ArrayList<>();
         //execute()：搜索 Redis 中某个 key
@@ -196,6 +191,29 @@ public class RedisUtil {
         } else {
             throw new Exception("redis 数据错误，无法完成转换");
         }
+    }
+
+    /**
+     * 更新 Redis ZSET 数据
+     *
+     * @param key   排行榜 key
+     * @param id    数据的唯一标识
+     * @param score 热度值
+     */
+    public void updateZSet(String key, long id, double score) {
+        // 更新 ZSET 的分值
+        template.opsForZSet().add(key, id, score);
+
+        // 删除超出前10名的数据
+        long rankSize = template.opsForZSet().zCard(key); // 获取 ZSET 的元素数量
+        if (rankSize > 10) {
+            template.opsForZSet().removeRange(key, 0, rankSize - 11); // 删除第 11 名及之后的数据
+        }
+    }
+
+    public Set<Object> getZSet(String key, int topN) {
+        // 更新 ZSET 的分值
+        return template.opsForZSet().reverseRange(key, 0, topN - 1);
     }
 }
 

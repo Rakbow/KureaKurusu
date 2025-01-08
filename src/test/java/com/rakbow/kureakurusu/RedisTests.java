@@ -1,12 +1,12 @@
 package com.rakbow.kureakurusu;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.LikeUtil;
-import com.rakbow.kureakurusu.toolkit.RedisUtil;
-import com.rakbow.kureakurusu.toolkit.VisitUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import jakarta.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +32,8 @@ public class RedisTests {
     private LikeUtil likeUtil;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private PopularUtil popularUtil;
 
 //    @Test
 //    public void deleteAllCache() {
@@ -55,7 +57,6 @@ public class RedisTests {
         // keys.forEach(key -> redisUtil.delete(key));
 
         long t1 = DateHelper.now().getTime();
-
 
 
         long t2 = DateHelper.now().getTime();
@@ -88,5 +89,26 @@ public class RedisTests {
 //        }
 //
 //    }
+
+    @Test
+    public void calculateEntityPopular() {
+        int type = EntityType.ITEM.getValue();
+        // Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
+        // BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
+        // List<Entry> entries = subMapper.selectList(null);
+
+        List<Item> items = itemMapper.selectList(null);
+
+        for (Item e : items) {
+            long visit = visitUtil.get(type, e.getId());
+            // long like = likeUtil.get(type, e.getId());
+            // double hotness = EntityPopularCalculator.calculateHotness(visit, like, e.getAddedTime().getTime());
+            // if (hotness < 1) continue;
+            // System.out.println(STR."ID: \{e.getId()}| HOT: \{hotness}| VISIT: \{visit}| LIKE: \{like}| NAME: \{e.getName()}");
+            if(visit == 1) continue;
+            popularUtil.updatePopularity(type, e.getId());
+            System.out.println(STR."\{e.getId()} success");
+        }
+    }
 
 }

@@ -24,8 +24,8 @@ public class EntryController {
 
     private final EntryService srv;
 
-    @PostMapping("detail/{type}/{id}")
     @UniqueVisitor
+    @PostMapping("detail/{type}/{id}")
     public ApiResult detail(@PathVariable("type") int type, @PathVariable("id") long id) {
         return new ApiResult().load(srv.detail(type, id));
     }
@@ -39,7 +39,7 @@ public class EntryController {
     }
 
     @PostMapping("search")
-    public ApiResult searchItem(@RequestBody GeneralSearchQry qry) {
+    public ApiResult search(@RequestBody GeneralSearchQry qry) {
         return new ApiResult().load(srv.search(qry.getEntrySearchType(), new SimpleSearchParam(qry.getParam())));
     }
 

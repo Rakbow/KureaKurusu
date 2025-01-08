@@ -9,12 +9,10 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
-import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntrySearchType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
-import com.rakbow.kureakurusu.data.entity.entry.*;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
@@ -30,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -41,6 +41,7 @@ public class EntryService {
 
     private final Converter converter;
     private final EntityUtil entityUtil;
+    private final PopularUtil popularUtil;
 
     private final QiniuImageUtil qiniuImageUtil;
 
@@ -54,7 +55,7 @@ public class EntryService {
         Class<? extends EntryVO> targetVOClass = EntryUtil.getDetailVO(type);
         return EntryDetailVO.builder()
                 .entry(converter.convert(entry, targetVOClass))
-                .traffic(entityUtil.getPageTraffic(type, id))
+                .traffic(entityUtil.buildTraffic(type, id))
                 .cover(CommonImageUtil.getEntryCover(entry.getCover()))
                 .build();
     }
@@ -80,9 +81,7 @@ public class EntryService {
         IPage<? extends Entry> pages;
         Integer entityType = EntryUtil.getEntityTypeByEntrySearchType(entrySearchType);
         BaseMapper<Entry> subMapper = getSubMapper(entityType);
-        QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>()
-                .eq("status", 1)
-                .orderByAsc("id");
+        QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>().eq("status", 1);
         if (entrySearchType == EntrySearchType.CLASSIFICATION.getValue()) {
             wrapper.eq("type", SubjectType.CLASSIFICATION);
         } else if (entrySearchType == EntrySearchType.MATERIAL.getValue()) {
@@ -101,6 +100,14 @@ public class EntryService {
                         .or().like("name", param.getKeyword())
                         .or().like("name_zh", param.getKeyword())
                         .or().like("name_en", param.getKeyword());
+            }
+        } else {
+            Set<Long> ids = popularUtil.getPopularityRank(entityType, 5);
+            if (!ids.isEmpty()) {
+                wrapper.in("id", ids)
+                        .orderBy(true, false,
+                                STR."FIELD(id, \{ids.stream()
+                                        .map(String::valueOf).collect(Collectors.joining(","))})");
             }
         }
         pages = subMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
@@ -121,17 +128,17 @@ public class EntryService {
         Entry entry = subMapper.selectById(entityId);
         String finalUrl;
         String fieldName;
-        if(image.getType() == ImageType.MAIN.getValue()) {
+        if (image.getType() == ImageType.MAIN.getValue()) {
             fieldName = "cover";
             if (StringUtils.isNotBlank(entry.getCover())) {
                 qiniuImageUtil.deleteEntryImage(entry.getCover());
             }
-        }else if (image.getType() == ImageType.THUMB.getValue()) {
+        } else if (image.getType() == ImageType.THUMB.getValue()) {
             fieldName = "thumb";
             if (StringUtils.isNotBlank(entry.getThumb())) {
                 qiniuImageUtil.deleteEntryImage(entry.getThumb());
             }
-        }else {
+        } else {
             throw new Exception();
         }
         finalUrl = qiniuImageUtil.uploadEntryImage(entityType, entityId, image);

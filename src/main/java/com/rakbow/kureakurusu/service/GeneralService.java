@@ -30,6 +30,7 @@ public class GeneralService {
 
     //region util resource
     private final LikeUtil likeUtil;
+    private final PopularUtil popularUtil;
     //endregion
 
     //region mapper
@@ -128,8 +129,11 @@ public class GeneralService {
         //点过赞
         if (likeUtil.isLike(entityType, entityId, likeToken)) {
             return false;
-        } else {//没点过赞,自增
+        } else {
+            //没点过赞,自增
             likeUtil.inc(entityType, entityId, likeToken);
+            //更新热度
+            popularUtil.updatePopularity(entityType, entityId);
             return true;
         }
     }
