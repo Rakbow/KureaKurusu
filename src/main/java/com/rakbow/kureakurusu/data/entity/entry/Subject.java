@@ -3,15 +3,12 @@ package com.rakbow.kureakurusu.data.entity.entry;
 import com.baomidou.mybatisplus.annotation.*;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
 import com.rakbow.kureakurusu.data.vo.entry.SubjectVO;
-import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.util.List;
 
 /**
  * @author Rakbow

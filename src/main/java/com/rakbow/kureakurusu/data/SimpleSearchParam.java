@@ -4,6 +4,8 @@ import com.rakbow.kureakurusu.data.dto.SearchQry;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2023-10-30 17:24
@@ -13,6 +15,7 @@ public class SimpleSearchParam {
 
     private boolean strict;
     private String keyword;
+    private List<String> keywords;
     private long page;
     private long size;
 
@@ -39,6 +42,7 @@ public class SimpleSearchParam {
     public SimpleSearchParam(SearchQry qry) {
         this.strict = qry.getStrict() == 1;
         this.keyword = qry.getKeyword();
+        this.keywords = qry.getKeywords();
         this.size = qry.getRow();
         this.page = qry.getFirst()/size + 1;
     }
