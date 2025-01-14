@@ -89,17 +89,17 @@ public class EntryService {
         } else if (entrySearchType == EntrySearchType.EVENT.getValue()) {
             wrapper.eq("type", SubjectType.EVENT);
         }
-        if (!param.keywordEmpty()) {
+        if (!param.getKeywords().isEmpty()) {
             if (param.strict()) {
-                wrapper.or().eq("name", param.getKeyword())
-                        .or().eq("name_zh", param.getKeyword())
-                        .or().eq("name_en", param.getKeyword());
+                param.getKeywords().forEach(k -> {
+                    wrapper.or().eq("name", k).or().eq("name_zh", k).or().eq("name_en", k);
+                });
             } else {
-                wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))" +
-                                " LIKE concat('%', {0}, '%')", param.getKeyword()))
-                        .or().like("name", param.getKeyword())
-                        .or().like("name_zh", param.getKeyword())
-                        .or().like("name_en", param.getKeyword());
+                param.getKeywords().forEach(k -> {
+                    wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))" +
+                                    " LIKE concat('%', {0}, '%')", k)).or().like("name", k)
+                            .or().like("name_zh", k).or().like("name_en", k);
+                });
             }
         } else {
             Set<Long> ids = popularUtil.getPopularityRank(entityType, 5);
