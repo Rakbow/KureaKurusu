@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.service.item;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
@@ -114,6 +115,9 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     @Transactional
     public void quickCreateAlbumDisc(long id, int serial, List<AlbumTrackVO> tracks) {
 
+        int runTime = 0;
+        int duration;
+
         List<Episode> eps = new ArrayList<>();
         for (AlbumTrackVO track : tracks) {
             Episode ep = new Episode();
@@ -121,7 +125,9 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             ep.setRelatedId(id);
             ep.setTitle(track.getTitle());
             ep.setSerial(track.getSerial());
-            ep.setDuration(DateHelper.getDuration(track.getDuration()));
+            duration = DateHelper.getDuration(track.getDuration());
+            runTime += duration;
+            ep.setDuration(duration);
             ep.setDiscNum(serial);
             ep.setEpisodeType(0);
             eps.add(ep);
@@ -130,6 +136,18 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         MybatisBatch.Method<Episode> method = new MybatisBatch.Method<>(EpisodeMapper.class);
         MybatisBatch<Episode> batchInsert = new MybatisBatch<>(sqlSessionFactory, eps);
         batchInsert.execute(method.insert());
+
+        //update album track disc duration
+        ItemAlbum album = mapper.selectById(id);
+        int discNum = album.getDiscs() + 1;
+        int trackNum = album.getTracks() + eps.size();
+        runTime = album.getRunTime() + runTime;
+        LambdaUpdateWrapper<ItemAlbum> wrapper = new LambdaUpdateWrapper<ItemAlbum>()
+                .eq(ItemAlbum::getId, id)
+                .set(ItemAlbum::getDiscs, discNum)
+                .set(ItemAlbum::getTracks, trackNum)
+                .set(ItemAlbum::getRunTime, runTime);
+        mapper.update(null, wrapper);
     }
 
     /**
