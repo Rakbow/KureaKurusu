@@ -185,8 +185,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         Map<Integer, List<Relation>> groups = pages.getRecords().stream()
                 .collect(Collectors.groupingBy(param.getDirection() == 1 ? Relation::getRelatedEntityType : Relation::getEntityType));
         for (int entityType : groups.keySet()) {
-            if (entityType == EntityType.CHARACTER.getValue())
-                continue;
+            // if (entityType == EntityType.CHARACTER.getValue())
+            //     continue;
             currentRelations = groups.get(entityType);
             targetIds = currentRelations.stream()
                     .map(param.getDirection() == 1 ? Relation::getRelatedEntityId : Relation::getEntityId)
