@@ -5,6 +5,7 @@ import com.rakbow.kureakurusu.data.ImageConfigValue;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageProperty;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
@@ -28,7 +29,8 @@ import static com.rakbow.kureakurusu.data.CommonConstant.*;
 public class CommonImageUtil {
 
     private static final int DEFAULT_THUMB_SIZE = 200;
-    private static final int DEFAULT_COVER_SIZE = 180;
+    private static final int DEFAULT_ENTRY_COVER_SIZE = 180;
+    private static final int DEFAULT_ITEM_COVER_SIZE = 185;
     private static final int THUMB_SIZE_64 = 64;
     private static final int THUMB_SIZE_70 = 70;
     private static final int THUMB_SIZE_50 = 50;
@@ -72,30 +74,23 @@ public class CommonImageUtil {
                 .build();
     }
 
-    public static String getItemCover(ItemType type, String cover) {
-        ImageConfigValue config = itemImageConfigMap.get(type);
-        return QiniuImageUtil.getThumbUrl(cover, config.getCoverSize());
-    }
-
-    public static String getItemThumb(Image image) {
-        if (image != null) return image.getUrl();
-        return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_64);
+    public static String getItemImage(int imageType, String cover) {
+        if (imageType == ImageType.MAIN.getValue()) {
+            return QiniuImageUtil.getThumbUrl(cover, DEFAULT_ITEM_COVER_SIZE);
+        }else {
+            return QiniuImageUtil.getThumbUrl(cover, THUMB_SIZE_64);
+        }
     }
 
     //TODO
     public static String getEntryCover(String orgUrl) {
         String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
-        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, DEFAULT_COVER_SIZE);
+        return QiniuImageUtil.getNoHeightLimitThumbUrl(url, DEFAULT_ENTRY_COVER_SIZE);
     }
 
     public static String getEntryThumb(String orgUrl) {
         String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
         return QiniuImageUtil.getThumbUrl(url, THUMB_SIZE_35);
-    }
-
-    public static String getThumbCover(Image image) {
-        if (image != null) return QiniuImageUtil.getThumbBackgroundUrl(image.getUrl(), THUMB_SIZE_50);
-        return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, THUMB_SIZE_50);
     }
 
     public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {
