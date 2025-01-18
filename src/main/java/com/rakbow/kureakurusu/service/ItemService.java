@@ -11,9 +11,9 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -166,25 +167,69 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .type(item.getType().getValue())
                 .item(converter.convert(item, targetVOClass))
                 .traffic(entityUtil.buildTraffic(EntityType.ITEM.getValue(), id))
-                .cover(resourceSrv.getItemCover(item.getType(), item.getId()))
+                .cover(resourceSrv.getItemImageCache(item.getId(), ImageType.MAIN))
                 .build();
     }
 
     @Transactional
-    public SearchResult<ItemMiniVO> search(SimpleSearchParam param) {
-        if (param.keywordEmpty()) new SearchResult<>();
+    public SearchResult<ItemMiniVO> search(ItemSearchParams param) {
+        IPage<Item> pages;
+        Page<Item> page = new Page<>(param.getPage(), param.getSize());
 
-        LambdaQueryWrapper<Item> wrapper = new LambdaQueryWrapper<Item>()
-                .or().like(Item::getName, param.getKeyword())
-                .and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')",
-                        param.getKeyword()))
-                .orderByDesc(Item::getId);
-
-        IPage<Item> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-
-        List<ItemMiniVO> items = converter.convert(pages.getRecords(), ItemMiniVO.class);
-
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        // 记录开始时间
+        long start = System.currentTimeMillis();
+        if (param.hasRelatedEntry()) {
+            //inner join relation
+            pages = mapper.selectJoinPage(
+                    page, Item.class,
+                    new MPJLambdaWrapper<Item>()
+                            .selectAll(Item.class)
+                            .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
+                            .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                            .eq(Relation::getRelatedEntityType, param.getEntityType())
+                            .eq(Relation::getRelatedEntityId, param.getEntityId())
+                            .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
+                            .eq(param.getType() != null, Item::getType, param.getType())
+                            .eq(param.getSubType() != null, Item::getSubType, param.getSubType())
+                            .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
+                            .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
+                            .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                            .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
+                            .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
+                            .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                            .orderByDesc(!param.isSort(), Item::getId)
+            );
+        } else {
+            if(param.isAllSearch()) {
+                page = new Page<>(param.getPage(), param.getSize(), false);
+            }
+            pages = mapper.selectPage(
+                    page,
+                    new LambdaQueryWrapper<Item>()
+                            .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
+                            .eq(param.getType() != null, Item::getType, param.getType())
+                            .eq(param.getSubType() != null, Item::getSubType, param.getSubType())
+                            .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
+                            .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
+                            .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                            .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
+                            .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
+                            .orderByDesc(!param.isSort(), Item::getId)
+            );
+            if(param.isAllSearch()) {
+                pages.setTotal(entityUtil.getEntityTotalCache(EntityType.ITEM));
+            }
+        }
+        if (pages.getRecords().isEmpty())
+            return new SearchResult<>();
+        List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
+        //get image cache
+        items.forEach(i -> {
+            i.setCover(resourceSrv.getItemImageCache(i.getId(), ImageType.MAIN));
+            i.setThumb(resourceSrv.getItemImageCache(i.getId(), ImageType.THUMB));
+        });
+        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize(),
+                String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
     }
 
     @Transactional
@@ -238,7 +283,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //save related entities
         relationSrv.batchCreate(EntityType.ITEM.getValue(), id, relatedEntities);
         //save image
-        resourceSrv.addEntityImage(EntityType.ITEM.getValue(), id,  images);
+        resourceSrv.addEntityImage(EntityType.ITEM.getValue(), id, images);
 
         return id;
     }

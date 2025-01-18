@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.ItemService;
@@ -57,8 +56,8 @@ public class ItemController {
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody SearchQry qry) {
-        return new ApiResult().load(srv.search(new SimpleSearchParam(qry)));
+    public ApiResult search(@RequestBody ItemSearchParams param) {
+        return new ApiResult().load(srv.search(param));
     }
 
     @PostMapping("list")

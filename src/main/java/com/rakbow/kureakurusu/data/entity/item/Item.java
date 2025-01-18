@@ -50,10 +50,13 @@ public class Item {
     @TableField(typeHandler = StrListHandler.class)
     private List<String> aliases;
 
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String barcode;// EAN/JAN/ISBN-13
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String catalogId;// album game disc catalog id
     private String releaseDate;
     private double price;
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String region;//ISO-3166 region code
     private ReleaseType releaseType;//release type
     @JsonDeserialize(using = BooleanToIntDeserializer.class)

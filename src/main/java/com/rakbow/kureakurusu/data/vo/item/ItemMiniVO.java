@@ -22,6 +22,6 @@ public class ItemMiniVO {
     private String cover;
     private String releaseDate;
     private double price;
-    private String currency;
+    private String region;
 
 }
