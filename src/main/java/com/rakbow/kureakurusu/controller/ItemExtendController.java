@@ -55,10 +55,4 @@ public class ItemExtendController {
         return new ApiResult().load(reSrv.getItemRelatedSubject(qry.getId()));
     }
 
-    @PostMapping("related-items")
-    public ApiResult getRelatedItems(@RequestBody RelatedItemQueryDTO qry) {
-        return new ApiResult().load(reSrv.getRelatedItems(qry.getEntityType(),
-                qry.getEntityId(), qry.getPage(), qry.getSize()));
-    }
-
 }
