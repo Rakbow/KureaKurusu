@@ -134,10 +134,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
         List<Entry> targets = subMapper.selectByIds(targetIds);
         for (Relation r : relations) {
-            Entry entity = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
-            if (entity == null) continue;
-            if (entity instanceof Product) {
-                remark = I18nHelper.getMessage(((Product) entity).getType().getLabelKey());
+            Entry e = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+            if (e == null) continue;
+            if (e instanceof Product) {
+                remark = I18nHelper.getMessage(((Product) e).getType().getLabelKey());
             } else {
                 remark = r.getRemark();
             }
@@ -147,10 +147,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     RelationVO.builder()
                             .id(r.getId())
                             .role(role)
-                            .target(new Attribute<>(entity.getName(), entity.getId()))
+                            .target(new Attribute<>(e.getName(), e.getId()))
                             .remark(remark)
                             .relatedTypeName(EntityType.getTableName(relatedEntity))
-                            .cover(resourceSrv.getThumbCover(relatedEntity, direction == 1 ? r.getRelatedEntityId() : r.getEntityId()))
+                            .cover(CommonImageUtil.getEntryThumb(e.getThumb()))
                             .build()
             );
         }
@@ -195,8 +195,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             subMapper = MyBatisUtil.getMapper(subClass);
             targets = subMapper.selectByIds(targetIds);
             for (Relation r : currentRelations) {
-                Entry entity = DataFinder.findEntityById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
-                if (entity == null) continue;
+                Entry e = DataFinder.findEntityById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+                if (e == null) continue;
                 Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
                 Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.optionsZh.roleSet);
                 Attribute<Integer> relatedGroup = DataFinder.findAttributeByValue(r.getRelatedGroup().getValue(), MetaData.optionsZh.relatedGroupSet);
@@ -208,10 +208,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                                 .relatedGroup(relatedGroup)
                                 .role(role)
                                 .reverseRole(reverseRole)
-                                .target(new Attribute<>(entity.getName(), entity.getId()))
+                                .target(new Attribute<>(e.getName(), e.getId()))
                                 .remark(r.getRemark())
                                 .relatedTypeName(EntityType.getTableName(entityType))
-                                .cover(resourceSrv.getThumbCover(entityType, param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()))
+                                .cover(CommonImageUtil.getEntryThumb(e.getThumb()))
                                 .build()
                 );
             }
@@ -305,35 +305,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             }
         }
         return res;
-    }
-
-    @Transactional
-    public SearchResult<ItemMiniVO> getRelatedItems(int entityType, long entityId, int page, int size) {
-        SearchResult<ItemMiniVO> res = new SearchResult<>();
-        IPage<Item> pages = itemMapper.selectJoinPage(new Page<>(page, size), Item.class,
-                new MPJLambdaWrapper<Item>()
-                        .selectAll(Item.class)
-                        .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
-                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
-                        .eq(Relation::getRelatedEntityType, entityType)
-                        .eq(Relation::getRelatedEntityId, entityId)
-                        .orderByDesc(Item::getReleaseDate));
-        if (pages.getRecords().isEmpty())
-            return res;
-        List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
-        List<Long> ids = items.stream().map(ItemMiniVO::getId).toList();
-        List<Image> images = resourceSrv.getItemThumbAndCover(ids);
-        images.sort(DataSorter.imageEntityTypeEntityIdTypeSorter);
-        for (ItemMiniVO item : items) {
-            Image thumb = DataFinder.findImageByEntityTypeEntityIdType(EntityType.ITEM.getValue(),
-                    item.getId(), ImageType.THUMB.getValue(), images);
-            item.setThumb(CommonImageUtil.getItemThumb(thumb));
-            Image cover = DataFinder.findImageByEntityTypeEntityIdType(EntityType.ITEM.getValue(),
-                    item.getId(), ImageType.MAIN.getValue(), images);
-            item.setCover(CommonImageUtil.getItemCover(ItemType.get(item.getType().getValue()),
-                    cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl()));
-        }
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
 }
