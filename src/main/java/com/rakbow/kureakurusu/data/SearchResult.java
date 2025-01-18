@@ -22,7 +22,6 @@ public class SearchResult<T> {
     public SearchResult(List<T> data, long total) {
         this.total = total;
         this.data = data;
-        this.searchTime = DateHelper.nowStr();
     }
 
     public SearchResult(List<T> data, long total, long page, long pageSize) {
@@ -30,7 +29,14 @@ public class SearchResult<T> {
         this.total = total;
         this.page = page;
         this.pageSize = pageSize;
-        this.searchTime = DateHelper.nowStr();
+    }
+
+    public SearchResult(List<T> data, long total, long page, long pageSize, String searchTime) {
+        this.data = data;
+        this.total = total;
+        this.page = page;
+        this.pageSize = pageSize;
+        this.searchTime = searchTime;
     }
 
     public SearchResult(IPage<T> page) {
@@ -38,7 +44,6 @@ public class SearchResult<T> {
         this.data = page.getRecords();
         this.page = page.getCurrent();
         this.pageSize = page.getSize();
-        this.searchTime = DateHelper.nowStr();
     }
 
     public SearchResult() {
@@ -46,6 +51,6 @@ public class SearchResult<T> {
         data = null;
         page = 0;
         pageSize = 10;
-        searchTime = DateHelper.nowStr();
+        searchTime = "";
     }
 }
