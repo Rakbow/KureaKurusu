@@ -14,13 +14,13 @@ public class ItemMiniVO {
 
     private long id;
     private String name;
-    private String nameEn;
-    private List<String> aliases;
     private Attribute<Integer> type;
     private Attribute<Integer> subType;
     private String thumb;
     private String cover;
     private String releaseDate;
+    private String barcode;
+    private String catalogId;
     private double price;
     private String region;
 

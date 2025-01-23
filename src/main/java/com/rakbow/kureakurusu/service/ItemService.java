@@ -19,6 +19,8 @@ import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.vo.EntityMinVO;
+import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
@@ -46,6 +48,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     //region inject
     private final ResourceService resourceSrv;
     private final RelationService relationSrv;
+    private final EntryService entrySrv;
 
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
@@ -175,32 +178,36 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     public SearchResult<ItemMiniVO> search(ItemSearchParams param) {
         IPage<Item> pages;
         Page<Item> page = new Page<>(param.getPage(), param.getSize());
-
         // 记录开始时间
         long start = System.currentTimeMillis();
         if (param.hasRelatedEntry()) {
             //inner join relation
-            pages = mapper.selectJoinPage(
-                    page, Item.class,
-                    new MPJLambdaWrapper<Item>()
-                            .selectAll(Item.class)
-                            .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
-                            .eq(Relation::getEntityType, EntityType.ITEM.getValue())
-                            .eq(Relation::getRelatedEntityType, param.getEntityType())
-                            .eq(Relation::getRelatedEntityId, param.getEntityId())
-                            .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
-                            .eq(param.getType() != null, Item::getType, param.getType())
-                            .eq(param.getSubType() != null, Item::getSubType, param.getSubType())
-                            .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
-                            .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
-                            .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
-                            .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
-                            .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
-                            .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                            .orderByDesc(!param.isSort(), Item::getId)
-            );
+            MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                    .selectAll(Item.class)
+                    .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
+                    .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                    .and(aw -> {
+                        for (EntityMinVO e : param.getEntries()) {
+                            aw.or(w -> w
+                                    .eq(Relation::getRelatedEntityType, e.getEntityType())
+                                    .eq(Relation::getRelatedEntityId, e.getEntityId()));
+                        }
+                    })
+                    .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
+                    .eq(param.getType() != null, Item::getType, param.getType())
+                    .eq(param.getSubType() != null, Item::getSubType, param.getSubType())
+                    .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
+                    .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
+                    .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                    .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
+                    .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
+                    .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                    .orderByDesc(!param.isSort(), Item::getReleaseDate)
+                    .groupBy(Item::getId)
+                    .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{param.getEntries().size()}");
+            pages = mapper.selectJoinPage(page, Item.class, wrapper);
         } else {
-            if(param.isAllSearch()) {
+            if (param.isAllSearch()) {
                 page = new Page<>(param.getPage(), param.getSize(), false);
             }
             pages = mapper.selectPage(
@@ -216,7 +223,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                             .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
                             .orderByDesc(!param.isSort(), Item::getId)
             );
-            if(param.isAllSearch()) {
+            if (param.isAllSearch()) {
                 pages.setTotal(entityUtil.getEntityTotalCache(EntityType.ITEM));
             }
         }

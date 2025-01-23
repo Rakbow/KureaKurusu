@@ -1,10 +1,13 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.vo.EntityMinVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -16,8 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class ItemSearchParams extends EntitySearchParams {
 
-    private Integer entityType;
-    private Long entityId;
+    private List<EntityMinVO> entries;
     private String keyword;
     private Integer type;
     private Integer subType;
@@ -28,11 +30,11 @@ public class ItemSearchParams extends EntitySearchParams {
     private Boolean bonus;
 
     public boolean hasRelatedEntry() {
-        return entityType != null;
+        return !entries.isEmpty();
     }
 
     public boolean isAllSearch() {
-        return entityType == null
+        return entries.isEmpty()
                 && StringUtils.isBlank(keyword)
                 && type == null && subType == null
                 && releaseType == null
