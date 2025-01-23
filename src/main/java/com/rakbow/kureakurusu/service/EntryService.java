@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
+import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntrySearchType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
 import com.rakbow.kureakurusu.data.entity.entry.Entry;
+import com.rakbow.kureakurusu.data.vo.EntityMinVO;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
@@ -60,6 +61,22 @@ public class EntryService {
                 .build();
     }
 
+    @SneakyThrows
+    @Transactional
+    public List<EntryMiniVO> getMiniVO(List<EntityMinVO> entries) {
+        List<EntryMiniVO> res = new ArrayList<>();
+        BaseMapper<Entry> subMapper;
+        for (EntityMinVO e : entries) {
+            subMapper = getSubMapper(e.getEntityType());
+            Entry entry = subMapper.selectById(e.getEntityId());
+            if (entry == null) continue;
+            EntryMiniVO vo = new EntryMiniVO(e.getEntityType(), entry);
+            vo.setThumb(CommonImageUtil.getEntryThumb(entry.getThumb()));
+            res.add(vo);
+        }
+        return res;
+    }
+
     @Transactional
     @SneakyThrows
     public String update(EntryUpdateDTO dto) {
@@ -77,16 +94,18 @@ public class EntryService {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EntryMiniVO> search(int entrySearchType, SimpleSearchParam param) {
+    public SearchResult<EntryMiniVO> search(EntrySearchParams param) {
+        // 记录开始时间
+        long start = System.currentTimeMillis();
         IPage<? extends Entry> pages;
-        Integer entityType = EntryUtil.getEntityTypeByEntrySearchType(entrySearchType);
+        Integer entityType = EntryUtil.getEntityTypeByEntrySearchType(param.getSearchType());
         BaseMapper<Entry> subMapper = getSubMapper(entityType);
         QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>().eq("status", 1);
-        if (entrySearchType == EntrySearchType.CLASSIFICATION.getValue()) {
+        if (param.getSearchType() == EntrySearchType.CLASSIFICATION.getValue()) {
             wrapper.eq("type", SubjectType.CLASSIFICATION);
-        } else if (entrySearchType == EntrySearchType.MATERIAL.getValue()) {
+        } else if (param.getSearchType() == EntrySearchType.MATERIAL.getValue()) {
             wrapper.eq("type", SubjectType.MATERIAL);
-        } else if (entrySearchType == EntrySearchType.EVENT.getValue()) {
+        } else if (param.getSearchType() == EntrySearchType.EVENT.getValue()) {
             wrapper.eq("type", SubjectType.EVENT);
         }
         if (!param.getKeywords().isEmpty()) {
@@ -115,7 +134,8 @@ public class EntryService {
                 pages.getRecords().stream().map(i -> new EntryMiniVO(entityType, i)).toList()
         );
 
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize(),
+                String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
     }
 
 

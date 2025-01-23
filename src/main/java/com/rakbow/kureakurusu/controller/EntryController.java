@@ -3,15 +3,16 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.GeneralSearchQry;
-import com.rakbow.kureakurusu.data.dto.ImageCreateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.vo.EntityMinVO;
 import com.rakbow.kureakurusu.service.EntryService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -39,8 +40,8 @@ public class EntryController {
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody GeneralSearchQry qry) {
-        return new ApiResult().load(srv.search(qry.getEntrySearchType(), new SimpleSearchParam(qry.getParam())));
+    public ApiResult search(@RequestBody EntrySearchParams param) {
+        return new ApiResult().load(srv.search(param));
     }
 
     @PostMapping("upload-image")
@@ -50,6 +51,11 @@ public class EntryController {
         if (dto.getImages().isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
         res.load(srv.uploadImage(dto.getEntityType(), dto.getEntityId(), dto.getImages().getFirst()));
         return res.ok(I18nHelper.getMessage("image.update.success"));
+    }
+
+    @PostMapping("mini")
+    public ApiResult mini(@RequestBody List<EntityMinVO> entries) {
+        return new ApiResult().load(srv.getMiniVO(entries));
     }
 
 }
