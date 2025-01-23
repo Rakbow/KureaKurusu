@@ -13,7 +13,7 @@ import lombok.Data;
 public class RelationVO {
 
     private long id;//relation id
-    private String cover;
+    private String thumb;
     private Attribute<Integer> relatedGroup;
     private Attribute<Long> role;
     private Attribute<Long> reverseRole;

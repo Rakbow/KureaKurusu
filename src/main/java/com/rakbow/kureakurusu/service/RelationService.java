@@ -8,26 +8,22 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.SubjectMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.entry.Subject;
-import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.entry.Product;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.entry.Entry;
-import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
-import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedEntityVO;
+import com.rakbow.kureakurusu.data.vo.relation.RelationMiniVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -150,7 +146,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                             .target(new Attribute<>(e.getName(), e.getId()))
                             .remark(remark)
                             .relatedTypeName(EntityType.getTableName(relatedEntity))
-                            .cover(CommonImageUtil.getEntryThumb(e.getThumb()))
+                            .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
                             .build()
             );
         }
@@ -177,7 +173,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 .eq(typeCol, param.getEntityType())
                 .eq(idCol, param.getEntityId())
                 .eq(param.getRelatedGroup() != -1, "related_group", param.getRelatedGroup())
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.sortField));
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.sortField))
+                .orderByDesc("id");
 
         IPage<Relation> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         if (pages.getRecords().isEmpty())
@@ -185,8 +182,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         Map<Integer, List<Relation>> groups = pages.getRecords().stream()
                 .collect(Collectors.groupingBy(param.getDirection() == 1 ? Relation::getRelatedEntityType : Relation::getEntityType));
         for (int entityType : groups.keySet()) {
-            // if (entityType == EntityType.CHARACTER.getValue())
-            //     continue;
             currentRelations = groups.get(entityType);
             targetIds = currentRelations.stream()
                     .map(param.getDirection() == 1 ? Relation::getRelatedEntityId : Relation::getEntityId)
@@ -211,7 +206,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                                 .target(new Attribute<>(e.getName(), e.getId()))
                                 .remark(r.getRemark())
                                 .relatedTypeName(EntityType.getTableName(entityType))
-                                .cover(CommonImageUtil.getEntryThumb(e.getThumb()))
+                                .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
                                 .build()
                 );
             }
@@ -231,14 +226,15 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             case EntityType.PRODUCT -> group = RelatedGroup.RELATED_PRODUCT;
             default -> group = RelatedGroup.DEFAULT;
         }
-        for (Long targetId : dto.getRelatedEntityIds()) {
+        for (RelationMiniVO target : dto.getRelatedEntityIds()) {
             Relation relation = new Relation();
             relation.setEntityType(dto.getEntityType());
             relation.setEntityId(dto.getEntityId());
             relation.setRoleId(dto.getRoleId());
             relation.setRelatedGroup(group);
             relation.setRelatedEntityType(dto.getRelatedEntityType());
-            relation.setRelatedEntityId(targetId);
+            relation.setRelatedEntityId(target.getId());
+            relation.setRemark(target.getRemark());
             res.add(relation);
         }
         //batch insert
