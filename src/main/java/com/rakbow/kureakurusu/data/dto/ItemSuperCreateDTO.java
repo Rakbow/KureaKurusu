@@ -18,5 +18,6 @@ public class ItemSuperCreateDTO extends DTO {
     private ItemCreateDTO item;
     private List<ImageMiniDTO> images;
     private List<RelatedEntityMiniDTO> relatedEntities;
+    private Boolean generateThumb;
 
 }

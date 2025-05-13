@@ -284,13 +284,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public long advanceCreate(ItemCreateDTO item, List<ImageMiniDTO> images,
-                              List<RelatedEntityMiniDTO> relatedEntities) {
+                              List<RelatedEntityMiniDTO> relatedEntities, boolean generateThumb) {
         //save item
         long id = insert(item);
         //save related entities
         relationSrv.batchCreate(EntityType.ITEM.getValue(), id, relatedEntities);
         //save image
-        resourceSrv.addEntityImage(EntityType.ITEM.getValue(), id, images);
+        resourceSrv.addEntityImage(EntityType.ITEM.getValue(), id, images, generateThumb);
 
         return id;
     }

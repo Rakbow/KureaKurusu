@@ -119,11 +119,15 @@ public class QiniuImageUtil {
     /**
      * 获取等比固定高宽的缩略图URL
      *
-     * @param imageUrl,size 原始图url，缩略图宽高
+     * @param image,size 原始图url，缩略图宽高
      * @return thumbImageUrl
      */
-    public static String getThumbUrl(String imageUrl, int size) {
-        return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x\{size}";
+    public static String getThumb(String image, int size) {
+        return STR."\{image}\{THUMBNAIL_URL}\{size}x\{size}";
+    }
+
+    public static String getThumb(String image, int size1, int size2) {
+        return STR."\{image}\{THUMBNAIL_URL}\{size1}x\{size2}";
     }
 
     public static String getNoHeightLimitThumbUrl(String imageUrl, int size) {
@@ -168,7 +172,7 @@ public class QiniuImageUtil {
                     return getThumbBackgroundUrl(image.getUrl(), 70);
             }
         }
-        return getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 70);
+        return getThumb(CommonConstant.EMPTY_IMAGE_URL, 70);
     }
 
     @SneakyThrows

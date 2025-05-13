@@ -44,7 +44,7 @@ public class ResourceController {
         //check
         if (dto.getImages().isEmpty()) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
         //save
-        srv.addEntityImage(dto.getEntityType(), dto.getEntityId(), dto.getImages());
+        srv.addEntityImage(dto.getEntityType(), dto.getEntityId(), dto.getImages(), false);
         return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
     }
 

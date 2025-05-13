@@ -74,7 +74,7 @@ public class ItemController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
-        return new ApiResult().load(srv.advanceCreate(dto.getItem(), dto.getImages(), dto.getRelatedEntities()));
+        return new ApiResult().load(srv.advanceCreate(dto.getItem(), dto.getImages(), dto.getRelatedEntities(), dto.getGenerateThumb()));
     }
 
     //endregion

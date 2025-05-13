@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.data.image;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,8 +13,6 @@ import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Timestamp;
 
@@ -50,11 +47,11 @@ public class Image {
     private Boolean status;
 
     @TableField(exist = false)
-    private String thumbUrl70;//缩略图url(70px)
+    private String thumb70;//缩略图url(70px)
     @TableField(exist = false)
-    private String thumbUrl50;//缩略图url(50px)
+    private String thumb50;//缩略图url(50px)
     @TableField(exist = false)
-    private String blackUrl;//缩略图url(黑背景)
+    private String thumb;//缩略图url(1200*600)
 
     public Image() {
         id = 0L;

@@ -74,7 +74,15 @@ public class ResourceService {
 
     @SneakyThrows
     @Transactional
-    public void addEntityImage(int entityType, long entityId, List<ImageMiniDTO> images) {
+    public void addEntityImage(int entityType, long entityId, List<ImageMiniDTO> images, boolean generateThumb) {
+        //generate thumb
+        if (generateThumb) {
+            ImageMiniDTO cover = images.stream().filter(i -> i.getType() == ImageType.MAIN.getValue()).findFirst().orElse(null);
+            if (cover != null) {
+                ImageMiniDTO thumb = CommonImageUtil.generateThumb(cover);
+                images.add(thumb);
+            }
+        }
         //upload to qiniu server
         List<Image> addImages = qiniuImageUtil.commonAddImages(entityType, entityId, images);
         //batch insert

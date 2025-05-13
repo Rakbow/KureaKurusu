@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.toolkit.file;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ImageConfigValue;
 import com.rakbow.kureakurusu.data.common.Constant;
+import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageProperty;
 import com.rakbow.kureakurusu.data.emun.ImageType;
@@ -10,12 +11,13 @@ import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.segmentImagesResult;
 import lombok.SneakyThrows;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -76,9 +78,9 @@ public class CommonImageUtil {
 
     public static String getItemImage(int imageType, String cover) {
         if (imageType == ImageType.MAIN.getValue()) {
-            return QiniuImageUtil.getThumbUrl(cover, DEFAULT_ITEM_COVER_SIZE);
+            return QiniuImageUtil.getThumb(cover, DEFAULT_ITEM_COVER_SIZE);
         }else {
-            return QiniuImageUtil.getThumbUrl(cover, THUMB_SIZE_64);
+            return QiniuImageUtil.getThumb(cover, THUMB_SIZE_64);
         }
     }
 
@@ -90,7 +92,7 @@ public class CommonImageUtil {
 
     public static String getEntryThumb(String orgUrl) {
         String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
-        return QiniuImageUtil.getThumbUrl(url, THUMB_SIZE_35);
+        return QiniuImageUtil.getThumb(url, THUMB_SIZE_35);
     }
 
     public static segmentImagesResult segmentItemImages(ItemType type, List<Image> images) {
@@ -111,8 +113,8 @@ public class CommonImageUtil {
         if (images.isEmpty()) return res;
         for (Image image : images) {
             //添加缩略图
-            image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-            image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+            image.setThumb70(QiniuImageUtil.getThumb(image.getUrl(), THUMB_SIZE_70));
+            image.setThumb50(QiniuImageUtil.getThumb(image.getUrl(), THUMB_SIZE_50));
             if (!image.isDisplay())
                 res.addOtherImage(image);
             else
@@ -128,8 +130,8 @@ public class CommonImageUtil {
         if (images.isEmpty()) return res;
         for (Image image : images) {
             //generate thumb image
-            image.setThumbUrl70(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_70));
-            image.setThumbUrl50(QiniuImageUtil.getThumbUrl(image.getUrl(), THUMB_SIZE_50));
+            image.setThumb70(QiniuImageUtil.getThumb(image.getUrl(), THUMB_SIZE_70));
+            image.setThumb50(QiniuImageUtil.getThumb(image.getUrl(), THUMB_SIZE_50));
             if (image.isDisplay())
                 res.addDisplayImage(image);
             else
@@ -141,9 +143,31 @@ public class CommonImageUtil {
 
     public static void generateThumb(List<Image> images) {
         images.forEach(i -> {
-            i.setThumbUrl70(QiniuImageUtil.getThumbUrl(i.getUrl(), THUMB_SIZE_70));
-            i.setThumbUrl50(QiniuImageUtil.getThumbUrl(i.getUrl(), THUMB_SIZE_50));
+            i.setThumb70(QiniuImageUtil.getThumb(i.getUrl(), THUMB_SIZE_70));
+            i.setThumb50(QiniuImageUtil.getThumb(i.getUrl(), THUMB_SIZE_50));
+            i.setThumb(QiniuImageUtil.getThumb(i.getUrl(), 1200, 650));
         });
+    }
+
+    @SneakyThrows
+    public static ImageMiniDTO generateThumb(ImageMiniDTO cover) {
+        ImageMiniDTO thumb = new ImageMiniDTO();
+        thumb.setName("Thumb");
+        thumb.setType(ImageType.THUMB.getValue());
+
+        // 提取文件类型（例如 "jpeg"）
+        String[] parts = cover.getBase64Code().split(";base64,");
+        String dataType = parts[0];  // "data:image/jpeg"
+        String base64code = parts[1];  // Base64编码部分
+
+        byte[] imageBytes = Base64.getDecoder().decode(base64code);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Thumbnails.of(new ByteArrayInputStream(imageBytes))
+                .size(THUMB_SIZE_64, THUMB_SIZE_64)
+                .outputFormat("jpg")
+                .toOutputStream(os);
+        thumb.setBase64Code(STR."\{dataType};base64,\{Base64.getEncoder().encodeToString(os.toByteArray())}");
+        return thumb;
     }
 
 }
