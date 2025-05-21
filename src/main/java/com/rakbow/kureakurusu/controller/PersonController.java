@@ -1,9 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.PersonAddDTO;
-import com.rakbow.kureakurusu.data.dto.PersonListParams;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.service.PersonService;
@@ -30,13 +28,6 @@ public class PersonController {
     private final PersonService srv;
     private final Converter converter;
     //endregion
-
-    //region person
-
-    @PostMapping("list")
-    public ApiResult list(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(srv.getPersons(new PersonListParams(qry)));
-    }
 
     @PostMapping("add")
     public ApiResult add(@Valid @RequestBody PersonAddDTO dto, BindingResult errors) {

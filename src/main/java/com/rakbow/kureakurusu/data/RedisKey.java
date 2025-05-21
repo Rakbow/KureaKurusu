@@ -8,6 +8,9 @@ package com.rakbow.kureakurusu.data;
  */
 public class RedisKey {
 
+    public static final String ENTITY_TOTAL_COUNT = "entity_total_count:%s";
+    public static final String ENTITY_IMAGE_CACHE = "entity_image_cache:";
+
     //region common
     public static final String SPLIT = ":";
     private static final String VISIT_RANK = "visit_rank";

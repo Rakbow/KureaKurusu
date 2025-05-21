@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.entity.entry;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.ProductType;
-import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
+import com.rakbow.kureakurusu.data.vo.entry.ProductListVO;
 import com.rakbow.kureakurusu.data.vo.entry.ProductVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -43,7 +43,6 @@ public class Product extends Entry {
         this.type = ProductType.OTHER;
         this.setDetail("");
         this.setRemark("");
-        this.setAddedTime(DateHelper.now());
         this.setEditedTime(DateHelper.now());
         this.setStatus(true);
     }

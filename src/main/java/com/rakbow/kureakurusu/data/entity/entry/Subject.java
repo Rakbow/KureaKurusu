@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data.entity.entry;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
+import com.rakbow.kureakurusu.data.vo.entry.SubjectListVO;
 import com.rakbow.kureakurusu.data.vo.entry.SubjectVO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -19,6 +20,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @TableName(value = "subject", autoResultMap = true)
 @AutoMappers({
+        @AutoMapper(target = SubjectListVO.class, reverseConvertGenerate = false),
         @AutoMapper(target = SubjectVO.class, reverseConvertGenerate = false)
 })
 public class Subject extends Entry {

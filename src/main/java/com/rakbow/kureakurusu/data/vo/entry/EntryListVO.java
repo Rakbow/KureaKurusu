@@ -1,27 +1,29 @@
-package com.rakbow.kureakurusu.data.vo.person;
+package com.rakbow.kureakurusu.data.vo.entry;
 
-import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 
 import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2023-11-05 23:23
+ * @since 2025/5/20 18:23
  */
 @Data
-public class PersonVOBeta {
+public class EntryListVO {
 
     private long id;
+    private int searchType;
     private String name;
     private String nameZh;
     private String nameEn;
     private List<String> aliases;
-    private Attribute<Integer> gender;
-    private String birthDate;
+    private List<String> links;
+
     private String remark;
     private String addedTime;
     private String editedTime;
-    private Boolean status;
+    private boolean status;
+
+    private long visitNum;
 
 }

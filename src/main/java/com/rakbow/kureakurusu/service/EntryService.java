@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
-import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntrySearchType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
@@ -16,6 +14,7 @@ import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.vo.EntityMinVO;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
+import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -172,6 +171,32 @@ public class EntryService {
     private BaseMapper<Entry> getSubMapper(int type) {
         Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
         return MyBatisUtil.getMapper(subClass);
+    }
+
+    @Transactional
+    @SneakyThrows
+    public SearchResult<? extends EntryListVO> list(ListQueryDTO dto) {
+        EntryListQueryDTO param = EntryUtil.getEntryListQueryDTO(dto);
+        Class<? extends EntryListVO> entryListVOClass = EntryUtil.getEntryListVO(param.getSearchType());
+        Integer entityType = EntryUtil.getEntityTypeByEntrySearchType(param.getSearchType());
+        BaseMapper<Entry> subMapper = getSubMapper(entityType);
+        QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>().eq("status", 1);
+        if (param.getSearchType() == EntrySearchType.CLASSIFICATION.getValue()) {
+            wrapper.eq("type", SubjectType.CLASSIFICATION);
+        } else if (param.getSearchType() == EntrySearchType.MATERIAL.getValue()) {
+            wrapper.eq("type", SubjectType.MATERIAL);
+        } else if (param.getSearchType() == EntrySearchType.EVENT.getValue()) {
+            wrapper.eq("type", SubjectType.EVENT);
+        }
+        if (param.getName() != null && !param.getName().isEmpty()) {
+            wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))" +
+                            " LIKE concat('%', {0}, '%')", param.getName())).or().like("name", param.getName())
+                    .or().like("name_zh", param.getName()).or().like("name_en", param.getName());
+        }
+        IPage<? extends Entry> pages = subMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        List<? extends EntryListVO> res = converter.convert(pages.getRecords(), entryListVOClass);
+
+        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
 }

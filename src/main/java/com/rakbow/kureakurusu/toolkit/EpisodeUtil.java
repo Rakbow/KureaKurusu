@@ -43,8 +43,8 @@ public class EpisodeUtil {
 
     private static String getAudioCover(String cover) {
         if (!StringUtils.isBlank(cover))
-            return QiniuImageUtil.getThumbUrl(cover, 80);
-        return QiniuImageUtil.getThumbUrl(CommonConstant.EMPTY_IMAGE_URL, 80);
+            return QiniuImageUtil.getThumb(cover, 80);
+        return QiniuImageUtil.getThumb(CommonConstant.EMPTY_IMAGE_URL, 80);
     }
 
     /**

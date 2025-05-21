@@ -1,11 +1,14 @@
 package com.rakbow.kureakurusu;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rakbow.kureakurusu.dao.*;
+import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.entry.Entry;
+import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.toolkit.*;
 import jakarta.annotation.Resource;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,7 +27,8 @@ public class RedisTests {
 
     @Resource
     private ItemMapper itemMapper;
-
+    @Resource
+    private ImageMapper imageMapper;
     @Resource
     private StatisticMapper statisticMapper;
     @Resource
@@ -105,10 +110,31 @@ public class RedisTests {
             // double hotness = EntityPopularCalculator.calculateHotness(visit, like, e.getAddedTime().getTime());
             // if (hotness < 1) continue;
             // System.out.println(STR."ID: \{e.getId()}| HOT: \{hotness}| VISIT: \{visit}| LIKE: \{like}| NAME: \{e.getName()}");
-            if(visit == 1) continue;
+            if (visit == 1) continue;
             popularUtil.updatePopularity(type, e.getId());
             System.out.println(STR."\{e.getId()} success");
         }
+    }
+
+    @Test
+    public void batchUpdateItemCoverAndThumbRedisCache() {
+        List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getType, ItemType.ALBUM));
+        redisUtil.delete("entity_image_cache:*");
+        String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{EntityType.ITEM.getValue()}:%s";
+        String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{EntityType.ITEM.getValue()}:%s";
+        int total = items.size();
+        AtomicInteger cur = new AtomicInteger();
+        items.forEach(i -> {
+            Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+                    .eq(Image::getEntityType, EntityType.ITEM.getValue())
+                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
+            Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+                    .eq(Image::getEntityType, EntityType.ITEM.getValue())
+                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
+            redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
+            redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
+            System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
+        });
     }
 
 }

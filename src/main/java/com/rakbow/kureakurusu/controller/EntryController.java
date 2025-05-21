@@ -39,6 +39,11 @@ public class EntryController {
         return new ApiResult().ok(srv.update(dto));
     }
 
+    @PostMapping("list")
+    public ApiResult list(@RequestBody ListQueryDTO dto) {
+        return new ApiResult().load(srv.list(dto));
+    }
+
     @PostMapping("search")
     public ApiResult search(@RequestBody EntrySearchParams param) {
         return new ApiResult().load(srv.search(param));

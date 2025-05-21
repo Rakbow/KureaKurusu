@@ -75,7 +75,7 @@ public class ItemUtil {
 
     @SneakyThrows
     public static ItemListQueryDTO getItemListQueryDTO(ListQueryDTO qry) {
-        Class<? extends ItemListQueryDTO> queryClass = itemListQryMap.get(qry.getItemType());
+        Class<? extends ItemListQueryDTO> queryClass = itemListQryMap.get((int)qry.getVal("itemType"));
         Constructor<? extends ItemListQueryDTO> constructor = queryClass.getConstructor(ListQueryDTO.class);
         return constructor.newInstance(qry);
     }

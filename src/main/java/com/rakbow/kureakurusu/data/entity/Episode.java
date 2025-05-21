@@ -32,7 +32,7 @@ import java.util.List;
 public class Episode {
 
     @Builder.Default
-    private Long id = 0L;//表主键
+    private Long id;//表主键
     private long relatedType;//关联类型 Album Product
     private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
     private String title;//标题(原)

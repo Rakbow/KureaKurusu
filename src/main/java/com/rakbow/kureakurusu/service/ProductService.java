@@ -1,25 +1,19 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.ProductMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
-import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.ProductListParams;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.entry.Product;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.data.vo.product.ProductListVO;
+import com.rakbow.kureakurusu.data.vo.entry.ProductListVO;
 import com.rakbow.kureakurusu.toolkit.DataSorter;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,17 +40,6 @@ public class ProductService extends ServiceImpl<ProductMapper, Product> {
     private final EntityType ENTITY_VALUE = EntityType.PRODUCT;
 
     //endregion
-
-    @Transactional
-    public SearchResult<ProductListVO> list(ProductListParams param) {
-        QueryWrapper<Product> wrapper = new QueryWrapper<Product>()
-                .like("name", param.getName())
-                .in(CollectionUtils.isNotEmpty(param.getType()), "type", param.getType())
-                .orderBy(param.isSort(), param.asc(), param.sortField);
-        IPage<Product> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<ProductListVO> items = converter.convert(pages.getRecords(), ProductListVO.class);
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
 
     @Transactional
     public void deleteProducts(List<Long> ids) {

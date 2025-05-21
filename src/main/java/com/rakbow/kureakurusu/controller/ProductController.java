@@ -24,11 +24,6 @@ public class ProductController {
     private final ProductService srv;
     private final Converter converter;
 
-    @PostMapping("list")
-    public ApiResult list(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(srv.list(new ProductListParams(qry)));
-    }
-
     @PostMapping("add")
     public ApiResult add(@Valid @RequestBody ProductCreateDTO dto, BindingResult errors) {
         //check

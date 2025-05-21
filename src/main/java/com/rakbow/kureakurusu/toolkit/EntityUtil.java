@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.entity.entry.Chara;
@@ -24,6 +25,8 @@ public class EntityUtil {
     private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
     private final PopularUtil popularUtil;
+    private final RedisUtil redisUtil;
+
     private final static Map<Integer, Class<? extends Entry>> subEntityMap = new HashMap<>() {{
         put(EntityType.PERSON.getValue(), Person.class);
         put(EntityType.PRODUCT.getValue(), Product.class);
@@ -53,5 +56,10 @@ public class EntityUtil {
         //update entity popularity
         popularUtil.updatePopularity(entityType, entityId);
         return traffic;
+    }
+
+    public long getEntityTotalCache(EntityType type) {
+        String key = String.format(RedisKey.ENTITY_TOTAL_COUNT, type.getValue());
+        return Long.parseLong(redisUtil.get(key).toString());
     }
 }

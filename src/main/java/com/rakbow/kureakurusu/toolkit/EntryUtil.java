@@ -1,10 +1,14 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntrySearchType;
 import com.rakbow.kureakurusu.data.entity.entry.*;
 import com.rakbow.kureakurusu.data.vo.entry.*;
+import lombok.SneakyThrows;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -45,6 +49,24 @@ public class EntryUtil {
             EntrySearchType.EVENT.getValue(), EntityType.SUBJECT.getValue()
     );
 
+    private final static Map<Integer, Class<? extends EntryListVO>> entryListVOMap = new HashMap<>() {{
+        put(EntrySearchType.PRODUCT.getValue(), ProductListVO.class);
+        put(EntrySearchType.PERSON.getValue(), PersonListVO.class);
+        put(EntrySearchType.CHARACTER.getValue(), CharacterListVO.class);
+        put(EntrySearchType.CLASSIFICATION.getValue(), SubjectListVO.class);
+        put(EntrySearchType.MATERIAL.getValue(), SubjectListVO.class);
+        put(EntrySearchType.EVENT.getValue(), SubjectListVO.class);
+    }};
+
+    private final static Map<Integer, Class<? extends EntryListQueryDTO>> entryListQryMap = new HashMap<>() {{
+        put(EntrySearchType.PRODUCT.getValue(), ProductListQueryDTO.class);
+        put(EntrySearchType.PERSON.getValue(), PersonListQueryDTO.class);
+        put(EntrySearchType.CHARACTER.getValue(), CharacterListQueryDTO.class);
+        put(EntrySearchType.CLASSIFICATION.getValue(), SubjectListQueryDTO.class);
+        put(EntrySearchType.MATERIAL.getValue(), SubjectListQueryDTO.class);
+        put(EntrySearchType.EVENT.getValue(), SubjectListQueryDTO.class);
+    }};
+
     public static Class<? extends Entry> getSubClass(Integer type) {
         return subEntryMap.get(type);
     }
@@ -59,6 +81,17 @@ public class EntryUtil {
 
     public static Integer getEntityTypeByEntrySearchType(Integer type) {
         return entrySearchEntityMap.get(type);
+    }
+
+    @SneakyThrows
+    public static EntryListQueryDTO getEntryListQueryDTO(ListQueryDTO qry) {
+        Class<? extends EntryListQueryDTO> queryClass = entryListQryMap.get((int)qry.getVal("searchType"));
+        Constructor<? extends EntryListQueryDTO> constructor = queryClass.getConstructor(ListQueryDTO.class);
+        return constructor.newInstance(qry);
+    }
+
+    public static Class<? extends EntryListVO> getEntryListVO(int type) {
+        return entryListVOMap.get(type);
     }
 
 }
