@@ -1,41 +1,35 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
-@EqualsAndHashCode(callSuper = true)
+/**
+ * @author Rakbow
+ * @since 2025/5/23 19:56
+ */
 @Data
-public class ListQueryDTO extends QueryDTO {
+@NoArgsConstructor
+public class ListQueryDTO {
 
-    private int first;
-    private int rows;
+    private int page;
+    private int size;
     private String sortField;
     private int sortOrder;
-    private LinkedHashMap<String, LinkedHashMap<String, Object>> filters;
 
-    private static String VALUE_KEY = "value";
-
-    @SuppressWarnings("unchecked")
-    public <T> T getVal(String key) {
-        Object value = null;
-        if(this.filters.containsKey(key))
-            value = this.filters.get(key).get(VALUE_KEY);
-        if(value == null || value.toString().isEmpty())
-            return null;
-        return (T) value;
+    public ListQueryDTO(ListQuery qry) {
+        size = qry.getRows();
+        page = qry.getFirst()/size + 1;
+        sortField = qry.getSortField();
+        sortOrder = qry.getSortOrder();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> getArray(String key) {
-        Object value = null;
-        if(this.filters.containsKey(key))
-            value = this.filters.get(key).get(VALUE_KEY);
-        if(value == null)
-            return null;
-        return (List<T>) value;
+    public boolean asc() {
+        return this.sortOrder == 1;
+    }
+
+    public boolean isSort() {
+        return StringUtils.isNotBlank(this.sortField);
     }
 
 }

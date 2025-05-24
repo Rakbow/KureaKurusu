@@ -84,9 +84,9 @@ public class EntryUtil {
     }
 
     @SneakyThrows
-    public static EntryListQueryDTO getEntryListQueryDTO(ListQueryDTO qry) {
+    public static EntryListQueryDTO getEntryListQueryDTO(ListQuery qry) {
         Class<? extends EntryListQueryDTO> queryClass = entryListQryMap.get((int)qry.getVal("searchType"));
-        Constructor<? extends EntryListQueryDTO> constructor = queryClass.getConstructor(ListQueryDTO.class);
+        Constructor<? extends EntryListQueryDTO> constructor = queryClass.getConstructor(ListQuery.class);
         return constructor.newInstance(qry);
     }
 

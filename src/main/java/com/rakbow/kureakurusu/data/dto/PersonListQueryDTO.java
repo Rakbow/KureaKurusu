@@ -19,7 +19,7 @@ public class PersonListQueryDTO extends EntryListQueryDTO {
     @QueryColumn(type = QueryColumnType.STRING)
     private String birthDate;
 
-    public PersonListQueryDTO(ListQueryDTO dto) {
+    public PersonListQueryDTO(ListQuery dto) {
         super(dto);
         super.setSearchType(EntrySearchType.PERSON.getValue());
         this.gender = dto.getVal("gender");

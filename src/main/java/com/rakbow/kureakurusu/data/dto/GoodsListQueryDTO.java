@@ -17,7 +17,7 @@ public class GoodsListQueryDTO extends ItemListQueryDTO {
     @QueryColumn(type = QueryColumnType.NUMBER)
     private Integer goodsType;
 
-    public GoodsListQueryDTO(ListQueryDTO dto) {
+    public GoodsListQueryDTO(ListQuery dto) {
         super(dto);
         super.setType(ItemType.GOODS.getValue());
         this.goodsType = dto.getVal("goodsType");

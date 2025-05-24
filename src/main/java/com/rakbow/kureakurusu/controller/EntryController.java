@@ -1,10 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.vo.EntityMinVO;
+import com.rakbow.kureakurusu.data.dto.EntityMinDTO;
+import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
+import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
 import com.rakbow.kureakurusu.service.EntryService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
@@ -40,7 +41,7 @@ public class EntryController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQueryDTO dto) {
+    public ApiResult list(@RequestBody ListQuery dto) {
         return new ApiResult().load(srv.list(dto));
     }
 
@@ -59,7 +60,7 @@ public class EntryController {
     }
 
     @PostMapping("mini")
-    public ApiResult mini(@RequestBody List<EntityMinVO> entries) {
+    public ApiResult mini(@RequestBody List<EntityMinDTO> entries) {
         return new ApiResult().load(srv.getMiniVO(entries));
     }
 

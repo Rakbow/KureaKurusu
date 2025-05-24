@@ -9,11 +9,10 @@ import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.ImageListParams;
+import com.rakbow.kureakurusu.data.dto.ImageListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.image.Image;
 import com.rakbow.kureakurusu.data.vo.ImageDisplayVO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
@@ -60,7 +59,7 @@ public class ResourceService {
      * @author rakbow
      */
     @Transactional
-    public SearchResult<Image> getEntityImages(ImageListParams param) {
+    public SearchResult<Image> getEntityImages(ImageListQueryDTO param) {
         QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
                 .eq("entity_type", param.getEntityType())
                 .eq("entity_id", param.getEntityId())

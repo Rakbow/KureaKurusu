@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleListParams extends ListQueryParams {
+public class RoleListQueryDTO extends ListQueryDTO {
 
     private String name;
     private String nameZh;
     private String nameEn;
 
-    public RoleListParams(ListQueryDTO qry) {
+    public RoleListQueryDTO(ListQuery qry) {
         super(qry);
-        this.name = super.getVal("name");
-        this.nameZh = super.getVal("nameZh");
-        this.nameEn = super.getVal("nameEn");
+        this.name = qry.getVal("name");
+        this.nameZh = qry.getVal("nameZh");
+        this.nameEn = qry.getVal("nameEn");
     }
 
 }

@@ -17,7 +17,7 @@ public class FigureListQueryDTO extends ItemListQueryDTO {
     @QueryColumn(type = QueryColumnType.NUMBER)
     private Integer figureType;
 
-    public FigureListQueryDTO(ListQueryDTO dto) {
+    public FigureListQueryDTO(ListQuery dto) {
         super(dto);
         super.setType(ItemType.FIGURE.getValue());
         this.figureType = dto.getVal("figureType");

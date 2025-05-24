@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
@@ -36,8 +35,8 @@ public class RelationController {
     }
 
     @PostMapping("get-relations")
-    public ApiResult getRelations(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(srv.getRelations(new RelationListParams(qry)));
+    public ApiResult getRelations(@RequestBody ListQuery qry) {
+        return new ApiResult().load(srv.getRelations(new RelationListQueryDTO(qry)));
     }
 
     @PostMapping("add-relations")
@@ -59,8 +58,8 @@ public class RelationController {
     }
 
     @PostMapping("get-roles")
-    public ApiResult getRoles(@RequestBody ListQueryDTO qry) {
-        return new ApiResult().load(roleSrv.getRoles(new RoleListParams(qry)));
+    public ApiResult getRoles(@RequestBody ListQuery qry) {
+        return new ApiResult().load(roleSrv.getRoles(new RoleListQueryDTO(qry)));
     }
 
     @PostMapping("add-role")

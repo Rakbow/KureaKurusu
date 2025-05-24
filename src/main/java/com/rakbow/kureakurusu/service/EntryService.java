@@ -7,11 +7,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.EntryListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
+import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntrySearchType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.SubjectType;
 import com.rakbow.kureakurusu.data.entity.entry.Entry;
-import com.rakbow.kureakurusu.data.vo.EntityMinVO;
+import com.rakbow.kureakurusu.data.dto.EntityMinDTO;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
@@ -62,10 +65,10 @@ public class EntryService {
 
     @SneakyThrows
     @Transactional
-    public List<EntryMiniVO> getMiniVO(List<EntityMinVO> entries) {
+    public List<EntryMiniVO> getMiniVO(List<EntityMinDTO> entries) {
         List<EntryMiniVO> res = new ArrayList<>();
         BaseMapper<Entry> subMapper;
-        for (EntityMinVO e : entries) {
+        for (EntityMinDTO e : entries) {
             subMapper = getSubMapper(e.getEntityType());
             Entry entry = subMapper.selectById(e.getEntityId());
             if (entry == null) continue;
@@ -175,12 +178,13 @@ public class EntryService {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<? extends EntryListVO> list(ListQueryDTO dto) {
+    public SearchResult<? extends EntryListVO> list(ListQuery dto) {
         EntryListQueryDTO param = EntryUtil.getEntryListQueryDTO(dto);
         Class<? extends EntryListVO> entryListVOClass = EntryUtil.getEntryListVO(param.getSearchType());
         Integer entityType = EntryUtil.getEntityTypeByEntrySearchType(param.getSearchType());
         BaseMapper<Entry> subMapper = getSubMapper(entityType);
-        QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>().eq("status", 1);
+        QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>()
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         if (param.getSearchType() == EntrySearchType.CLASSIFICATION.getValue()) {
             wrapper.eq("type", SubjectType.CLASSIFICATION);
         } else if (param.getSearchType() == EntrySearchType.MATERIAL.getValue()) {

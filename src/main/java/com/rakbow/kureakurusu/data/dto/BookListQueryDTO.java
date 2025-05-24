@@ -19,7 +19,7 @@ public class BookListQueryDTO extends ItemListQueryDTO {
     @QueryColumn(type = QueryColumnType.NUMBER)
     private Integer bookType;
 
-    public BookListQueryDTO(ListQueryDTO dto) {
+    public BookListQueryDTO(ListQuery dto) {
         super(dto);
         super.setType(ItemType.BOOK.getValue());
         this.lang = dto.getVal("lang");

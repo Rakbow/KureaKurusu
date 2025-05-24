@@ -1,6 +1,10 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.AlbumListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.BookListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.GoodsListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
@@ -74,9 +78,9 @@ public class ItemUtil {
     }
 
     @SneakyThrows
-    public static ItemListQueryDTO getItemListQueryDTO(ListQueryDTO qry) {
+    public static ItemListQueryDTO getItemListQueryDTO(ListQuery qry) {
         Class<? extends ItemListQueryDTO> queryClass = itemListQryMap.get((int)qry.getVal("itemType"));
-        Constructor<? extends ItemListQueryDTO> constructor = queryClass.getConstructor(ListQueryDTO.class);
+        Constructor<? extends ItemListQueryDTO> constructor = queryClass.getConstructor(ListQuery.class);
         return constructor.newInstance(qry);
     }
 

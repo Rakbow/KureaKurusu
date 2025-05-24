@@ -153,7 +153,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         return res;
     }
 
-    public SearchResult<RelationVO> getRelations(RelationListParams param) {
+    public SearchResult<RelationVO> getRelations(RelationListQueryDTO param) {
         List<RelationVO> res = new ArrayList<>();
         List<Long> targetIds;
         Class<? extends Entry> subClass;
@@ -173,7 +173,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 .eq(typeCol, param.getEntityType())
                 .eq(idCol, param.getEntityId())
                 .eq(param.getRelatedGroup() != -1, "related_group", param.getRelatedGroup())
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.sortField))
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
                 .orderByDesc("id");
 
         IPage<Relation> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);

@@ -21,7 +21,7 @@ public class AlbumListQueryDTO extends ItemListQueryDTO {
     @QueryColumn(type = QueryColumnType.NUMBER_LIST)
     private List<Integer> mediaFormat;
 
-    public AlbumListQueryDTO(ListQueryDTO dto) {
+    public AlbumListQueryDTO(ListQuery dto) {
         super(dto);
         super.setType(ItemType.ALBUM.getValue());
         this.albumFormat = dto.getArray("albumFormat");

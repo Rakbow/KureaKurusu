@@ -61,7 +61,7 @@ public class ItemController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQueryDTO dto) {
+    public ApiResult list(@RequestBody ListQuery dto) {
         return new ApiResult().load(srv.list(dto));
     }
 

@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.vo.EntityMinVO;
+import com.rakbow.kureakurusu.data.dto.EntityMinDTO;
+import com.rakbow.kureakurusu.data.dto.EntitySearchParams;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ItemSearchParams extends EntitySearchParams {
 
-    private List<EntityMinVO> entries;
+    private List<EntityMinDTO> entries;
     private String keyword;
     private Integer type;
     private Integer subType;

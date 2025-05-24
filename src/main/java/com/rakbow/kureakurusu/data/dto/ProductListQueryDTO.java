@@ -19,7 +19,7 @@ public class ProductListQueryDTO extends EntryListQueryDTO {
     @QueryColumn(type = QueryColumnType.STRING)
     private String date;
 
-    public ProductListQueryDTO(ListQueryDTO dto) {
+    public ProductListQueryDTO(ListQuery dto) {
         super(dto);
         super.setSearchType(EntrySearchType.PRODUCT.getValue());
         this.type = dto.getVal("type");

@@ -19,7 +19,7 @@ public class CharacterListQueryDTO extends EntryListQueryDTO {
     @QueryColumn(type = QueryColumnType.STRING)
     private String birthDate;
 
-    public CharacterListQueryDTO(ListQueryDTO dto) {
+    public CharacterListQueryDTO(ListQuery dto) {
         super(dto);
         super.setSearchType(EntrySearchType.CHARACTER.getValue());
         this.gender = dto.getVal("gender");

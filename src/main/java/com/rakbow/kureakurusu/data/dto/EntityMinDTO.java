@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo;
+package com.rakbow.kureakurusu.data.dto;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import lombok.Data;
  * @since 2025/1/22 9:15
  */
 @Data
-public class EntityMinVO {
+public class EntityMinDTO {
 
     private Integer entityType;
     private Long entityId;

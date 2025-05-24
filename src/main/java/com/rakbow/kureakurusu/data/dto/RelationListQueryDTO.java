@@ -13,19 +13,19 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelationListParams extends ListQueryParams {
+public class RelationListQueryDTO extends ListQueryDTO {
 
     private int entityType;
     private long entityId;
     private int relatedGroup;
     private int direction;// 1: positive -1: negative
 
-    public RelationListParams(ListQueryDTO qry) {
+    public RelationListQueryDTO(ListQuery qry) {
         super(qry);
-        this.entityType = super.getVal("entityType");
-        this.entityId = ((Integer)super.getVal("entityId")).longValue();
-        this.relatedGroup = super.getVal("relatedGroup");
-        this.direction = super.getVal("direction");
+        this.entityType = qry.getVal("entityType");
+        this.entityId = ((Integer)qry.getVal("entityId")).longValue();
+        this.relatedGroup = qry.getVal("relatedGroup");
+        this.direction = qry.getVal("direction");
     }
 
 }

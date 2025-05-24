@@ -1,18 +1,17 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 /**
  * @author Rakbow
  * @since 2024/5/4 9:04
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
-public class ItemListQueryDTO {
+public class ItemListQueryDTO extends ListQueryDTO {
 
     private int type;
     private String name;
@@ -23,32 +22,16 @@ public class ItemListQueryDTO {
     private String region;
     private Integer releaseType;
 
-    private int page;
-    private int size;
-    private String sortField;
-    private int sortOrder;
+    public ItemListQueryDTO(ListQuery qry) {
+        super(qry);
 
-    public ItemListQueryDTO(ListQueryDTO dto) {
-        size = dto.getRows();
-        page = dto.getFirst()/size + 1;
-        sortField = dto.getSortField();
-        sortOrder = dto.getSortOrder();
-
-        name = dto.getVal("name");
-        aliases = dto.getVal("aliases");
-        barcode = dto.getVal("barcode");
-        catalogId = dto.getVal("catalogId");
-        region = dto.getVal("region");
-        bonus = dto.getVal("bonus");
-        releaseType = dto.getVal("releaseType");
-    }
-
-    public boolean asc() {
-        return this.sortOrder == 1;
-    }
-
-    public boolean isSort() {
-        return StringUtils.isNotBlank(this.sortField);
+        name = qry.getVal("name");
+        aliases = qry.getVal("aliases");
+        barcode = qry.getVal("barcode");
+        catalogId = qry.getVal("catalogId");
+        region = qry.getVal("region");
+        bonus = qry.getVal("bonus");
+        releaseType = qry.getVal("releaseType");
     }
 
 }

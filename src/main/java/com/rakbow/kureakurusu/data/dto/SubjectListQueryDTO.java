@@ -19,7 +19,7 @@ public class SubjectListQueryDTO extends EntryListQueryDTO {
     @QueryColumn(type = QueryColumnType.STRING)
     private String date;
 
-    public SubjectListQueryDTO(ListQueryDTO dto) {
+    public SubjectListQueryDTO(ListQuery dto) {
         super(dto);
         super.setSearchType(EntrySearchType.CLASSIFICATION.getValue());
         this.type = dto.getVal("type");

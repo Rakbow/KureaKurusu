@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.PersonAddDTO;
+import com.rakbow.kureakurusu.data.dto.PersonCreateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.service.PersonService;
@@ -30,7 +30,7 @@ public class PersonController {
     //endregion
 
     @PostMapping("add")
-    public ApiResult add(@Valid @RequestBody PersonAddDTO dto, BindingResult errors) {
+    public ApiResult add(@Valid @RequestBody PersonCreateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //build

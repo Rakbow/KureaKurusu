@@ -28,9 +28,9 @@ public class ResourceController {
     //region image
 
     @PostMapping("get-images")
-    public ApiResult getEntityImages(@RequestBody ListQueryDTO dto) {
+    public ApiResult getEntityImages(@RequestBody ListQuery dto) {
         return new ApiResult().load(
-                srv.getEntityImages(new ImageListParams(dto))
+                srv.getEntityImages(new ImageListQueryDTO(dto))
         );
     }
 

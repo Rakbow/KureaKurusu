@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.data.dto.DTO;
 import com.rakbow.kureakurusu.data.entity.entry.Person;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMapping;
@@ -17,7 +18,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AutoMapper(target = Person.class, reverseConvertGenerate = false)
-public class PersonAddDTO extends DTO {
+public class PersonCreateDTO extends DTO {
 
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;
@@ -29,7 +30,7 @@ public class PersonAddDTO extends DTO {
     private int gender;
     private String remark;
 
-    public PersonAddDTO() {
+    public PersonCreateDTO() {
         aliases = new ArrayList<>();
     }
 

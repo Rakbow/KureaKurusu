@@ -12,6 +12,10 @@ import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.ItemCreateDTO;
+import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.ItemSearchParams;
+import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Relation;
@@ -19,8 +23,7 @@ import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.image.Image;
-import com.rakbow.kureakurusu.data.vo.EntityMinVO;
-import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
+import com.rakbow.kureakurusu.data.dto.EntityMinDTO;
 import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
@@ -48,7 +51,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     //region inject
     private final ResourceService resourceSrv;
     private final RelationService relationSrv;
-    private final EntryService entrySrv;
 
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
@@ -187,7 +189,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
                     .eq(Relation::getEntityType, EntityType.ITEM.getValue())
                     .and(aw -> {
-                        for (EntityMinVO e : param.getEntries()) {
+                        for (EntityMinDTO e : param.getEntries()) {
                             aw.or(w -> w
                                     .eq(Relation::getRelatedEntityType, e.getEntityType())
                                     .eq(Relation::getRelatedEntityId, e.getEntityId()));
@@ -241,7 +243,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<? extends ItemListVO> list(ListQueryDTO dto) {
+    public SearchResult<? extends ItemListVO> list(ListQuery dto) {
 
         ItemListQueryDTO param = ItemUtil.getItemListQueryDTO(dto);
 

@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.ProductCreateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.entry.Product;
 import com.rakbow.kureakurusu.service.ProductService;
