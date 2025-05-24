@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.data.dto.EpisodeDeleteCmd;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.common.File;
+import com.rakbow.kureakurusu.data.dto.EpisodeDeleteCmd;
+import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EpisodeService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -25,16 +23,21 @@ public class EpisodeController {
 
     private final EpisodeService srv;
 
-    @PostMapping("upload-file")
-    public ApiResult uploadFile(int id, MultipartFile[] files, List<File> fileInfos) {
-        srv.updateFile(id, files, fileInfos);
-        return new ApiResult().ok(I18nHelper.getMessage("file.update.success"));
+    @PostMapping("list")
+    public ApiResult list(@RequestBody ListQuery dto) {
+        return new ApiResult().load(srv.list(dto));
     }
 
-    @PostMapping("delete-file")
-    public ApiResult deleteFile(@RequestBody EpisodeDeleteCmd cmd) {
-        srv.deleteFiles(cmd.getId(), cmd.getFiles());
-        return new ApiResult().ok(I18nHelper.getMessage("file.delete.success"));
-    }
+    // @PostMapping("upload-file")
+    // public ApiResult uploadFile(int id, MultipartFile[] files, List<File> fileInfos) {
+    //     srv.updateFile(id, files, fileInfos);
+    //     return new ApiResult().ok(I18nHelper.getMessage("file.update.success"));
+    // }
+    //
+    // @PostMapping("delete-file")
+    // public ApiResult deleteFile(@RequestBody EpisodeDeleteCmd cmd) {
+    //     srv.deleteFiles(cmd.getId(), cmd.getFiles());
+    //     return new ApiResult().ok(I18nHelper.getMessage("file.delete.success"));
+    // }
 
 }

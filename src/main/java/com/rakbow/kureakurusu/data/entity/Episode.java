@@ -1,11 +1,8 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.common.File;
-import com.rakbow.kureakurusu.data.vo.episode.EpisodeVOAlpha;
+import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.handler.FileHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.AllArgsConstructor;
@@ -14,8 +11,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -27,7 +22,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @TableName(value = "episode", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = EpisodeVOAlpha.class, reverseConvertGenerate = false)
+        @AutoMapper(target = EpisodeListVO.class, reverseConvertGenerate = false)
 })
 public class Episode {
 
@@ -41,9 +36,6 @@ public class Episode {
     private int duration;//时长 单位：秒
     private int discNum;//碟片序号
     private int serial;//序号
-    @TableField(typeHandler = FileHandler.class)
-    @Builder.Default
-    private List<File> files = new ArrayList<>();//文件
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
 
@@ -64,7 +56,6 @@ public class Episode {
         duration = 0;
         discNum = 1;
         serial = 1;
-        files = new ArrayList<>();
         detail = "";
         episodeType = 0;
         addedTime = DateHelper.now();

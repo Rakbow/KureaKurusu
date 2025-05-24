@@ -21,7 +21,7 @@ public class EpisodeUtil {
      * @author rakbow
      * */
     public static Audio getAudios(Episode ep, String cover) {
-        List<File> files = ep.getFiles();
+        List<File> files = null;
         if (files.isEmpty()) return null;
         Audio audio = new Audio();
         for (File file : files) {
