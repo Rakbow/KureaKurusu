@@ -53,11 +53,6 @@ public class ResourceService {
             ImageType.THUMB.getValue()
     );
 
-    /**
-     * 根据实体类型和实体Id获取图片
-     *
-     * @author rakbow
-     */
     @Transactional
     public SearchResult<Image> getEntityImages(ImageListQueryDTO param) {
         QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
@@ -91,25 +86,15 @@ public class ResourceService {
 
         //update item image redis cache
         if (entityType == EntityType.ITEM.getValue()) {
-            resetItemImageRedisCache(entityType, entityId);
+            resetEntityImageRedisCache(entityType, entityId);
         }
     }
 
-    /**
-     * 更新图片
-     *
-     * @author rakbow
-     */
     @Transactional
     public void updateEntityImage(Image image) {
         imageMapper.updateById(image);
     }
 
-    /**
-     * delete image
-     *
-     * @author rakbow
-     */
     @Transactional
     public void deleteEntityImage(List<Image> images) {
         //delete from qiniu server
@@ -118,10 +103,9 @@ public class ResourceService {
         imageMapper.deleteByIds(deleteImages.stream().map(Image::getId).toList());
     }
 
-    public String getItemImageCache(long itemId, ImageType imageType) {
+    public String getEntityImageCache(int entityType, long entityId, ImageType imageType) {
         String url = redisUtil.get(
-                STR."\{RedisKey.ENTITY_IMAGE_CACHE}\{imageType.getValue()}:\{EntityType.ITEM.getValue()}:\{itemId}"
-                , String.class);
+                STR."\{RedisKey.ENTITY_IMAGE_CACHE}\{imageType.getValue()}:\{entityType}:\{entityId}", String.class);
         return CommonImageUtil.getItemImage(imageType.getValue(), url);
     }
 
@@ -137,7 +121,7 @@ public class ResourceService {
     }
 
     @SneakyThrows
-    public void resetItemImageRedisCache(int entityType, long entityId) {
+    public void resetEntityImageRedisCache(int entityType, long entityId) {
         String key = STR."\{RedisKey.ENTITY_IMAGE_CACHE}%s:\{entityType}:\{entityId}";
         List<Image> images = imageMapper.selectList(
                 new LambdaQueryWrapper<Image>()

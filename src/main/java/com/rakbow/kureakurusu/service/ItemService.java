@@ -60,6 +60,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final ImageMapper imageMapper;
     private final RelationMapper relationMapper;
     private final Converter converter;
+    private final EntityType ENTITY_TYPE = EntityType.ITEM;
     //endregion
 
     //region static const
@@ -132,7 +133,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         List<Item> items = mapper.selectByIds(ids);
         List<Image> images = imageMapper.selectList(
                 new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, EntityType.ITEM)
+                        .eq(Image::getEntityType, ENTITY_TYPE)
                         .in(Image::getEntityId, ids)
         );
         if (items.isEmpty()) throw new Exception("");
@@ -140,7 +141,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             //delete all image
             qiniuImageUtil.deleteAllImage(images);
             //delete visit record
-            visitUtil.del(EntityType.ITEM.getValue(), item.getId());
+            visitUtil.del(ENTITY_TYPE.getValue(), item.getId());
         }
         int type = items.getFirst().getType().getValue();
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(type);
@@ -151,7 +152,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         relationMapper.delete(
                 new LambdaQueryWrapper<Relation>()
-                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                        .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
                         .in(Relation::getEntityId, ids)
         );
 
@@ -171,8 +172,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return ItemDetailVO.builder()
                 .type(item.getType().getValue())
                 .item(converter.convert(item, targetVOClass))
-                .traffic(entityUtil.buildTraffic(EntityType.ITEM.getValue(), id))
-                .cover(resourceSrv.getItemImageCache(item.getId(), ImageType.MAIN))
+                .traffic(entityUtil.buildTraffic(ENTITY_TYPE.getValue(), id))
+                .cover(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))
                 .build();
     }
 
@@ -187,7 +188,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                     .selectAll(Item.class)
                     .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
-                    .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                    .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
                     .and(aw -> {
                         for (EntityMinDTO e : param.getEntries()) {
                             aw.or(w -> w
@@ -226,7 +227,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                             .orderByDesc(!param.isSort(), Item::getId)
             );
             if (param.isAllSearch()) {
-                pages.setTotal(entityUtil.getEntityTotalCache(EntityType.ITEM));
+                pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
             }
         }
         if (pages.getRecords().isEmpty())
@@ -234,8 +235,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
         //get image cache
         items.forEach(i -> {
-            i.setCover(resourceSrv.getItemImageCache(i.getId(), ImageType.MAIN));
-            i.setThumb(resourceSrv.getItemImageCache(i.getId(), ImageType.THUMB));
+            i.setCover(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
+            i.setThumb(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
         });
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize(),
                 String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
@@ -290,9 +291,9 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //save item
         long id = insert(item);
         //save related entities
-        relationSrv.batchCreate(EntityType.ITEM.getValue(), id, relatedEntities);
+        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, relatedEntities);
         //save image
-        resourceSrv.addEntityImage(EntityType.ITEM.getValue(), id, images, generateThumb);
+        resourceSrv.addEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
 
         return id;
     }

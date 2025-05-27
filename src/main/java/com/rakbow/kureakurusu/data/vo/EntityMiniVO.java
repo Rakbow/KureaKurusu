@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EntityMiniVO {
 
+    private String thumb;//thumb cover
     private Integer type;// entity type
     private Long id;// entity id
     private String tableName;// entity type
