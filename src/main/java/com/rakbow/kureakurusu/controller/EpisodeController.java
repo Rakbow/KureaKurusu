@@ -1,15 +1,13 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeDeleteCmd;
 import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EpisodeService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -22,6 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class EpisodeController {
 
     private final EpisodeService srv;
+
+    @UniqueVisitor
+    @PostMapping("detail/{id}")
+    public ApiResult detail(@PathVariable("id") long id) {
+        return new ApiResult().load(srv.detail(id));
+    }
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQuery dto) {

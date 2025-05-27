@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
+import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -22,6 +23,7 @@ import java.sql.Timestamp;
 @ToString(callSuper = true)
 @TableName(value = "episode", autoResultMap = true)
 @AutoMappers({
+        @AutoMapper(target = EpisodeVO.class, reverseConvertGenerate = false),
         @AutoMapper(target = EpisodeListVO.class, reverseConvertGenerate = false)
 })
 public class Episode {

@@ -10,11 +10,12 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
+import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
+import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.QiniuBaseUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuFileUtil;
 import io.github.linpeilie.Converter;
@@ -36,8 +37,21 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     private final EpisodeMapper mapper;
     private final ItemService itemSrv;
     private final Converter converter;
+    private final EntityUtil entityUtil;
+    private final ResourceService resourceSrv;
     private final QiniuFileUtil qiniuFileUtil;
     private final QiniuBaseUtil qiniuBaseUtil;
+
+    @Transactional
+    @SneakyThrows
+    public EpisodeVO detail(long id) {
+        Episode ep = getById(id);
+        if (ep == null) throw new Exception(I18nHelper.getMessage("entity.url.error", "enum.entity.episode"));
+        EpisodeVO vo = converter.convert(ep, EpisodeVO.class);
+        vo.setTraffic(entityUtil.buildTraffic(EntityType.EPISODE.getValue(), id));
+        vo.setCover(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), ep.getRelatedId(), ImageType.MAIN));
+        return vo;
+    }
 
     @Transactional
     @SneakyThrows
@@ -55,6 +69,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         List<Long> albumIds = pages.getRecords().stream().map(Episode::getRelatedId).distinct().toList();
         List<Item> items = itemSrv.list(new LambdaQueryWrapper<Item>().in(Item::getId, albumIds));
         for(EpisodeListVO e : res) {
+            e.setDurationStr(DateHelper.getDuration(e.getDuration()));
             Item item = DataFinder.findItemById(e.getRelatedId(), items);
             if(item == null) continue;
             e.getParent().setId(item.getId());
