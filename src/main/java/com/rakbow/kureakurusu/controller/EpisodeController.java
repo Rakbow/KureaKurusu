@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeDeleteCmd;
+import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
 import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EpisodeService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
@@ -30,6 +31,11 @@ public class EpisodeController {
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQuery dto) {
         return new ApiResult().load(srv.list(dto));
+    }
+
+    @PostMapping("get-related")
+    public ApiResult getRelatedEpisodes(@RequestBody EpisodeRelatedDTO dto) {
+        return new ApiResult().load(srv.getRelatedEpisodes(dto));
     }
 
     // @PostMapping("upload-file")

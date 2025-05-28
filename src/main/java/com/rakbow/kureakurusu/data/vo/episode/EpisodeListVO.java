@@ -19,8 +19,7 @@ public class EpisodeListVO {
     private int discNum;
     private String title;
     private String premiereDate;
-    private String durationStr;
-    private int duration;
+    private String duration;
     private long relatedType;
     private long relatedId;
 

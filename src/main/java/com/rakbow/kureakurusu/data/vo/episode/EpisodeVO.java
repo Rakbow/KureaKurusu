@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.data.vo.episode;
 
 import com.rakbow.kureakurusu.data.PageTraffic;
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -17,7 +16,7 @@ public class EpisodeVO {
     private String title;
     private String titleEn;
     private String premiereDate;
-    private int duration;
+    private String duration;
     private int discNum;
     private int serial;
     private String detail;

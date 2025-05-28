@@ -113,4 +113,9 @@ public interface MetaVOMapper {
         return DateHelper.nowStr();
     }
 
+    @Named("getDuration")
+    default String getDuration(int duration) {
+        return DateHelper.getDuration(duration);
+    }
+
 }

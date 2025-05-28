@@ -6,6 +6,7 @@ import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class Episode {
     private String title;//标题(原)
     private String titleEn;//标题(英)
     private String premiereDate;//首播日期
+    @AutoMapping(qualifiedByName = "getDuration")
     private int duration;//时长 单位：秒
     private int discNum;//碟片序号
     private int serial;//序号
