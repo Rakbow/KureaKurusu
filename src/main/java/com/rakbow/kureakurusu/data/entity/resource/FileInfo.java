@@ -1,8 +1,6 @@
 package com.rakbow.kureakurusu.data.entity.resource;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
@@ -22,7 +20,7 @@ import java.sql.Timestamp;
 @TableName(value = "file_info", autoResultMap = true)
 public class FileInfo {
 
-    private Long id;
+    private Long id = 0L;
     private String name;
     private String mime;
     private Long size;

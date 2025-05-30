@@ -43,7 +43,7 @@ public class UniqueVisitorAspect {
         String visitToken = CookieUtil.getValue(request, "visit_token");
         if (ObjectUtils.isEmpty(visitToken)){
             //生成visitToken,并返回
-            visitToken = CommonUtil.generateUUID();
+            visitToken = CommonUtil.generateUUID(0);
             Cookie cookie = new Cookie("visit_token", visitToken);
             cookie.setPath(contextPath);
             assert response != null;

@@ -1,9 +1,14 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
@@ -43,10 +48,17 @@ public class Episode {
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
+    @AutoMapping(qualifiedByName = "getVOTime")
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     @Builder.Default
     private Timestamp addedTime = DateHelper.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
+    @AutoMapping(qualifiedByName = "getVOTime")
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     @Builder.Default
     private Timestamp editedTime = DateHelper.now();
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
     @Builder.Default
     private Boolean status = true;
 

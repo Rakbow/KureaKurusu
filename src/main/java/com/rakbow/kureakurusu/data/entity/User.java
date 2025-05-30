@@ -45,11 +45,10 @@ public class User {
     public User(UserRegisterDTO dto) {
         this.username = dto.getUsername();
         this.email = dto.getEmail();
-        this.salt = CommonUtil.generateUUID().substring(0, 5);
-        this.salt = CommonUtil.generateUUID().substring(0, 5);
+        this.salt = CommonUtil.generateUUID(5);
         this.password = CommonUtil.md5(STR."\{dto.getPassword()}\{this.salt}}");
         this.type = UserAuthority.USER;
-        this.activationCode = CommonUtil.generateUUID();
+        this.activationCode = CommonUtil.generateUUID(0);
         //设置用户默认头像
         //user.setHeaderUrl(String.format("", new Random().nextInt(1000)));
     }

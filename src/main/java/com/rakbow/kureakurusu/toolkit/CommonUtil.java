@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.toolkit;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
@@ -72,9 +73,9 @@ public class CommonUtil {
         }
     }
 
-    //生成随机字符串
-    public static String generateUUID() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
+    public static String generateUUID(int length) {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        return length == 0 ? uuid : uuid.substring(0, length);
     }
 
     //MD5加密

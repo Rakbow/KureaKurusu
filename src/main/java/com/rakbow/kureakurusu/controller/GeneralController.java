@@ -83,7 +83,7 @@ public class GeneralController {
         String likeToken = TokenInterceptor.getLikeToken();
         if (StringUtils.isBlank(likeToken)) {
             //generate like token and return
-            likeToken = CommonUtil.generateUUID();
+            likeToken = CommonUtil.generateUUID(0);
             Cookie cookie = new Cookie("like_token", likeToken);
             cookie.setPath(contextPath);
             response.addCookie(cookie);

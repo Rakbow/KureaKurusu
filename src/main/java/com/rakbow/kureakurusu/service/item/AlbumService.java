@@ -4,28 +4,38 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.EpisodeMapper;
-import com.rakbow.kureakurusu.dao.ItemAlbumMapper;
-import com.rakbow.kureakurusu.dao.ItemMapper;
+import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
+import com.rakbow.kureakurusu.data.entity.resource.EntityFileRelated;
+import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
+import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,7 +54,9 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     private final EpisodeMapper epMapper;
     private final ItemAlbumMapper mapper;
     private final ItemMapper itemMapper;
+    private final ResourceService resourceSrv;
     private final SqlSessionFactory sqlSessionFactory;
+    private final EntityType ENTITY_TYPE = EntityType.ITEM;
 
     //endregion
 
@@ -54,14 +66,14 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
 
         Item item = itemMapper.selectById(id);
-        if(item == null) return res;
+        if (item == null) return res;
 
         //get all episode
         List<Episode> episodes = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
-                        .eq(Episode::getRelatedType, EntityType.ITEM.getValue())
+                        .eq(Episode::getRelatedType, ENTITY_TYPE.getValue())
                         .eq(Episode::getRelatedId, item.getId())
-                        .orderByAsc(Episode::getDiscNum)
+                        .orderByAsc(Episode::getDiscNo)
                         .orderByAsc(Episode::getSerial)
         );
         if (episodes.isEmpty()) return res;
@@ -69,16 +81,16 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         int totalDuration = 0;
         int discDuration;
 
-        //grouping by Episode.discNum
+        //grouping by Episode.discNo
         Map<Integer, List<Episode>> episodeGroup = episodes.stream()
-                .collect(Collectors.groupingBy(Episode::getDiscNum));
+                .collect(Collectors.groupingBy(Episode::getDiscNo));
         //build
-        for (int discNum : episodeGroup.keySet()) {
+        for (int discNo : episodeGroup.keySet()) {
             discDuration = 0;
             AlbumDiscVO disc = new AlbumDiscVO();
-            disc.setSerial(discNum);
-            disc.generateCode(item.getCatalogId(), discNum);
-            for (Episode ep : episodeGroup.get(discNum)) {
+            disc.setSerial(discNo);
+            disc.generateCode(item.getCatalogId(), discNo);
+            for (Episode ep : episodeGroup.get(discNo)) {
                 AlbumTrackVO track = AlbumTrackVO.builder()
                         .serial(ep.getSerial())
                         .id(ep.getId())
@@ -106,7 +118,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     /**
      * 更新音轨信息
      *
-     * @param id    专辑id
+     * @param id     专辑id
      * @param serial 专辑碟片序号
      * @param tracks 音轨信息
      * @author rakbow
@@ -128,7 +140,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             duration = DateHelper.getDuration(track.getDuration());
             runTime += duration;
             ep.setDuration(duration);
-            ep.setDiscNum(serial);
+            ep.setDiscNo(serial);
             ep.setEpisodeType(0);
             eps.add(ep);
         }
@@ -139,12 +151,12 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
         //update album track disc duration
         ItemAlbum album = mapper.selectById(id);
-        int discNum = album.getDiscs() + 1;
+        int discNo = album.getDiscs() + 1;
         int trackNum = album.getTracks() + eps.size();
         runTime = album.getRunTime() + runTime;
         LambdaUpdateWrapper<ItemAlbum> wrapper = new LambdaUpdateWrapper<ItemAlbum>()
                 .eq(ItemAlbum::getId, id)
-                .set(ItemAlbum::getDiscs, discNum)
+                .set(ItemAlbum::getDiscs, discNo)
                 .set(ItemAlbum::getTracks, trackNum)
                 .set(ItemAlbum::getRunTime, runTime);
         mapper.update(null, wrapper);
@@ -181,7 +193,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                     Episode ep = Episode.builder()
                             .title(track.getTitle().replace("\t", ""))
                             .duration(DateHelper.getDuration(track.getDuration()))
-                            .discNum(discs.indexOf(disc)+1)
+                            .discNo(discs.indexOf(disc) + 1)
                             .serial(track.getSerial())
                             .relatedId(id)
                             .build();
@@ -190,18 +202,18 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 continue;
             }
             //update or delete
-            for(AlbumTrackVO track : tracks) {
+            for (AlbumTrackVO track : tracks) {
                 if (track.isUpdate()) {
                     Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
-                    if(ep == null) continue;
+                    if (ep == null) continue;
                     ep.setEditedTime(DateHelper.now());
                     ep.setTitle(track.getTitle().replace("\t", ""));
                     ep.setDuration(DateHelper.getDuration(track.getDuration()));
                     ep.setSerial(track.getSerial());
                     updateEpSet.add(ep);
-                }else if(track.isDelete()) {
+                } else if (track.isDelete()) {
                     Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
-                    if(ep == null) continue;
+                    if (ep == null) continue;
                     deleteEpSet.add(ep);
                 }
             }
@@ -217,5 +229,45 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     }
 
     //endregion
+
+    @SneakyThrows
+    @Transactional
+    public void uploadAlbumTrackFiles(MultipartFile[] files, long albumId) {
+        List<Episode> updateEps = new ArrayList<>();
+        Tag tag;
+        AudioFile audio;
+        File file;
+        Episode ep;
+        int discNo;
+        int serial;
+        List<String> artists;
+        List<String> composers;
+        List<Episode> eps = epMapper.selectList(
+                new LambdaQueryWrapper<Episode>()
+                        .eq(Episode::getRelatedType, ENTITY_TYPE.getValue())
+                        .eq(Episode::getRelatedId, albumId)
+        );
+        for (MultipartFile f : files) {
+            file = FileUtil.convertToTempFile(f);
+            audio = AudioFileIO.read(file);
+            tag = audio.getTag();
+            if (StringUtils.isBlank(tag.getFirst("DISCNO"))) {
+                discNo = 1;
+            } else {
+                discNo = Integer.parseInt(tag.getFirst("DISCNO"));
+            }
+            serial = Integer.parseInt(tag.getFirst("TRACKNUMBER"));
+            ep = DataFinder.findEpisodeByDiscNoAndSerial(discNo, serial, eps);
+            if (ep == null) continue;
+            artists = tag.getAll(FieldKey.ARTIST);
+            composers = tag.getAll(FieldKey.COMPOSER);
+            ep.setDetail(STR."Artists: \{String.join(", ", artists)}\nComposers: \{String.join(", ", composers)}\n");
+            updateEps.add(ep);
+            resourceSrv.uploadFileInfo(EntityType.EPISODE.getValue(), ep.getId(), file, Objects.requireNonNull(f.getOriginalFilename()));
+        }
+        MybatisBatch.Method<Episode> method = new MybatisBatch.Method<>(EpisodeMapper.class);
+        MybatisBatch<Episode> batchUpdate = new MybatisBatch<>(sqlSessionFactory, updateEps);
+        batchUpdate.execute(method.updateById());
+    }
 
 }

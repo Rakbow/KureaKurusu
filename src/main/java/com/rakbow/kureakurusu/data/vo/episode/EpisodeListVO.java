@@ -22,6 +22,8 @@ public class EpisodeListVO {
     private String duration;
     private long relatedType;
     private long relatedId;
+    private String addedTime;
+    private String editedTime;
 
     private EntityMiniVO parent = new EntityMiniVO();
 

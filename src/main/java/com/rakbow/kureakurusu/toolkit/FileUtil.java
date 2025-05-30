@@ -1,9 +1,13 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.emun.FileType;
+import lombok.SneakyThrows;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Path;
+import java.security.MessageDigest;
 
 /**
  * @author Rakbow
@@ -38,6 +42,33 @@ public class FileUtil {
                 file.delete();
             }
         }
+    }
+
+    @SneakyThrows
+    public static File convertToTempFile(MultipartFile multipartFile) {
+        File tempFile = File.createTempFile("upload_", STR."_\{multipartFile.getOriginalFilename()}");
+        multipartFile.transferTo(tempFile);
+        return tempFile;
+    }
+
+    @SneakyThrows
+    public static String getMd5(File file) {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = fis.read(buffer)) != -1) {
+                md.update(buffer, 0, read);
+            }
+        }
+
+        byte[] digest = md.digest();
+        // 转换为16进制字符串
+        StringBuilder sb = new StringBuilder();
+        for (byte b : digest) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }
 

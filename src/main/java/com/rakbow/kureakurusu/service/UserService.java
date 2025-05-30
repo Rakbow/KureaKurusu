@@ -96,7 +96,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         //generate login ticket
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
-        loginTicket.setTicket(CommonUtil.generateUUID());
+        loginTicket.setTicket(CommonUtil.generateUUID(0));
         int expiredSeconds = dto.getRememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS * 1000;
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
         loginTicketMapper.insert(loginTicket);

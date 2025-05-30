@@ -15,22 +15,31 @@ import com.rakbow.kureakurusu.data.dto.ImageListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.entity.resource.EntityFileRelated;
+import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.ImageDisplayVO;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
-import com.rakbow.kureakurusu.toolkit.DataSorter;
-import com.rakbow.kureakurusu.toolkit.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.tika.Tika;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Rakbow
@@ -46,6 +55,10 @@ public class ResourceService {
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
+    private final Tika tika = new Tika();
+
+    @Value("${kureakurusu.path.file}")
+    private String FILE_UPLOAD_DIR;
 
     private final static List<Integer> defaultImageType = Arrays.asList(
             ImageType.MAIN.getValue(),
@@ -139,6 +152,36 @@ public class ResourceService {
         redisUtil.set(String.format(key, ImageType.MAIN.getValue()), cover != null ? cover.getUrl() : defaultCover);
         Image thumb = DataFinder.findImageByEntityTypeEntityIdType(entityType, entityId, ImageType.THUMB.getValue(), images);
         redisUtil.set(String.format(key, ImageType.THUMB.getValue()), thumb != null ? thumb.getUrl() : defaultCover);
+    }
+
+    @SneakyThrows
+    @Transactional
+    public void uploadFileInfo(int entityType, long entityId, File file, String filename) {
+        String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
+        Path saveDir = Paths.get(FILE_UPLOAD_DIR, datePath);
+        Files.createDirectories(saveDir);
+
+        String ext = filename.substring(filename.lastIndexOf("."));
+        String newFileName = STR."\{CommonUtil.generateUUID(0)}\{ext}";
+
+        Path destPath = saveDir.resolve(newFileName);
+
+        Files.copy(file.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
+
+        FileInfo info = new FileInfo();
+        info.setName(filename);
+        info.setMime(tika.detect(file));
+        info.setSize(file.length());
+        info.setMd5(FileUtil.getMd5(file));
+        info.setPath(STR."/upload/\{datePath}/\{newFileName}");
+        info.setUploadUser(1L);
+        fileInfoMapper.insert(info);
+
+        EntityFileRelated related = new EntityFileRelated();
+        related.setEntityType(entityType);
+        related.setEntityId(entityId);
+        related.setFileId(info.getId());
+        fileRelatedMapper.insert(related);
     }
 
 }

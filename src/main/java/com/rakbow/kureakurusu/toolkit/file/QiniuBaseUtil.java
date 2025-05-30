@@ -8,10 +8,11 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
-import com.rakbow.kureakurusu.data.emun.FileType;
 import com.rakbow.kureakurusu.data.common.ActionResult;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.data.emun.FileType;
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,8 +85,8 @@ public class QiniuBaseUtil {
                 return ar.fail(I18nHelper.getMessage("file.format.unsupported", fileType.getNameZh()));
             }
 
-            // 通过随机UUID生成唯一文件名 长度：16
-            String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8)}.\{fileExt}";
+            // 通过随机UUID生成唯一文件名 长度：8
+            String fileName = STR."\{CommonUtil.generateUUID(8)}.\{fileExt}";
 
             // 生成完整文件名，例：album/11/xxx.jpg
             String fullFileName = filePath + fileName;
