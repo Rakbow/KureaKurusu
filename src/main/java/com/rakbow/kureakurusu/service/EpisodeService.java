@@ -106,7 +106,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, dto.getRelatedType())
                         .eq(Episode::getRelatedId, dto.getRelatedId())
-                        .eq(Episode::getDiscNum, dto.getDiscNum())
+                        .eq(Episode::getDiscNo, dto.getDiscNo())
                         .orderByAsc(Episode::getSerial)
         );
         List<Episode> nearEps = getNearbyRecords(allEps, dto.getId(), 10);

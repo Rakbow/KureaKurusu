@@ -16,7 +16,7 @@ public class EpisodeListVO {
 
     private Long id;
     private int serial;
-    private int discNum;
+    private int discNo;
     private String title;
     private String premiereDate;
     private String duration;

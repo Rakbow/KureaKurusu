@@ -38,7 +38,7 @@ public class Episode {
     private String premiereDate;//首播日期
     @AutoMapping(qualifiedByName = "getDuration")
     private int duration;//时长 单位：秒
-    private int discNum;//碟片序号
+    private int discNo;//碟片序号
     private int serial;//序号
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
@@ -58,7 +58,7 @@ public class Episode {
         titleEn = "";
         premiereDate = "";
         duration = 0;
-        discNum = 1;
+        discNo = 1;
         serial = 1;
         detail = "";
         episodeType = 0;

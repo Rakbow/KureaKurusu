@@ -39,11 +39,11 @@ public class AlbumDiscVO {
         return action == DataActionType.INSERT.getValue();
     }
 
-    public void generateCode(String catalogNo, int discNum) {
+    public void generateCode(String catalogNo, int discNo) {
         if(StringUtils.isBlank(catalogNo))
             code = EMPTY;
         else
-            code = catalogNo + BAR + discNum;
+            code = catalogNo + BAR + discNo;
     }
 
 }

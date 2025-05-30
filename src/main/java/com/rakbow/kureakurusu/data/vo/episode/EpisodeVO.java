@@ -17,7 +17,7 @@ public class EpisodeVO {
     private String titleEn;
     private String premiereDate;
     private String duration;
-    private int discNum;
+    private int discNo;
     private int serial;
     private String detail;
     private int episodeType;

@@ -2,14 +2,11 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.EpisodeDeleteCmd;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
 import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EpisodeService;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Rakbow
