@@ -1,8 +1,7 @@
 package com.rakbow.kureakurusu.data.vo;
 
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;

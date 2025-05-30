@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

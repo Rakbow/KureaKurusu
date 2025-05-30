@@ -7,7 +7,7 @@ import com.rakbow.kureakurusu.data.entity.entry.Person;
 import com.rakbow.kureakurusu.data.entity.entry.Product;
 import com.rakbow.kureakurusu.data.entity.entry.Subject;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 
 import java.util.ArrayList;
 import java.util.Collections;

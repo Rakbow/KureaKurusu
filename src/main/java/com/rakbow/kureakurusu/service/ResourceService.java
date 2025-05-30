@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rakbow.kureakurusu.dao.EntityFileRelatedMapper;
+import com.rakbow.kureakurusu.dao.FileInfoMapper;
 import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.RedisKey;
@@ -13,7 +15,7 @@ import com.rakbow.kureakurusu.data.dto.ImageListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.ImageDisplayVO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
@@ -39,6 +41,8 @@ import java.util.List;
 public class ResourceService {
 
     private final ImageMapper imageMapper;
+    private final FileInfoMapper fileInfoMapper;
+    private final EntityFileRelatedMapper fileRelatedMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;

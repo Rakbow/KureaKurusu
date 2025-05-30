@@ -1,14 +1,16 @@
 package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.toolkit.*;
 import jakarta.annotation.Resource;
 import org.junit.Test;
@@ -130,6 +132,30 @@ public class RedisTests {
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
             Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
                     .eq(Image::getEntityType, EntityType.ITEM.getValue())
+                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
+            redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
+            redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
+            System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
+        });
+    }
+
+    @Test
+    public void batchUpdateEntryCoverAndThumbRedisCache() {
+        int type = EntityType.CHARACTER.getValue();
+        Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
+        BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
+        List<Entry> entries = subMapper.selectList(null);
+        redisUtil.delete("entity_image_cache:*");
+        String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{type}:%s";
+        String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{type}:%s";
+        int total = entries.size();
+        AtomicInteger cur = new AtomicInteger();
+        entries.forEach(i -> {
+            Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+                    .eq(Image::getEntityType, type)
+                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
+            Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+                    .eq(Image::getEntityType, type)
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
             redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
             redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());

@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data;
 
-import com.rakbow.kureakurusu.data.image.Image;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 import lombok.Data;
 
 import java.util.ArrayList;

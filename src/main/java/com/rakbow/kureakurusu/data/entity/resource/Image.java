@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.image;
+package com.rakbow.kureakurusu.data.entity.resource;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;

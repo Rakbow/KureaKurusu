@@ -11,10 +11,8 @@ import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Rakbow
@@ -57,6 +55,15 @@ public class ItemExtendController {
     @PostMapping("get-exc-related-entries")
     public ApiResult getRelatedEntries(@RequestBody CommonDetailQry qry) {
         return new ApiResult().load(reSrv.getItemRelatedSubject(qry.getId()));
+    }
+
+    @PostMapping("/upload-album-track-files")
+    public ApiResult uploadAlbumTrackFiles(
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam("albumId") long albumId
+    ) {
+        albumSrv.uploadAlbumTrackFiles(files, albumId);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
     }
 
 }
