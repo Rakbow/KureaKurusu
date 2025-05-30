@@ -31,41 +31,36 @@ public class DataFinder {
 
     //region album
 
-    public static Entry findEntityById(Long id, List<Entry> items) {
+    public static Entry findEntityById(Long id, List<Entry> list) {
         entityFinder.setId(id);
-        int idx = Collections.binarySearch(items, entityFinder, DataSorter.entitySortById);
-        if (idx >= 0) return items.get(idx);
-        return null;
+        int idx = Collections.binarySearch(list, entityFinder, DataSorter.entryIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Subject findEntryById(Long id, List<Subject> items) {
+    public static Subject findEntryById(Long id, List<Subject> list) {
         subjectFinder.setId(id);
-        int idx = Collections.binarySearch(items, subjectFinder, DataSorter.entryIdSorter);
-        if (idx >= 0) return items.get(idx);
-        return null;
+        int idx = Collections.binarySearch(list, subjectFinder, DataSorter.subjectIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Image findImageByEntityTypeEntityIdType(int entityType, long entityId, int type, List<Image> images) {
+    public static Image findImageByEntityTypeEntityIdType(int entityType, long entityId, int type, List<Image> list) {
         imageFinder.setEntityType(entityType);
         imageFinder.setEntityId(entityId);
         imageFinder.setType(type);
-        int idx = Collections.binarySearch(images, imageFinder, DataSorter.imageEntityTypeEntityIdTypeSorter);
-        if (idx >= 0) return images.get(idx);
-        return null;
+        int idx = Collections.binarySearch(list, imageFinder, DataSorter.imageEntityTypeEntityIdTypeSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Item findItemById(Long id, List<Item> items) {
+    public static Item findItemById(Long id, List<Item> list) {
         itemFinder.setId(id);
-        int idx = Collections.binarySearch(items, itemFinder, DataSorter.itemIdSorter);
-        if (idx >= 0) return items.get(idx);
-        return null;
+        int idx = Collections.binarySearch(list, itemFinder, DataSorter.itemIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Product findProductById(Long id, List<Product> products) {
+    public static Product findProductById(Long id, List<Product> list) {
         productFinder.setId(id);
-        int idx = Collections.binarySearch(products, productFinder, DataSorter.productIdSorter);
-        if (idx >= 0) return products.get(idx);
-        return null;
+        int idx = Collections.binarySearch(list, productFinder, DataSorter.productIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
     //endregion
@@ -75,32 +70,32 @@ public class DataFinder {
     /**
      * 根据Value从指定attributes列表中查找
      *
-     * @param value,attributes 查找id和json列表
+     * @param value,list 查找id和json列表
      * @return json
      * @author rakbow
      */
-    public static Attribute<Integer> findAttributeByValue(int value, List<Attribute<Integer>> attributes) {
+    public static Attribute<Integer> findAttributeByValue(int value, List<Attribute<Integer>> list) {
         Attribute<Integer> finder = new Attribute<>();
         finder.setValue(value);
-        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesIntValueSorter);
-        return idx >= 0 ? attributes.get(idx) : null;
+        int idx = Collections.binarySearch(list, finder, DataSorter.attributesIntValueSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Attribute<Long> findAttributeByValue(long value, List<Attribute<Long>> attributes) {
+    public static Attribute<Long> findAttributeByValue(long value, List<Attribute<Long>> list) {
         Attribute<Long> finder = new Attribute<>();
         finder.setValue(value);
-        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesLongValueSorter);
-        return idx >= 0 ? attributes.get(idx) : null;
+        int idx = Collections.binarySearch(list, finder, DataSorter.attributesLongValueSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Attribute<String> findAttributeByValue(String value, List<Attribute<String>> attributes) {
+    public static Attribute<String> findAttributeByValue(String value, List<Attribute<String>> list) {
         Attribute<String> finder = new Attribute<>();
         finder.setValue(value);
-        int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesStringValueSorter);
-        return idx >= 0 ? attributes.get(idx) : null;
+        int idx = Collections.binarySearch(list, finder, DataSorter.attributesStringValueSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static List<Attribute<Integer>> findAttributesByValues(int[] values, List<Attribute<Integer>> attributes) {
+    public static List<Attribute<Integer>> findAttributesByValues(int[] values, List<Attribute<Integer>> list) {
 
         List<Attribute<Integer>> res = new ArrayList<>();
 
@@ -109,26 +104,33 @@ public class DataFinder {
         Attribute<Integer> finder = new Attribute<>();
         for (int value : values) {
             finder.setValue(value);
-            int idx = Collections.binarySearch(attributes, finder, DataSorter.attributesIntValueSorter);
+            int idx = Collections.binarySearch(list, finder, DataSorter.attributesIntValueSorter);
             if (idx >= 0) {
-                res.add(attributes.get(idx));
+                res.add(list.get(idx));
             }
         }
         return res;
     }
 
-    public static Person findPersonById(long id, List<Person> persons) {
+    public static Person findPersonById(long id, List<Person> list) {
         personFinder.setId(id);
-        int idx = Collections.binarySearch(persons, personFinder, DataSorter.personIdSorter);
-        return idx >= 0 ? persons.get(idx) : null;
+        int idx = Collections.binarySearch(list, personFinder, DataSorter.personIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
     //endregion
 
-    public static Episode findEpisodeById(long id, List<Episode> episodes) {
+    public static Episode findEpisodeById(long id, List<Episode> list) {
         episodeFinder.setId(id);
-        int idx = Collections.binarySearch(episodes, episodeFinder, DataSorter.episodeIdSorter);
-        return idx >= 0 ? episodes.get(idx) : null;
+        int idx = Collections.binarySearch(list, episodeFinder, DataSorter.episodeIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
+    }
+
+    public static Episode findEpisodeByDiscNoAndSerial(int discNo, int serial, List<Episode> list) {
+        episodeFinder.setDiscNo(discNo);
+        episodeFinder.setSerial(serial);
+        int idx = Collections.binarySearch(list, episodeFinder, DataSorter.episodeSortByDiscNoAndSerial);
+        return idx >= 0 ? list.get(idx) : null;
     }
 
 }
