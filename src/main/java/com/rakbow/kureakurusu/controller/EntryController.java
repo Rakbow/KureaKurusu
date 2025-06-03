@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -51,11 +52,19 @@ public class EntryController {
     }
 
     @PostMapping("upload-image")
-    public ApiResult uploadImage(@RequestBody ImageCreateDTO dto) {
+    public ApiResult uploadImage(
+            @RequestPart("entityType") int entityType,
+            @RequestPart("entityId") int entityId,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("imageType") int imageType
+    ) {
         ApiResult res = new ApiResult();
         //check
-        if (dto.getImages().isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
-        res.load(srv.uploadImage(dto.getEntityType(), dto.getEntityId(), dto.getImages().getFirst()));
+        ImageMiniDTO image = new ImageMiniDTO();
+        image.setFile(file);
+        image.setType(imageType);
+        if (file.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
+        res.load(srv.uploadImage(entityType, entityId, image));
         return res.ok(I18nHelper.getMessage("image.update.success"));
     }
 

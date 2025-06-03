@@ -5,12 +5,15 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,12 +42,23 @@ public class ResourceController {
         return new ApiResult().load(srv.getEntityDisplayImages(qry.getEntityType(), qry.getEntityId()));
     }
 
-    @PostMapping("add-image")
-    public ApiResult addEntityImage(@RequestBody ImageCreateDTO dto) {
+    @PostMapping("upload-image")
+    public ApiResult addEntityImage(
+            @RequestParam("entityType") int entityType,
+            @RequestParam("entityId") int entityId,
+            @RequestParam("infos") String infoStr,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("generateThumb") boolean generateThumb
+    ) {
+        List<ImageCreateDTO> infos = JsonUtil.toJavaList(infoStr, ImageCreateDTO.class);
+        List<ImageMiniDTO> images = new ArrayList<>();
+        for(int i = 0;i<infos.size();i++) {
+            images.add(new ImageMiniDTO(infos.get(i), files.get(i)));
+        }
         //check
-        if (dto.getImages().isEmpty()) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
+        if (images.isEmpty()) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
         //save
-        srv.addEntityImage(dto.getEntityType(), dto.getEntityId(), dto.getImages(), false);
+        srv.addEntityImage(entityType, entityId, images, generateThumb);
         return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
     }
 

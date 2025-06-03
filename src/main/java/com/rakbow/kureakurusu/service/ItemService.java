@@ -29,6 +29,7 @@ import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -293,6 +294,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //save related entities
         relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, relatedEntities);
         //save image
+        images.forEach(i -> i.setFile(CommonImageUtil.base64ToMultipartFile(i.getBase64Code())));
         resourceSrv.addEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
 
         return id;

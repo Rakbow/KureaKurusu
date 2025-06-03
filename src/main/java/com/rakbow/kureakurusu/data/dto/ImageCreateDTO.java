@@ -15,8 +15,8 @@ import java.util.List;
 @Data
 public class ImageCreateDTO extends DTO {
 
-    private int entityType;
-    private long entityId;
-    private List<ImageMiniDTO> images;
+    private String name;
+    private int type;
+    private String detail;
 
 }

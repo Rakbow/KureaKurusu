@@ -13,10 +13,14 @@ import com.rakbow.kureakurusu.data.segmentImagesResult;
 import lombok.SneakyThrows;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Base64;
 import java.util.EnumMap;
 import java.util.List;
@@ -149,14 +153,11 @@ public class CommonImageUtil {
         });
     }
 
-    @SneakyThrows
-    public static ImageMiniDTO generateThumb(ImageMiniDTO cover) {
-        ImageMiniDTO thumb = new ImageMiniDTO();
-        thumb.setName("Thumb");
-        thumb.setType(ImageType.THUMB.getValue());
 
+    @SneakyThrows
+    public static String generateThumb(String coverBase64Code) {
         // 提取文件类型（例如 "jpeg"）
-        String[] parts = cover.getBase64Code().split(";base64,");
+        String[] parts = coverBase64Code.split(";base64,");
         String dataType = parts[0];  // "data:image/jpeg"
         String base64code = parts[1];  // Base64编码部分
 
@@ -166,8 +167,70 @@ public class CommonImageUtil {
                 .size(THUMB_SIZE_64, THUMB_SIZE_64)
                 .outputFormat("jpg")
                 .toOutputStream(os);
-        thumb.setBase64Code(STR."\{dataType};base64,\{Base64.getEncoder().encodeToString(os.toByteArray())}");
+        return STR."\{dataType};base64,\{Base64.getEncoder().encodeToString(os.toByteArray())}";
+    }
+
+    @SneakyThrows
+    public static String getBase64CodeByUrl(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            URLConnection connection = url.openConnection();
+            String contentType = connection.getContentType(); // 如 image/jpeg
+
+            try (InputStream in = connection.getInputStream()) {
+                byte[] imageBytes = in.readAllBytes();
+                String base64 = Base64.getEncoder().encodeToString(imageBytes);
+                return STR."data:\{contentType};base64,\{base64}";
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get image from URL", e);
+        }
+    }
+
+    @SneakyThrows
+    public static ImageMiniDTO generateThumb(ImageMiniDTO cover) {
+        ImageMiniDTO thumb = new ImageMiniDTO();
+        thumb.setName("Thumb");
+        thumb.setType(ImageType.THUMB.getValue());
+
+
+        MultipartFile originalFile = cover.getFile();
+
+        // 生成缩略图到内存
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Thumbnails.of(originalFile.getInputStream())
+                .size(THUMB_SIZE_64, THUMB_SIZE_64)
+                .outputFormat("jpg")
+                .toOutputStream(os);
+
+        byte[] thumbBytes = os.toByteArray();
+        // 创建 MultipartFile 对象（MockMultipartFile 实现类）
+        MultipartFile thumbFile = new MockMultipartFile(
+                "file",                              // 字段名
+                "Thumb.jpg",                         // 文件名
+                "image/jpeg",                        // MIME 类型
+                thumbBytes                           // 内容
+        );
+
+        // 设置生成的 MultipartFile 到 DTO
+        thumb.setFile(thumbFile);
         return thumb;
+    }
+
+    @SneakyThrows
+    public static MultipartFile base64ToMultipartFile(String base64) {
+        String[] parts = base64.split(",");
+        String base64Data = parts.length > 1 ? parts[1] : parts[0];
+
+        // 提取 MIME 类型（可选）
+        String contentType = "application/octet-stream";
+        if (parts[0].contains("data:") && parts[0].contains(";")) {
+            contentType = parts[0].substring(parts[0].indexOf(":") + 1, parts[0].indexOf(";"));
+        }
+
+        byte[] fileBytes = Base64.getDecoder().decode(base64Data);
+
+        return new MockMultipartFile("file", "filename", contentType, fileBytes);
     }
 
 }

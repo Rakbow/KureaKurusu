@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
+import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
+import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import jakarta.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -41,6 +46,10 @@ public class RedisTests {
     private RedisUtil redisUtil;
     @Resource
     private PopularUtil popularUtil;
+    @Resource
+    private QiniuImageUtil qiniuImageUtil;
+    @Resource
+    private ResourceService resourceSrv;
 
 //    @Test
 //    public void deleteAllCache() {
@@ -124,19 +133,39 @@ public class RedisTests {
         redisUtil.delete("entity_image_cache:*");
         String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{EntityType.ITEM.getValue()}:%s";
         String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{EntityType.ITEM.getValue()}:%s";
+
+        String curThumb;
+
         int total = items.size();
         AtomicInteger cur = new AtomicInteger();
-        items.forEach(i -> {
+        for(Item i : items) {
             Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
                     .eq(Image::getEntityType, EntityType.ITEM.getValue())
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
             Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
                     .eq(Image::getEntityType, EntityType.ITEM.getValue())
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
+
+            if(thumb != null) {
+                curThumb = thumb.getUrl();
+            }else if(cover != null) {
+                String coverBase64Code = CommonImageUtil.getBase64CodeByUrl(cover.getUrl());
+                String thumbBase64Code = CommonImageUtil.generateThumb(coverBase64Code);
+                ImageMiniDTO thumbDto = new ImageMiniDTO();
+                // thumbDto.setBase64Code(thumbBase64Code);
+                thumbDto.setName("Thumb");
+                thumbDto.setType(ImageType.THUMB.getValue());
+                Image thumbImage = qiniuImageUtil.commonAddImages(EntityType.ITEM.getValue(), i.getId(), List.of(thumbDto)).getFirst();
+                imageMapper.insert(thumbImage);
+                curThumb = thumbImage.getUrl();
+            }else {
+                curThumb = CommonConstant.EMPTY_IMAGE_URL;
+            }
+
             redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
-            redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
+            redisUtil.set(String.format(thumbKey, i.getId()), curThumb);
             System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
-        });
+        }
     }
 
     @Test

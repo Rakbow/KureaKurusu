@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -33,6 +35,8 @@ public class QiniuImageUtil {
     private final static String THUMBNAIL_URL = "?imageMogr2/auto-orient/thumbnail/";
     @Value("${kureakurusu.qiniu.image.domain}")
     private static String FILE_DOMAIN;
+
+    private static final Tika tika = new Tika();
 
     /**
      * 通用新增图片
@@ -198,26 +202,25 @@ public class QiniuImageUtil {
         uploadImage res = new uploadImage();
         //generate upload file pre-fix
         res.setPrefixKey(STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_");
-
-        // 提取文件类型（例如 "jpeg"）
-        String[] parts = image.getBase64Code().split(";base64,");
-        String dataType = parts[0];  // "data:image/jpeg"
-        String base64code = parts[1];  // Base64编码部分
+        res.setData(image.getFile().getBytes());
 
         // 提取文件后缀（例如 "jpeg"）
-        String extension = dataType.split("/")[1];  // "jpeg"
+        String originalFilename = image.getFile().getOriginalFilename();
+        assert originalFilename != null;
+        String extension;
+        if(!originalFilename.contains(".")) {
+            String mimeType = tika.detect(image.getFile().getInputStream());
+            MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+            extension = allTypes.forName(mimeType).getExtension().replace(".", "");
+        }else {
+            extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        }
         if(StringUtils.equals(extension, "jpeg")) extension = "jpg";
         // 检测格式是否支持
         if (FileUtil.isFileFormatAllowed(extension, FileType.IMAGE)) {
             throw new Exception(I18nHelper.getMessage("file.format.unsupported", FileType.IMAGE.getNameZh()));
         }
         res.setExtension(extension);
-
-        // encode Base64
-        byte[] fileData = Base64.getDecoder().decode(base64code);
-        // 检测文件是否为空
-        if (fileData.length == 0) throw new Exception(I18nHelper.getMessage("file.empty"));
-        res.setData(fileData);
 
         return res;
     }
