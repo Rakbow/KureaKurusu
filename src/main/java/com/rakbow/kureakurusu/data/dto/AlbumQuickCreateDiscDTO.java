@@ -16,7 +16,6 @@ import java.util.List;
 public class AlbumQuickCreateDiscDTO extends DTO {
 
     private long id;
-    private int serial;
     private List<AlbumTrackVO> tracks;//碟片列表
 
 }

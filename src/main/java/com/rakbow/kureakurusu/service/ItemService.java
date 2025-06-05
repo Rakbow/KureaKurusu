@@ -18,6 +18,7 @@ import com.rakbow.kureakurusu.data.dto.ItemSearchParams;
 import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
@@ -28,6 +29,7 @@ import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemVO;
+import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
@@ -52,6 +54,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     //region inject
     private final ResourceService resourceSrv;
     private final RelationService relationSrv;
+    private final AlbumService albumSrv;
 
     private final RedisUtil redisUtil;
     private final QiniuImageUtil qiniuImageUtil;
@@ -296,6 +299,11 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //save image
         images.forEach(i -> i.setFile(CommonImageUtil.base64ToMultipartFile(i.getBase64Code())));
         resourceSrv.addEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
+
+        //save episode
+        if(item.getType().intValue() == ItemType.ALBUM.getValue()) {
+            albumSrv.quickCreateAlbumTrack(id, ((AlbumCreateDTO) item).getTrackList(), false);
+        }
 
         return id;
     }

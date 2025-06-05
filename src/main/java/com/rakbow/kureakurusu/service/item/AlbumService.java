@@ -10,8 +10,6 @@ import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
-import com.rakbow.kureakurusu.data.entity.resource.EntityFileRelated;
-import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
@@ -119,13 +117,12 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
      * 更新音轨信息
      *
      * @param id     专辑id
-     * @param serial 专辑碟片序号
      * @param tracks 音轨信息
      * @author rakbow
      */
     @SneakyThrows
     @Transactional
-    public void quickCreateAlbumDisc(long id, int serial, List<AlbumTrackVO> tracks) {
+    public void quickCreateAlbumTrack(long id, List<AlbumTrackVO> tracks, boolean updateAlbum) {
 
         int runTime = 0;
         int duration;
@@ -140,7 +137,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             duration = DateHelper.getDuration(track.getDuration());
             runTime += duration;
             ep.setDuration(duration);
-            ep.setDiscNo(serial);
+            ep.setDiscNo(track.getDiscNo());
             ep.setEpisodeType(0);
             eps.add(ep);
         }
@@ -150,6 +147,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         batchInsert.execute(method.insert());
 
         //update album track disc duration
+        if(!updateAlbum) return;
         ItemAlbum album = mapper.selectById(id);
         int discNo = album.getDiscs() + 1;
         int trackNum = album.getTracks() + eps.size();

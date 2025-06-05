@@ -12,11 +12,12 @@ import lombok.Data;
 @Data
 public class AlbumTrackVO {
 
-    private int serial;//音轨序号
-    private long id;//Episode Id
-    private String title;//音轨标题(原)
-    private String titleEn;//音轨标题(英)
-    private String duration;//音轨时长 hh:mm:ss
+    private int discNo;
+    private int serial;
+    private long id;
+    private String title;
+    private String titleEn;
+    private String duration;
 
     private int action;
 

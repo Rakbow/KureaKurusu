@@ -29,9 +29,9 @@ public class ItemExtendController {
     private final RelationService reSrv;
     //endregion
 
-    @PostMapping("quick-add-album-disc")
-    public ApiResult batchAddAlbumTrack(@RequestBody AlbumQuickCreateDiscDTO dto) {
-        albumSrv.quickCreateAlbumDisc(dto.getId(), dto.getSerial(), dto.getTracks());
+    @PostMapping("quick-create-album-disc")
+    public ApiResult quickCreateAlbumTrack(@RequestBody AlbumQuickCreateDiscDTO dto) {
+        albumSrv.quickCreateAlbumTrack(dto.getId(), dto.getTracks(), true);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
     }
 
