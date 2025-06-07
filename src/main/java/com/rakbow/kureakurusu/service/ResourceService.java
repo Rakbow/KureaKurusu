@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rakbow.kureakurusu.dao.EntityFileRelatedMapper;
+import com.rakbow.kureakurusu.dao.FileRelatedMapper;
 import com.rakbow.kureakurusu.dao.FileInfoMapper;
 import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
@@ -15,7 +15,7 @@ import com.rakbow.kureakurusu.data.dto.ImageListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.entity.resource.EntityFileRelated;
+import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.ImageDisplayVO;
@@ -39,7 +39,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Rakbow
@@ -51,7 +50,7 @@ public class ResourceService {
 
     private final ImageMapper imageMapper;
     private final FileInfoMapper fileInfoMapper;
-    private final EntityFileRelatedMapper fileRelatedMapper;
+    private final FileRelatedMapper fileRelatedMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
@@ -154,34 +153,58 @@ public class ResourceService {
         redisUtil.set(String.format(key, ImageType.THUMB.getValue()), thumb != null ? thumb.getUrl() : defaultCover);
     }
 
+    // @SneakyThrows
+    // @Transactional
+    // public void uploadFileInfo(int entityType, long entityId, File file) {
+    //     String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
+    //     Path saveDir = Paths.get(FILE_UPLOAD_DIR, datePath);
+    //     Files.createDirectories(saveDir);
+    //
+    //     String filename = file.getName();
+    //     String newFileName = getNewFilename(filename);
+    //
+    //     Path destPath = saveDir.resolve(newFileName);
+    //
+    //     Files.copy(file.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
+    //     file.delete();
+    //
+    //     FileInfo info = new FileInfo();
+    //     info.setName(filename);
+    //     info.setMime(tika.detect(file));
+    //     info.setSize(file.length());
+    //     info.setPath(STR."/upload/\{datePath}/\{newFileName}");
+    //     fileInfoMapper.insert(info);
+    //
+    //     FileRelated related = new FileRelated();
+    //     related.setEntityType(entityType);
+    //     related.setEntityId(entityId);
+    //     related.setFileId(info.getId());
+    //     fileRelatedMapper.insert(related);
+    // }
+
     @SneakyThrows
-    @Transactional
-    public void uploadFileInfo(int entityType, long entityId, File file, String filename) {
+    public FileRelated generateFileRelated(int entityType, long entityId, File file) {
         String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
         Path saveDir = Paths.get(FILE_UPLOAD_DIR, datePath);
+
         Files.createDirectories(saveDir);
-
-        String ext = filename.substring(filename.lastIndexOf("."));
-        String newFileName = STR."\{CommonUtil.generateUUID(0)}\{ext}";
-
+        String filename = file.getName();
+        String newFileName = FileUtil.getNewFilename(filename);
         Path destPath = saveDir.resolve(newFileName);
-
         Files.copy(file.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
 
         FileInfo info = new FileInfo();
         info.setName(filename);
         info.setMime(tika.detect(file));
         info.setSize(file.length());
-        info.setMd5(FileUtil.getMd5(file));
         info.setPath(STR."/upload/\{datePath}/\{newFileName}");
-        info.setUploadUser(1L);
-        fileInfoMapper.insert(info);
 
-        EntityFileRelated related = new EntityFileRelated();
+        FileRelated related = new FileRelated();
         related.setEntityType(entityType);
         related.setEntityId(entityId);
-        related.setFileId(info.getId());
-        fileRelatedMapper.insert(related);
+        related.setFileInfo(info);
+
+        return related;
     }
 
 }

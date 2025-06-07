@@ -8,8 +8,11 @@ import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.item.Album;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
+import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
+import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
@@ -17,6 +20,7 @@ import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
+import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -82,12 +86,22 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         //grouping by Episode.discNo
         Map<Integer, List<Episode>> episodeGroup = episodes.stream()
                 .collect(Collectors.groupingBy(Episode::getDiscNo));
+
+
+        List<String> catalogIds = ItemUtil.expandAlbumRange(item.getCatalogId());
+        boolean isCatalogIdEqualDiscNo = catalogIds.size() == episodeGroup.keySet().size();
         //build
         for (int discNo : episodeGroup.keySet()) {
             discDuration = 0;
             AlbumDiscVO disc = new AlbumDiscVO();
             disc.setSerial(discNo);
-            disc.generateCode(item.getCatalogId(), discNo);
+
+            if (isCatalogIdEqualDiscNo) {
+                disc.setCode(catalogIds.get(discNo - 1));
+            } else {
+                disc.generateCode(item.getCatalogId(), discNo);
+            }
+
             for (Episode ep : episodeGroup.get(discNo)) {
                 AlbumTrackVO track = AlbumTrackVO.builder()
                         .serial(ep.getSerial())
@@ -147,7 +161,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         batchInsert.execute(method.insert());
 
         //update album track disc duration
-        if(!updateAlbum) return;
+        if (!updateAlbum) return;
         ItemAlbum album = mapper.selectById(id);
         int discNo = album.getDiscs() + 1;
         int trackNum = album.getTracks() + eps.size();
@@ -232,40 +246,73 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     @Transactional
     public void uploadAlbumTrackFiles(MultipartFile[] files, long albumId) {
         List<Episode> updateEps = new ArrayList<>();
+        List<FileInfo> addFiles = new ArrayList<>();
+        List<FileRelated> addFileRelatedList = new ArrayList<>();
         Tag tag;
         AudioFile audio;
         File file;
         Episode ep;
         int discNo;
-        int serial;
+        int trackNo;
         List<String> artists;
         List<String> composers;
+        String discCode;
+        StringBuilder epDetail = new StringBuilder();
+        Item album = itemMapper.selectById(albumId);
         List<Episode> eps = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, ENTITY_TYPE.getValue())
                         .eq(Episode::getRelatedId, albumId)
         );
+        int discCount = eps.stream().mapToInt(Episode::getDiscNo).max().orElseThrow();
+
+        List<String> catalogIds = ItemUtil.expandAlbumRange(album.getCatalogId());
+        boolean isCatalogIdEqualDiscNo = catalogIds.size() == discCount;
+
         for (MultipartFile f : files) {
             file = FileUtil.convertToTempFile(f);
             audio = AudioFileIO.read(file);
             tag = audio.getTag();
-            if (StringUtils.isBlank(tag.getFirst("DISCNO"))) {
-                discNo = 1;
-            } else {
-                discNo = Integer.parseInt(tag.getFirst("DISCNO"));
-            }
-            serial = Integer.parseInt(tag.getFirst("TRACKNUMBER"));
-            ep = DataFinder.findEpisodeByDiscNoAndSerial(discNo, serial, eps);
+            discNo = tag.hasField(FieldKey.DISC_NO) ? Integer.parseInt(tag.getFirst(FieldKey.DISC_NO)) : 1;
+            trackNo = Integer.parseInt(tag.getFirst("TRACKNUMBER"));
+            ep = DataFinder.findEpisodeByDiscNoAndSerial(discNo, trackNo, eps);
             if (ep == null) continue;
+            //update episode detail
             artists = tag.getAll(FieldKey.ARTIST);
             composers = tag.getAll(FieldKey.COMPOSER);
-            ep.setDetail(STR."Artists: \{String.join(", ", artists)}\nComposers: \{String.join(", ", composers)}\n");
+
+            if(!artists.isEmpty()) epDetail.append(STR."Artists: \{String.join(", ", artists)}");
+            if(!composers.isEmpty()) epDetail.append(STR."\n\nComposers: \{String.join(", ", composers)}");
+
+            ep.setDetail(epDetail.toString());
             updateEps.add(ep);
-            resourceSrv.uploadFileInfo(EntityType.EPISODE.getValue(), ep.getId(), file, Objects.requireNonNull(f.getOriginalFilename()));
+
+            FileRelated related = resourceSrv.generateFileRelated(EntityType.EPISODE.getValue(), ep.getId(), file);
+            addFileRelatedList.add(related);
+            addFiles.add(related.getFileInfo());
+
+            //update file name
+            if (isCatalogIdEqualDiscNo) {
+                discCode = STR."\{catalogIds.get(ep.getDiscNo()-1)}_\{ep.getSerial()}";
+            }else {
+                discCode = STR."\{catalogIds.getFirst()}_\{ep.getDiscNo()}_\{ep.getSerial()}";
+            }
+            related.getFileInfo().setName(discCode);
         }
-        MybatisBatch.Method<Episode> method = new MybatisBatch.Method<>(EpisodeMapper.class);
-        MybatisBatch<Episode> batchUpdate = new MybatisBatch<>(sqlSessionFactory, updateEps);
-        batchUpdate.execute(method.updateById());
+
+        MybatisBatch.Method<Episode> epMethod = new MybatisBatch.Method<>(EpisodeMapper.class);
+        MybatisBatch.Method<FileInfo> fileMethod = new MybatisBatch.Method<>(FileInfoMapper.class);
+        MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
+
+        MybatisBatch<Episode> epBatchUpdate = new MybatisBatch<>(sqlSessionFactory, updateEps);
+        MybatisBatch<FileInfo> fBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFiles);
+        MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
+
+        epBatchUpdate.execute(epMethod.updateById());
+        fBatchInsert.execute(fileMethod.insert());
+
+        addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
+        frBatchInsert.execute(fileRelatedMethod.insert());
     }
 
 }

@@ -51,6 +51,11 @@ public class FileUtil {
         return tempFile;
     }
 
+    public static String getNewFilename(String filename) {
+        String ext = filename.substring(filename.lastIndexOf("."));
+        return STR."\{CommonUtil.generateUUID(0)}\{ext}";
+    }
+
     @SneakyThrows
     public static String getMd5(File file) {
         MessageDigest md = MessageDigest.getInstance("MD5");

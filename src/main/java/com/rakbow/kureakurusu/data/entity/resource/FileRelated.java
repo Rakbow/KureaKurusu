@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.data.entity.resource;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
@@ -17,8 +19,8 @@ import java.sql.Timestamp;
  */
 @Data
 @NoArgsConstructor
-@TableName(value = "entity_file_related", autoResultMap = true)
-public class EntityFileRelated {
+@TableName(value = "file_related", autoResultMap = true)
+public class FileRelated {
 
     private Long id = 0L;
     private Integer entityType;
@@ -31,5 +33,8 @@ public class EntityFileRelated {
     private Timestamp addedTime;
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;
+
+    @TableField(exist = false)
+    private FileInfo fileInfo;
 
 }

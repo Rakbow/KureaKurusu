@@ -9,6 +9,7 @@ import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
 import java.sql.Timestamp;
 
 /**
@@ -24,15 +25,16 @@ public class FileInfo {
     private String name;
     private String mime;
     private Long size;
-    private String md5;
     private String path;
     private String remark;
-    private Long uploadUser;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     @AutoMapping(qualifiedByName = "getVOTime")
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private Timestamp uploadTime;
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;
+
+    @TableField(exist = false)
+    private File file;
 
 }
