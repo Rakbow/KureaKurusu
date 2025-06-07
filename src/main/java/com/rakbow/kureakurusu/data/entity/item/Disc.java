@@ -1,55 +1,42 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.rakbow.kureakurusu.data.vo.item.DiscListVO;
+import com.rakbow.kureakurusu.data.vo.item.DiscVO;
+import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rakbow
  * @since 2022-11-27 18:49
  */
-@Data
 @EqualsAndHashCode(callSuper = true)
+@Data
 @ToString(callSuper = true)
-@TableName(value = "disc", autoResultMap = true)
+@AutoMappers({
+        @AutoMapper(target = DiscListVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = DiscVO.class, reverseConvertGenerate = false)
+})
 public class Disc extends SuperItem {
 
-//    private Long id;
-//    private String catalogNo;
-//    private String name;
-//    private String nameZh;
-//    private String nameEn;
-//    private String ean13;
-//    private String releaseDate;
-//    private double price;//发行价格（含税）
-//    private Currency currency;
-//    private List<Integer> mediaFormat;
-//    private Version version;
-//    private String spec;
-//    private int hasBonus;
-//    private String bonus;
-//
-//    public Disc () {
-//        this.id = 0L;
-//        this.catalogNo = "";
-//        this.name = "";
-//        this.nameZh = "";
-//        this.nameEn = "";
-//        this.ean13 = "";
-//        this.releaseDate = null;
-//        this.price = 0;
-//        this.currency = Currency.JPY;
-//        this.mediaFormat = new ArrayList<>();
-//        this.version = Version.REGULAR_EDITION;
-//        this.spec = "[]";
-//        this.hasBonus = 0;
-//        this.bonus = "";
-//        this.setDetail("");
-//        this.setRemark("");
-//        this.setAddedTime(DateHelper.now());
-//        this.setEditedTime(DateHelper.now());
-//        this.setStatus(true);
-//    }
+    @AutoMapping(qualifiedByName = "getMediaFormat")
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> mediaFormat;//媒体类型
 
+    private int discs;
+    private int episodes;
+    private int runTime;
+
+    public Disc() {
+        super();
+        this.mediaFormat = new ArrayList<>();
+    }
 }

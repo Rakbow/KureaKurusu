@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.entity.item;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.vo.item.AlbumListVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumVO;
 import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
@@ -23,7 +22,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-@TableName(value = "album", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false),
         @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false)

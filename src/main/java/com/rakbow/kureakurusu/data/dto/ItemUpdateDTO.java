@@ -23,7 +23,8 @@ import java.util.List;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = AlbumUpdateDTO.class, name = "1"),
-        @JsonSubTypes.Type(value = BookUpdateDTO.class, name = "2")
+        @JsonSubTypes.Type(value = BookUpdateDTO.class, name = "2"),
+        @JsonSubTypes.Type(value = DiscUpdateDTO.class, name = "3")
 })
 public class ItemUpdateDTO extends DTO {
 

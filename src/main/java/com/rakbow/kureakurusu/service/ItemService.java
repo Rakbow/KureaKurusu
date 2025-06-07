@@ -121,7 +121,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         Item item = converter.convert(dto, Item.class);
-        item.setEditedTime(DateHelper.now());
+        item.setAddedTime(null);
         SubItem subItem = converter.convert(dto, subClass);
 
         mapper.updateById(item);

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
 import com.rakbow.kureakurusu.data.vo.item.BookVO;
@@ -18,7 +17,6 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName(value = "book", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = BookListVO.class, reverseConvertGenerate = false),
         @AutoMapper(target = BookVO.class, reverseConvertGenerate = false)

@@ -30,12 +30,14 @@ public class ItemUtil {
     private final static Map<Integer, Class<? extends SubItem>> subItemMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), ItemAlbum.class);
         put(ItemType.BOOK.getValue(), ItemBook.class);
+        put(ItemType.DISC.getValue(), ItemDisc.class);
         put(ItemType.GOODS.getValue(), ItemGoods.class);
         put(ItemType.FIGURE.getValue(), ItemFigure.class);
     }};
     private final static Map<Integer, Class<? extends SuperItem>> SuperItemMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), Album.class);
         put(ItemType.BOOK.getValue(), Book.class);
+        put(ItemType.DISC.getValue(), Disc.class);
         put(ItemType.GOODS.getValue(), Goods.class);
         put(ItemType.FIGURE.getValue(), Figure.class);
     }};
@@ -43,6 +45,7 @@ public class ItemUtil {
     private final static Map<Integer, Class<? extends ItemListVO>> itemListVOMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), AlbumListVO.class);
         put(ItemType.BOOK.getValue(), BookListVO.class);
+        put(ItemType.DISC.getValue(), DiscListVO.class);
         put(ItemType.GOODS.getValue(), GoodsListVO.class);
         put(ItemType.FIGURE.getValue(), FigureListVO.class);
     }};
@@ -50,6 +53,7 @@ public class ItemUtil {
     private final static Map<Integer, Class<? extends ItemVO>> itemDetailVOMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), AlbumVO.class);
         put(ItemType.BOOK.getValue(), BookVO.class);
+        put(ItemType.DISC.getValue(), DiscVO.class);
         put(ItemType.GOODS.getValue(), GoodsVO.class);
         put(ItemType.FIGURE.getValue(), FigureVO.class);
     }};
@@ -57,6 +61,7 @@ public class ItemUtil {
     private final static Map<Integer, Class<? extends ItemListQueryDTO>> itemListQryMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), AlbumListQueryDTO.class);
         put(ItemType.BOOK.getValue(), BookListQueryDTO.class);
+        put(ItemType.DISC.getValue(), DiscListQueryDTO.class);
         put(ItemType.GOODS.getValue(), GoodsListQueryDTO.class);
         put(ItemType.FIGURE.getValue(), FigureListQueryDTO.class);
     }};
