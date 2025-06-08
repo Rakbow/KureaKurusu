@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo;
+package com.rakbow.kureakurusu.data.vo.resource;
 
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import lombok.AllArgsConstructor;

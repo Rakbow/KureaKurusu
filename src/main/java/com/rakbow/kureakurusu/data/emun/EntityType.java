@@ -21,6 +21,7 @@ public enum EntityType {
     ROLE(3, "enum.entity.role", "role"),
     EPISODE(4, "enum.entity.episode", "episode"),
     CHARACTER(5, "enum.entity.character", "chara"),
+    FILE(98, "enum.entity.file", "file_info"),
     PRODUCT(99, "enum.entity.product", "product"),
     FRANCHISE(100, "enum.entity.franchise", "franchise"),
     USER(101, "enum.entity.user", "user");

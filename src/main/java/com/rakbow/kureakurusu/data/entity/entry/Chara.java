@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.entity.entry;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.vo.entry.CharaVO;
@@ -25,8 +27,8 @@ import lombok.NoArgsConstructor;
 })
 public class Chara extends Entry {
 
-    private Long id;
-
+    @TableId(type = IdType.AUTO)
+    private Long id = 0L;
     @AutoMapping(qualifiedByName = "toAttribute")
     private Gender gender;
     private String birthDate;

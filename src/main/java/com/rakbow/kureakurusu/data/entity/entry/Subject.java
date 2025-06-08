@@ -9,7 +9,7 @@ import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Rakbow
@@ -17,8 +17,8 @@ import lombok.ToString;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @TableName(value = "subject", autoResultMap = true)
+@NoArgsConstructor
 @AutoMappers({
         @AutoMapper(target = SubjectListVO.class, reverseConvertGenerate = false),
         @AutoMapper(target = SubjectVO.class, reverseConvertGenerate = false)
@@ -26,7 +26,8 @@ import lombok.ToString;
 public class Subject extends Entry {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Long id = 0L;
+
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private Long mfcEntryId;// myFigureCollection entry id
 

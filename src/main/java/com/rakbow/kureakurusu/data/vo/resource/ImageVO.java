@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo;
+package com.rakbow.kureakurusu.data.vo.resource;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

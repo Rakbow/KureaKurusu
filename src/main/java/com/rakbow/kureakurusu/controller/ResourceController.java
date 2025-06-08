@@ -79,4 +79,22 @@ public class ResourceController {
 
     //endregion
 
+    @PostMapping("file/list")
+    public ApiResult fileList(@RequestBody ListQuery dto) {
+        return new ApiResult().load(srv.getFileList(dto));
+    }
+
+    @PostMapping("related-files")
+    public ApiResult relatedFiles(@RequestBody EntityQry dto) {
+        return new ApiResult().load(srv.getRelatedFiles(dto.getEntityType(), dto.getEntityId()));
+    }
+
+    @PostMapping("file/update")
+    public ApiResult update(@Valid @RequestBody FileUpdateDTO dto, BindingResult errors) {
+        //check
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //update
+        return new ApiResult().ok(srv.updateFile(dto));
+    }
+
 }

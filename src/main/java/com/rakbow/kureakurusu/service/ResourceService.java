@@ -1,29 +1,35 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.rakbow.kureakurusu.dao.FileRelatedMapper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.FileInfoMapper;
+import com.rakbow.kureakurusu.dao.FileRelatedMapper;
 import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.ImageListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
+import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
+import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.vo.ImageDisplayVO;
+import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
+import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,11 +55,12 @@ import java.util.List;
 public class ResourceService {
 
     private final ImageMapper imageMapper;
-    private final FileInfoMapper fileInfoMapper;
+    private final FileInfoMapper fileMapper;
     private final FileRelatedMapper fileRelatedMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
+    private final Converter converter;
     private final Tika tika = new Tika();
 
     @Value("${kureakurusu.path.file}")
@@ -153,34 +160,7 @@ public class ResourceService {
         redisUtil.set(String.format(key, ImageType.THUMB.getValue()), thumb != null ? thumb.getUrl() : defaultCover);
     }
 
-    // @SneakyThrows
-    // @Transactional
-    // public void uploadFileInfo(int entityType, long entityId, File file) {
-    //     String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
-    //     Path saveDir = Paths.get(FILE_UPLOAD_DIR, datePath);
-    //     Files.createDirectories(saveDir);
-    //
-    //     String filename = file.getName();
-    //     String newFileName = getNewFilename(filename);
-    //
-    //     Path destPath = saveDir.resolve(newFileName);
-    //
-    //     Files.copy(file.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
-    //     file.delete();
-    //
-    //     FileInfo info = new FileInfo();
-    //     info.setName(filename);
-    //     info.setMime(tika.detect(file));
-    //     info.setSize(file.length());
-    //     info.setPath(STR."/upload/\{datePath}/\{newFileName}");
-    //     fileInfoMapper.insert(info);
-    //
-    //     FileRelated related = new FileRelated();
-    //     related.setEntityType(entityType);
-    //     related.setEntityId(entityId);
-    //     related.setFileId(info.getId());
-    //     fileRelatedMapper.insert(related);
-    // }
+    //region file
 
     @SneakyThrows
     public FileRelated generateFileRelated(int entityType, long entityId, File file) {
@@ -206,5 +186,56 @@ public class ResourceService {
 
         return related;
     }
+
+    @Transactional
+    @SneakyThrows
+    public SearchResult<FileListVO> getFileList(ListQuery dto) {
+        FileListQueryDTO param = new FileListQueryDTO(dto);
+        Wrapper<FileInfo> wrapper;
+        if(param.getEntityType() == null && param.getEntityId() == null){
+            wrapper = new QueryWrapper<FileInfo>()
+                .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
+                .like(StringUtils.isNotEmpty(param.getMime()), "mime", param.getMime())
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+        }else {
+            wrapper = new MPJLambdaWrapper<FileInfo>()
+                    .selectAll(FileInfo.class)
+                    .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
+                    .eq(FileRelated::getEntityType, param.getEntityType())
+                    .eq(FileRelated::getEntityId, param.getEntityId())
+                    .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
+                    .like(StringUtils.isNotEmpty(param.getMime()), "mime", param.getMime())
+                    .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+        }
+
+
+        IPage<FileInfo> pages = fileMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
+
+        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+    }
+
+    @Transactional
+    @SneakyThrows
+    public List<FileListVO> getRelatedFiles(int entityTyp, long entityId) {
+        MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
+                .selectAll(FileInfo.class)
+                .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
+                .eq(FileRelated::getEntityType, entityTyp)
+                .eq(FileRelated::getEntityId, entityId);
+        List<FileInfo> files = fileMapper.selectList(wrapper);
+        return converter.convert(files, FileListVO.class);
+    }
+
+    @Transactional
+    @SneakyThrows
+    public String updateFile(FileUpdateDTO dto) {
+        FileInfo file = converter.convert(dto, FileInfo.class);
+        file.setEditedTime(DateHelper.now());
+        fileMapper.updateById(file);
+        return I18nHelper.getMessage("entity.crud.update.success");
+    }
+
+    //endregion
 
 }

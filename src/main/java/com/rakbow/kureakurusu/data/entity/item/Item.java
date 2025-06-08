@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
+import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
@@ -14,6 +15,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
@@ -32,7 +34,7 @@ import java.util.List;
 public class Item {
 
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Long id = 0L;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @AutoMapping(qualifiedByName = "toAttribute")
     private ItemType type;
@@ -70,13 +72,11 @@ public class Item {
     private double weight;// g
 
     private String remark;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     @TableField(updateStrategy = FieldStrategy.NEVER)
+    private Timestamp addedTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp addedTime = DateHelper.now();
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp editedTime = DateHelper.now();
-
+    private Timestamp editedTime;
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;
 

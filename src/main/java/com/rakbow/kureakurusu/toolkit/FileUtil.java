@@ -52,8 +52,8 @@ public class FileUtil {
     }
 
     public static String getNewFilename(String filename) {
-        String ext = filename.substring(filename.lastIndexOf("."));
-        return STR."\{CommonUtil.generateUUID(0)}\{ext}";
+        String ext = getExtension(filename);
+        return STR."\{CommonUtil.generateUUID(0)}.\{ext}";
     }
 
     @SneakyThrows
@@ -74,6 +74,15 @@ public class FileUtil {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
+    }
+
+    public static String getExtension(String filename) {
+        if(filename == null) return "";
+        int lastDotIndex = filename.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < filename.length() - 1) {
+            return filename.substring(lastDotIndex + 1);
+        }
+        return "";
     }
 }
 

@@ -1,13 +1,15 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.data.entity.Entity;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +17,11 @@ import java.util.List;
  * @author Rakbow
  * @since 2024/4/26 2:34
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class SuperItem {
+public abstract class SuperItem extends Entity {
 
-    private Long id;
+    private Long id = 0L;
     private ItemType type;
     @AutoMapping(qualifiedByName = "toAttribute")
     private ItemSubType subType;
@@ -43,15 +46,9 @@ public abstract class SuperItem {
 
     private Boolean bonus;
     private String detail;
-    private String remark;
-    @AutoMapping(qualifiedByName = "getVOTime")
-    private Timestamp addedTime;
-    @AutoMapping(qualifiedByName = "getVOTime")
-    private Timestamp editedTime;
-    private Boolean status;
 
     public SuperItem() {
-        id = 0L;
+        super();
         name = "";
         nameEn = "";
         aliases = new ArrayList<>();
@@ -68,10 +65,6 @@ public abstract class SuperItem {
 
         bonus = true;
         detail = "";
-        remark = "";
-        addedTime = DateHelper.now();
-        editedTime = DateHelper.now();
-        status = true;
     }
 
 }

@@ -56,6 +56,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     private final EpisodeMapper epMapper;
     private final ItemAlbumMapper mapper;
     private final ItemMapper itemMapper;
+    private final FileInfoMapper fileMapper;
     private final ResourceService resourceSrv;
     private final SqlSessionFactory sqlSessionFactory;
     private final EntityType ENTITY_TYPE = EntityType.ITEM;
@@ -293,23 +294,21 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
             //update file name
             if (isCatalogIdEqualDiscNo) {
-                discCode = STR."\{catalogIds.get(ep.getDiscNo()-1)}_\{ep.getSerial()}";
+                discCode = STR."\{catalogIds.get(ep.getDiscNo()-1)}";
             }else {
-                discCode = STR."\{catalogIds.getFirst()}_\{ep.getDiscNo()}_\{ep.getSerial()}";
+                discCode = STR."\{catalogIds.getFirst()}_\{ep.getDiscNo()}";
             }
-            related.getFileInfo().setName(discCode);
+            related.getFileInfo().setName(STR."\{discCode}_\{ep.getSerial()}.\{FileUtil.getExtension(f.getOriginalFilename())}");
         }
 
         MybatisBatch.Method<Episode> epMethod = new MybatisBatch.Method<>(EpisodeMapper.class);
-        MybatisBatch.Method<FileInfo> fileMethod = new MybatisBatch.Method<>(FileInfoMapper.class);
         MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
 
         MybatisBatch<Episode> epBatchUpdate = new MybatisBatch<>(sqlSessionFactory, updateEps);
-        MybatisBatch<FileInfo> fBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFiles);
         MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
 
         epBatchUpdate.execute(epMethod.updateById());
-        fBatchInsert.execute(fileMethod.insert());
+        addFiles.forEach(fileMapper::insert);
 
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
         frBatchInsert.execute(fileRelatedMethod.insert());

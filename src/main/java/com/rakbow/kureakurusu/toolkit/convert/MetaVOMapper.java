@@ -118,4 +118,15 @@ public interface MetaVOMapper {
         return DateHelper.getDuration(duration);
     }
 
+    @Named("size")
+    default String size(long bytes) {
+        double kb = bytes / 1024.0;
+        if (kb < 100) {
+            return String.format("%.2f KB", kb);
+        } else {
+            double mb = kb / 1024.0;
+            return String.format("%.2f MB", mb);
+        }
+    }
+
 }
