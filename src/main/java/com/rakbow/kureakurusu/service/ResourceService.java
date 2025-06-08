@@ -16,8 +16,6 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
@@ -35,6 +33,7 @@ import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -43,6 +42,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -179,6 +179,8 @@ public class ResourceService {
         info.setSize(file.length());
         info.setPath(STR."/upload/\{datePath}/\{newFileName}");
 
+        file.delete();
+
         FileRelated related = new FileRelated();
         related.setEntityType(entityType);
         related.setEntityId(entityId);
@@ -217,22 +219,52 @@ public class ResourceService {
 
     @Transactional
     @SneakyThrows
-    public List<FileListVO> getRelatedFiles(int entityTyp, long entityId) {
-        MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
-                .selectAll(FileInfo.class)
-                .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
-                .eq(FileRelated::getEntityType, entityTyp)
-                .eq(FileRelated::getEntityId, entityId);
-        List<FileInfo> files = fileMapper.selectList(wrapper);
-        return converter.convert(files, FileListVO.class);
-    }
-
-    @Transactional
-    @SneakyThrows
     public String updateFile(FileUpdateDTO dto) {
         FileInfo file = converter.convert(dto, FileInfo.class);
         file.setEditedTime(DateHelper.now());
         fileMapper.updateById(file);
+        return I18nHelper.getMessage("entity.crud.update.success");
+    }
+
+    @Transactional
+    @SneakyThrows
+    public String uploadFiles(int entityType, long entityId, MultipartFile[] files,
+                              List<String> names, List<String> remarks) {
+        List<FileRelated> addFileRelatedList = new ArrayList<>();
+        String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
+        Path saveDir = Paths.get(FILE_UPLOAD_DIR, datePath);
+        Files.createDirectories(saveDir);
+
+        int idx = 0;
+
+        for(MultipartFile f : files){
+            File file = FileUtil.convertToTempFile(f);
+
+            String newFileName = FileUtil.getNewFilename(file.getName());
+            Path destPath = saveDir.resolve(newFileName);
+            Files.copy(file.toPath(), destPath, StandardCopyOption.REPLACE_EXISTING);
+
+            FileInfo info = new FileInfo();
+            info.setName(names.get(idx));
+            info.setMime(tika.detect(file));
+            info.setSize(file.length());
+            info.setPath(STR."/upload/\{datePath}/\{newFileName}");
+            info.setRemark(remarks.get(idx));
+
+            FileRelated related = new FileRelated();
+            related.setEntityType(entityType);
+            related.setEntityId(entityId);
+            related.setFileInfo(info);
+
+            idx++;
+            fileMapper.insert(info);
+            file.delete();
+            addFileRelatedList.add(related);
+        }
+        MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
+        MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
+        addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
+        frBatchInsert.execute(fileRelatedMethod.insert());
         return I18nHelper.getMessage("entity.crud.update.success");
     }
 

@@ -281,7 +281,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             //update episode detail
             artists = tag.getAll(FieldKey.ARTIST);
             composers = tag.getAll(FieldKey.COMPOSER);
-
+            epDetail.setLength(0);
             if(!artists.isEmpty()) epDetail.append(STR."Artists: \{String.join(", ", artists)}");
             if(!composers.isEmpty()) epDetail.append(STR."\n\nComposers: \{String.join(", ", composers)}");
 

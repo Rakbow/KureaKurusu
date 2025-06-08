@@ -26,7 +26,6 @@ public class FileRelated {
     private Integer entityType;
     private Long entityId;
     private Long fileId;
-    private String remark;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     @AutoMapping(qualifiedByName = "getVOTime")
     @TableField(updateStrategy = FieldStrategy.NEVER)

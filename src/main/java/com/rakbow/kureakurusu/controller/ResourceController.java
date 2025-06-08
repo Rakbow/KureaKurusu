@@ -84,17 +84,23 @@ public class ResourceController {
         return new ApiResult().load(srv.getFileList(dto));
     }
 
-    @PostMapping("related-files")
-    public ApiResult relatedFiles(@RequestBody EntityQry dto) {
-        return new ApiResult().load(srv.getRelatedFiles(dto.getEntityType(), dto.getEntityId()));
-    }
-
     @PostMapping("file/update")
-    public ApiResult update(@Valid @RequestBody FileUpdateDTO dto, BindingResult errors) {
+    public ApiResult updateFile(@Valid @RequestBody FileUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         return new ApiResult().ok(srv.updateFile(dto));
+    }
+
+    @PostMapping("file/upload")
+    public ApiResult uploadFiles(
+            @RequestParam("entityType") int entityType,
+            @RequestParam("entityId") long entityId,
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam("names") List<String> names,
+            @RequestParam("remarks") List<String> remarks
+    ) {
+        return new ApiResult().ok(srv.uploadFiles(entityType, entityId, files, names, remarks));
     }
 
 }
