@@ -1,18 +1,16 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.PageTraffic;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.entry.Entry;
-import com.rakbow.kureakurusu.data.entity.entry.Chara;
-import com.rakbow.kureakurusu.data.entity.entry.Person;
-import com.rakbow.kureakurusu.data.entity.entry.Product;
-import com.rakbow.kureakurusu.data.entity.entry.Subject;
+import com.rakbow.kureakurusu.data.entity.Entity;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
-import com.rakbow.kureakurusu.data.PageTraffic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -27,14 +25,12 @@ public class EntityUtil {
     private final PopularUtil popularUtil;
     private final RedisUtil redisUtil;
 
-    private final static Map<Integer, Class<? extends Entry>> subEntityMap = new HashMap<>() {{
-        put(EntityType.PERSON.getValue(), Person.class);
-        put(EntityType.PRODUCT.getValue(), Product.class);
-        put(EntityType.CHARACTER.getValue(), Chara.class);
-        put(EntityType.SUBJECT.getValue(), Subject.class);
+    private final static Map<Integer, Class<? extends Entity>> subEntityMap = new HashMap<>() {{
+        put(EntityType.ITEM.getValue(), Item.class);
+        put(EntityType.ENTRY.getValue(), com.rakbow.kureakurusu.data.entity.Entry.class);
     }};
 
-    public Class<? extends Entry> getSubEntity(int type) {
+    public Class<? extends Entity> getSubEntity(int type) {
         return subEntityMap.get(type);
     }
 

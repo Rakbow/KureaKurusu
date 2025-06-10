@@ -28,9 +28,9 @@ public class EntryController {
     private final EntryService srv;
 
     @UniqueVisitor
-    @PostMapping("detail/{type}/{id}")
-    public ApiResult detail(@PathVariable("type") int type, @PathVariable("id") long id) {
-        return new ApiResult().load(srv.detail(type, id));
+    @PostMapping("detail/{id}")
+    public ApiResult detail(@PathVariable("id") long id) {
+        return new ApiResult().load(srv.detail(id));
     }
 
     @PostMapping("update")
@@ -53,8 +53,7 @@ public class EntryController {
 
     @PostMapping("upload-image")
     public ApiResult uploadImage(
-            @RequestPart("entityType") int entityType,
-            @RequestPart("entityId") int entityId,
+            @RequestPart("id") int id,
             @RequestPart("file") MultipartFile file,
             @RequestPart("imageType") int imageType
     ) {
@@ -64,13 +63,18 @@ public class EntryController {
         image.setFile(file);
         image.setType(imageType);
         if (file.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
-        res.load(srv.uploadImage(entityType, entityId, image));
+        res.load(srv.uploadImage(id, image));
         return res.ok(I18nHelper.getMessage("image.update.success"));
     }
 
     @PostMapping("mini")
-    public ApiResult mini(@RequestBody List<EntityMinDTO> entries) {
-        return new ApiResult().load(srv.getMiniVO(entries));
+    public ApiResult mini(@RequestBody List<Long> ids) {
+        return new ApiResult().load(srv.getMiniVO(ids));
+    }
+
+    @PostMapping("get-sub-entries")
+    public ApiResult getSubProduct(@RequestBody CommonDetailQry qry) {
+        return new ApiResult().load(srv.getSubEntries(qry.getId()));
     }
 
 }

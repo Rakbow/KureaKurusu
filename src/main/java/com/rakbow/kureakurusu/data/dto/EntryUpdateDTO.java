@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rakbow.kureakurusu.data.entity.Entry;
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,16 +16,8 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "entityType"
-)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = SubjectUpdateDTO.class, name = "1"),
-        @JsonSubTypes.Type(value = PersonUpdateDTO.class, name = "2"),
-        @JsonSubTypes.Type(value = CharaUpdateDTO.class, name = "5"),
-        @JsonSubTypes.Type(value = ProductUpdateDTO.class, name = "99"),
-})
+@JsonIgnoreProperties(ignoreUnknown = true)
+@AutoMapper(target = Entry.class, reverseConvertGenerate = false)
 public class EntryUpdateDTO extends DTO {
 
     private Integer entityType;
@@ -33,6 +27,8 @@ public class EntryUpdateDTO extends DTO {
     private String name;
     private String nameZh;
     private String nameEn;
+    private String date;
+    private Integer gender;
     private List<String> aliases;
     private List<String> links;
     private String remark;

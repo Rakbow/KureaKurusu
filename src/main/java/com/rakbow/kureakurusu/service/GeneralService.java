@@ -62,20 +62,17 @@ public class GeneralService {
         MetaData.optionsZh.genderSet = EnumHelper.getAttributeOptions(Gender.class, "zh");
         MetaData.optionsEn.genderSet = EnumHelper.getAttributeOptions(Gender.class, "en");
 
-        MetaData.optionsZh.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "zh");
-        MetaData.optionsEn.linkTypeSet = EnumHelper.getAttributeOptions(LinkType.class, "en");
-
         MetaData.optionsZh.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "zh");
         MetaData.optionsEn.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "en");
 
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
-        MetaData.optionsZh.productTypeSet = EnumHelper.getAttributeOptions(ProductType.class, "zh");
-        MetaData.optionsEn.productTypeSet = EnumHelper.getAttributeOptions(ProductType.class, "en");
+        MetaData.optionsZh.entryTypeSet = EnumHelper.getAttributeOptions(EntryType.class, "zh");
+        MetaData.optionsEn.entryTypeSet = EnumHelper.getAttributeOptions(EntryType.class, "en");
 
-        MetaData.optionsZh.subjectTypeSet = EnumHelper.getAttributeOptions(SubjectType.class, "zh");
-        MetaData.optionsEn.subjectTypeSet = EnumHelper.getAttributeOptions(SubjectType.class, "en");
+        MetaData.optionsZh.entrySubTypeSet = EnumHelper.getAttributeOptions(EntrySubType.class, "zh");
+        MetaData.optionsEn.entrySubTypeSet = EnumHelper.getAttributeOptions(EntrySubType.class, "en");
 
         MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "zh");
         MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "en");
@@ -179,13 +176,13 @@ public class GeneralService {
         res.put("figureTypeSet", Objects.requireNonNull(MetaData.getOptions()).figureTypeSet);
         res.put("releaseTypeSet", Objects.requireNonNull(MetaData.getOptions()).releaseTypeSet);
         res.put("relatedGroupSet", Objects.requireNonNull(MetaData.getOptions()).relatedGroupSet);
-        res.put("productTypeSet", Objects.requireNonNull(MetaData.getOptions()).productTypeSet);
         res.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
-        res.put("linkTypeSet", Objects.requireNonNull(MetaData.getOptions()).linkTypeSet);
         res.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
         res.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
         res.put("imageTypeSet", Objects.requireNonNull(MetaData.getOptions()).imageTypeSet);
-        res.put("subjectTypeSet", Objects.requireNonNull(MetaData.getOptions()).subjectTypeSet);
+
+        res.put("entryTypeSet", Objects.requireNonNull(MetaData.getOptions()).entryTypeSet);
+        res.put("entrySubTypeSet", Objects.requireNonNull(MetaData.getOptions()).entrySubTypeSet);
         return res;
     }
 

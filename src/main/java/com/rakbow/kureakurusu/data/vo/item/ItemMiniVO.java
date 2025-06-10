@@ -24,4 +24,7 @@ public class ItemMiniVO {
     private double price;
     private String region;
 
+    private String addedTime;
+    private String editedTime;
+
 }

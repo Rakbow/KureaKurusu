@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.dto.EntitySearchParams;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class EntrySearchParams extends EntitySearchParams {
 
-    private int searchType;
+    private int type;
     private List<String> keywords;
     private boolean strict;
 

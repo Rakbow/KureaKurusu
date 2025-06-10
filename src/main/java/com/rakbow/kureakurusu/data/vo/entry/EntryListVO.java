@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.vo.entry;
 
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.vo.EntityListVO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +15,10 @@ import java.util.List;
 @Data
 public class EntryListVO extends EntityListVO {
 
-    private int searchType;
+    private Attribute<Integer> type;
+    private Attribute<Integer> subType;
+    private String date;
+    private Attribute<Integer> gender;
     private String name;
     private String nameZh;
     private String nameEn;

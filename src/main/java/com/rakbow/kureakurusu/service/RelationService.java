@@ -8,18 +8,18 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.SubjectMapper;
-import com.rakbow.kureakurusu.dao.ItemMapper;
+import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.*;
-import com.rakbow.kureakurusu.data.entity.entry.Subject;
-import com.rakbow.kureakurusu.data.entity.entry.Product;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.EntryType;
+import com.rakbow.kureakurusu.data.emun.RelatedGroup;
+import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.entity.entry.Entry;
+import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedEntityVO;
@@ -49,10 +49,11 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final RelationMapper mapper;
     private final SqlSessionFactory sqlSessionFactory;
     private final EntityUtil entityUtil;
-    private final ResourceService resourceSrv;
-    private final SubjectMapper subjectMapper;
-    private final ItemMapper itemMapper;
     private final Converter converter;
+    private final EntryMapper entryMapper;
+
+    private final List<EntryType> itemExcRelationEntryTypes
+            = List.of(EntryType.CLASSIFICATION, EntryType.MATERIAL, EntryType.EVENT);
 
     public SearchResult<RelatedEntityVO> getRelatedEntities(RelationQry qry) {
         int relatedGroup = qry.getRelatedGroup();
@@ -71,18 +72,16 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
         List<Relation> relations = pages.getRecords();
         if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
-            relatedEntity = EntityType.PRODUCT.getValue();
+            relatedEntity = EntityType.ENTRY.getValue();
         } else if (relatedGroup == RelatedGroup.RELATED_CHAR.getValue()) {
-            relatedEntity = EntityType.CHARACTER.getValue();
+            relatedEntity = EntityType.ENTRY.getValue();
         } else {
             relatedEntity = EntityType.ITEM.getValue();
         }
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
-        Class<? extends Entry> subClass = entityUtil.getSubEntity(relatedEntity);
-        BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
-        List<Entry> targets = subMapper.selectByIds(targetIds);
+        List<Entry> targets = entryMapper.selectByIds(targetIds);
         for (Relation r : relations) {
-            Entry entity = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+            Entry entity = DataFinder.findEntryById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
             if (entity == null) continue;
             Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
             if (role == null) continue;
@@ -116,24 +115,18 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         );
         if (relations.isEmpty())
             return res;
-        if (relatedGroup == RelatedGroup.RELATED_PERSON.getValue()) {
-            relatedEntity = EntityType.PERSON.getValue();
-        } else if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
-            relatedEntity = EntityType.PRODUCT.getValue();
-        } else if (relatedGroup == RelatedGroup.RELATED_CHAR.getValue()) {
-            relatedEntity = EntityType.CHARACTER.getValue();
-        } else {
+        if (relatedGroup == RelatedGroup.RELATED_ITEM.getValue()) {
             relatedEntity = EntityType.ITEM.getValue();
+        } else {
+            relatedEntity = EntityType.ENTRY.getValue();
         }
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
-        Class<? extends Entry> subClass = entityUtil.getSubEntity(relatedEntity);
-        BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
-        List<Entry> targets = subMapper.selectByIds(targetIds);
+        List<Entry> targets = entryMapper.selectByIds(targetIds);
         for (Relation r : relations) {
-            Entry e = DataFinder.findEntityById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+            Entry e = DataFinder.findEntryById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
             if (e == null) continue;
-            if (e instanceof Product) {
-                remark = I18nHelper.getMessage(((Product) e).getType().getLabelKey());
+            if (e.getType() == EntryType.PRODUCT) {
+                remark = I18nHelper.getMessage(e.getSubType().getLabelKey());
             } else {
                 remark = r.getRemark();
             }
@@ -156,7 +149,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public SearchResult<RelationVO> getRelations(RelationListQueryDTO param) {
         List<RelationVO> res = new ArrayList<>();
         List<Long> targetIds;
-        Class<? extends Entry> subClass;
+        Class<? extends Entity> subClass;
         BaseMapper<Entry> subMapper;
         List<Entry> targets;
         List<Relation> currentRelations;
@@ -190,7 +183,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             subMapper = MyBatisUtil.getMapper(subClass);
             targets = subMapper.selectByIds(targetIds);
             for (Relation r : currentRelations) {
-                Entry e = DataFinder.findEntityById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+                Entry e = DataFinder.findEntryById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
                 if (e == null) continue;
                 Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
                 Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.optionsZh.roleSet);
@@ -218,12 +211,13 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public void addRelations(RelationCreateDTO dto) {
         List<Relation> res = new ArrayList<>();
         RelatedGroup group;
-        switch (EntityType.get(dto.getRelatedEntityType())) {
-            case EntityType.PERSON -> group = RelatedGroup.RELATED_PERSON;
-            case EntityType.SUBJECT -> group = RelatedGroup.RELATED_SUBJECT;
-            case EntityType.ITEM -> group = RelatedGroup.RELATED_ITEM;
-            case EntityType.CHARACTER -> group = RelatedGroup.RELATED_CHAR;
-            case EntityType.PRODUCT -> group = RelatedGroup.RELATED_PRODUCT;
+        switch (EntryType.get(dto.getRelatedEntryType())) {
+            case EntryType.PRODUCT -> group = RelatedGroup.RELATED_PRODUCT;
+            case EntryType.PERSON -> group = RelatedGroup.RELATED_PERSON;
+            case EntryType.CHARACTER -> group = RelatedGroup.RELATED_CHAR;
+            case EntryType.CLASSIFICATION -> group = RelatedGroup.RELATED_SUBJECT;
+            case EntryType.MATERIAL -> group = RelatedGroup.MATERIAL;
+            case EntryType.EVENT -> group = RelatedGroup.EVENT;
             default -> group = RelatedGroup.DEFAULT;
         }
         for (RelationMiniVO target : dto.getRelatedEntityIds()) {
@@ -273,30 +267,33 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public ItemExcRelatedEntries getItemRelatedSubject(long entityId) {
+    public ItemExcRelatedEntries getItemRelatedEntries(long id) {
         ItemExcRelatedEntries res = new ItemExcRelatedEntries();
         List<Relation> relations = mapper.selectList(
                 new LambdaQueryWrapper<Relation>()
                         .in(Relation::getRelatedGroup, ItemUtil.ItemExcRelatedGroups)
                         .eq(Relation::getEntityType, EntityType.ITEM.getValue())
-                        .eq(Relation::getEntityId, entityId)
+                        .eq(Relation::getEntityId, id)
         );
         if (relations.isEmpty())
             return res;
-        List<Long> targetIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
-        List<Subject> targets = subjectMapper.selectByIds(targetIds);
+        List<Long> entryIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
+        List<Entry> entries = entryMapper.selectList(
+                new LambdaQueryWrapper<Entry>()
+                        .in(Entry::getType, itemExcRelationEntryTypes).in(Entry::getId, entryIds)
+        );
         for (Relation r : relations) {
-            Subject subject = DataFinder.findEntryById(r.getRelatedEntityId(), targets);
-            if (subject == null) continue;
+            Entry e = DataFinder.findEntryById(r.getRelatedEntityId(), entries);
+            if (e == null) continue;
             RelationVO re = RelationVO.builder()
-                    .target(new Attribute<>(subject.getName(), subject.getId()))
+                    .target(new Attribute<>(e.getName(), e.getId()))
                     .remark(r.getRemark())
                     .build();
-            if (subject.getType() == SubjectType.CLASSIFICATION) {
+            if (e.getType() == EntryType.CLASSIFICATION) {
                 res.getClassifications().add(re);
-            } else if (subject.getType() == SubjectType.EVENT) {
+            } else if (e.getType() == EntryType.EVENT) {
                 res.getEvents().add(re);
-            } else if (subject.getType() == SubjectType.MATERIAL) {
+            } else if (e.getType() == EntryType.MATERIAL) {
                 res.getMaterials().add(re);
             }
         }

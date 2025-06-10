@@ -1,14 +1,12 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -18,20 +16,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
  * @author Rakbow
  * @since 2024/4/7 17:29
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName(value = "item", autoResultMap = true)
 @NoArgsConstructor
 @AutoMappers({
         @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false)
 })
-public class Item {
+public class Item extends Entity {
 
     @TableId(type = IdType.AUTO)
     private Long id = 0L;
@@ -70,14 +68,5 @@ public class Item {
     private double length;// mm
     private double height;// mm
     private double weight;// g
-
-    private String remark;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
-    private Timestamp addedTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp editedTime;
-    @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean status;
 
 }

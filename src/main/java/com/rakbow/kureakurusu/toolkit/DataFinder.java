@@ -2,10 +2,7 @@ package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.data.entity.entry.Entry;
-import com.rakbow.kureakurusu.data.entity.entry.Person;
-import com.rakbow.kureakurusu.data.entity.entry.Product;
-import com.rakbow.kureakurusu.data.entity.entry.Subject;
+import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 
@@ -22,24 +19,15 @@ import java.util.List;
 public class DataFinder {
 
     public static Episode episodeFinder = new Episode();
-    public static Person personFinder = new Person();
     public static Item itemFinder = new Item();
-    public static Product productFinder = new Product();
     public static Entry entityFinder = new Entry();
-    public static Subject subjectFinder = new Subject();
     public static Image imageFinder = new Image();
 
     //region album
 
-    public static Entry findEntityById(Long id, List<Entry> list) {
+    public static Entry findEntryById(Long id, List<Entry> list) {
         entityFinder.setId(id);
         int idx = Collections.binarySearch(list, entityFinder, DataSorter.entryIdSorter);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
-    public static Subject findEntryById(Long id, List<Subject> list) {
-        subjectFinder.setId(id);
-        int idx = Collections.binarySearch(list, subjectFinder, DataSorter.subjectIdSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
 
@@ -54,12 +42,6 @@ public class DataFinder {
     public static Item findItemById(Long id, List<Item> list) {
         itemFinder.setId(id);
         int idx = Collections.binarySearch(list, itemFinder, DataSorter.itemIdSorter);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
-    public static Product findProductById(Long id, List<Product> list) {
-        productFinder.setId(id);
-        int idx = Collections.binarySearch(list, productFinder, DataSorter.productIdSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
 
@@ -110,12 +92,6 @@ public class DataFinder {
             }
         }
         return res;
-    }
-
-    public static Person findPersonById(long id, List<Person> list) {
-        personFinder.setId(id);
-        int idx = Collections.binarySearch(list, personFinder, DataSorter.personIdSorter);
-        return idx >= 0 ? list.get(idx) : null;
     }
 
     //endregion

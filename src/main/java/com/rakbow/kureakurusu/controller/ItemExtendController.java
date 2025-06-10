@@ -54,7 +54,7 @@ public class ItemExtendController {
 
     @PostMapping("get-exc-related-entries")
     public ApiResult getRelatedEntries(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(reSrv.getItemRelatedSubject(qry.getId()));
+        return new ApiResult().load(reSrv.getItemRelatedEntries(qry.getId()));
     }
 
     @PostMapping("/upload-album-track-files")

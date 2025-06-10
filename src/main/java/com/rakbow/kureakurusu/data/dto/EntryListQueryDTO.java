@@ -11,13 +11,14 @@ import lombok.EqualsAndHashCode;
 @Data
 public class EntryListQueryDTO extends ListQueryDTO {
 
-    private int SearchType;
+    private int type;
     private String name;
     private String nameZh;
     private String nameEn;
 
     public EntryListQueryDTO(ListQuery qry) {
         super(qry);
+        type = qry.getVal("type");
         name = qry.getVal("name");
         nameZh = qry.getVal("nameZh");
         nameEn = qry.getVal("nameEn");

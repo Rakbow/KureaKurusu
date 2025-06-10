@@ -1,14 +1,14 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.entity.entry.Person;
+import com.rakbow.kureakurusu.data.dto.EntityQry;
+import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
+import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
+import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.ExcelUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.Cookie;
@@ -105,7 +105,7 @@ public class GeneralController {
     public ApiResult importEntity(MultipartFile file) {
         ApiResult res = new ApiResult();
         if (file.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
-        List<Person> items = ExcelUtil.getDataFromExcel(file.getInputStream(), Person.class);
+        List<Entry> items = ExcelUtil.getDataFromExcel(file.getInputStream(), Entry.class);
         Db.saveBatch(items);
         return res;
     }
