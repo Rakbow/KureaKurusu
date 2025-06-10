@@ -1,7 +1,5 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;

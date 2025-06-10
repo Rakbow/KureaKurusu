@@ -192,7 +192,7 @@ public class EntryService {
         } else if (param.getSearchType() == EntrySearchType.EVENT.getValue()) {
             wrapper.eq("type", SubjectType.EVENT);
         }
-        if (param.getName() != null && !param.getName().isEmpty()) {
+        if (StringUtils.isNotEmpty(param.getName())) {
             wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))" +
                             " LIKE concat('%', {0}, '%')", param.getName())).or().like("name", param.getName())
                     .or().like("name_zh", param.getName()).or().like("name_en", param.getName());
