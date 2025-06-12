@@ -16,5 +16,6 @@ public class FileListVO extends EntityListVO {
     private String mime;
     private String size;
     private String path;
+    private String ext;
 
 }

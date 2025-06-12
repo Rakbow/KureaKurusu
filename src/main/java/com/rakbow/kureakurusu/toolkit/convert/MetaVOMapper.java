@@ -129,4 +129,9 @@ public interface MetaVOMapper {
         }
     }
 
+    @Named("getFileExt")
+    default String getFileExt(String name) {
+        return name.substring(name.lastIndexOf("."));
+    }
+
 }

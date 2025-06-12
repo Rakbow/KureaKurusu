@@ -29,6 +29,7 @@ public class FileInfo extends Entity {
 
     @TableId(type = IdType.AUTO)
     private Long id = 0L;
+    @AutoMapping(qualifiedByName = "getFileExt", target = "ext")
     private String name;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)

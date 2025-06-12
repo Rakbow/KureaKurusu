@@ -103,4 +103,14 @@ public class ResourceController {
         return new ApiResult().ok(srv.uploadFiles(entityType, entityId, files, names, remarks));
     }
 
+    @PostMapping("file/create-related")
+    public ApiResult createFileRelated(@RequestBody FileCreateDTO dto) {
+        return new ApiResult().ok(srv.createFileRelated(dto.getEntityType(), dto.getEntityId(), dto.getFileIds()));
+    }
+
+    @PostMapping("file/search")
+    public ApiResult search(@RequestBody FileSearchParams param) {
+        return new ApiResult().load(srv.searchFiles(param));
+    }
+
 }

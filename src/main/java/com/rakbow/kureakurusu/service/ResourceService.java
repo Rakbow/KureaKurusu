@@ -267,6 +267,36 @@ public class ResourceService {
         return I18nHelper.getMessage("entity.crud.update.success");
     }
 
+    @Transactional
+    @SneakyThrows
+    public String createFileRelated(int entityType, long entityId, List<Long> fileIds) {
+        List<FileRelated> addFileRelatedList = new ArrayList<>();
+        fileIds.forEach(fid -> {
+            FileRelated related = new FileRelated();
+            related.setEntityType(entityType);
+            related.setEntityId(entityId);
+            related.setFileId(fid);
+            addFileRelatedList.add(related);
+        });
+        MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
+        MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
+        frBatchInsert.execute(fileRelatedMethod.insert());
+        return I18nHelper.getMessage("entity.crud.update.success");
+    }
+
+    @Transactional
+    @SneakyThrows
+    public SearchResult<FileListVO> searchFiles(FileSearchParams param) {
+        // 记录开始时间
+        long start = System.currentTimeMillis();
+        LambdaQueryWrapper<FileInfo> wrapper = new LambdaQueryWrapper<FileInfo>().eq(FileInfo::getStatus, 1);
+        if (!param.getKeywords().isEmpty()) param.getKeywords().forEach(k -> wrapper.like(FileInfo::getName, k));
+        IPage<FileInfo> pages = fileMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
+        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize(),
+                String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
+    }
+
     //endregion
 
 }

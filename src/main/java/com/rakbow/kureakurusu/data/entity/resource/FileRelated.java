@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.entity.resource;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -28,7 +29,7 @@ public class FileRelated {
     private Long fileId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     @AutoMapping(qualifiedByName = "getVOTime")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
+    @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     private Timestamp addedTime;
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;
