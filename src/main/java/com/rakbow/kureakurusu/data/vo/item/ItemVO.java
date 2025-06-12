@@ -42,4 +42,6 @@ public class ItemVO {
 
     private boolean status;
 
+    private String spec;
+
 }

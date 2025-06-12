@@ -1,13 +1,13 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
+import com.rakbow.kureakurusu.data.UploadImage;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.FileType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -17,10 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -33,8 +31,9 @@ public class QiniuImageUtil {
 
     private final QiniuBaseUtil qiniuBaseUtil;
     private final static String THUMBNAIL_URL = "?imageMogr2/auto-orient/thumbnail/";
-    @Value("${kureakurusu.qiniu.image.domain}")
+    @Value("${qiniu.domain}")
     private static String FILE_DOMAIN;
+    private final static String IMAGE_PREFIX = "upload/image/";
 
     private static final Tika tika = new Tika();
 
@@ -44,41 +43,18 @@ public class QiniuImageUtil {
      * @author rakbow
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public ActionResult commonAddImages(int entityType, long entityId, MultipartFile[] files, List<Image> addImages) {
-        ActionResult res = new ActionResult();
-        try{
-            //创建存储链接前缀
-            String filePath = STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_";
-            for (int i = 0; i < files.length; i++) {
-                //上传图片
-                ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(files[i], filePath, FileType.IMAGE);
-                if (!ar.state) throw new Exception(ar.message);
-                Image image = addImages.get(i);
-                image.setUrl(ar.data.toString());
-            }
-        }catch(Exception ex) {
-            res.setErrorMessage(ex.getMessage());
-        }
-        return res;
-    }
-
-    /**
-     * 通用新增图片
-     *
-     * @author rakbow
-     */
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
-    public List<Image> commonAddImages(int entityType, long entityId, List<ImageMiniDTO> addImages) {
+    public List<Image> uploadImages(int entityType, long entityId, List<ImageMiniDTO> addImages) {
         List<Image> images = new ArrayList<>();
         for (ImageMiniDTO miniImage : addImages) {
             //handle image
-            uploadImage img = handleImage(entityType, entityId, miniImage);
+            UploadImage img = handleImage(entityType, entityId, miniImage);
             //upload image
-            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(),  img.getPrefixKey());
+            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(), img.getPrefixKey());
             if (!ar.state) throw new Exception(ar.message);
             Image image = new Image();
             image.setUrl(ar.data.toString());
+            image.setSize(img.getSize());
             image.setEntityType(entityType);
             image.setEntityId(entityId);
             image.setType(miniImage.getType());
@@ -89,24 +65,12 @@ public class QiniuImageUtil {
         return images;
     }
 
-    @SuppressWarnings("unchecked")
     @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public List<Image> deleteImage(List<Image> deleteImages) {
-
-        //delete image from qiniu server
-        List<String> deleteResult = new ArrayList<>();
-        //若删除的文件只有一个，调用单张删除方法
-        if (deleteImages.size() == 1) {
-            ActionResult ar = qiniuBaseUtil.deleteFileFromQiniu(deleteImages.getFirst().getUrl());
-            if (ar.fail()) throw new Exception(ar.message);
-            deleteResult.add(deleteImages.getFirst().getUrl());
-        } else {
-            String[] fullFileUrlList = deleteImages.stream().map(Image::getUrl).toArray(String[]::new);
-            ActionResult ar = qiniuBaseUtil.deleteFilesFromQiniu(fullFileUrlList);
-            deleteResult.addAll((List<String>) ar.data);
-        }
-        return deleteImages.stream().filter(i -> deleteResult.contains(i.getUrl())).toList();
+    public List<Integer> deleteImages(List<Image> deleteImages) {
+        String[] keys = deleteImages.stream().map(Image::getUrl)
+                .map(url -> url.replace(FILE_DOMAIN, "")).toArray(String[]::new);
+        return qiniuBaseUtil.deleteFilesFromQiniu(keys);
     }
 
     /**
@@ -116,8 +80,12 @@ public class QiniuImageUtil {
      * @author Rakbow
      */
     public void deleteAllImage(List<Image> images) {
-        String[] deleteImageKeyList = images.stream().map(Image::getUrl).toArray(String[]::new);
-        qiniuBaseUtil.deleteFilesFromQiniu(deleteImageKeyList);
+        String[] keys = images.stream().map(Image::getUrl).toArray(String[]::new);
+        qiniuBaseUtil.deleteFilesFromQiniu(keys);
+    }
+
+    public void deleteEntryImage(String key) {
+        qiniuBaseUtil.deleteFilesFromQiniu(new String[]{key});
     }
 
     /**
@@ -139,9 +107,9 @@ public class QiniuImageUtil {
     }
 
     public static String getCustomThumbUrl(String imageUrl, int size, int lengthLabel) {
-        if(lengthLabel == 0) {
+        if (lengthLabel == 0) {
             return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";
-        }else {
+        } else {
             return STR."\{imageUrl}\{THUMBNAIL_URL}x\{size}";
         }
     }
@@ -172,50 +140,44 @@ public class QiniuImageUtil {
     public static String getThumb70Url(List<Image> images) {
         if (!images.isEmpty()) {
             for (Image image : images) {
-                if(image.isMain())
+                if (image.isMain())
                     return getThumbBackgroundUrl(image.getUrl(), 70);
             }
         }
         return getThumb(CommonConstant.EMPTY_IMAGE_URL, 70);
     }
 
-    @SneakyThrows
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public void deleteEntryImage(String key) {
-        ActionResult ar = qiniuBaseUtil.deleteFileFromQiniu(key);
-        if (ar.fail()) throw new Exception(ar.message);
-    }
-
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
     public String uploadEntryImage(int entityType, long entityId, ImageMiniDTO image) {
         //handle image
-        uploadImage img = handleImage(entityType, entityId, image);
+        UploadImage img = handleImage(entityType, entityId, image);
         //upload image
-        ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(),  img.getPrefixKey());
+        ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(), img.getPrefixKey());
         if (!ar.state) throw new Exception(ar.message);
         return ar.data.toString();
     }
 
     @SneakyThrows
-    private uploadImage handleImage(int entityType, long entityId, ImageMiniDTO image) {
-        uploadImage res = new uploadImage();
+    private UploadImage handleImage(int entityType, long entityId, ImageMiniDTO image) {
+        UploadImage res = new UploadImage();
         //generate upload file pre-fix
-        res.setPrefixKey(STR."upload/\{entityType}/\{entityId}/\{entityType}_\{entityId}_");
+        res.setPrefixKey(STR."\{IMAGE_PREFIX}\{entityType}/\{entityId}/\{entityType}_\{entityId}_");
         res.setData(image.getFile().getBytes());
+        res.setSize(image.getFile().getSize());
 
         // 提取文件后缀（例如 "jpeg"）
         String originalFilename = image.getFile().getOriginalFilename();
         assert originalFilename != null;
         String extension;
-        if(!originalFilename.contains(".")) {
+        if (!originalFilename.contains(".")) {
             String mimeType = tika.detect(image.getFile().getInputStream());
             MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
             extension = allTypes.forName(mimeType).getExtension().replace(".", "");
-        }else {
+        } else {
             extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         }
-        if(StringUtils.equals(extension, "jpeg")) extension = "jpg";
+        if (StringUtils.equals(extension, "jpeg")) extension = "jpg";
         // 检测格式是否支持
         if (FileUtil.isFileFormatAllowed(extension, FileType.IMAGE)) {
             throw new Exception(I18nHelper.getMessage("file.format.unsupported", FileType.IMAGE.getNameZh()));
@@ -225,11 +187,4 @@ public class QiniuImageUtil {
         return res;
     }
 
-}
-
-@Data
-class uploadImage {
-    private String prefixKey;
-    private byte[] data;
-    private String extension;
 }

@@ -56,15 +56,15 @@ public class ResourceService {
 
     private final ImageMapper imageMapper;
     private final FileInfoMapper fileMapper;
-    private final FileRelatedMapper fileRelatedMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
     private final Converter converter;
     private final Tika tika = new Tika();
 
-    @Value("${kureakurusu.path.file}")
+    @Value("${system.path.upload.file}")
     private String FILE_UPLOAD_DIR;
+    private final static String FILE_UPLOAD_PREFIX = "upload/file/";
 
     private final static List<Integer> defaultImageType = Arrays.asList(
             ImageType.MAIN.getValue(),
@@ -91,7 +91,7 @@ public class ResourceService {
 
     @SneakyThrows
     @Transactional
-    public void addEntityImage(int entityType, long entityId, List<ImageMiniDTO> images, boolean generateThumb) {
+    public void uploadEntityImage(int entityType, long entityId, List<ImageMiniDTO> images, boolean generateThumb) {
         //generate thumb
         if (generateThumb) {
             ImageMiniDTO cover = images.stream().filter(i -> i.getType() == ImageType.MAIN.getValue()).findFirst().orElse(null);
@@ -101,7 +101,7 @@ public class ResourceService {
             }
         }
         //upload to qiniu server
-        List<Image> addImages = qiniuImageUtil.commonAddImages(entityType, entityId, images);
+        List<Image> addImages = qiniuImageUtil.uploadImages(entityType, entityId, images);
         //batch insert
         MybatisBatch.Method<Image> method = new MybatisBatch.Method<>(ImageMapper.class);
         MybatisBatch<Image> batchInsert = new MybatisBatch<>(sqlSessionFactory, addImages);
@@ -121,9 +121,9 @@ public class ResourceService {
     @Transactional
     public void deleteEntityImage(List<Image> images) {
         //delete from qiniu server
-        List<Image> deleteImages = qiniuImageUtil.deleteImage(images);
+        List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(images);
         //delete from database
-        imageMapper.deleteByIds(deleteImages.stream().map(Image::getId).toList());
+        imageMapper.deleteByIds(deleteIndexes.stream().map(index -> images.get(index).getId()).toList());
     }
 
     public String getEntityImageCache(int entityType, long entityId, ImageType imageType) {
@@ -133,14 +133,14 @@ public class ResourceService {
     }
 
     public ImageDisplayVO getEntityDisplayImages(int entityType, long entityId) {
-        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
-                .eq("entity_type", entityType)
-                .eq("entity_id", entityId)
-                .in("type", defaultImageType)
-                .orderByAsc("id");
-        IPage<Image> pages = imageMapper.selectPage(new Page<>(1, 6), wrapper);
+        IPage<Image> pages = imageMapper.selectPage(new Page<>(1, 6),
+                new LambdaQueryWrapper<Image>().eq(Image::getEntityType, entityType)
+                        .eq(Image::getEntityId, entityId)
+                        .in(Image::getType, defaultImageType)
+                        .orderByAsc(Image::getId)
+        );
         CommonImageUtil.generateThumb(pages.getRecords());
-        return new ImageDisplayVO(pages.getRecords(), imageMapper.selectCount(wrapper).intValue());
+        return new ImageDisplayVO(pages.getRecords(), pages.getTotal());
     }
 
     @SneakyThrows
@@ -194,12 +194,12 @@ public class ResourceService {
     public SearchResult<FileListVO> getFileList(ListQuery dto) {
         FileListQueryDTO param = new FileListQueryDTO(dto);
         Wrapper<FileInfo> wrapper;
-        if(param.getEntityType() == null && param.getEntityId() == null){
+        if (param.getEntityType() == null && param.getEntityId() == null) {
             wrapper = new QueryWrapper<FileInfo>()
-                .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
-                .like(StringUtils.isNotEmpty(param.getMime()), "mime", param.getMime())
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        }else {
+                    .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
+                    .like(StringUtils.isNotEmpty(param.getMime()), "mime", param.getMime())
+                    .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+        } else {
             wrapper = new MPJLambdaWrapper<FileInfo>()
                     .selectAll(FileInfo.class)
                     .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
@@ -221,7 +221,6 @@ public class ResourceService {
     @SneakyThrows
     public String updateFile(FileUpdateDTO dto) {
         FileInfo file = converter.convert(dto, FileInfo.class);
-        file.setEditedTime(DateHelper.now());
         fileMapper.updateById(file);
         return I18nHelper.getMessage("entity.crud.update.success");
     }
@@ -237,7 +236,7 @@ public class ResourceService {
 
         int idx = 0;
 
-        for(MultipartFile f : files){
+        for (MultipartFile f : files) {
             File file = FileUtil.convertToTempFile(f);
 
             String newFileName = FileUtil.getNewFilename(file.getName());
@@ -248,7 +247,7 @@ public class ResourceService {
             info.setName(names.get(idx));
             info.setMime(tika.detect(file));
             info.setSize(file.length());
-            info.setPath(STR."/upload/\{datePath}/\{newFileName}");
+            info.setPath(STR."\{FILE_UPLOAD_PREFIX}\{datePath}/\{newFileName}");
             info.setRemark(remarks.get(idx));
 
             FileRelated related = new FileRelated();

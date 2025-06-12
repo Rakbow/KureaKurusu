@@ -13,6 +13,7 @@ import com.rakbow.kureakurusu.data.vo.item.*;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Constructor;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,43 @@ import java.util.regex.Pattern;
  * @since 2024/4/26 17:04
  */
 public class ItemUtil {
+
+    private static final DecimalFormat DIMENSION_FORMAT = new DecimalFormat("0.#");
+    private static final DecimalFormat WEIGHT_FORMAT = new DecimalFormat("0.##");
+
+    public static String generateSpec(double width, double length, double height, double weight) {
+        StringBuilder specBuilder = new StringBuilder();
+
+        // 处理尺寸部分
+        if (width > 0 && length > 0) {
+            // 转换为cm并格式化（保留1位小数）
+            String wStr = DIMENSION_FORMAT.format(width / 10);
+            String lStr = DIMENSION_FORMAT.format(length / 10);
+
+            if (height > 0) {
+                // 三维尺寸
+                String hStr = DIMENSION_FORMAT.format(height / 10);
+                specBuilder.append(wStr).append(" x ")
+                        .append(lStr).append(" x ")
+                        .append(hStr).append(" cm");
+            } else {
+                // 二维尺寸
+                specBuilder.append(wStr).append(" x ")
+                        .append(lStr).append(" cm");
+            }
+        }
+
+        // 处理重量部分
+        if (weight > 0) {
+            if (!specBuilder.isEmpty()) {
+                // 已有尺寸部分，添加分隔符
+                specBuilder.append("; ");
+            }
+            specBuilder.append(WEIGHT_FORMAT.format(weight)).append(" g");
+        }
+
+        return specBuilder.toString();
+    }
 
     public final static List<Integer> ItemExcRelatedGroups = Arrays.asList(
             RelatedGroup.RELATED_SUBJECT.getValue(),

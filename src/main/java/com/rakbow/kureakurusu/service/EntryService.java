@@ -13,8 +13,8 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
-import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
@@ -83,7 +83,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public String update(EntryUpdateDTO dto) {
 
         Entry entry = converter.convert(dto, Entry.class);
-        entry.setEditedTime(DateHelper.now());
         mapper.updateById(entry);
         return I18nHelper.getMessage("entity.crud.update.success");
     }
@@ -127,28 +126,26 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @SneakyThrows
     @Transactional
     public String uploadImage(long id, ImageMiniDTO image) {
-
         Entry entry = mapper.selectById(id);
         String finalUrl;
         String fieldName;
         if (image.getType() == ImageType.MAIN.getValue()) {
             fieldName = "cover";
-            if (StringUtils.isNotBlank(entry.getCover())) {
+            if (StringUtils.isNotEmpty(entry.getCover())) {
                 qiniuImageUtil.deleteEntryImage(entry.getCover());
             }
         } else if (image.getType() == ImageType.THUMB.getValue()) {
             fieldName = "thumb";
-            if (StringUtils.isNotBlank(entry.getThumb())) {
+            if (StringUtils.isNotEmpty(entry.getThumb())) {
                 qiniuImageUtil.deleteEntryImage(entry.getThumb());
             }
         } else {
             throw new Exception();
         }
+        //upload new entry image
         finalUrl = qiniuImageUtil.uploadEntryImage(ENTITY_TYPE, id, image);
-
-        UpdateWrapper<Entry> wrapper = new UpdateWrapper<Entry>()
-                .eq("id", id).set(fieldName, finalUrl);
-        mapper.update(null, wrapper);
+        //update entry
+        mapper.update(null, new UpdateWrapper<Entry>().eq("id", id).set(fieldName, finalUrl));
         return finalUrl;
     }
 

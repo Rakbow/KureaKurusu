@@ -15,6 +15,6 @@ import java.util.List;
 public class ImageDisplayVO {
 
     private List<Image> images;
-    private int count;
+    private long count;
 
 }

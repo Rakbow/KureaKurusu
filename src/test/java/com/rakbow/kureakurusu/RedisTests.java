@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
@@ -9,7 +8,6 @@ import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.entity.entry.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.service.ResourceService;
@@ -25,7 +23,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -129,7 +126,7 @@ public class RedisTests {
 
     @Test
     public void batchUpdateItemCoverAndThumbRedisCache() {
-        List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getType, ItemType.ALBUM));
+        List<Item> items = itemMapper.selectList(null);
         redisUtil.delete("entity_image_cache:*");
         String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{EntityType.ITEM.getValue()}:%s";
         String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{EntityType.ITEM.getValue()}:%s";
@@ -145,51 +142,59 @@ public class RedisTests {
             Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
                     .eq(Image::getEntityType, EntityType.ITEM.getValue())
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
-
-            if(thumb != null) {
-                curThumb = thumb.getUrl();
-            }else if(cover != null) {
-                String coverBase64Code = CommonImageUtil.getBase64CodeByUrl(cover.getUrl());
-                String thumbBase64Code = CommonImageUtil.generateThumb(coverBase64Code);
-                ImageMiniDTO thumbDto = new ImageMiniDTO();
-                // thumbDto.setBase64Code(thumbBase64Code);
-                thumbDto.setName("Thumb");
-                thumbDto.setType(ImageType.THUMB.getValue());
-                Image thumbImage = qiniuImageUtil.commonAddImages(EntityType.ITEM.getValue(), i.getId(), List.of(thumbDto)).getFirst();
-                imageMapper.insert(thumbImage);
-                curThumb = thumbImage.getUrl();
-            }else {
-                curThumb = CommonConstant.EMPTY_IMAGE_URL;
-            }
+            // if(thumb != null) {
+            //     curThumb = thumb.getUrl();
+            // }else if(cover != null) {
+            //     String coverBase64Code = CommonImageUtil.getBase64CodeByUrl(cover.getUrl());
+            //     String thumbBase64Code = CommonImageUtil.generateThumb(coverBase64Code);
+            //     ImageMiniDTO thumbDto = new ImageMiniDTO();
+            //     // thumbDto.setBase64Code(thumbBase64Code);
+            //     thumbDto.setName("Thumb");
+            //     thumbDto.setType(ImageType.THUMB.getValue());
+            //     Image thumbImage = qiniuImageUtil.uploadImages(EntityType.ITEM.getValue(), i.getId(), List.of(thumbDto)).getFirst();
+            //     imageMapper.insert(thumbImage);
+            //     curThumb = thumbImage.getUrl();
+            // }else {
+            //     curThumb = CommonConstant.EMPTY_IMAGE_URL;
+            // }
 
             redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
-            redisUtil.set(String.format(thumbKey, i.getId()), curThumb);
+            redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
             System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
         }
     }
 
     @Test
     public void batchUpdateEntryCoverAndThumbRedisCache() {
-        int type = EntityType.CHARACTER.getValue();
-        Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
-        BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
-        List<Entry> entries = subMapper.selectList(null);
-        redisUtil.delete("entity_image_cache:*");
-        String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{type}:%s";
-        String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{type}:%s";
-        int total = entries.size();
-        AtomicInteger cur = new AtomicInteger();
-        entries.forEach(i -> {
-            Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
-                    .eq(Image::getEntityType, type)
-                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
-            Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
-                    .eq(Image::getEntityType, type)
-                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
-            redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
-            redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
-            System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
-        });
+        // int type = EntityType.CHARACTER.getValue();
+        // Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
+        // BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
+        // List<Entry> entries = subMapper.selectList(null);
+        // redisUtil.delete("entity_image_cache:*");
+        // String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{type}:%s";
+        // String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{type}:%s";
+        // int total = entries.size();
+        // AtomicInteger cur = new AtomicInteger();
+        // entries.forEach(i -> {
+        //     Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+        //             .eq(Image::getEntityType, type)
+        //             .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
+        //     Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+        //             .eq(Image::getEntityType, type)
+        //             .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
+        //     redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
+        //     redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
+        //     System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
+        // });
+    }
+
+    @Test
+    public void batchGetEntryTableCountRedisCache() {
+        // int type = EntityType.SUBJECT.getValue();
+        // Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
+        // BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
+        // List<Entry> entries = subMapper.selectList(null);
+        // redisUtil.set(STR."entity_table_total:\{type}", entries.size());
     }
 
 }

@@ -219,7 +219,6 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 if (track.isUpdate()) {
                     Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
                     if (ep == null) continue;
-                    ep.setEditedTime(DateHelper.now());
                     ep.setTitle(track.getTitle().replace("\t", ""));
                     ep.setDuration(DateHelper.getDuration(track.getDuration()));
                     ep.setSerial(track.getSerial());

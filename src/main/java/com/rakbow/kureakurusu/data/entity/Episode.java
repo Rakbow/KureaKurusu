@@ -1,28 +1,18 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
-
-import java.sql.Timestamp;
+import lombok.*;
 
 /**
  * @author Rakbow
  * @since 2024/01/08 14:54
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @AllArgsConstructor
@@ -32,7 +22,7 @@ import java.sql.Timestamp;
         @AutoMapper(target = EpisodeVO.class, reverseConvertGenerate = false),
         @AutoMapper(target = EpisodeListVO.class, reverseConvertGenerate = false)
 })
-public class Episode {
+public class Episode extends Entity {
 
     @Builder.Default
     private Long id;//表主键
@@ -48,21 +38,8 @@ public class Episode {
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    @AutoMapping(qualifiedByName = "getVOTime")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
-    @Builder.Default
-    private Timestamp addedTime = DateHelper.now();
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    @AutoMapping(qualifiedByName = "getVOTime")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
-    @Builder.Default
-    private Timestamp editedTime = DateHelper.now();
-    @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    @Builder.Default
-    private Boolean status = true;
-
     public Episode() {
+        super();
         id = 0L;
         relatedType = 0;
         relatedId = 0;
@@ -74,9 +51,6 @@ public class Episode {
         serial = 1;
         detail = "";
         episodeType = 0;
-        addedTime = DateHelper.now();
-        editedTime = DateHelper.now();
-        status = true;
     }
 
 }

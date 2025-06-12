@@ -121,7 +121,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         Item item = converter.convert(dto, Item.class);
-        item.setAddedTime(null);
         SubItem subItem = converter.convert(dto, subClass);
 
         mapper.updateById(item);
@@ -172,10 +171,11 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         SuperItem item = getById(id);
         if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
         Class<? extends ItemVO> targetVOClass = ItemUtil.getDetailVO(item.getType().getValue());
-
+        ItemVO vo = converter.convert(item, targetVOClass);
+        vo.setSpec(ItemUtil.generateSpec(vo.getWidth(), vo.getLength(), vo.getHeight(), vo.getWeight()));
         return ItemDetailVO.builder()
                 .type(item.getType().getValue())
-                .item(converter.convert(item, targetVOClass))
+                .item(vo)
                 .traffic(entityUtil.buildTraffic(ENTITY_TYPE.getValue(), id))
                 .cover(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))
                 .build();
@@ -298,7 +298,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, relatedEntities);
         //save image
         images.forEach(i -> i.setFile(CommonImageUtil.base64ToMultipartFile(i.getBase64Code())));
-        resourceSrv.addEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
+        resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
 
         //save episode
         if(item.getType().intValue() == ItemType.ALBUM.getValue()) {

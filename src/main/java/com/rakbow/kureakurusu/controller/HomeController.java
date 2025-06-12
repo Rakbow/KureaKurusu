@@ -23,7 +23,7 @@ public class HomeController {
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     //region ------引入实例------
-    @Value("${kureakurusu.path.img}")
+    @Value("${system.path.img}")
     private String imgPath;
 
     //获取图像
