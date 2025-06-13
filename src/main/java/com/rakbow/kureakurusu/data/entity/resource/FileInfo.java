@@ -2,8 +2,6 @@ package com.rakbow.kureakurusu.data.entity.resource;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.rakbow.kureakurusu.data.entity.Entity;
-import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
-import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -29,11 +27,10 @@ public class FileInfo extends Entity {
 
     @TableId(type = IdType.AUTO)
     private Long id = 0L;
-    @AutoMapping(qualifiedByName = "getFileExt", target = "ext")
     private String name;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    private String mime;
+    private String extension;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @AutoMapping(qualifiedByName = "size")
     private long size;

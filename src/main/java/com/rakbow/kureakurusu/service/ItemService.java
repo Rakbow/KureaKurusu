@@ -12,10 +12,6 @@ import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.dto.ItemCreateDTO;
-import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ItemSearchParams;
-import com.rakbow.kureakurusu.data.dto.ItemUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
@@ -24,7 +20,7 @@ import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.dto.EntityMinDTO;
+import com.rakbow.kureakurusu.data.vo.EntityResourceCount;
 import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
@@ -42,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -261,11 +259,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .selectAll(subClass, SUB_T_PREFIX)
                 .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)}\{SUB_T_CONDITION}")
                 .eq(Item::getType, param.getType())
-                .like(StringUtils.isNotBlank(param.getName()), Item::getName, param.getName())
-                .like(StringUtils.isNotBlank(param.getAliases()),
+                .like(StringUtils.isNotEmpty(param.getName()), Item::getName, param.getName())
+                .like(StringUtils.isNotEmpty(param.getAliases()),
                         "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getAliases()}%")
-                .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
-                .like(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                .eq(StringUtils.isNotEmpty(param.getRegion()), Item::getRegion, param.getRegion())
+                .like(StringUtils.isNotEmpty(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                .like(StringUtils.isNotEmpty(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
                 .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
                 .eq(param.getBonus() != null, Item::getBonus, Boolean.TRUE.equals(param.getBonus()) ? 1 : 0)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
@@ -276,7 +275,28 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
 
+        //get related resource count
+        getItemResourceCount(items);
+
         return new SearchResult<>(items, page.getTotal(), page.getCurrent(), page.getSize());
+    }
+
+    @Transactional
+    @SneakyThrows
+    public void getItemResourceCount(List<? extends ItemListVO> items) {
+        if(items.isEmpty()) return;
+        List<Long> ids = items.stream().map(ItemListVO::getId).toList();
+        int entityType = ENTITY_TYPE.getValue();
+        // 将资源统计列表转换为 Map<entityId, count>
+        Map<Long, Integer> fileCountMap = resourceSrv.getFileCount(entityType, ids).stream()
+                .collect(Collectors.toMap(EntityResourceCount::getEntityId, EntityResourceCount::getCount));
+        Map<Long, Integer> imageCountMap = resourceSrv.getImageCount(entityType, ids).stream()
+                .collect(Collectors.toMap(EntityResourceCount::getEntityId, EntityResourceCount::getCount));
+        for (ItemListVO item : items) {
+            long id = item.getId();
+            item.setFileCount(fileCountMap.getOrDefault(id, 0));
+            item.setImageCount(imageCountMap.getOrDefault(id, 0));
+        }
     }
 
     //endregion
@@ -301,7 +321,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
 
         //save episode
-        if(item.getType().intValue() == ItemType.ALBUM.getValue()) {
+        if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
             albumSrv.quickCreateAlbumTrack(id, ((AlbumCreateDTO) item).getTrackList(), false);
         }
 

@@ -93,7 +93,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         // 记录开始时间
         long start = System.currentTimeMillis();
         QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>()
-                .eq("type", param.getType()).eq("status", 1);
+                .eq("type", param.getType()).eq("status", 1)
+                .orderByDesc("id");
         if (!param.getKeywords().isEmpty()) {
             if (param.strict()) {
                 param.getKeywords().forEach(k ->
@@ -104,15 +105,16 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                                         " LIKE concat('%', {0}, '%')", k)).or().like("name", k)
                                 .or().like("name_zh", k).or().like("name_en", k));
             }
-        } else {
-            Set<Long> ids = popularUtil.getPopularityRank(param.getType(), 5);
-            if (!ids.isEmpty()) {
-                wrapper.in("id", ids)
-                        .orderBy(true, false,
-                                STR."FIELD(id, \{ids.stream()
-                                        .map(String::valueOf).collect(Collectors.joining(","))})");
-            }
         }
+        // else {
+        //     Set<Long> ids = popularUtil.getPopularityRank(param.getType(), 5);
+        //     if (!ids.isEmpty()) {
+        //         wrapper.in("id", ids)
+        //                 .orderBy(true, false,
+        //                         STR."FIELD(id, \{ids.stream()
+        //                                 .map(String::valueOf).collect(Collectors.joining(","))})");
+        //     }
+        // }
         IPage<Entry> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryMiniVO> res = new ArrayList<>(
                 pages.getRecords().stream().map(EntryMiniVO::new).toList()

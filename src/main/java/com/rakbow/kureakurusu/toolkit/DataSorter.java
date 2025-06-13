@@ -5,6 +5,7 @@ import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.data.vo.EntityResourceCount;
 
 import java.util.Comparator;
 
@@ -25,6 +26,9 @@ public class DataSorter {
             .thenComparingInt(Episode::getSerial);
     public static Comparator<Image> imageEntityTypeEntityIdTypeSorter = Comparator.comparingInt(Image::getEntityType)
             .thenComparingLong(Image::getEntityId).thenComparingInt(Image::getType);
+
+    public static Comparator<EntityResourceCount> entityResourceCountEntityTypeEntityIdSorter = Comparator.comparingInt(EntityResourceCount::getEntityType)
+            .thenComparingLong(EntityResourceCount::getEntityId);
 
 }
 

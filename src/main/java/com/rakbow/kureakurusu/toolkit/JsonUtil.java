@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class JsonUtil {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = SpringUtil.getBean(ObjectMapper.class);
 
     @SneakyThrows
     public static <T> List<T> toJavaList(String json, Class<T> clazz) {
@@ -79,6 +79,18 @@ public class JsonUtil {
         }
 
         return values;
+    }
+
+    @SneakyThrows
+    public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz) {
+        return mapper.readValue(mapper.writeValueAsString(map), clazz);
+    }
+
+    @SneakyThrows
+    public static <T> List<T> to(List<Map<String, Object>> mapList, Class<T> clazz) {
+        List<T> res = new ArrayList<>();
+        mapList.forEach(map -> res.add(mapToBean(map, clazz)));
+        return res;
     }
 
 }

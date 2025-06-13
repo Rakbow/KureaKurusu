@@ -13,9 +13,8 @@ import lombok.EqualsAndHashCode;
 public class FileListVO extends EntityListVO {
 
     private String name;
-    private String mime;
+    private String extension;
     private String size;
     private String path;
-    private String ext;
 
 }

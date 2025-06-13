@@ -19,6 +19,7 @@ import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.data.vo.EntityResourceCount;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -29,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +45,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -56,11 +57,11 @@ public class ResourceService {
 
     private final ImageMapper imageMapper;
     private final FileInfoMapper fileMapper;
+    private final FileRelatedMapper fileRelatedMapper;
     private final QiniuImageUtil qiniuImageUtil;
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
     private final Converter converter;
-    private final Tika tika = new Tika();
 
     @Value("${system.path.upload.file}")
     private String FILE_UPLOAD_DIR;
@@ -175,7 +176,7 @@ public class ResourceService {
 
         FileInfo info = new FileInfo();
         info.setName(filename);
-        info.setMime(tika.detect(file));
+        info.setExtension(FileUtil.getExtension(filename));
         info.setSize(file.length());
         info.setPath(STR."/upload/\{datePath}/\{newFileName}");
 
@@ -197,7 +198,6 @@ public class ResourceService {
         if (param.getEntityType() == null && param.getEntityId() == null) {
             wrapper = new QueryWrapper<FileInfo>()
                     .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
-                    .like(StringUtils.isNotEmpty(param.getMime()), "mime", param.getMime())
                     .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         } else {
             wrapper = new MPJLambdaWrapper<FileInfo>()
@@ -206,7 +206,6 @@ public class ResourceService {
                     .eq(FileRelated::getEntityType, param.getEntityType())
                     .eq(FileRelated::getEntityId, param.getEntityId())
                     .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
-                    .like(StringUtils.isNotEmpty(param.getMime()), "mime", param.getMime())
                     .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         }
 
@@ -245,7 +244,7 @@ public class ResourceService {
 
             FileInfo info = new FileInfo();
             info.setName(names.get(idx));
-            info.setMime(tika.detect(file));
+            info.setExtension(FileUtil.getExtension(info.getName()));
             info.setSize(file.length());
             info.setPath(STR."\{FILE_UPLOAD_PREFIX}\{datePath}/\{newFileName}");
             info.setRemark(remarks.get(idx));
@@ -295,6 +294,33 @@ public class ResourceService {
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize(),
                 String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
+    }
+
+    public List<EntityResourceCount> getFileCount(Integer entityType, List<Long> ids) {
+        QueryWrapper<FileRelated> wrapper = new QueryWrapper<FileRelated>()
+                .select("entity_id", "COUNT(file_id) AS count")
+                .eq("entity_type", entityType)
+                .in("entity_id", ids)
+                .groupBy("entity_type", "entity_id");
+        List<Map<String, Object>> maps = fileRelatedMapper.selectMaps(wrapper);
+
+        List<EntityResourceCount> res = JsonUtil.to(maps, EntityResourceCount.class);
+        res.forEach(r -> r.setEntityType(entityType));
+        return res;
+    }
+
+    public List<EntityResourceCount> getImageCount(Integer entityType, List<Long> ids) {
+        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
+                .select("entity_id", "COUNT(id) AS count")
+                .eq("entity_type", entityType)
+                .eq("type", ImageType.DEFAULT)
+                .in("entity_id", ids)
+                .groupBy("entity_type", "entity_id");
+        List<Map<String, Object>> maps = imageMapper.selectMaps(wrapper);
+
+        List<EntityResourceCount> res = JsonUtil.to(maps, EntityResourceCount.class);
+        res.forEach(r -> r.setEntityType(entityType));
+        return res;
     }
 
     //endregion

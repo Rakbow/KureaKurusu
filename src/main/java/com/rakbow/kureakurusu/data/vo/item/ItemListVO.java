@@ -37,5 +37,7 @@ public class ItemListVO {
     private boolean status;
 
     private long visitNum;
+    private int fileCount;
+    private int imageCount;
 
 }

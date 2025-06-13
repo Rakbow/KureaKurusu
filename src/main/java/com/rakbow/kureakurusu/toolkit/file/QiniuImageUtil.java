@@ -11,8 +11,6 @@ import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.Tika;
-import org.apache.tika.mime.MimeTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -34,8 +32,6 @@ public class QiniuImageUtil {
     @Value("${qiniu.domain}")
     private static String FILE_DOMAIN;
     private final static String IMAGE_PREFIX = "upload/image/";
-
-    private static final Tika tika = new Tika();
 
     /**
      * 通用新增图片
@@ -169,12 +165,8 @@ public class QiniuImageUtil {
         // 提取文件后缀（例如 "jpeg"）
         String originalFilename = image.getFile().getOriginalFilename();
         assert originalFilename != null;
-        String extension;
-        if (!originalFilename.contains(".")) {
-            String mimeType = tika.detect(image.getFile().getInputStream());
-            MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
-            extension = allTypes.forName(mimeType).getExtension().replace(".", "");
-        } else {
+        String extension = "";
+        if (originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         }
         if (StringUtils.equals(extension, "jpeg")) extension = "jpg";
