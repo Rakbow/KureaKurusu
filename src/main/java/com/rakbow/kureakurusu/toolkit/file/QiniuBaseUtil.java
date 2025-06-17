@@ -83,7 +83,7 @@ public class QiniuBaseUtil {
             UploadManager uploadManager = new UploadManager(cfg);
 
             // 通过随机UUID生成唯一文件名 长度：16
-            String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8)}.\{fileExt}";
+            String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "")}.\{fileExt}";
 
             // 生成完整文件名，例：album/11/xxx.jpg
             String fullFileName = filePath + fileName;

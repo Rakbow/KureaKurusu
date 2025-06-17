@@ -15,13 +15,13 @@ import lombok.Getter;
 public enum RelatedGroup {
 
     DEFAULT(0, "enum.related_group.default"),
-    RELATED_PERSON(1, "enum.related_group.related_person"),
-    RELATED_SUBJECT(2, "enum.related_group.related_subject"),
-    RELATED_ITEM(3, "enum.related_group.related_item"),
-    RELATED_CHAR(4, "enum.related_group.related_char"),
-    RELATED_PRODUCT(5, "enum.related_group.related_product"),
-    MATERIAL(6, "enum.related_group.material"),
-    EVENT(7, "enum.related_group.event");
+    PRODUCT(1, "enum.related_group.product"),
+    PERSON(2, "enum.related_group.person"),
+    CHARACTER(3, "enum.related_group.character"),
+    CLASSIFICATION(4, "enum.related_group.classification"),
+    MATERIAL(5, "enum.related_group.material"),
+    EVENT(6, "enum.related_group.event"),
+    ITEM(10, "enum.related_group.item");
 
     @EnumValue
     private final Integer value;

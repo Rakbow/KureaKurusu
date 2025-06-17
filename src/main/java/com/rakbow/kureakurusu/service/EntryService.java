@@ -32,8 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -94,16 +92,18 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         long start = System.currentTimeMillis();
         QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>()
                 .eq("type", param.getType()).eq("status", 1)
-                .orderByDesc("id");
+                .orderByAsc("id");
         if (!param.getKeywords().isEmpty()) {
             if (param.strict()) {
                 param.getKeywords().forEach(k ->
                         wrapper.or().eq("name", k).or().eq("name_zh", k).or().eq("name_en", k));
             } else {
-                param.getKeywords().forEach(k ->
-                        wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))" +
-                                        " LIKE concat('%', {0}, '%')", k)).or().like("name", k)
-                                .or().like("name_zh", k).or().like("name_en", k));
+                wrapper.and(w -> param.getKeywords().forEach(k -> w.or(i -> i
+                        .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
+                        .or().like("name", k)
+                        .or().like("name_zh", k)
+                        .or().like("name_en", k)
+                )));
             }
         }
         // else {
@@ -175,7 +175,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
             return res;
         List<Relation> relations = relatedMapper.selectList(
                 new LambdaQueryWrapper<Relation>()
-                        .eq(Relation::getRelatedGroup, RelatedGroup.RELATED_PRODUCT)
+                        .eq(Relation::getRelatedGroup, RelatedGroup.PRODUCT)
                         .eq(Relation::getRelatedEntityType, EntityType.ENTRY)
                         .eq(Relation::getRelatedEntityId, id)
         );

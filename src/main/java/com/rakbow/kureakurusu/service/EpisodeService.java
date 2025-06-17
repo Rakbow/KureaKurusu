@@ -63,8 +63,8 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         EpisodeListQueryDTO param = new EpisodeListQueryDTO(dto);
         QueryWrapper<Episode> wrapper = new QueryWrapper<Episode>()
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        if (param.getTitle() != null && !param.getTitle().isEmpty()) {
-            wrapper.like("title", param.getTitle()).or().like("title_en", param.getTitle());
+        if (param.getName() != null && !param.getName().isEmpty()) {
+            wrapper.like("name", param.getName()).or().like("name_en", param.getName());
         }
         IPage<Episode> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EpisodeListVO> res = converter.convert(pages.getRecords(), EpisodeListVO.class);

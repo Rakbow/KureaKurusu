@@ -19,7 +19,7 @@ public class EpisodeListVO extends EntityListVO {
 
     private int serial;
     private int discNo;
-    private String title;
+    private String name;
     private String premiereDate;
     private String duration;
     private long relatedType;

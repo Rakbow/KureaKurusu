@@ -33,7 +33,6 @@ import java.util.List;
 })
 public class Entry extends Entity {
 
-    private Long id = 0L;
     @AutoMapping(qualifiedByName = "toAttribute")
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private EntryType type;

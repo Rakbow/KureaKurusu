@@ -31,8 +31,6 @@ import java.util.List;
 })
 public class Item extends Entity {
 
-    @TableId(type = IdType.AUTO)
-    private Long id = 0L;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @AutoMapping(qualifiedByName = "toAttribute")
     private ItemType type;

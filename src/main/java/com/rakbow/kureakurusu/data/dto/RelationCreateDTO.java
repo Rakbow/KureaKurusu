@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.vo.relation.RelationMiniVO;
+import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,8 +17,8 @@ public class RelationCreateDTO extends DTO {
     private int entityType;
     private long entityId;
     private int relatedEntityType;
-    private int relatedEntryType;
-    private List<RelationMiniVO> relatedEntityIds;
+    private int relatedGroup;
+    private List<RelationCreateMiniDTO> relatedEntries;
     private long roleId;
 
 }

@@ -28,8 +28,8 @@ public class Episode extends Entity {
     private Long id;//表主键
     private long relatedType;//关联类型 Album Product
     private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
-    private String title;//标题(原)
-    private String titleEn;//标题(英)
+    private String name;//标题(原)
+    private String nameEn;//标题(英)
     private String premiereDate;//首播日期
     @AutoMapping(qualifiedByName = "getDuration")
     private int duration;//时长 单位：秒
@@ -43,8 +43,8 @@ public class Episode extends Entity {
         id = 0L;
         relatedType = 0;
         relatedId = 0;
-        title = "";
-        titleEn = "";
+        name = "";
+        nameEn = "";
         premiereDate = "";
         duration = 0;
         discNo = 1;

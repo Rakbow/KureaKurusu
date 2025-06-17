@@ -1,13 +1,12 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapping;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -18,6 +17,13 @@ import java.sql.Timestamp;
  */
 @Data
 public class Entity {
+
+    @TableId(type = IdType.AUTO)
+    private Long id = 0L;
+
+    @NotBlank(message = "{entity.crud.name.required_field}")
+    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
+    private String name;
 
     private String remark;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")

@@ -21,16 +21,23 @@ public class DataFinder {
 
     public static Episode episodeFinder = new Episode();
     public static Item itemFinder = new Item();
-    public static Entry entityFinder = new Entry();
+    public static Entry entryFinder = new Entry();
+    public static Entity entityFinder = new Entity();
     public static Image imageFinder = new Image();
 
     public static EntityResourceCount resourceCountFinder = new EntityResourceCount();
 
     //region album
 
-    public static Entry findEntryById(Long id, List<Entry> list) {
+    public static Entity findEntityById(Long id, List<? extends Entity> list) {
         entityFinder.setId(id);
-        int idx = Collections.binarySearch(list, entityFinder, DataSorter.entryIdSorter);
+        int idx = Collections.binarySearch(list, entityFinder, DataSorter.entityIdSorter);
+        return idx >= 0 ? list.get(idx) : null;
+    }
+
+    public static Entry findEntryById(Long id, List<Entry> list) {
+        entryFinder.setId(id);
+        int idx = Collections.binarySearch(list, entryFinder, DataSorter.entryIdSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
 

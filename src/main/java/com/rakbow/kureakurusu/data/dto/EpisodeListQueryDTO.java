@@ -11,12 +11,12 @@ import lombok.EqualsAndHashCode;
 @Data
 public class EpisodeListQueryDTO extends ListQueryDTO {
 
-    private String title;
+    private String name;
     private Integer episodeType;
 
     public EpisodeListQueryDTO(ListQuery qry) {
         super(qry);
-        title = qry.getVal("title");
+        name = qry.getVal("name");
         episodeType = qry.getVal("episodeType");
     }
 

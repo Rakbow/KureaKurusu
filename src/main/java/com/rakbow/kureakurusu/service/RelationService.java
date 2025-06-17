@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.EntryMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
@@ -18,12 +19,12 @@ import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Entity;
-import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedEntityVO;
-import com.rakbow.kureakurusu.data.vo.relation.RelationMiniVO;
+import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -48,9 +49,9 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
     private final RelationMapper mapper;
     private final SqlSessionFactory sqlSessionFactory;
-    private final EntityUtil entityUtil;
     private final Converter converter;
     private final EntryMapper entryMapper;
+    private final ItemMapper itemMapper;
 
     private final List<EntryType> itemExcRelationEntryTypes
             = List.of(EntryType.CLASSIFICATION, EntryType.MATERIAL, EntryType.EVENT);
@@ -71,9 +72,9 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         );
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
         List<Relation> relations = pages.getRecords();
-        if (relatedGroup == RelatedGroup.RELATED_PRODUCT.getValue()) {
+        if (relatedGroup == RelatedGroup.PRODUCT.getValue()) {
             relatedEntity = EntityType.ENTRY.getValue();
-        } else if (relatedGroup == RelatedGroup.RELATED_CHAR.getValue()) {
+        } else if (relatedGroup == RelatedGroup.CHARACTER.getValue()) {
             relatedEntity = EntityType.ENTRY.getValue();
         } else {
             relatedEntity = EntityType.ITEM.getValue();
@@ -81,18 +82,18 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
         List<Entry> targets = entryMapper.selectByIds(targetIds);
         for (Relation r : relations) {
-            Entry entity = DataFinder.findEntryById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
-            if (entity == null) continue;
+            Entry e = DataFinder.findEntryById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+            if (e == null) continue;
             Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
             if (role == null) continue;
             res.add(
                     RelatedEntityVO
                             .builder()
                             .type(relatedEntity)
-                            .id(entity.getId())
-                            .name(entity.getName())
-                            .subName(entity.getNameZh())
-                            .cover(CommonImageUtil.getEntryThumb(entity.getThumb()))
+                            .id(e.getId())
+                            .name(e.getName())
+                            .subName(EntryUtil.getSubName(e))
+                            .cover(CommonImageUtil.getEntryThumb(e.getThumb()))
                             .role(role)
                             .build()
             );
@@ -115,7 +116,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         );
         if (relations.isEmpty())
             return res;
-        if (relatedGroup == RelatedGroup.RELATED_ITEM.getValue()) {
+        if (relatedGroup == RelatedGroup.ITEM.getValue()) {
             relatedEntity = EntityType.ITEM.getValue();
         } else {
             relatedEntity = EntityType.ENTRY.getValue();
@@ -149,9 +150,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public SearchResult<RelationVO> getRelations(RelationListQueryDTO param) {
         List<RelationVO> res = new ArrayList<>();
         List<Long> targetIds;
-        Class<? extends Entity> subClass;
-        BaseMapper<Entry> subMapper;
-        List<Entry> targets;
+        BaseMapper<? extends Entity> subMapper;
+        List<? extends Entity> targets;
         List<Relation> currentRelations;
         String typeCol;
         String idCol;
@@ -165,7 +165,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         QueryWrapper<Relation> wrapper = new QueryWrapper<Relation>()
                 .eq(typeCol, param.getEntityType())
                 .eq(idCol, param.getEntityId())
-                .eq(param.getRelatedGroup() != -1, "related_group", param.getRelatedGroup())
+                .eq(param.getRelatedGroup() != RelatedGroup.DEFAULT.getValue(), "related_group", param.getRelatedGroup())
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
                 .orderByDesc("id");
 
@@ -179,11 +179,15 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             targetIds = currentRelations.stream()
                     .map(param.getDirection() == 1 ? Relation::getRelatedEntityId : Relation::getEntityId)
                     .distinct().toList();
-            subClass = entityUtil.getSubEntity(entityType);
-            subMapper = MyBatisUtil.getMapper(subClass);
+
+            if(param.getRelatedGroup() == RelatedGroup.ITEM.getValue()) {
+                subMapper = itemMapper;
+            }else {
+                subMapper = entryMapper;
+            }
             targets = subMapper.selectByIds(targetIds);
             for (Relation r : currentRelations) {
-                Entry e = DataFinder.findEntryById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+                Entity e = DataFinder.findEntityById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
                 if (e == null) continue;
                 Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
                 Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.optionsZh.roleSet);
@@ -199,7 +203,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                                 .target(new Attribute<>(e.getName(), e.getId()))
                                 .remark(r.getRemark())
                                 .relatedTypeName(EntityType.getTableName(entityType))
-                                .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
+                                .thumb(CommonImageUtil.getEntryThumb(((Entry)e).getThumb()))
                                 .build()
                 );
             }
@@ -208,25 +212,15 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public void addRelations(RelationCreateDTO dto) {
+    public void addRelatedEntries(RelationCreateDTO dto) {
         List<Relation> res = new ArrayList<>();
-        RelatedGroup group;
-        switch (EntryType.get(dto.getRelatedEntryType())) {
-            case EntryType.PRODUCT -> group = RelatedGroup.RELATED_PRODUCT;
-            case EntryType.PERSON -> group = RelatedGroup.RELATED_PERSON;
-            case EntryType.CHARACTER -> group = RelatedGroup.RELATED_CHAR;
-            case EntryType.CLASSIFICATION -> group = RelatedGroup.RELATED_SUBJECT;
-            case EntryType.MATERIAL -> group = RelatedGroup.MATERIAL;
-            case EntryType.EVENT -> group = RelatedGroup.EVENT;
-            default -> group = RelatedGroup.DEFAULT;
-        }
-        for (RelationMiniVO target : dto.getRelatedEntityIds()) {
+        for (RelationCreateMiniDTO target : dto.getRelatedEntries()) {
             Relation relation = new Relation();
             relation.setEntityType(dto.getEntityType());
             relation.setEntityId(dto.getEntityId());
             relation.setRoleId(dto.getRoleId());
-            relation.setRelatedGroup(group);
-            relation.setRelatedEntityType(dto.getRelatedEntityType());
+            relation.setRelatedGroup(RelatedGroup.get(dto.getRelatedGroup()));
+            relation.setRelatedEntityType(EntityType.ENTRY.getValue());
             relation.setRelatedEntityId(target.getId());
             relation.setRemark(target.getRemark());
             res.add(relation);

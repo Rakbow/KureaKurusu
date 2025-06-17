@@ -158,7 +158,7 @@ public class QiniuImageUtil {
     private UploadImage handleImage(int entityType, long entityId, ImageMiniDTO image) {
         UploadImage res = new UploadImage();
         //generate upload file pre-fix
-        res.setPrefixKey(STR."\{IMAGE_PREFIX}\{entityType}/\{entityId}/\{entityType}_\{entityId}_");
+        res.setPrefixKey(STR."\{IMAGE_PREFIX}\{entityType}/\{entityId}/");
         res.setData(image.getFile().getBytes());
         res.setSize(image.getFile().getSize());
 

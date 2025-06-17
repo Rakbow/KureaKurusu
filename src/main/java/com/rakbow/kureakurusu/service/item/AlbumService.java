@@ -8,7 +8,6 @@ import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.emun.DataActionType;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.item.Album;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
@@ -23,7 +22,6 @@ import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -37,7 +35,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -107,8 +104,8 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 AlbumTrackVO track = AlbumTrackVO.builder()
                         .serial(ep.getSerial())
                         .id(ep.getId())
-                        .title(ep.getTitle())
-                        .titleEn(ep.getTitleEn())
+                        .title(ep.getName())
+                        .titleEn(ep.getNameEn())
                         .duration(DateHelper.getDuration(ep.getDuration()))
                         .action(DataActionType.NO_ACTION.getValue())
                         .build();
@@ -147,7 +144,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             Episode ep = new Episode();
             ep.setRelatedType(0);
             ep.setRelatedId(id);
-            ep.setTitle(track.getTitle());
+            ep.setName(track.getTitle());
             ep.setSerial(track.getSerial());
             duration = DateHelper.getDuration(track.getDuration());
             runTime += duration;
@@ -204,7 +201,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 IntStream.range(0, tracks.size()).forEach(i -> tracks.get(i).setSerial(i + 1));
                 tracks.forEach(track -> {
                     Episode ep = Episode.builder()
-                            .title(track.getTitle().replace("\t", ""))
+                            .name(track.getTitle().replace("\t", ""))
                             .duration(DateHelper.getDuration(track.getDuration()))
                             .discNo(discs.indexOf(disc) + 1)
                             .serial(track.getSerial())
@@ -219,7 +216,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 if (track.isUpdate()) {
                     Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
                     if (ep == null) continue;
-                    ep.setTitle(track.getTitle().replace("\t", ""));
+                    ep.setName(track.getTitle().replace("\t", ""));
                     ep.setDuration(DateHelper.getDuration(track.getDuration()));
                     ep.setSerial(track.getSerial());
                     updateEpSet.add(ep);

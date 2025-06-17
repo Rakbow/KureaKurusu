@@ -3,14 +3,9 @@ package com.rakbow.kureakurusu.toolkit;
 import com.rakbow.kureakurusu.data.PageTraffic;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.entity.Entity;
-import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Rakbow
@@ -24,15 +19,6 @@ public class EntityUtil {
     private final LikeUtil likeUtil;
     private final PopularUtil popularUtil;
     private final RedisUtil redisUtil;
-
-    private final static Map<Integer, Class<? extends Entity>> subEntityMap = new HashMap<>() {{
-        put(EntityType.ITEM.getValue(), Item.class);
-        put(EntityType.ENTRY.getValue(), com.rakbow.kureakurusu.data.entity.Entry.class);
-    }};
-
-    public Class<? extends Entity> getSubEntity(int type) {
-        return subEntityMap.get(type);
-    }
 
     /**
      * 获取页面数据

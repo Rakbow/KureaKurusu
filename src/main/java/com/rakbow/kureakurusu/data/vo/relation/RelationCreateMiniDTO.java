@@ -7,7 +7,7 @@ import lombok.Data;
  * @since 2025/1/21 15:45
  */
 @Data
-public class RelationMiniVO {
+public class RelationCreateMiniDTO {
 
     private long id;
     private String remark;

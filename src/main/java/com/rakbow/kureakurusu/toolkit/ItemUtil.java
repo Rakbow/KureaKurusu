@@ -62,7 +62,7 @@ public class ItemUtil {
     }
 
     public final static List<Integer> ItemExcRelatedGroups = Arrays.asList(
-            RelatedGroup.RELATED_SUBJECT.getValue(),
+            RelatedGroup.CLASSIFICATION.getValue(),
             RelatedGroup.EVENT.getValue(),
             RelatedGroup.MATERIAL.getValue()
     );

@@ -34,14 +34,14 @@ public class RelationController {
         return new ApiResult().load(srv.getRelatedEntities(qry));
     }
 
-    @PostMapping("get-relations")
+    @PostMapping("list")
     public ApiResult getRelations(@RequestBody ListQuery qry) {
         return new ApiResult().load(srv.getRelations(new RelationListQueryDTO(qry)));
     }
 
     @PostMapping("add-relations")
     public ApiResult getPersonnel(@RequestBody RelationCreateDTO dto) {
-        srv.addRelations(dto);
+        srv.addRelatedEntries(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success"));
     }
 

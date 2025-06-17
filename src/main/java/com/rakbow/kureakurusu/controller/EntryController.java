@@ -53,9 +53,9 @@ public class EntryController {
 
     @PostMapping("upload-image")
     public ApiResult uploadImage(
-            @RequestPart("id") int id,
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("imageType") int imageType
+            @RequestParam("id") int id,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("imageType") int imageType
     ) {
         ApiResult res = new ApiResult();
         //check
