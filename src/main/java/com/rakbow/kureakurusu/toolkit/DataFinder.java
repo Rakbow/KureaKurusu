@@ -5,7 +5,7 @@ import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.vo.EntityResourceCount;
+import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +25,7 @@ public class DataFinder {
     public static Entity entityFinder = new Entity();
     public static Image imageFinder = new Image();
 
-    public static EntityResourceCount resourceCountFinder = new EntityResourceCount();
+    public static EntityRelatedCount resourceCountFinder = new EntityRelatedCount();
 
     //region album
 
@@ -119,7 +119,7 @@ public class DataFinder {
         return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static EntityResourceCount findResourceCountByTypeAndId(int type, long id, List<EntityResourceCount> list) {
+    public static EntityRelatedCount findResourceCountByTypeAndId(int type, long id, List<EntityRelatedCount> list) {
         resourceCountFinder.setEntityType(type);
         resourceCountFinder.setEntityId(id);
         int idx = Collections.binarySearch(list, resourceCountFinder, DataSorter.entityResourceCountEntityTypeEntityIdSorter);

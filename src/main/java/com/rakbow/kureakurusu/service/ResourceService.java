@@ -19,7 +19,7 @@ import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.vo.EntityResourceCount;
+import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -296,7 +296,7 @@ public class ResourceService {
                 String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
     }
 
-    public List<EntityResourceCount> getFileCount(Integer entityType, List<Long> ids) {
+    public List<EntityRelatedCount> getFileCount(Integer entityType, List<Long> ids) {
         QueryWrapper<FileRelated> wrapper = new QueryWrapper<FileRelated>()
                 .select("entity_id", "COUNT(file_id) AS count")
                 .eq("entity_type", entityType)
@@ -304,12 +304,12 @@ public class ResourceService {
                 .groupBy("entity_type", "entity_id");
         List<Map<String, Object>> maps = fileRelatedMapper.selectMaps(wrapper);
 
-        List<EntityResourceCount> res = JsonUtil.to(maps, EntityResourceCount.class);
+        List<EntityRelatedCount> res = JsonUtil.to(maps, EntityRelatedCount.class);
         res.forEach(r -> r.setEntityType(entityType));
         return res;
     }
 
-    public List<EntityResourceCount> getImageCount(Integer entityType, List<Long> ids) {
+    public List<EntityRelatedCount> getImageCount(Integer entityType, List<Long> ids) {
         QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
                 .select("entity_id", "COUNT(id) AS count")
                 .eq("entity_type", entityType)
@@ -318,7 +318,7 @@ public class ResourceService {
                 .groupBy("entity_type", "entity_id");
         List<Map<String, Object>> maps = imageMapper.selectMaps(wrapper);
 
-        List<EntityResourceCount> res = JsonUtil.to(maps, EntityResourceCount.class);
+        List<EntityRelatedCount> res = JsonUtil.to(maps, EntityRelatedCount.class);
         res.forEach(r -> r.setEntityType(entityType));
         return res;
     }

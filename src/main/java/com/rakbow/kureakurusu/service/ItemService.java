@@ -20,7 +20,7 @@ import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.vo.EntityResourceCount;
+import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
@@ -289,9 +289,9 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         int entityType = ENTITY_TYPE.getValue();
         // 将资源统计列表转换为 Map<entityId, count>
         Map<Long, Integer> fileCountMap = resourceSrv.getFileCount(entityType, ids).stream()
-                .collect(Collectors.toMap(EntityResourceCount::getEntityId, EntityResourceCount::getCount));
+                .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
         Map<Long, Integer> imageCountMap = resourceSrv.getImageCount(entityType, ids).stream()
-                .collect(Collectors.toMap(EntityResourceCount::getEntityId, EntityResourceCount::getCount));
+                .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
         for (ItemListVO item : items) {
             long id = item.getId();
             item.setFileCount(fileCountMap.getOrDefault(id, 0));

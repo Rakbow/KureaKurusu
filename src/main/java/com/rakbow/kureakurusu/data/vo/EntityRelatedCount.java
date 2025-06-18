@@ -8,7 +8,7 @@ import lombok.Data;
  * @since 2025/6/13 12:55
  */
 @Data
-public class EntityResourceCount {
+public class EntityRelatedCount {
 
     private int entityType;
     @JsonProperty("entity_id")
