@@ -51,14 +51,14 @@ public class GeneralController {
     }
 
     @PostMapping("update-entity-status")
-    public ApiResult updateEntryStatus(@RequestBody UpdateStatusDTO dto) {
-        srv.updateEntryStatus(dto);
+    public ApiResult updateEntityStatus(@RequestBody UpdateStatusDTO dto) {
+        srv.updateEntityStatus(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.status.update.success"));
     }
 
     @PostMapping("update-entity-detail")
-    public ApiResult updateEntryDetail(@RequestBody UpdateDetailDTO dto) {
-        srv.updateEntryDetail(dto);
+    public ApiResult updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
+        srv.updateEntityDetail(dto);
         return new ApiResult().ok(I18nHelper.getMessage("entity.crud.description.update.success"));
     }
 

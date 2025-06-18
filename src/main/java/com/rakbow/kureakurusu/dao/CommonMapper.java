@@ -13,8 +13,8 @@ import java.util.List;
 public interface CommonMapper {
 
     //修改状态(批量)
-    void updateEntryStatus(String tableName, List<Long> ids, int status);
+    void updateEntityStatus(String tableName, List<Long> ids, int status);
     //通用更新描述
-    void updateEntryDetail(String tableName, long entityId, String text, Timestamp editedTime);
+    void updateEntityDetail(String tableName, long entityId, String text, Timestamp editedTime);
 
 }

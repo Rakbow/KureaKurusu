@@ -111,8 +111,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateEntryStatus(UpdateStatusDTO dto) {
-        mapper.updateEntryStatus(EntityType.getTableName(dto.getEntity()), dto.getIds(), dto.status());
+    public void updateEntityStatus(UpdateStatusDTO dto) {
+        mapper.updateEntityStatus(EntityType.getTableName(dto.getEntity()), dto.getIds(), dto.status());
     }
 
     /**
@@ -141,8 +141,8 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
-    public void updateEntryDetail(UpdateDetailDTO dto) {
-        mapper.updateEntryDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
+    public void updateEntityDetail(UpdateDetailDTO dto) {
+        mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
     }
 
     //endregion
