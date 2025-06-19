@@ -31,14 +31,14 @@ public class UserController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //register
         srv.register(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("user.register.success"));
+        return new ApiResult().ok("user.register.success");
     }
 
     //activation user
     @PostMapping("activation")
     public ApiResult activation(@RequestBody UserActivationDTO dto) {
         srv.activation(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("user.activation.success"));
+        return new ApiResult().ok("user.activation.success");
     }
 
 }

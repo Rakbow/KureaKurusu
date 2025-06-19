@@ -20,7 +20,11 @@ public class ErrorFactory {
         return new ApiException("entry.url.error");
     }
 
-    public static Exception qiniuError(QiniuException e) {
+    public static ApiException fileEmpty() {
+        return new ApiException("file.empty");
+    }
+
+    public static ApiException qiniuError(QiniuException e) {
         return new ApiException("qiniu.exception", e.response.toString());
     }
 

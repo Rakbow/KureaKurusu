@@ -39,7 +39,7 @@ public class EntryController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.update(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @PostMapping("list")
@@ -60,7 +60,7 @@ public class EntryController {
     ) {
         return new ApiResult().ok(
                 srv.uploadImage(id, imageType, file),
-                I18nHelper.getMessage("image.update.success")
+                "image.update.success"
         );
     }
 

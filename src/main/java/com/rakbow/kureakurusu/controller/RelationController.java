@@ -42,19 +42,19 @@ public class RelationController {
     @PostMapping("add-relations")
     public ApiResult getPersonnel(@RequestBody RelationCreateDTO dto) {
         srv.addRelatedEntries(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success"));
+        return new ApiResult().ok("entity.curd.insert.success");
     }
 
     @PostMapping("update-relation")
     public ApiResult getPersonnel(@RequestBody RelationUpdateDTO dto) {
         srv.updateRelation(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
+        return new ApiResult().ok("entity.curd.update.success");
     }
 
     @DeleteMapping("delete-relations")
     public ApiResult deletePersonnel(@RequestBody CommonDeleteDTO dto) {
         srv.deleteRelations(dto.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success"));
+        return new ApiResult().ok("entity.curd.delete.success");
     }
 
     @PostMapping("get-roles")
@@ -68,7 +68,7 @@ public class RelationController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.save(role);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.insert.success", EntityType.ROLE.getLabel()));
+        return new ApiResult().ok(null, "entity.curd.insert.success", EntityType.ROLE.getLabel());
     }
 
     @PostMapping("update-role")
@@ -77,6 +77,6 @@ public class RelationController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.updateById(role);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success", EntityType.ROLE.getLabel()));
+        return new ApiResult().ok(null, "entity.curd.update.success", EntityType.ROLE.getLabel());
     }
 }

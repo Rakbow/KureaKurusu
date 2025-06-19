@@ -35,16 +35,4 @@ public class EpisodeController {
         return new ApiResult().load(srv.getRelatedEpisodes(dto));
     }
 
-    // @PostMapping("upload-file")
-    // public ApiResult uploadFile(int id, MultipartFile[] files, List<File> fileInfos) {
-    //     srv.updateFile(id, files, fileInfos);
-    //     return new ApiResult().ok(I18nHelper.getMessage("file.update.success"));
-    // }
-    //
-    // @PostMapping("delete-file")
-    // public ApiResult deleteFile(@RequestBody EpisodeDeleteCmd cmd) {
-    //     srv.deleteFiles(cmd.getId(), cmd.getFiles());
-    //     return new ApiResult().ok(I18nHelper.getMessage("file.delete.success"));
-    // }
-
 }

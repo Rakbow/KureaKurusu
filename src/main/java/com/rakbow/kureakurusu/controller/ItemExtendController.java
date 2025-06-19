@@ -32,13 +32,13 @@ public class ItemExtendController {
     @PostMapping("quick-create-album-disc")
     public ApiResult quickCreateAlbumTrack(@RequestBody AlbumQuickCreateDiscDTO dto) {
         albumSrv.quickCreateAlbumTrack(dto.getId(), dto.getTracks(), true);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
+        return new ApiResult().ok("entity.curd.update.success");
     }
 
     @PostMapping("update-album-track-info")
     public ApiResult updateTrackInfo(@RequestBody AlbumUpdateTrackInfoDTO cmd) {
         albumSrv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.update.success"));
+        return new ApiResult().ok("entity.curd.update.success");
     }
 
     @PostMapping("get-album-track-info")
@@ -63,7 +63,7 @@ public class ItemExtendController {
             @RequestParam("albumId") long albumId
     ) {
         albumSrv.uploadAlbumTrackFiles(files, albumId);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
+        return new ApiResult().ok("entity.crud.insert.success");
     }
 
 }

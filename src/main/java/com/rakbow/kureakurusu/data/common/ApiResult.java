@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.common;
 
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.Data;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -41,25 +42,24 @@ public class ApiResult {
         this.data = data;
     }
 
-    public ApiResult ok(String message) {
-        this.message = message;
+    public ApiResult ok(String messageKey) {
+        this.message = I18nHelper.getMessage(messageKey);
         return this;
     }
 
-    public ApiResult ok(Object data, String message) {
+    public ApiResult ok(String messageKey, String... args) {
+        this.message = I18nHelper.getMessage(messageKey, args);
+        return this;
+    }
+
+    public ApiResult ok(Object data, String messageKey) {
         this.data = data;
-        this.message = message;
+        this.message = I18nHelper.getMessage(messageKey);
         return this;
     }
 
     public ApiResult load(Object data) {
         this.data = data;
-        return this;
-    }
-
-    public ApiResult fail(Exception e) {
-        this.state = FAIL_CODE;
-        this.message = e.getMessage();
         return this;
     }
 

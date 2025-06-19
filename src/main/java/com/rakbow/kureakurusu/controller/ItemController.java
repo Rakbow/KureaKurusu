@@ -29,7 +29,7 @@ public class ItemController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         srv.insert(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.insert.success"));
+        return new ApiResult().ok("entity.crud.insert.success");
     }
 
     @PostMapping("update")
@@ -38,13 +38,13 @@ public class ItemController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.update(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
         srv.delete(dto.getIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success"));
+        return new ApiResult().ok("entity.curd.delete.success");
     }
 
     //endregion

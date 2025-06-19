@@ -4,6 +4,7 @@ import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.common.LoginResult;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.Cookie;
@@ -63,7 +64,7 @@ public class LoginController {
         //check captcha
         String kaptcha = (String) session.getAttribute("kaptcha");
         if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(dto.getVerifyCode()) || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
-            return res.fail(I18nHelper.getMessage("login.verify_code.error"));
+            throw new ApiException("login.verify_code.error");
         //login
         LoginResult loginResult = userSrv.login(dto);
         //load cookie to response

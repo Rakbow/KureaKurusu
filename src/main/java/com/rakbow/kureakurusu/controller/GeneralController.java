@@ -6,6 +6,8 @@ import com.rakbow.kureakurusu.data.dto.EntityQry;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.exception.ApiException;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
@@ -53,13 +55,13 @@ public class GeneralController {
     @PostMapping("update-entity-status")
     public ApiResult updateEntityStatus(@RequestBody UpdateStatusDTO dto) {
         srv.updateEntityStatus(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.status.update.success"));
+        return new ApiResult().ok("entity.crud.status.update.success");
     }
 
     @PostMapping("update-entity-detail")
     public ApiResult updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
         srv.updateEntityDetail(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.description.update.success"));
+        return new ApiResult().ok("entity.crud.description.update.success");
     }
 
     //endregion
@@ -69,7 +71,7 @@ public class GeneralController {
     @PostMapping("refresh-role")
     public ApiResult refreshPersonRole() {
         srv.refreshRoleSet();
-        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.refresh.success"));
+        return new ApiResult().ok("entity.curd.refresh.success");
     }
 
     //endregion
@@ -91,7 +93,7 @@ public class GeneralController {
         if (srv.like(qry.getEntityType(), qry.getEntityId(), likeToken)) {
             res.ok(I18nHelper.getMessage("entity.like.success"));
         } else {
-            res.fail(I18nHelper.getMessage("entity.like.failed"));
+            throw new ApiException("entity.like.failed");
         }
         return res;
     }
@@ -104,7 +106,7 @@ public class GeneralController {
     @PostMapping("import-entity")
     public ApiResult importEntity(MultipartFile file) {
         ApiResult res = new ApiResult();
-        if (file.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
+        if (file.isEmpty()) throw ErrorFactory.fileEmpty();
         List<Entry> items = ExcelUtil.getDataFromExcel(file.getInputStream(), Entry.class);
         Db.saveBatch(items);
         return res;

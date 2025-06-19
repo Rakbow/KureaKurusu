@@ -3,6 +3,8 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.exception.ApiException;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
@@ -56,10 +58,10 @@ public class ResourceController {
             images.add(new ImageMiniDTO(infos.get(i), files.get(i)));
         }
         //check
-        if (images.isEmpty()) return new ApiResult().fail(I18nHelper.getMessage("file.empty"));
+        if (images.isEmpty()) throw ErrorFactory.fileEmpty();
         //save
         srv.uploadEntityImage(entityType, entityId, images, generateThumb);
-        return new ApiResult().ok(I18nHelper.getMessage("image.insert.success"));
+        return new ApiResult().ok("image.insert.success");
     }
 
     @PostMapping("update-image")
@@ -68,13 +70,13 @@ public class ResourceController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.updateEntityImage(converter.convert(dto, Image.class));
-        return new ApiResult().ok(I18nHelper.getMessage("image.update.success"));
+        return new ApiResult().ok("image.update.success");
     }
 
     @DeleteMapping("delete-images")
     public ApiResult deleteEntityImages(@RequestBody List<Image> images) {
         srv.deleteEntityImage(images);
-        return new ApiResult().ok(I18nHelper.getMessage("image.delete.success"));
+        return new ApiResult().ok("image.delete.success");
     }
 
     //endregion
@@ -90,7 +92,7 @@ public class ResourceController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.updateFile(dto);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @PostMapping("file/upload")
@@ -102,13 +104,13 @@ public class ResourceController {
             @RequestParam("remarks") List<String> remarks
     ) {
         srv.uploadFiles(entityType, entityId, files, names, remarks);
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @PostMapping("file/create-related")
     public ApiResult createFileRelated(@RequestBody FileCreateDTO dto) {
         srv.createFileRelated(dto.getEntityType(), dto.getEntityId(), dto.getFileIds());
-        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @PostMapping("file/search")
