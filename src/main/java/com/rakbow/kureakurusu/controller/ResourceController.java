@@ -52,7 +52,7 @@ public class ResourceController {
     ) {
         List<ImageCreateDTO> infos = JsonUtil.toJavaList(infoStr, ImageCreateDTO.class);
         List<ImageMiniDTO> images = new ArrayList<>();
-        for(int i = 0;i<infos.size();i++) {
+        for (int i = 0; i < infos.size(); i++) {
             images.add(new ImageMiniDTO(infos.get(i), files.get(i)));
         }
         //check
@@ -89,7 +89,8 @@ public class ResourceController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
-        return new ApiResult().ok(srv.updateFile(dto));
+        srv.updateFile(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
     }
 
     @PostMapping("file/upload")
@@ -100,12 +101,14 @@ public class ResourceController {
             @RequestParam("names") List<String> names,
             @RequestParam("remarks") List<String> remarks
     ) {
-        return new ApiResult().ok(srv.uploadFiles(entityType, entityId, files, names, remarks));
+        srv.uploadFiles(entityType, entityId, files, names, remarks);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
     }
 
     @PostMapping("file/create-related")
     public ApiResult createFileRelated(@RequestBody FileCreateDTO dto) {
-        return new ApiResult().ok(srv.createFileRelated(dto.getEntityType(), dto.getEntityId(), dto.getFileIds()));
+        srv.createFileRelated(dto.getEntityType(), dto.getEntityId(), dto.getFileIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
     }
 
     @PostMapping("file/search")

@@ -25,6 +25,7 @@ import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemVO;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -99,7 +100,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Item item = converter.convert(dto, Item.class);
         SubItem subItem = converter.convert(dto, subClass);
 
-        mapper.insert(item);
+        save(item);
         subItem.setId(item.getId());
         subMapper.insert(subItem);
 
@@ -113,7 +114,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public String update(ItemUpdateDTO dto) {
+    public void update(ItemUpdateDTO dto) {
 
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
@@ -121,23 +122,21 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Item item = converter.convert(dto, Item.class);
         SubItem subItem = converter.convert(dto, subClass);
 
-        mapper.updateById(item);
+        updateById(item);
         subMapper.updateById(subItem);
-
-        return I18nHelper.getMessage("entity.crud.update.success");
     }
 
     @Transactional
     @SneakyThrows
-    public String delete(List<Long> ids) {
+    public void delete(List<Long> ids) {
         //get original data
-        List<Item> items = mapper.selectByIds(ids);
+        List<Item> items = listByIds(ids);
+        if (items.isEmpty()) return;
         List<Image> images = imageMapper.selectList(
                 new LambdaQueryWrapper<Image>()
                         .eq(Image::getEntityType, ENTITY_TYPE)
                         .in(Image::getEntityId, ids)
         );
-        if (items.isEmpty()) throw new Exception("");
         for (Item item : items) {
             //delete all image
             qiniuImageUtil.deleteAllImage(images);
@@ -148,7 +147,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(type);
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
-        mapper.delete(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
+        remove(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
         subMapper.delete(new LambdaQueryWrapper<SubItem>().in(SubItem::getId, ids));
 
         relationMapper.delete(
@@ -156,8 +155,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                         .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
                         .in(Relation::getEntityId, ids)
         );
-
-        return I18nHelper.getMessage("entity.curd.delete.success");
     }
 
     //endregion
@@ -167,7 +164,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public ItemDetailVO detail(long id) {
         SuperItem item = getById(id);
-        if (item == null) throw new Exception(I18nHelper.getMessage("item.url.error"));
+        if (item == null) throw ErrorFactory.itemNull();
         Class<? extends ItemVO> targetVOClass = ItemUtil.getDetailVO(item.getType().getValue());
         ItemVO vo = converter.convert(item, targetVOClass);
         vo.setSpec(ItemUtil.generateSpec(vo.getWidth(), vo.getLength(), vo.getHeight(), vo.getWeight()));
@@ -215,7 +212,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             if (param.isAllSearch()) {
                 page = new Page<>(param.getPage(), param.getSize(), false);
             }
-            pages = mapper.selectPage(
+            pages = page(
                     page,
                     new LambdaQueryWrapper<Item>()
                             .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())

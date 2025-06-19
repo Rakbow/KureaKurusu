@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
 import com.rakbow.kureakurusu.data.entity.LoginTicket;
 import com.rakbow.kureakurusu.data.entity.User;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
@@ -48,9 +49,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         //check username and email duplicate
         long count;
         count = count(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
-        if (count != 0) throw new Exception(I18nHelper.getMessage("user.register.username_duplicate"));
+        if (count != 0) throw new ApiException("user.register.username_duplicate");
         count = count(new LambdaQueryWrapper<User>().eq(User::getEmail, dto.getEmail()));
-        if (count != 0) throw new Exception(I18nHelper.getMessage("user.register.email_duplicate"));
+        if (count != 0) throw new ApiException("user.register.email_duplicate");
         //register new user
         User user = new User(dto);
         //save
@@ -70,9 +71,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         User user = getById(dto.getUserId());
         //check
         if (user.getStatus())
-            throw new Exception(I18nHelper.getMessage("user.activation.duplicate"));
+            throw new ApiException("user.activation.duplicate");
         if (!StringUtils.equals(user.getActivationCode(), dto.getCode()))
-            throw new Exception(I18nHelper.getMessage("user.activation.failure"));
+            throw new ApiException("user.activation.failure");
         //activation
         mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, dto.getUserId()).set(User::getStatus, 1));
     }
@@ -82,16 +83,16 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     public LoginResult login(LoginDTO dto) {
 
         //check empty
-        if (StringUtils.isBlank(dto.getUsername())) throw new Exception(I18nHelper.getMessage("login.username.empty"));
-        if (StringUtils.isBlank(dto.getPassword())) throw new Exception(I18nHelper.getMessage("login.password.empty"));
+        if (StringUtils.isBlank(dto.getUsername())) throw new ApiException("login.username.empty");
+        if (StringUtils.isBlank(dto.getPassword())) throw new ApiException("login.password.empty");
         //check user exist
         User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
-        if (user == null) throw new Exception(I18nHelper.getMessage("login.user.not_exist"));
+        if (user == null) throw new ApiException("login.user.not_exist");
         //check user activation status
-        if (!user.getStatus()) throw new Exception(I18nHelper.getMessage("login.user.inactivated"));
+        if (!user.getStatus()) throw new ApiException("login.user.inactivated");
         //check user password
         String password = CommonUtil.md5(STR."\{dto.getPassword()}\{user.getSalt()}");
-        if (!user.getPassword().equals(password)) throw new Exception(I18nHelper.getMessage("login.password.error"));
+        if (!user.getPassword().equals(password)) throw new ApiException("login.password.error");
 
         //generate login ticket
         LoginTicket loginTicket = new LoginTicket();

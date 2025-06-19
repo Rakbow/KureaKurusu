@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.service.item;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.ItemBookMapper;
 import com.rakbow.kureakurusu.data.entity.item.ItemBook;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -33,11 +33,11 @@ public class BookService extends ServiceImpl<ItemBookMapper, ItemBook> {
 
         if (StringUtils.equals(label, "isbn13")) {
             if (validator.isValidISBN10(isbn))
-                throw new Exception(I18nHelper.getMessage("book.crud.isbn10.invalid"));
+                throw new ApiException("book.crud.isbn10.invalid");
             return validator.convertToISBN13(isbn);
         } else if (StringUtils.equals(label, "isbn10")) {
             if (validator.isValidISBN13(isbn))
-                throw new Exception(I18nHelper.getMessage("book.crud.isbn13.invalid"));
+                throw new ApiException("book.crud.isbn13.invalid");
             String isbn10Base = isbn.substring(3, 12);
             int sum = 0;
             for (int i = 0; i < 9; i++) {

@@ -37,12 +37,14 @@ public class ItemController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
-        return new ApiResult().ok(srv.update(dto));
+        srv.update(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
     }
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
-        return new ApiResult().ok(srv.delete(dto.getIds()));
+        srv.delete(dto.getIds());
+        return new ApiResult().ok(I18nHelper.getMessage("entity.curd.delete.success"));
     }
 
     //endregion

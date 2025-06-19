@@ -218,15 +218,14 @@ public class ResourceService {
 
     @Transactional
     @SneakyThrows
-    public String updateFile(FileUpdateDTO dto) {
+    public void updateFile(FileUpdateDTO dto) {
         FileInfo file = converter.convert(dto, FileInfo.class);
         fileMapper.updateById(file);
-        return I18nHelper.getMessage("entity.crud.update.success");
     }
 
     @Transactional
     @SneakyThrows
-    public String uploadFiles(int entityType, long entityId, MultipartFile[] files,
+    public void uploadFiles(int entityType, long entityId, MultipartFile[] files,
                               List<String> names, List<String> remarks) {
         List<FileRelated> addFileRelatedList = new ArrayList<>();
         String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
@@ -263,12 +262,11 @@ public class ResourceService {
         MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
         frBatchInsert.execute(fileRelatedMethod.insert());
-        return I18nHelper.getMessage("entity.crud.update.success");
     }
 
     @Transactional
     @SneakyThrows
-    public String createFileRelated(int entityType, long entityId, List<Long> fileIds) {
+    public void createFileRelated(int entityType, long entityId, List<Long> fileIds) {
         List<FileRelated> addFileRelatedList = new ArrayList<>();
         fileIds.forEach(fid -> {
             FileRelated related = new FileRelated();
@@ -280,7 +278,6 @@ public class ResourceService {
         MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
         MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
         frBatchInsert.execute(fileRelatedMethod.insert());
-        return I18nHelper.getMessage("entity.crud.update.success");
     }
 
     @Transactional

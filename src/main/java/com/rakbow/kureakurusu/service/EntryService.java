@@ -16,10 +16,12 @@ import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
@@ -29,9 +31,12 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -43,8 +48,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     private final Converter converter;
     private final EntityUtil entityUtil;
-    private final PopularUtil popularUtil;
-    private final EntryMapper mapper;
     private final RelationMapper relatedMapper;
 
     private final QiniuImageUtil qiniuImageUtil;
@@ -54,8 +57,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     public EntryDetailVO detail(long id) {
 
-        Entry entry = mapper.selectById(id);
-        if (entry == null) throw new Exception(I18nHelper.getMessage("entry.url.error"));
+        Entry entry = getById(id);
+        if (entry == null) throw ErrorFactory.entryNull();
         return EntryDetailVO.builder()
                 .entry(converter.convert(entry, EntryVO.class))
                 .traffic(entityUtil.buildTraffic(ENTITY_TYPE, id))
@@ -67,7 +70,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     public List<EntryMiniVO> getMiniVO(List<Long> ids) {
         List<EntryMiniVO> res = new ArrayList<>();
-        List<Entry> entries = mapper.selectByIds(ids);
+        List<Entry> entries = listByIds(ids);
         entries.forEach(e -> {
             EntryMiniVO vo = new EntryMiniVO(e);
             vo.setThumb(CommonImageUtil.getEntryThumb(e.getThumb()));
@@ -78,11 +81,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public String update(EntryUpdateDTO dto) {
-
+    public void update(EntryUpdateDTO dto) {
         Entry entry = converter.convert(dto, Entry.class);
-        mapper.updateById(entry);
-        return I18nHelper.getMessage("entity.crud.update.success");
+        updateById(entry);
     }
 
     @Transactional
@@ -115,7 +116,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         //                                 .map(String::valueOf).collect(Collectors.joining(","))})");
         //     }
         // }
-        IPage<Entry> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryMiniVO> res = new ArrayList<>(
                 pages.getRecords().stream().map(EntryMiniVO::new).toList()
         );
@@ -127,16 +128,17 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @SneakyThrows
     @Transactional
-    public String uploadImage(long id, ImageMiniDTO image) {
-        Entry entry = mapper.selectById(id);
+    public String uploadImage(long id, int type, MultipartFile file) {
+        ImageMiniDTO image = new ImageMiniDTO(type, file);
+        Entry entry = getById(id);
         String finalUrl;
         String fieldName;
-        if (image.getType() == ImageType.MAIN.getValue()) {
+        if (type == ImageType.MAIN.getValue()) {
             fieldName = "cover";
             if (StringUtils.isNotEmpty(entry.getCover())) {
                 qiniuImageUtil.deleteEntryImage(entry.getCover());
             }
-        } else if (image.getType() == ImageType.THUMB.getValue()) {
+        } else if (type == ImageType.THUMB.getValue()) {
             fieldName = "thumb";
             if (StringUtils.isNotEmpty(entry.getThumb())) {
                 qiniuImageUtil.deleteEntryImage(entry.getThumb());
@@ -147,7 +149,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         //upload new entry image
         finalUrl = qiniuImageUtil.uploadEntryImage(ENTITY_TYPE, id, image);
         //update entry
-        mapper.update(null, new UpdateWrapper<Entry>().eq("id", id).set(fieldName, finalUrl));
+        update(null, new UpdateWrapper<Entry>().eq("id", id).set(fieldName, finalUrl));
         return finalUrl;
     }
 
@@ -158,13 +160,16 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>().eq("type", param.getType())
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         if (StringUtils.isNotEmpty(param.getName())) {
-            wrapper.and(i -> i.apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))" +
-                            " LIKE concat('%', {0}, '%')", param.getName())).or().like("name", param.getName())
-                    .or().like("name_zh", param.getName()).or().like("name_en", param.getName());
+            wrapper.and(i -> i
+                    .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getName())
+                    .or().like("name", param.getName())
+                    .or().like("name_zh", param.getName())
+                    .or().like("name_en", param.getName())
+            );
         }
-        IPage<Entry> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryListVO> res = converter.convert(pages.getRecords(), EntryListVO.class);
-
+        getEntryRelatedItemCount(res);
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
     }
 
@@ -182,10 +187,30 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         if (relations.isEmpty())
             return res;
         List<Long> targetIds = relations.stream().map(Relation::getEntityId).distinct().toList();
-        List<Entry> targets = mapper.selectByIds(targetIds);
+        List<Entry> targets = listByIds(targetIds);
         targets.sort(DataSorter.entryDateSorter);
         res = converter.convert(targets, EntryListVO.class);
         return res;
+    }
+
+    @Transactional
+    @SneakyThrows
+    public void getEntryRelatedItemCount(List<EntryListVO> entries) {
+        if(entries.isEmpty()) return;
+        List<Long> ids = entries.stream().map(EntryListVO::getId).toList();
+        QueryWrapper<Relation> wrapper = new QueryWrapper<Relation>()
+                .select("related_entity_id AS entity_id", "COUNT(id) AS count")
+                .eq("related_entity_type", EntityType.ENTRY)
+                .eq("entity_type", EntityType.ITEM)
+                .in("related_entity_id", ids)
+                .groupBy("related_entity_type", "related_entity_id");
+        List<Map<String, Object>> maps = relatedMapper.selectMaps(wrapper);
+        List<EntityRelatedCount> relatedCountList = JsonUtil.to(maps, EntityRelatedCount.class);
+        Map<Long, Integer> countMap = relatedCountList.stream()
+                .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
+        for(EntryListVO e : entries) {
+            e.setItemCount(countMap.getOrDefault(e.getId(), 0));
+        }
     }
 
 }

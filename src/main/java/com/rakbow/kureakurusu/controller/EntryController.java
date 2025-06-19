@@ -2,10 +2,10 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.dto.EntityMinDTO;
+import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
 import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EntryService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
@@ -38,7 +38,8 @@ public class EntryController {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
-        return new ApiResult().ok(srv.update(dto));
+        srv.update(dto);
+        return new ApiResult().ok(I18nHelper.getMessage("entity.crud.update.success"));
     }
 
     @PostMapping("list")
@@ -57,14 +58,10 @@ public class EntryController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("imageType") int imageType
     ) {
-        ApiResult res = new ApiResult();
-        //check
-        ImageMiniDTO image = new ImageMiniDTO();
-        image.setFile(file);
-        image.setType(imageType);
-        if (file.isEmpty()) return res.fail(I18nHelper.getMessage("file.empty"));
-        res.load(srv.uploadImage(id, image));
-        return res.ok(I18nHelper.getMessage("image.update.success"));
+        return new ApiResult().ok(
+                srv.uploadImage(id, imageType, file),
+                I18nHelper.getMessage("image.update.success")
+        );
     }
 
     @PostMapping("mini")

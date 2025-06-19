@@ -25,4 +25,9 @@ public class ImageMiniDTO {
         this.detail = dto.getDetail();
     }
 
+    public ImageMiniDTO(int type, MultipartFile file) {
+        this.type = type;
+        this.file = file;
+    }
+
 }

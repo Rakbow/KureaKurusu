@@ -19,6 +19,7 @@ import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
@@ -50,7 +51,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     public EpisodeVO detail(long id) {
         Episode ep = getById(id);
-        if (ep == null) throw new Exception(I18nHelper.getMessage("entity.url.error", "enum.entity.episode"));
+        if (ep == null) throw ErrorFactory.entityNull();
         EpisodeVO vo = converter.convert(ep, EpisodeVO.class);
         vo.setTraffic(entityUtil.buildTraffic(EntityType.EPISODE.getValue(), id));
         vo.setCover(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), ep.getRelatedId(), ImageType.MAIN));

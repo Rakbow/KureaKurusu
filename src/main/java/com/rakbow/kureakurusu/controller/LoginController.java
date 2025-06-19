@@ -58,7 +58,7 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public ApiResult login(@RequestBody LoginDTO dto, HttpSession session, HttpServletResponse response) throws Exception {
+    public ApiResult login(@RequestBody LoginDTO dto, HttpSession session, HttpServletResponse response) {
         ApiResult res = new ApiResult();
         //check captcha
         String kaptcha = (String) session.getAttribute("kaptcha");

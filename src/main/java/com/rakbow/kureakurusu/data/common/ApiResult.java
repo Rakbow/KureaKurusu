@@ -46,6 +46,12 @@ public class ApiResult {
         return this;
     }
 
+    public ApiResult ok(Object data, String message) {
+        this.data = data;
+        this.message = message;
+        return this;
+    }
+
     public ApiResult load(Object data) {
         this.data = data;
         return this;

@@ -6,6 +6,7 @@ import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.FileType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
@@ -172,7 +173,7 @@ public class QiniuImageUtil {
         if (StringUtils.equals(extension, "jpeg")) extension = "jpg";
         // 检测格式是否支持
         if (FileUtil.isFileFormatAllowed(extension, FileType.IMAGE)) {
-            throw new Exception(I18nHelper.getMessage("file.format.unsupported", FileType.IMAGE.getNameZh()));
+            throw new ApiException("file.format.unsupported", FileType.IMAGE.getNameZh());
         }
         res.setExtension(extension);
 

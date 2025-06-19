@@ -1,10 +1,14 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -189,7 +193,7 @@ public class RedisUtil {
         } else if (data instanceof String) {
             return JsonUtil.to((String) data, t);
         } else {
-            throw new Exception("redis 数据错误，无法完成转换");
+            throw new ApiException("redis.change_data.error");
         }
     }
 

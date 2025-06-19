@@ -26,5 +26,6 @@ public class EntryListVO extends EntityListVO {
     private List<String> links;
 
     private long visitNum;
+    private int itemCount;
 
 }

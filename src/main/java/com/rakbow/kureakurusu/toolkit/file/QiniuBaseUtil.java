@@ -9,6 +9,7 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
 import com.rakbow.kureakurusu.data.common.ActionResult;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +62,7 @@ public class QiniuBaseUtil {
             BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
             IntStream.range(0, keys.length).filter(i -> batchStatusList[i].code == 200).forEach(deleteIndexes::add);
         }catch (QiniuException ex) {
-            throw new Exception(I18nHelper.getMessage("qiniu.exception", ex.response.toString()));
+            throw ErrorFactory.qiniuError(ex);
         }
         return deleteIndexes;
     }
