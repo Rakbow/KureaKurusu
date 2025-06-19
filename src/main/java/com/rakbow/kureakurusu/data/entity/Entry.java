@@ -74,4 +74,7 @@ public class Entry extends Entity {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private Long orgEntityId;
 
+    @TableField(exist = false)
+    private int items;
+
 }

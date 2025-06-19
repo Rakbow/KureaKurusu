@@ -7,7 +7,6 @@ import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
 import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EntryService;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -69,9 +68,9 @@ public class EntryController {
         return new ApiResult().load(srv.getMiniVO(ids));
     }
 
-    @PostMapping("get-sub-entries")
-    public ApiResult getSubProduct(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(srv.getSubEntries(qry.getId()));
+    @PostMapping("get-sub-products")
+    public ApiResult getSubProducts(@RequestBody CommonDetailQry qry) {
+        return new ApiResult().load(srv.getSubProducts(qry.getId()));
     }
 
 }
