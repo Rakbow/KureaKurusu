@@ -109,7 +109,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 )));
             }
         } else {
-            if (ObjectUtils.isNotEmpty(param.getType())) {
+            if (param.getMode() != 0 && ObjectUtils.isNotEmpty(param.getType())) {
                 Set<Long> ids = popularUtil.getEntryPopularityRank(param.getType(), 7);
                 if (!ids.isEmpty()) {
                     wrapper.in(Entry::getId, ids).orderBy(true, false, STR."FIELD(id, \{ids.stream()
@@ -118,9 +118,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
             }
         }
         IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
-        List<EntryMiniVO> res = new ArrayList<>(
-                pages.getRecords().stream().map(EntryMiniVO::new).toList()
-        );
+        List<EntryMiniVO> res = new ArrayList<>(pages.getRecords().stream().map(EntryMiniVO::new).toList());
 
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize(),
                 String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));

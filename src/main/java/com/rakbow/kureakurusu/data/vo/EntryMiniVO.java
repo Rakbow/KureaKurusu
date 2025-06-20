@@ -22,6 +22,7 @@ public class EntryMiniVO {
     private String subName;
     private String thumb;
     private String info;
+    private String date;
 
     public EntryMiniVO(Entry entry) {
         this.type = entry.getType().getValue();
@@ -29,6 +30,7 @@ public class EntryMiniVO {
         this.name = entry.getName();
         this.subName = CommonUtil.getSubName(entry.getNameEn(), entry.getNameZh());
         this.thumb = CommonImageUtil.getEntryThumb(entry.getThumb());
+        this.date = entry.getDate();
     }
 
 }

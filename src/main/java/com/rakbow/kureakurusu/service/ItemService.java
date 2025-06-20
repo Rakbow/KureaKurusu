@@ -194,10 +194,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
                     .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
                     .and(aw -> {
-                        for (EntityMinDTO e : param.getEntries()) {
+                        for (Long entryId : param.getEntries()) {
                             aw.or(w -> w
-                                    .eq(Relation::getRelatedEntityType, e.getEntityType())
-                                    .eq(Relation::getRelatedEntityId, e.getEntityId()));
+                                    .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                                    .eq(Relation::getRelatedEntityId, entryId));
                         }
                     })
                     .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())

@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ItemSearchParams extends EntitySearchParams {
 
-    private List<EntityMinDTO> entries;
+    private List<Long> entries;
     private String keyword;
     private Integer type;
     private Integer subType;
