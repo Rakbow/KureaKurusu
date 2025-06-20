@@ -56,6 +56,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final AlbumService albumSrv;
 
     private final RedisUtil redisUtil;
+    private final PopularUtil popularUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
@@ -168,6 +169,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Class<? extends ItemVO> targetVOClass = ItemUtil.getDetailVO(item.getType().getValue());
         ItemVO vo = converter.convert(item, targetVOClass);
         vo.setSpec(ItemUtil.generateSpec(vo.getWidth(), vo.getLength(), vo.getHeight(), vo.getWeight()));
+
+        //update entity popularity
+        popularUtil.updateEntityPopularity(ENTITY_TYPE.getValue(), id);
+
         return ItemDetailVO.builder()
                 .type(item.getType().getValue())
                 .item(vo)

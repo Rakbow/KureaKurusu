@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class EntrySearchParams extends EntitySearchParams {
 
-    private int type;
+    private Integer type;
     private List<String> keywords;
     private boolean strict;
 

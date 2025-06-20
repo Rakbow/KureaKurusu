@@ -28,6 +28,7 @@ import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +59,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
         Entry entry = getById(id);
         if (entry == null) throw ErrorFactory.entryNull();
+        //update popular
+        // popularUtil.updateEntryPopularity(entry.getType(), id);
         return EntryDetailVO.builder()
                 .entry(converter.convert(entry, EntryVO.class))
                 .traffic(entityUtil.buildTraffic(ENTITY_TYPE, id))
@@ -90,29 +93,28 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public SearchResult<EntryMiniVO> search(EntrySearchParams param) {
         // 记录开始时间
         long start = System.currentTimeMillis();
-        QueryWrapper<Entry> wrapper = new QueryWrapper<Entry>()
-                .eq("type", param.getType()).eq("status", 1)
-                .orderByAsc("id");
+        MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>().eq(Entry::getStatus, 1)
+                .eq(ObjectUtils.isNotEmpty(param.getType()), Entry::getType, param.getType())
+                .orderByDesc(Entry::getId);
         if (!param.getKeywords().isEmpty()) {
             if (param.strict()) {
                 param.getKeywords().forEach(k ->
-                        wrapper.or().eq("name", k).or().eq("name_zh", k).or().eq("name_en", k));
+                        wrapper.or().eq(Entry::getName, k).or().eq(Entry::getNameZh, k).or().eq(Entry::getNameEn, k));
             } else {
                 wrapper.and(w -> param.getKeywords().forEach(k -> w.or(i -> i
                         .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
-                        .or().like("name", k)
-                        .or().like("name_zh", k)
-                        .or().like("name_en", k)
+                        .or().like(Entry::getName, k)
+                        .or().like(Entry::getNameZh, k)
+                        .or().like(Entry::getNameEn, k)
                 )));
             }
-        }
-        else {
-            Set<Long> ids = popularUtil.getPopularityRank(param.getType(), 5);
-            if (!ids.isEmpty()) {
-                wrapper.in("id", ids)
-                        .orderBy(true, false,
-                                STR."FIELD(id, \{ids.stream()
-                                        .map(String::valueOf).collect(Collectors.joining(","))})");
+        } else {
+            if (ObjectUtils.isNotEmpty(param.getType())) {
+                Set<Long> ids = popularUtil.getEntryPopularityRank(param.getType(), 7);
+                if (!ids.isEmpty()) {
+                    wrapper.in(Entry::getId, ids).orderBy(true, false, STR."FIELD(id, \{ids.stream()
+                            .map(String::valueOf).collect(Collectors.joining(","))})");
+                }
             }
         }
         IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
