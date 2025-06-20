@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.RedisKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Component;
 public class VisitUtil {
 
     private final RedisUtil redisUtil;
-    private static final String PREFIX_VISIT_TOKEN = "visit_token";
-    private static final String PREFIX_VISIT = "visit";
 
     /**
      * 新增浏览数存入redis缓存
@@ -37,19 +36,17 @@ public class VisitUtil {
     }
 
     /**
-     * 自增并返回浏览数
+     * 自增浏览数
      * @param entityType,entityId 实体类型,实体id
      * @author Rakbow
      */
-    public long inc(int entityType, long entityId, String visitToken) {
+    public void increase(int entityType, long entityId, String visitToken) {
         String key = getSingleVisitKey(entityType, entityId);
         String tokenKey = getEntityVisitTokenKey(entityType, entityId, visitToken);
-        if(redisUtil.hasKey(tokenKey)) {
-            return get(entityType, entityId);
-        }else {
+        if(!redisUtil.hasKey(tokenKey)) {
             redisUtil.set(tokenKey, 1);
             redisUtil.expire(tokenKey, 3600*24);
-            return redisUtil.increment(key, 1);
+            redisUtil.increment(key, 1);
         }
     }
 
@@ -67,14 +64,14 @@ public class VisitUtil {
      * 获取实体访问token key,用于判断是否第一次访问
      * */
     private String getEntityVisitTokenKey(int entityType, long entityId, String visitToken) {
-        return STR."\{PREFIX_VISIT_TOKEN}:\{entityType}:\{entityId}:\{visitToken}";
+        return STR."\{RedisKey.PREFIX_VISIT_TOKEN}:\{entityType}:\{entityId}:\{visitToken}";
     }
 
     /**
      * 获取实体浏览数key,用于记录浏览数
      * */
     private String getSingleVisitKey(int entityType, long entityId) {
-        return STR."\{PREFIX_VISIT}:\{entityType}:\{entityId}";
+        return STR."\{RedisKey.PREFIX_VISIT}:\{entityType}:\{entityId}";
     }
 
 }

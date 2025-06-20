@@ -20,10 +20,7 @@ import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
-import com.rakbow.kureakurusu.toolkit.EntityUtil;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -45,7 +42,9 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     private final ItemService itemSrv;
     private final Converter converter;
     private final EntityUtil entityUtil;
+    private final PopularUtil popularUtil;
     private final ResourceService resourceSrv;
+    private final EntityType ENTITY_TYPE = EntityType.EPISODE;
 
     @Transactional
     @SneakyThrows
@@ -55,6 +54,10 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         EpisodeVO vo = converter.convert(ep, EpisodeVO.class);
         vo.setTraffic(entityUtil.buildTraffic(EntityType.EPISODE.getValue(), id));
         vo.setCover(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), ep.getRelatedId(), ImageType.MAIN));
+
+        //update popularity
+        popularUtil.updateEntityPopularity(ENTITY_TYPE.getValue(), id);
+
         return vo;
     }
 

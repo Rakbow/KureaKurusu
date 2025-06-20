@@ -130,7 +130,7 @@ public class GeneralService {
             //没点过赞,自增
             likeUtil.inc(entityType, entityId, likeToken);
             //更新热度
-            popularUtil.updatePopularity(entityType, entityId);
+            popularUtil.updateEntityPopularity(entityType, entityId);
             return true;
         }
     }

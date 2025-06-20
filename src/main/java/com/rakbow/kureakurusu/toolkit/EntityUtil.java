@@ -17,7 +17,6 @@ public class EntityUtil {
 
     private final VisitUtil visitUtil;
     private final LikeUtil likeUtil;
-    private final PopularUtil popularUtil;
     private final RedisUtil redisUtil;
 
     /**
@@ -29,15 +28,11 @@ public class EntityUtil {
     public PageTraffic buildTraffic(int entityType, long entityId) {
         // 从cookie中获取点赞token和访问token
         String likeToken = TokenInterceptor.getLikeToken();
-        String visitToken = TokenInterceptor.getVisitToken();
-        PageTraffic traffic = PageTraffic.builder()
+        return PageTraffic.builder()
                 .liked(likeUtil.isLike(entityType, entityId, likeToken))
                 .likeCount(likeUtil.get(entityType, entityId))
-                .visitCount(visitUtil.inc(entityType, entityId, visitToken))
+                .visitCount(visitUtil.get(entityType, entityId))
                 .build();
-        //update entity popularity
-        popularUtil.updatePopularity(entityType, entityId);
-        return traffic;
     }
 
     public long getEntityTotalCache(EntityType type) {
