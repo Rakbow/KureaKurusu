@@ -61,7 +61,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     //endregion
 
     @Transactional
-    public AlbumTrackInfoVO getTrackInfo(long id) {
+    public AlbumTrackInfoVO getAlbumTracks(long id) {
 
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
 

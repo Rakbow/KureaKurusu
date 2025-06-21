@@ -94,7 +94,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    public long insert(ItemCreateDTO dto) {
+    public long create(ItemCreateDTO dto) {
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
@@ -315,7 +315,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     public long advanceCreate(ItemCreateDTO item, List<ImageMiniDTO> images,
                               List<RelatedEntityMiniDTO> relatedEntities, boolean generateThumb) {
         //save item
-        long id = insert(item);
+        long id = create(item);
         //save related entities
         relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, relatedEntities);
         //save image

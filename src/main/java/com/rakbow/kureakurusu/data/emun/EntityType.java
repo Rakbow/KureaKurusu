@@ -20,7 +20,6 @@ public enum EntityType {
     ROLE(3, "enum.entity.role", "role"),
     EPISODE(4, "enum.entity.episode", "episode"),
     FILE(98, "enum.entity.file", "file_info"),
-    FRANCHISE(100, "enum.entity.franchise", "franchise"),
     USER(101, "enum.entity.user", "user");
 
     @EnumValue

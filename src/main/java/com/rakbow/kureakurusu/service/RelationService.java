@@ -23,7 +23,7 @@ import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.data.result.ItemExcRelatedEntries;
+import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.relation.RelatedEntityVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
@@ -56,7 +56,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final ItemMapper itemMapper;
     private final ResourceService resourceSrv;
 
-    private final List<EntryType> itemExcRelationEntryTypes
+    private final List<EntryType> itemExtraInfoEntryTypes
             = List.of(EntryType.CLASSIFICATION, EntryType.MATERIAL, EntryType.EVENT);
 
     public SearchResult<RelatedEntityVO> getRelatedEntities(RelationQry qry) {
@@ -265,8 +265,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public ItemExcRelatedEntries getItemRelatedEntries(long id) {
-        ItemExcRelatedEntries res = new ItemExcRelatedEntries();
+    public ItemExtraInfo getItemExtraInfo(long id) {
+        ItemExtraInfo res = new ItemExtraInfo();
         List<Relation> relations = list(
                 new LambdaQueryWrapper<Relation>()
                         .in(Relation::getRelatedGroup, ItemUtil.ItemExcRelatedGroups)
@@ -276,10 +276,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         if (relations.isEmpty())
             return res;
         List<Long> entryIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
-        List<Entry> entries = entryMapper.selectList(
-                new LambdaQueryWrapper<Entry>()
-                        .in(Entry::getType, itemExcRelationEntryTypes).in(Entry::getId, entryIds)
-        );
+        List<Entry> entries = entryMapper.selectList(new LambdaQueryWrapper<Entry>()
+                        .in(Entry::getType, itemExtraInfoEntryTypes).in(Entry::getId, entryIds));
         for (Relation r : relations) {
             Entry e = DataFinder.findEntryById(r.getRelatedEntityId(), entries);
             if (e == null) continue;

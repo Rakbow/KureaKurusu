@@ -58,7 +58,7 @@ public class ResourceController {
         if (images.isEmpty()) throw ErrorFactory.fileEmpty();
         //save
         srv.uploadEntityImage(entityType, entityId, images, generateThumb);
-        return new ApiResult().ok("image.insert.success");
+        return new ApiResult().ok("entity.crud.create.success");
     }
 
     @PostMapping("update-image")
@@ -67,13 +67,13 @@ public class ResourceController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.updateEntityImage(converter.convert(dto, Image.class));
-        return new ApiResult().ok("image.update.success");
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete-images")
     public ApiResult deleteEntityImages(@RequestBody List<ImageVO> images) {
         srv.deleteEntityImage(images);
-        return new ApiResult().ok("image.delete.success");
+        return new ApiResult().ok("entity.crud.delete.success");
     }
 
     //endregion

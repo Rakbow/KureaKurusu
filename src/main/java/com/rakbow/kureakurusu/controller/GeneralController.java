@@ -12,7 +12,6 @@ import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.ExcelUtil;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +60,7 @@ public class GeneralController {
     @PostMapping("update-entity-detail")
     public ApiResult updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
         srv.updateEntityDetail(dto);
-        return new ApiResult().ok("entity.crud.description.update.success");
+        return new ApiResult().ok("entity.crud.detail.update.success");
     }
 
     //endregion

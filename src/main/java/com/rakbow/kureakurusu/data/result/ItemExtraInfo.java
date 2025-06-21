@@ -11,7 +11,7 @@ import java.util.List;
  * @since 2024/7/27 3:21
  */
 @Data
-public class ItemExcRelatedEntries {
+public class ItemExtraInfo {
 
     private List<RelationVO> classifications = new ArrayList<>();
     private List<RelationVO> events = new ArrayList<>();

@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.data.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import io.github.linpeilie.annotations.AutoMapper;
-import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,9 +19,8 @@ import java.util.List;
 @AutoMapper(target = Entry.class, reverseConvertGenerate = false)
 public class EntryUpdateDTO extends DTO {
 
-    private Integer entityType;
-
     private Long id;
+    private int type;
     @NotBlank(message = "{entity.crud.name.required_field}")
     private String name;
     private String nameZh;

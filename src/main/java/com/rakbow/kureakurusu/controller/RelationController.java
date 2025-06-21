@@ -2,11 +2,9 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.service.RoleService;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -39,22 +37,22 @@ public class RelationController {
         return new ApiResult().load(srv.getRelations(new RelationListQueryDTO(qry)));
     }
 
-    @PostMapping("add-relations")
+    @PostMapping("create")
     public ApiResult getPersonnel(@RequestBody RelationCreateDTO dto) {
         srv.addRelatedEntries(dto);
-        return new ApiResult().ok("entity.curd.insert.success");
+        return new ApiResult().ok("entity.crud.create.success");
     }
 
-    @PostMapping("update-relation")
+    @PostMapping("update")
     public ApiResult getPersonnel(@RequestBody RelationUpdateDTO dto) {
         srv.updateRelation(dto);
-        return new ApiResult().ok("entity.curd.update.success");
+        return new ApiResult().ok("entity.crud.update.success");
     }
 
-    @DeleteMapping("delete-relations")
+    @DeleteMapping("delete")
     public ApiResult deletePersonnel(@RequestBody CommonDeleteDTO dto) {
         srv.removeByIds(dto.getIds());
-        return new ApiResult().ok("entity.curd.delete.success");
+        return new ApiResult().ok("entity.crud.delete.success");
     }
 
     @PostMapping("get-roles")
@@ -68,7 +66,7 @@ public class RelationController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.save(role);
-        return new ApiResult().ok(null, "entity.curd.insert.success", EntityType.ROLE.getLabel());
+        return new ApiResult().ok("entity.crud.create.success");
     }
 
     @PostMapping("update-role")
@@ -77,6 +75,6 @@ public class RelationController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //save
         roleSrv.updateById(role);
-        return new ApiResult().ok(null, "entity.curd.update.success", EntityType.ROLE.getLabel());
+        return new ApiResult().ok("entity.crud.update.success");
     }
 }

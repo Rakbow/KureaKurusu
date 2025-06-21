@@ -59,7 +59,7 @@ public class EntryController {
     ) {
         return new ApiResult().ok(
                 srv.uploadImage(id, imageType, file),
-                "image.update.success"
+                "entity.crud.update.success"
         );
     }
 

@@ -14,12 +14,12 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum ItemType {
 
-    ALBUM(1, "enum.entity.album"),
-    BOOK(2, "enum.entity.book"),
-    DISC(3, "enum.entity.disc"),
-    GAME(4, "enum.entity.game"),
-    GOODS(5, "enum.entity.goods"),
-    FIGURE(6, "enum.entity.figure");
+    ALBUM(1, "enum.item.album"),
+    BOOK(2, "enum.item.book"),
+    DISC(3, "enum.item.disc"),
+    GAME(4, "enum.item.game"),
+    GOODS(5, "enum.item.goods"),
+    FIGURE(6, "enum.item.figure");
 
     @EnumValue
     private final Integer value;

@@ -24,11 +24,12 @@ public enum AlbumFormat {
     DRAMA(7, "enum.album_format.drama"),
     TALK(8, "enum.album_format.talk"),
     REMIX(9, "enum.album_format.Remix"),
-    DOUJIN_REMIX(10, "enum.album_format.Doujin_Remix"),
-    DERIVATIVE(11, "enum.album_format.Derivative"),
-    ARRANGEMENT(12, "enum.album_format.Arrangement"),
-    DOUJIN_ARRANGEMENT(13,"enum.album_format.Doujin_Arrangement"),
-    VIDEO(14,"enum.album_format.Video");
+    DOUJIN_REMIX(10, "enum.album_format.doujin_Remix"),
+    DERIVATIVE(11, "enum.album_format.derivative"),
+    ARRANGEMENT(12, "enum.album_format.arrangement"),
+    DOUJIN_ARRANGEMENT(13, "enum.album_format.doujin_arrangement"),
+    VIDEO(14, "enum.album_format.video"),
+    LIVE_EVENT(15, "enum.album_format.live_event");
 
     @EnumValue
     private final Integer value;

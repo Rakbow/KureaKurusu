@@ -17,7 +17,7 @@ public enum EntrySubType {
     OTHER(0, "enum.entry_sub_type.other"),
     ANIME(1, "enum.entry_sub_type.anime"),
     NOVEL(2, "enum.entry_sub_type.novel"),
-    COMIC(3, "enum.entry_sub_type.comic"),
+    COMIC(3, "enum.entry_sub_type.manga"),
     GAME(4, "enum.entry_sub_type.game"),
     MOVIE(5, "enum.entry_sub_type.movie"),
     TV_SERIES(6, "enum.entry_sub_type.tv_series"),

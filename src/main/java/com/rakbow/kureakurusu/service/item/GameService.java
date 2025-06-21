@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.service.item;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.GameMapper;
+import com.rakbow.kureakurusu.dao.ItemGameMapper;
 import com.rakbow.kureakurusu.data.entity.item.Game;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class GameService extends ServiceImpl<GameMapper, Game> {
+public class GameService extends ServiceImpl<ItemGameMapper, Game> {
 }
