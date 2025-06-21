@@ -15,8 +15,8 @@ public class AlbumTrackVO {
     private int discNo;
     private int serial;
     private long id;
-    private String title;
-    private String titleEn;
+    private String name;
+    private String nameEn;
     private String duration;
 
     private int action;

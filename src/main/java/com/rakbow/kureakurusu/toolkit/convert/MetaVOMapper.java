@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
@@ -9,6 +10,7 @@ import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.EnumHelper;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -132,6 +134,16 @@ public interface MetaVOMapper {
     @Named("getFileExt")
     default String getFileExt(String name) {
         return name.substring(name.lastIndexOf("."));
+    }
+
+    @Named("thumbImage")
+    default String thumbImage(String url) {
+        return QiniuImageUtil.getThumb(url, 70);
+    }
+
+    @Named("displayImage")
+    default String displayImage(String url) {
+        return QiniuImageUtil.getThumb(url, 1200, 650);
     }
 
 }

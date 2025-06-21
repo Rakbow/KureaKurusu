@@ -104,8 +104,8 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 AlbumTrackVO track = AlbumTrackVO.builder()
                         .serial(ep.getSerial())
                         .id(ep.getId())
-                        .title(ep.getName())
-                        .titleEn(ep.getNameEn())
+                        .name(ep.getName())
+                        .nameEn(ep.getNameEn())
                         .duration(DateHelper.getDuration(ep.getDuration()))
                         .action(DataActionType.NO_ACTION.getValue())
                         .build();
@@ -144,7 +144,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             Episode ep = new Episode();
             ep.setRelatedType(0);
             ep.setRelatedId(id);
-            ep.setName(track.getTitle());
+            ep.setName(track.getName());
             ep.setSerial(track.getSerial());
             duration = DateHelper.getDuration(track.getDuration());
             runTime += duration;
@@ -201,7 +201,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 IntStream.range(0, tracks.size()).forEach(i -> tracks.get(i).setSerial(i + 1));
                 tracks.forEach(track -> {
                     Episode ep = Episode.builder()
-                            .name(track.getTitle().replace("\t", ""))
+                            .name(track.getName().replace("\t", ""))
                             .duration(DateHelper.getDuration(track.getDuration()))
                             .discNo(discs.indexOf(disc) + 1)
                             .serial(track.getSerial())
@@ -216,7 +216,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 if (track.isUpdate()) {
                     Episode ep = DataFinder.findEpisodeById(track.getId(), episodes);
                     if (ep == null) continue;
-                    ep.setName(track.getTitle().replace("\t", ""));
+                    ep.setName(track.getName().replace("\t", ""));
                     ep.setDuration(DateHelper.getDuration(track.getDuration()));
                     ep.setSerial(track.getSerial());
                     updateEpSet.add(ep);

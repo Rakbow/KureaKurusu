@@ -1,17 +1,9 @@
 package com.rakbow.kureakurusu.data.emun;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.*;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import io.github.linpeilie.annotations.AutoEnumMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Rakbow
@@ -50,32 +42,11 @@ public enum ItemSubType {
     private final Integer value;
     private final String labelKey;
 
-    private final static Map<Integer, ItemSubType[]> subItemTypeMap = new HashMap<>() {{
-        put(ItemType.BOOK.getValue(), new ItemSubType[]{
-                DEFAULT, NOVEL, COMIC, ANTHOLOGY, ART_BOOK, ELECTRONIC_BOOK
-        });
-        put(ItemType.GOODS.getValue(), new ItemSubType[]{
-                DEFAULT, MISC, HANGED_UP, PLUSH_TOY, STATIONERY, DISHES, APPAREL, LINENS, ON_WALLS
-        });
-        put(ItemType.FIGURE.getValue(), new ItemSubType[]{
-                DEFAULT, PREPAINTED, ACTION_DOLLS, TRADING, ACCESSORIES, MODEL_KITS, GARAGE_KITS
-        });
-    }};
-
     public static ItemSubType get(int value) {
         for (ItemSubType type : ItemSubType.values()) {
             if(type.value == value) return type;
         }
         return DEFAULT;
-    }
-
-    public static List<Attribute<Integer>> getItemSubTypeSet(Integer itemType, String lang) {
-        List<Attribute<Integer>> subTypeSet = new ArrayList<>();
-        ItemSubType[] types = subItemTypeMap.get(itemType);
-        for(ItemSubType type : types) {
-            subTypeSet.add(new Attribute<>(I18nHelper.getMessage(type.labelKey, lang), type.value));
-        }
-        return subTypeSet;
     }
 
 

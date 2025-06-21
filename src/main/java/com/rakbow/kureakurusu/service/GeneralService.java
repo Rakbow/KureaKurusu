@@ -11,8 +11,6 @@ import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +37,6 @@ public class GeneralService {
 
     //endregion
 
-    private static final Logger log = LoggerFactory.getLogger(GeneralService.class);
-
     /**
      * 刷新redis中的选项缓存
      *
@@ -59,50 +55,15 @@ public class GeneralService {
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
 
-        MetaData.optionsZh.genderSet = EnumHelper.getAttributeOptions(Gender.class, "zh");
-        MetaData.optionsEn.genderSet = EnumHelper.getAttributeOptions(Gender.class, "en");
-
         MetaData.optionsZh.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "zh");
         MetaData.optionsEn.albumFormatSet = EnumHelper.getAttributeOptions(AlbumFormat.class, "en");
 
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
-        MetaData.optionsZh.entryTypeSet = EnumHelper.getAttributeOptions(EntryType.class, "zh");
-        MetaData.optionsEn.entryTypeSet = EnumHelper.getAttributeOptions(EntryType.class, "en");
-
-        MetaData.optionsZh.entrySubTypeSet = EnumHelper.getAttributeOptions(EntrySubType.class, "zh");
-        MetaData.optionsEn.entrySubTypeSet = EnumHelper.getAttributeOptions(EntrySubType.class, "en");
-
-        MetaData.optionsZh.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "zh");
-        MetaData.optionsEn.entityTypeSet = EnumHelper.getAttributeOptions(EntityType.class, "en");
-
-        MetaData.optionsZh.releaseTypeSet = EnumHelper.getAttributeOptions(ReleaseType.class, "zh");
-        MetaData.optionsEn.releaseTypeSet = EnumHelper.getAttributeOptions(ReleaseType.class, "en");
-
-        MetaData.optionsZh.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "zh");
-        MetaData.optionsEn.languageSet = EnumHelper.getAttributeStrOptions(Language.class, "en");
-
-        MetaData.optionsZh.bookTypeSet = ItemSubType.getItemSubTypeSet(ItemType.BOOK.getValue(), "zh");
-        MetaData.optionsEn.bookTypeSet = ItemSubType.getItemSubTypeSet(ItemType.BOOK.getValue(), "en");
-
-        MetaData.optionsZh.goodsTypeSet = ItemSubType.getItemSubTypeSet(ItemType.GOODS.getValue(), "zh");
-        MetaData.optionsEn.goodsTypeSet = ItemSubType.getItemSubTypeSet(ItemType.GOODS.getValue(), "en");
-
-        MetaData.optionsZh.figureTypeSet = ItemSubType.getItemSubTypeSet(ItemType.FIGURE.getValue(), "zh");
-        MetaData.optionsEn.figureTypeSet = ItemSubType.getItemSubTypeSet(ItemType.FIGURE.getValue(), "en");
-
-        MetaData.optionsZh.relatedGroupSet = EnumHelper.getAttributeOptions(RelatedGroup.class, "zh");
-        MetaData.optionsEn.relatedGroupSet = EnumHelper.getAttributeOptions(RelatedGroup.class, "en");
-
-        MetaData.optionsZh.imageTypeSet = EnumHelper.getAttributeOptions(ImageType.class, "zh");
-        MetaData.optionsEn.imageTypeSet = EnumHelper.getAttributeOptions(ImageType.class, "en");
-
         MetaData.optionsZh.roleSet = getPersonRoleSet();
         MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);
         MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
-
-        log.info(I18nHelper.getMessage("system.load_data.meta_data"));
     }
 
     /**
@@ -170,19 +131,7 @@ public class GeneralService {
         Map<String, Object> res = new HashMap<>();
         res.put("albumFormatSet", Objects.requireNonNull(MetaData.getOptions()).albumFormatSet);
         res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
-        res.put("languageSet", Objects.requireNonNull(MetaData.getOptions()).languageSet);
-        res.put("bookTypeSet", Objects.requireNonNull(MetaData.getOptions()).bookTypeSet);
-        res.put("goodsTypeSet", Objects.requireNonNull(MetaData.getOptions()).goodsTypeSet);
-        res.put("figureTypeSet", Objects.requireNonNull(MetaData.getOptions()).figureTypeSet);
-        res.put("releaseTypeSet", Objects.requireNonNull(MetaData.getOptions()).releaseTypeSet);
-        res.put("relatedGroupSet", Objects.requireNonNull(MetaData.getOptions()).relatedGroupSet);
-        res.put("genderSet", Objects.requireNonNull(MetaData.getOptions()).genderSet);
         res.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
-        res.put("entityTypeSet", Objects.requireNonNull(MetaData.getOptions()).entityTypeSet);
-        res.put("imageTypeSet", Objects.requireNonNull(MetaData.getOptions()).imageTypeSet);
-
-        res.put("entryTypeSet", Objects.requireNonNull(MetaData.getOptions()).entryTypeSet);
-        res.put("entrySubTypeSet", Objects.requireNonNull(MetaData.getOptions()).entrySubTypeSet);
         return res;
     }
 
