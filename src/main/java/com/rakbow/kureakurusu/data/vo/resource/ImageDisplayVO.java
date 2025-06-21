@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.resource;
 
-import com.rakbow.kureakurusu.data.entity.resource.Image;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ImageDisplayVO {
 
-    private List<Image> images;
+    private List<ImageVO> images;
     private long count;
 
 }

@@ -4,7 +4,6 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ public class DataFinder {
     public static Item itemFinder = new Item();
     public static Entry entryFinder = new Entry();
     public static Entity entityFinder = new Entity();
-    public static Image imageFinder = new Image();
 
     public static EntityRelatedCount resourceCountFinder = new EntityRelatedCount();
 
@@ -38,14 +36,6 @@ public class DataFinder {
     public static Entry findEntryById(Long id, List<Entry> list) {
         entryFinder.setId(id);
         int idx = Collections.binarySearch(list, entryFinder, DataSorter.entryIdSorter);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
-    public static Image findImageByEntityTypeEntityIdType(int entityType, long entityId, int type, List<Image> list) {
-        imageFinder.setEntityType(entityType);
-        imageFinder.setEntityId(entityId);
-        imageFinder.setType(type);
-        int idx = Collections.binarySearch(list, imageFinder, DataSorter.imageEntityTypeEntityIdTypeSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
 

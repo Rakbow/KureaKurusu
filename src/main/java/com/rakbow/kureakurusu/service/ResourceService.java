@@ -22,12 +22,14 @@ import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
+import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,16 +80,16 @@ public class ResourceService {
     );
 
     @Transactional
-    public SearchResult<Image> getEntityImages(ImageListQueryDTO param) {
-        QueryWrapper<Image> wrapper = new QueryWrapper<Image>()
-                .eq("entity_type", param.getEntityType())
-                .eq("entity_id", param.getEntityId())
-                .eq(param.getType() != null && param.getType() != -1 && param.getType() != -2, "type", param.getType())
-                .in(param.getType() != null && param.getType() == -2, "type", defaultImageType)
+    public SearchResult<ImageVO> getEntityImages(ImageListQueryDTO param) {
+        MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
+                .eq(Image::getEntityType, param.getEntityType())
+                .eq(Image::getEntityId, param.getEntityId())
+                .eq(ObjectUtils.isNotEmpty(param.getType()) && param.getType() != -1 && param.getType() != -2, Image::getType, param.getType())
+                .in(ObjectUtils.isNotEmpty(param.getType()) && param.getType() == -2, Image::getType, defaultImageType)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
         IPage<Image> pages = imageMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
-        CommonImageUtil.generateThumb(pages.getRecords());
-        return new SearchResult<>(pages.getRecords(), pages.getTotal());
+        List<ImageVO> res = converter.convert(pages.getRecords(), ImageVO.class);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
     @SneakyThrows
@@ -140,8 +142,7 @@ public class ResourceService {
                         .in(Image::getType, defaultImageType)
                         .orderByAsc(Image::getId)
         );
-        CommonImageUtil.generateThumb(pages.getRecords());
-        return new ImageDisplayVO(pages.getRecords(), pages.getTotal());
+        return new ImageDisplayVO(converter.convert(pages.getRecords(), ImageVO.class), pages.getTotal());
     }
 
     @SneakyThrows
@@ -154,10 +155,9 @@ public class ResourceService {
                         .in(Image::getType, defaultImageCoverType)
         );
         String defaultCover = CommonConstant.EMPTY_IMAGE_URL;
-        images.sort(DataSorter.imageEntityTypeEntityIdTypeSorter);
-        Image cover = DataFinder.findImageByEntityTypeEntityIdType(entityType, entityId, ImageType.MAIN.getValue(), images);
+        Image cover = images.stream().filter(i -> i.getType() == ImageType.MAIN).findFirst().orElse(null);
         redisUtil.set(String.format(key, ImageType.MAIN.getValue()), cover != null ? cover.getUrl() : defaultCover);
-        Image thumb = DataFinder.findImageByEntityTypeEntityIdType(entityType, entityId, ImageType.THUMB.getValue(), images);
+        Image thumb = images.stream().filter(i -> i.getType() == ImageType.THUMB).findFirst().orElse(null);
         redisUtil.set(String.format(key, ImageType.THUMB.getValue()), thumb != null ? thumb.getUrl() : defaultCover);
     }
 

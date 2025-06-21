@@ -3,10 +3,8 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.ResourceService;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import io.github.linpeilie.Converter;
 import jakarta.validation.Valid;
@@ -34,9 +32,7 @@ public class ResourceController {
 
     @PostMapping("get-images")
     public ApiResult getEntityImages(@RequestBody ListQuery dto) {
-        return new ApiResult().load(
-                srv.getEntityImages(new ImageListQueryDTO(dto))
-        );
+        return new ApiResult().load(srv.getEntityImages(new ImageListQueryDTO(dto)));
     }
 
     @PostMapping("get-display-images")

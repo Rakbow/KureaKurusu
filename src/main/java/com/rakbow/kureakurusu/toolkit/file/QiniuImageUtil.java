@@ -1,14 +1,13 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
-import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.UploadImage;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.FileType;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +53,7 @@ public class QiniuImageUtil {
             image.setSize(img.getSize());
             image.setEntityType(entityType);
             image.setEntityId(entityId);
-            image.setType(miniImage.getType());
+            image.setType(ImageType.get(miniImage.getType()));
             image.setName(miniImage.getName());
             image.setDetail(miniImage.getDetail());
             images.add(image);
@@ -103,45 +102,9 @@ public class QiniuImageUtil {
         return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";
     }
 
-    public static String getCustomThumbUrl(String imageUrl, int size, int lengthLabel) {
-        if (lengthLabel == 0) {
-            return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";
-        } else {
-            return STR."\{imageUrl}\{THUMBNAIL_URL}x\{size}";
-        }
-    }
-
-    public static String getThumbUrlWidth(String imageUrl, int size) {
-        return STR."\{imageUrl}\{THUMBNAIL_URL}200x\{size}";
-    }
-
-    public static String getThumbBackgroundUrl(String imageUrl, int size) {
-        return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x\{size}/extent/\{size}x\{size}/background/IzJmMzY0Zg==";
-    }
-
     public static String getBookThumbBackgroundUrl(String imageUrl, double width, double height) {
 
         return STR."\{imageUrl}\{THUMBNAIL_URL}\{width}x\{height}/extent/\{width}x\{height}/background/IzJmMzY0Zg==";
-    }
-
-    /**
-     * 通过外链获取图片key
-     *
-     * @param fullImageUrl 原始图url
-     * @return thumbImageUrl
-     */
-    public static String getImageKeyByFullUrl(String fullImageUrl) {
-        return fullImageUrl.replace(FILE_DOMAIN, "");
-    }
-
-    public static String getThumb70Url(List<Image> images) {
-        if (!images.isEmpty()) {
-            for (Image image : images) {
-                if (image.isMain())
-                    return getThumbBackgroundUrl(image.getUrl(), 70);
-            }
-        }
-        return getThumb(CommonConstant.EMPTY_IMAGE_URL, 70);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
