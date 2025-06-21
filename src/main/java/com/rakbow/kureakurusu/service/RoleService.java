@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
-    private final RoleMapper mapper;
-
     @Transactional
     public SearchResult<Role> getRoles(RoleListQueryDTO param) {
 
@@ -31,7 +29,7 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
                 .like("name_en", param.getNameEn())
                 .orderBy(param.isSort(), param.asc(), param.getSortField());
 
-        IPage<Role> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Role> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         return new SearchResult<>(pages);
     }
 

@@ -38,7 +38,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
-    private final EpisodeMapper mapper;
     private final ItemService itemSrv;
     private final Converter converter;
     private final EntityUtil entityUtil;
@@ -70,7 +69,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         if (param.getName() != null && !param.getName().isEmpty()) {
             wrapper.like("name", param.getName()).or().like("name_en", param.getName());
         }
-        IPage<Episode> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Episode> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EpisodeListVO> res = converter.convert(pages.getRecords(), EpisodeListVO.class);
 
         //get album info
@@ -105,7 +104,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                             .build()
             );
         }
-        List<Episode> allEps = mapper.selectList(
+        List<Episode> allEps = list(
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, dto.getRelatedType())
                         .eq(Episode::getRelatedId, dto.getRelatedId())

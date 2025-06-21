@@ -53,7 +53,7 @@ public class RelationController {
 
     @DeleteMapping("delete-relations")
     public ApiResult deletePersonnel(@RequestBody CommonDeleteDTO dto) {
-        srv.deleteRelations(dto.getIds());
+        srv.removeByIds(dto.getIds());
         return new ApiResult().ok("entity.curd.delete.success");
     }
 

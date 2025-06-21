@@ -2,12 +2,12 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
-    private final RelationMapper mapper;
     private final SqlSessionFactory sqlSessionFactory;
     private final Converter converter;
     private final EntryMapper entryMapper;
@@ -62,7 +61,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         int direction = qry.getDirection();
         List<RelatedEntityVO> res = new ArrayList<>();
         SimpleSearchParam param = new SimpleSearchParam(qry.getParam());
-        IPage<Relation> pages = mapper.selectPage(
+        IPage<Relation> pages = page(
                 new Page<>(param.getPage(), param.getSize()),
                 new LambdaQueryWrapper<Relation>()
                         .eq(Relation::getRelatedGroup, qry.getRelatedGroup())
@@ -107,7 +106,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<RelationVO> res = new ArrayList<>();
         if (MetaData.optionsZh.roleSet.isEmpty())
             return res;
-        List<Relation> relations = mapper.selectList(
+        List<Relation> relations = list(
                 new LambdaQueryWrapper<Relation>()
                         .eq(Relation::getRelatedGroup, relatedGroup)
                         .eq(direction == 1 ? Relation::getEntityType : Relation::getRelatedEntityType, entityType)
@@ -162,14 +161,14 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             typeCol = "related_entity_type";
             idCol = "related_entity_id";
         }
-        QueryWrapper<Relation> wrapper = new QueryWrapper<Relation>()
+        MPJLambdaWrapper<Relation> wrapper = new MPJLambdaWrapper<Relation>()
                 .eq(typeCol, param.getEntityType())
                 .eq(idCol, param.getEntityId())
                 .eq(param.getRelatedGroup() != RelatedGroup.DEFAULT.getValue(), "related_group", param.getRelatedGroup())
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
                 .orderByDesc("id");
 
-        IPage<Relation> pages = mapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Relation> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         if (pages.getRecords().isEmpty())
             return new SearchResult<>();
         Map<Integer, List<Relation>> groups = pages.getRecords().stream()
@@ -249,7 +248,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
     @Transactional
     public void updateRelation(RelationUpdateDTO dto) {
-        mapper.update(
+        update(
                 new LambdaUpdateWrapper<Relation>()
                         .set(Relation::getRoleId, dto.getRoleId())
                         .set(Relation::getReverseRoleId, dto.getReverseRoleId())
@@ -259,14 +258,9 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public void deleteRelations(List<Long> ids) {
-        mapper.deleteByIds(ids);
-    }
-
-    @Transactional
     public ItemExcRelatedEntries getItemRelatedEntries(long id) {
         ItemExcRelatedEntries res = new ItemExcRelatedEntries();
-        List<Relation> relations = mapper.selectList(
+        List<Relation> relations = list(
                 new LambdaQueryWrapper<Relation>()
                         .in(Relation::getRelatedGroup, ItemUtil.ItemExcRelatedGroups)
                         .eq(Relation::getEntityType, EntityType.ITEM.getValue())
