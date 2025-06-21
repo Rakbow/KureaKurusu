@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.data.emun;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,10 +25,6 @@ public enum EntityType {
     private final Integer value;
     private final String labelKey;
     private final String tableName;
-
-    public String getLabel() {
-        return I18nHelper.getMessage(this.labelKey);
-    }
 
     public static EntityType get(int value) {
         for (EntityType type : EntityType.values())
