@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
@@ -70,7 +71,7 @@ public class ResourceController {
     }
 
     @DeleteMapping("delete-images")
-    public ApiResult deleteEntityImages(@RequestBody List<Image> images) {
+    public ApiResult deleteEntityImages(@RequestBody List<ImageVO> images) {
         srv.deleteEntityImage(images);
         return new ApiResult().ok("image.delete.success");
     }

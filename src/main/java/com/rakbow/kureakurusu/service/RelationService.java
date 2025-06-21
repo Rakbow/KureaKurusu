@@ -17,6 +17,7 @@ import com.rakbow.kureakurusu.data.SimpleSearchParam;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
+import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
@@ -30,6 +31,8 @@ import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +54,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final Converter converter;
     private final EntryMapper entryMapper;
     private final ItemMapper itemMapper;
+    private final ResourceService resourceSrv;
 
     private final List<EntryType> itemExcRelationEntryTypes
             = List.of(EntryType.CLASSIFICATION, EntryType.MATERIAL, EntryType.EVENT);
@@ -71,12 +75,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         );
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
         List<Relation> relations = pages.getRecords();
-        if (relatedGroup == RelatedGroup.PRODUCT.getValue()) {
-            relatedEntity = EntityType.ENTRY.getValue();
-        } else if (relatedGroup == RelatedGroup.CHARACTER.getValue()) {
-            relatedEntity = EntityType.ENTRY.getValue();
-        } else {
+        if (relatedGroup == RelatedGroup.ITEM.getValue()) {
             relatedEntity = EntityType.ITEM.getValue();
+        } else {
+            relatedEntity = EntityType.ENTRY.getValue();
         }
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
         List<Entry> targets = entryMapper.selectByIds(targetIds);
@@ -101,7 +103,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     public List<RelationVO> getSimpleRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
-        int relatedEntity;
         String remark;
         List<RelationVO> res = new ArrayList<>();
         if (MetaData.optionsZh.roleSet.isEmpty())
@@ -115,11 +116,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         );
         if (relations.isEmpty())
             return res;
-        if (relatedGroup == RelatedGroup.ITEM.getValue()) {
-            relatedEntity = EntityType.ITEM.getValue();
-        } else {
-            relatedEntity = EntityType.ENTRY.getValue();
-        }
         List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
         List<Entry> targets = entryMapper.selectByIds(targetIds);
         for (Relation r : relations) {
@@ -138,7 +134,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                             .role(role)
                             .target(new Attribute<>(e.getName(), e.getId()))
                             .remark(remark)
-                            .relatedTypeName(EntityType.getTableName(relatedEntity))
                             .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
                             .build()
             );
@@ -146,47 +141,54 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         return res;
     }
 
+    @Transactional
+    @SneakyThrows
     public SearchResult<RelationVO> getRelations(RelationListQueryDTO param) {
         List<RelationVO> res = new ArrayList<>();
         List<Long> targetIds;
         BaseMapper<? extends Entity> subMapper;
         List<? extends Entity> targets;
         List<Relation> currentRelations;
-        String typeCol;
-        String idCol;
-        if (param.getDirection() == 1) {
-            typeCol = "entity_type";
-            idCol = "entity_id";
-        } else {
-            typeCol = "related_entity_type";
-            idCol = "related_entity_id";
-        }
         MPJLambdaWrapper<Relation> wrapper = new MPJLambdaWrapper<Relation>()
-                .eq(typeCol, param.getEntityType())
-                .eq(idCol, param.getEntityId())
-                .eq(param.getRelatedGroup() != RelatedGroup.DEFAULT.getValue(), "related_group", param.getRelatedGroup())
+                .and(w ->
+                        w.or(i -> i.eq(Relation::getRelatedEntityType, param.getEntityType()).eq(Relation::getRelatedEntityId, param.getEntityId()))
+                                .or(i -> i.eq(Relation::getEntityType, param.getEntityType()).eq(Relation::getEntityId, param.getEntityId()))
+                )
+                .eq(ObjectUtils.isNotEmpty(param.getRelatedGroup()), Relation::getRelatedGroup, param.getRelatedGroup())
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                .orderByDesc("id");
+                .orderByDesc(Relation::getId);
 
         IPage<Relation> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         if (pages.getRecords().isEmpty())
             return new SearchResult<>();
+        //mark direction
+        pages.getRecords().forEach(r -> {
+            if (r.getRelatedEntityType() == param.getEntityType()
+                    && r.getRelatedEntityId() == param.getEntityId()) {
+                r.setDirection(-1);
+            }
+        });
+        //get map group by entity type
         Map<Integer, List<Relation>> groups = pages.getRecords().stream()
-                .collect(Collectors.groupingBy(param.getDirection() == 1 ? Relation::getRelatedEntityType : Relation::getEntityType));
+                .collect(Collectors.groupingBy(r -> r.getDirection() == 1 ? r.getRelatedEntityType() : r.getEntityType()));
+
         for (int entityType : groups.keySet()) {
             currentRelations = groups.get(entityType);
             targetIds = currentRelations.stream()
-                    .map(param.getDirection() == 1 ? Relation::getRelatedEntityId : Relation::getEntityId)
+                    .map(r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId())
                     .distinct().toList();
 
-            if(param.getRelatedGroup() == RelatedGroup.ITEM.getValue()) {
+            if (entityType == EntityType.ITEM.getValue()) {
                 subMapper = itemMapper;
-            }else {
+            } else if (entityType == EntityType.ENTRY.getValue()) {
                 subMapper = entryMapper;
+            } else {
+                throw new Exception();
             }
             targets = subMapper.selectByIds(targetIds);
+
             for (Relation r : currentRelations) {
-                Entity e = DataFinder.findEntityById(param.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+                Entity e = DataFinder.findEntityById(r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
                 if (e == null) continue;
                 Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
                 Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.optionsZh.roleSet);
@@ -196,18 +198,23 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 );
                 if (role == null) role = new Attribute<>("-", 0L);
                 if (reverseRole == null) reverseRole = new Attribute<>("-", 0L);
-                res.add(
-                        RelationVO.builder()
-                                .id(r.getId())
-                                .relatedGroup(relatedGroup)
-                                .role(role)
-                                .reverseRole(reverseRole)
-                                .target(new Attribute<>(e.getName(), e.getId()))
-                                .remark(r.getRemark())
-                                .relatedTypeName(EntityType.getTableName(entityType))
-                                .thumb(CommonImageUtil.getEntryThumb(((Entry)e).getThumb()))
-                                .build()
-                );
+
+                RelationVO vo = RelationVO.builder()
+                        .id(r.getId())
+                        .relatedGroup(relatedGroup)
+                        .role(role)
+                        .reverseRole(reverseRole)
+                        .target(new Attribute<>(e.getName(), e.getId()))
+                        .remark(r.getRemark())
+                        .build();
+                if (entityType == EntityType.ENTRY.getValue()) {
+                    vo.setTargetType(EntityType.ENTRY.getValue());
+                    vo.setThumb(CommonImageUtil.getEntryThumb(((Entry) e).getThumb()));
+                } else {
+                    vo.setTargetType(EntityType.ITEM.getValue());
+                    vo.setThumb(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));
+                }
+                res.add(vo);
             }
         }
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());

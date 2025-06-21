@@ -63,9 +63,7 @@ public class QiniuImageUtil {
 
     @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public List<Integer> deleteImages(List<Image> deleteImages) {
-        String[] keys = deleteImages.stream().map(Image::getUrl)
-                .map(url -> url.replace(FILE_DOMAIN, "")).toArray(String[]::new);
+    public List<Integer> deleteImages(String[] keys) {
         return qiniuBaseUtil.deleteFilesFromQiniu(keys);
     }
 

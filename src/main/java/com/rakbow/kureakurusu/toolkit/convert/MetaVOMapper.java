@@ -143,7 +143,7 @@ public interface MetaVOMapper {
 
     @Named("displayImage")
     default String displayImage(String url) {
-        return QiniuImageUtil.getThumb(url, 1200, 650);
+        return QiniuImageUtil.getThumb(url, 1200, 900);
     }
 
 }

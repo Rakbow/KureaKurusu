@@ -13,6 +13,7 @@ import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
@@ -122,9 +123,11 @@ public class ResourceService {
     }
 
     @Transactional
-    public void deleteEntityImage(List<Image> images) {
+    public void deleteEntityImage(List<ImageVO> images) {
+        String[] keys = images.stream().map(ImageVO::getUrl)
+                .map(url -> url.replace(Constant.FILE_DOMAIN, "")).toArray(String[]::new);
         //delete from qiniu server
-        List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(images);
+        List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(keys);
         //delete from database
         imageMapper.deleteByIds(deleteIndexes.stream().map(index -> images.get(index).getId()).toList());
     }

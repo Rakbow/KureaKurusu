@@ -5,12 +5,15 @@ import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
-import com.rakbow.kureakurusu.data.emun.*;
+import com.rakbow.kureakurusu.data.emun.AlbumFormat;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.MediaFormat;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,6 +105,7 @@ public class GeneralService {
      * @author rakbow
      */
     @Transactional
+    @SneakyThrows
     public void updateEntityDetail(UpdateDetailDTO dto) {
         mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
     }

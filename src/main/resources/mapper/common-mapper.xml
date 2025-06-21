@@ -8,7 +8,7 @@
 <!--        <result property="images" column="images" typeHandler="com.rakbow.kureakurusu.util.handler.TestHandler" />-->
 <!--    </resultMap>-->
 
-    <update id="updateEntryStatus" keyProperty="id">
+    <update id="updateEntityStatus" keyProperty="id">
         update ${param1}
         set
         status = #{status}
@@ -23,7 +23,7 @@
         </where>
     </update>
 
-    <update id="updateEntryDetail" keyProperty="id">
+    <update id="updateEntityDetail" keyProperty="id">
         update ${param1}
         set
         detail = #{text}, edited_time = #{editedTime}

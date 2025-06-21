@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
@@ -28,5 +29,8 @@ public class Relation {
     private Long relatedEntityId;
     private String remark;
     private Boolean status;
+
+    @TableField(exist = false)
+    private int direction = 1;
 
 }

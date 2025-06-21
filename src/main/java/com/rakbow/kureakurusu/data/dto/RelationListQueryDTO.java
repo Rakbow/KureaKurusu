@@ -17,15 +17,13 @@ public class RelationListQueryDTO extends ListQueryDTO {
 
     private int entityType;
     private long entityId;
-    private int relatedGroup;
-    private int direction;// 1: positive -1: negative
+    private Integer relatedGroup;
 
     public RelationListQueryDTO(ListQuery qry) {
         super(qry);
         this.entityType = qry.getVal("entityType");
         this.entityId = ((Integer)qry.getVal("entityId")).longValue();
         this.relatedGroup = qry.getVal("relatedGroup");
-        this.direction = qry.getVal("direction");
     }
 
 }

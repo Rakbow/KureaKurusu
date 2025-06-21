@@ -91,7 +91,7 @@ public class GeneralController {
             response.addCookie(cookie);
         }
         if (srv.like(qry.getEntityType(), qry.getEntityId(), likeToken)) {
-            res.ok(I18nHelper.getMessage("entity.like.success"));
+            res.ok("entity.like.success");
         } else {
             throw new ApiException("entity.like.failed");
         }
