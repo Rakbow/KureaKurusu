@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import com.rakbow.kureakurusu.data.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023-12-10 6:33
  */
 @Mapper
-public interface RoleMapper extends BaseMapper<Role> {
+public interface RoleMapper extends MPJBaseMapper<Role> {
 }

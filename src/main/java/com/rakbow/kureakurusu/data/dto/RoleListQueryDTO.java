@@ -15,15 +15,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoleListQueryDTO extends ListQueryDTO {
 
-    private String name;
-    private String nameZh;
-    private String nameEn;
+    private String keyword;
 
     public RoleListQueryDTO(ListQuery qry) {
         super(qry);
-        this.name = qry.getVal("name");
-        this.nameZh = qry.getVal("nameZh");
-        this.nameEn = qry.getVal("nameEn");
+        this.keyword = qry.getVal("keyword");
     }
 
 }

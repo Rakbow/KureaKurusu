@@ -221,7 +221,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public void addRelatedEntries(RelationCreateDTO dto) {
+    public void create(RelationCreateDTO dto) {
         List<Relation> res = new ArrayList<>();
         for (RelationCreateMiniDTO target : dto.getRelatedEntries()) {
             Relation relation = new Relation();
@@ -254,7 +254,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public void updateRelation(RelationUpdateDTO dto) {
+    public void update(RelationUpdateDTO dto) {
         update(
                 new LambdaUpdateWrapper<Relation>()
                         .set(Relation::getRoleId, dto.getRoleId())

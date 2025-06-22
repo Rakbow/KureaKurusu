@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Rakbow
  * @since 2023-12-10 3:24
  */
 @Data
+@NoArgsConstructor
 @TableName("role")
 public class Role {
 
@@ -26,12 +28,5 @@ public class Role {
     @JsonIgnore
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;//激活状态
-
-    public Role() {
-        id = 0L;
-        name = "";
-        nameZh = "";
-        nameEn = "";
-    }
 
 }

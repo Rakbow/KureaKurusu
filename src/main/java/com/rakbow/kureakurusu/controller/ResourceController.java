@@ -31,17 +31,17 @@ public class ResourceController {
 
     //region image
 
-    @PostMapping("get-images")
+    @PostMapping("image/list")
     public ApiResult getEntityImages(@RequestBody ListQuery dto) {
         return new ApiResult().load(srv.getEntityImages(new ImageListQueryDTO(dto)));
     }
 
-    @PostMapping("get-display-images")
+    @PostMapping("image/default-displayed")
     public ApiResult getEntityImages(@RequestBody EntityQry qry) {
         return new ApiResult().load(srv.getEntityDisplayImages(qry.getEntityType(), qry.getEntityId()));
     }
 
-    @PostMapping("upload-image")
+    @PostMapping("image/upload")
     public ApiResult addEntityImage(
             @RequestParam("entityType") int entityType,
             @RequestParam("entityId") int entityId,
@@ -61,7 +61,7 @@ public class ResourceController {
         return new ApiResult().ok("entity.crud.create.success");
     }
 
-    @PostMapping("update-image")
+    @PostMapping("image/update")
     public ApiResult updateEntityImage(@Valid @RequestBody ImageUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
@@ -70,7 +70,7 @@ public class ResourceController {
         return new ApiResult().ok("entity.crud.update.success");
     }
 
-    @DeleteMapping("delete-images")
+    @DeleteMapping("images/delete")
     public ApiResult deleteEntityImages(@RequestBody List<ImageVO> images) {
         srv.deleteEntityImage(images);
         return new ApiResult().ok("entity.crud.delete.success");

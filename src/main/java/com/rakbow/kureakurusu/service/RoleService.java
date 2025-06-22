@@ -1,9 +1,9 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
     @Transactional
-    public SearchResult<Role> getRoles(RoleListQueryDTO param) {
+    public SearchResult<Role> list(RoleListQueryDTO param) {
 
-        QueryWrapper<Role> wrapper = new QueryWrapper<Role>()
-                .like("name", param.getName())
-                .like("name_zh", param.getNameZh())
-                .like("name_en", param.getNameEn())
+        MPJLambdaWrapper<Role> wrapper = new MPJLambdaWrapper<Role>()
+                .or().like(Role::getName, param.getKeyword())
+                .or().like(Role::getNameZh, param.getKeyword())
+                .or().like(Role::getNameEn, param.getKeyword())
                 .orderBy(param.isSort(), param.asc(), param.getSortField());
 
         IPage<Role> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);

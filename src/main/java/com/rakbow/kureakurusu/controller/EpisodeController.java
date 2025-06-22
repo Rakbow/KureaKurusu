@@ -30,9 +30,9 @@ public class EpisodeController {
         return new ApiResult().load(srv.list(dto));
     }
 
-    @PostMapping("get-related")
-    public ApiResult getRelatedEpisodes(@RequestBody EpisodeRelatedDTO dto) {
-        return new ApiResult().load(srv.getRelatedEpisodes(dto));
+    @PostMapping("related")
+    public ApiResult related(@RequestBody EpisodeRelatedDTO dto) {
+        return new ApiResult().load(srv.related(dto));
     }
 
 }

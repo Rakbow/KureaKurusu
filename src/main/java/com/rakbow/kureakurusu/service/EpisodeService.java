@@ -89,7 +89,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
     @Transactional
     @SneakyThrows
-    public EpisodeRelatedVO getRelatedEpisodes(EpisodeRelatedDTO dto) {
+    public EpisodeRelatedVO related(EpisodeRelatedDTO dto) {
         EpisodeRelatedVO res = new EpisodeRelatedVO();
         if (dto.getRelatedType() == EntityType.ITEM.getValue()) {
             Album album = itemSrv.getById(dto.getRelatedId());
