@@ -17,16 +17,6 @@ public class RelationController {
 
     private final RelationService srv;
 
-    @PostMapping("get-related-entity")
-    public ApiResult getRelatedEntity(@RequestBody RelationQry qry) {
-        return new ApiResult().load(srv.getSimpleRelatedEntity(qry.getDirection(), qry.getRelatedGroup(), qry.getEntityType(), qry.getEntityId()));
-    }
-
-    @PostMapping("get-related-entities")
-    public ApiResult getRelatedEntities(@RequestBody RelationQry qry) {
-        return new ApiResult().load(srv.getRelatedEntities(qry));
-    }
-
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQuery qry) {
         return new ApiResult().load(srv.getRelations(new RelationListQueryDTO(qry)));

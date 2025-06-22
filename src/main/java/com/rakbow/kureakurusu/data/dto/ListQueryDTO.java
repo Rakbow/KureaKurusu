@@ -18,8 +18,8 @@ public class ListQueryDTO {
     private int sortOrder;
 
     public ListQueryDTO(ListQuery qry) {
-        size = qry.getRows();
-        page = qry.getFirst()/size + 1;
+        size = qry.isPage() ? qry.getRows() : -1;
+        page = qry.isPage() ? qry.getFirst()/size + 1 : 1;
         sortField = qry.getSortField();
         sortOrder = qry.getSortOrder();
     }

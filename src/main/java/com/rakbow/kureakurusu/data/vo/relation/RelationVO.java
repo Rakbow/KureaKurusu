@@ -19,6 +19,7 @@ public class RelationVO {
     private Attribute<Long> reverseRole;
     private int targetType;
     private Attribute<Long> target;
+    private String subName;
     private String remark;
     private String relatedTypeName;
 

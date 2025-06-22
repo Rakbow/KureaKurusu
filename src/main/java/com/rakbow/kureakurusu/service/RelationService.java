@@ -13,8 +13,10 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.SimpleSearchParam;
-import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.RelatedEntityMiniDTO;
+import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
+import com.rakbow.kureakurusu.data.dto.RelationListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
@@ -24,7 +26,6 @@ import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
-import com.rakbow.kureakurusu.data.vo.relation.RelatedEntityVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -55,91 +56,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final EntryMapper entryMapper;
     private final ItemMapper itemMapper;
     private final ResourceService resourceSrv;
+    private final EntityUtil entityUtil;
 
     private final List<EntryType> itemExtraInfoEntryTypes
             = List.of(EntryType.CLASSIFICATION, EntryType.MATERIAL, EntryType.EVENT);
-
-    public SearchResult<RelatedEntityVO> getRelatedEntities(RelationQry qry) {
-        int relatedGroup = qry.getRelatedGroup();
-        int relatedEntity;
-        int direction = qry.getDirection();
-        List<RelatedEntityVO> res = new ArrayList<>();
-        SimpleSearchParam param = new SimpleSearchParam(qry.getParam());
-        IPage<Relation> pages = page(
-                new Page<>(param.getPage(), param.getSize()),
-                new LambdaQueryWrapper<Relation>()
-                        .eq(Relation::getRelatedGroup, qry.getRelatedGroup())
-                        .eq(direction == 1 ? Relation::getEntityType : Relation::getRelatedEntityType, qry.getEntityType())
-                        .eq(direction == 1 ? Relation::getEntityId : Relation::getRelatedEntityId, qry.getEntityId())
-                        .orderByAsc(param.getSize() == -1 ? Relation::getId : (direction == 1 ? Relation::getRoleId : Relation::getReverseRoleId))
-        );
-        if (pages.getRecords().isEmpty()) return new SearchResult<>();
-        List<Relation> relations = pages.getRecords();
-        if (relatedGroup == RelatedGroup.ITEM.getValue()) {
-            relatedEntity = EntityType.ITEM.getValue();
-        } else {
-            relatedEntity = EntityType.ENTRY.getValue();
-        }
-        List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
-        List<Entry> targets = entryMapper.selectByIds(targetIds);
-        for (Relation r : relations) {
-            Entry e = DataFinder.findEntryById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
-            if (e == null) continue;
-            Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
-            if (role == null) continue;
-            res.add(
-                    RelatedEntityVO
-                            .builder()
-                            .type(relatedEntity)
-                            .id(e.getId())
-                            .name(e.getName())
-                            .subName(EntryUtil.getSubName(e))
-                            .cover(CommonImageUtil.getEntryThumb(e.getThumb()))
-                            .role(role)
-                            .build()
-            );
-        }
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
-    }
-
-    public List<RelationVO> getSimpleRelatedEntity(int direction, int relatedGroup, int entityType, long entityId) {
-        String remark;
-        List<RelationVO> res = new ArrayList<>();
-        if (MetaData.optionsZh.roleSet.isEmpty())
-            return res;
-        List<Relation> relations = list(
-                new LambdaQueryWrapper<Relation>()
-                        .eq(Relation::getRelatedGroup, relatedGroup)
-                        .eq(direction == 1 ? Relation::getEntityType : Relation::getRelatedEntityType, entityType)
-                        .eq(direction == 1 ? Relation::getEntityId : Relation::getRelatedEntityId, entityId)
-                        .orderByAsc(direction == 1 ? Relation::getRoleId : Relation::getReverseRoleId)
-        );
-        if (relations.isEmpty())
-            return res;
-        List<Long> targetIds = relations.stream().map(direction == 1 ? Relation::getRelatedEntityId : Relation::getEntityId).distinct().toList();
-        List<Entry> targets = entryMapper.selectByIds(targetIds);
-        for (Relation r : relations) {
-            Entry e = DataFinder.findEntryById(direction == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
-            if (e == null) continue;
-            if (e.getType() == EntryType.PRODUCT) {
-                remark = I18nHelper.getMessage(e.getSubType().getLabelKey());
-            } else {
-                remark = r.getRemark();
-            }
-            Attribute<Long> role = DataFinder.findAttributeByValue(direction == 1 ? r.getRoleId() : r.getReverseRoleId(), MetaData.optionsZh.roleSet);
-            if (role == null) continue;
-            res.add(
-                    RelationVO.builder()
-                            .id(r.getId())
-                            .role(role)
-                            .target(new Attribute<>(e.getName(), e.getId()))
-                            .remark(remark)
-                            .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
-                            .build()
-            );
-        }
-        return res;
-    }
 
     @Transactional
     @SneakyThrows
@@ -210,6 +130,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 if (entityType == EntityType.ENTRY.getValue()) {
                     vo.setTargetType(EntityType.ENTRY.getValue());
                     vo.setThumb(CommonImageUtil.getEntryThumb(((Entry) e).getThumb()));
+                    vo.setSubName(entityUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
                 } else {
                     vo.setTargetType(EntityType.ITEM.getValue());
                     vo.setThumb(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));

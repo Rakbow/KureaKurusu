@@ -9,9 +9,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class EntryUtil {
 
-    public static String getSubName(Entry entry) {
-        if(StringUtils.isNotEmpty(entry.getNameZh())) return entry.getNameZh();
-        else if(StringUtils.isNotEmpty(entry.getNameEn())) return entry.getNameEn();
+    public static String getSubName(String nameZh, String nameEn) {
+        if(StringUtils.isNotEmpty(nameZh)) return nameZh;
+        else if(StringUtils.isNotEmpty(nameEn)) return nameEn;
         else return StringUtils.EMPTY;
     }
 

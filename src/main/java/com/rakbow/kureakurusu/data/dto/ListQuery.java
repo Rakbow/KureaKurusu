@@ -38,4 +38,8 @@ public class ListQuery extends QueryDTO {
         return (List<T>) value;
     }
 
+    public boolean isPage() {
+        return this.getRows() != 0;
+    }
+
 }
