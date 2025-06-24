@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.data.dto;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
-import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,7 +27,7 @@ public class AlbumCreateDTO extends ItemCreateDTO {
     private int discs;
     private int tracks;
     private int runTime;
-    private List<AlbumTrackVO> trackList;
+    private AlbumDiscCreateDTO disc;
     @NotEmpty(message = "{album.crud.album_format.required_field}")
     private List<Integer> albumFormat;
     @NotEmpty(message = "{entity.crud.media_format.required_field}")

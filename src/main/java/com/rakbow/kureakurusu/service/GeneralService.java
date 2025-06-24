@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
@@ -11,15 +12,19 @@ import com.rakbow.kureakurusu.data.emun.MediaFormat;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
-import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.EnumHelper;
+import com.rakbow.kureakurusu.toolkit.LikeUtil;
+import com.rakbow.kureakurusu.toolkit.PopularUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
-import static com.rakbow.kureakurusu.data.common.Constant.SLASH;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -64,9 +69,11 @@ public class GeneralService {
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
-        MetaData.optionsZh.roleSet = getPersonRoleSet();
-        MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);
-        MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
+        List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
+        roles.forEach(i -> {
+            MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
+            MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
+        });
     }
 
     /**
@@ -109,27 +116,6 @@ public class GeneralService {
     public void updateEntityDetail(UpdateDetailDTO dto) {
         mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
     }
-
-    //endregion
-
-    //region person role
-    @Transactional
-    public void refreshRoleSet() {
-        MetaData.optionsZh.roleSet.clear();
-        MetaData.optionsEn.roleSet.clear();
-        MetaData.optionsZh.roleSet = getPersonRoleSet();
-        MetaData.optionsZh.roleSet.sort(DataSorter.attributesLongValueSorter);
-        MetaData.optionsEn.roleSet = MetaData.optionsZh.roleSet;
-    }
-
-    private List<Attribute<Long>> getPersonRoleSet() {
-        List<Attribute<Long>> res = new ArrayList<>();
-        //获取所有role数据
-        List<Role> items = roleMapper.selectList(null);
-        items.forEach(i -> res.add(new Attribute<>(i.getNameZh() + SLASH + i.getNameEn(), i.getId())));
-        return res;
-    }
-    //endregion
 
     public Map<String, Object> getOptions() {
         Map<String, Object> res = new HashMap<>();

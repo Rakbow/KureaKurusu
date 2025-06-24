@@ -23,8 +23,4 @@ public class AlbumTrackInfoVO {
         totalTracks = 0;
     }
 
-    public void addDisc(AlbumDiscVO disc) {
-        discs.add(disc);
-    }
-
 }

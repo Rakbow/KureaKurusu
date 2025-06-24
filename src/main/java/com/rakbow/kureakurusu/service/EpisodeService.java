@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rakbow.kureakurusu.dao.AlbumDiscMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
@@ -14,11 +15,13 @@ import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.Album;
+import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
@@ -43,6 +46,8 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     private final EntityUtil entityUtil;
     private final PopularUtil popularUtil;
     private final ResourceService resourceSrv;
+
+    private final AlbumDiscMapper discMapper;
     private final EntityType ENTITY_TYPE = EntityType.EPISODE;
 
     @Transactional
@@ -91,14 +96,17 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     public EpisodeRelatedVO related(EpisodeRelatedDTO dto) {
         EpisodeRelatedVO res = new EpisodeRelatedVO();
-        if (dto.getRelatedType() == EntityType.ITEM.getValue()) {
-            Album album = itemSrv.getById(dto.getRelatedId());
+        if (dto.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
+
+            AlbumDisc disc = discMapper.selectById(dto.getRelatedId());
+            if(disc == null) throw  ErrorFactory.entityNull();
+            Album album = itemSrv.getById(disc.getItemId());
             res.setParent(
                     EntityMiniVO.builder()
-                            .type(dto.getRelatedType())
-                            .id(dto.getRelatedId())
+                            .type(EntityType.ITEM.getValue())
+                            .id(album.getId())
                             .name(album.getName())
-                            .subName(STR."\{album.getReleaseDate()} \{album.getCatalogId()}")
+                            .subName(STR."\{album.getReleaseDate()}  \{album.getCatalogId()}")
                             .tableName(EntityType.ITEM.getTableName())
                             .thumb(resourceSrv.getEntityImageCache(dto.getRelatedType(), dto.getRelatedId(), ImageType.THUMB))
                             .build()
@@ -108,7 +116,6 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, dto.getRelatedType())
                         .eq(Episode::getRelatedId, dto.getRelatedId())
-                        .eq(Episode::getDiscNo, dto.getDiscNo())
                         .orderByAsc(Episode::getSerial)
         );
         List<Episode> nearEps = getNearbyRecords(allEps, dto.getId(), 10);

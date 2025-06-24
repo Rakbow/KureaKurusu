@@ -24,6 +24,7 @@ import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
@@ -124,14 +125,15 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                         .relatedGroup(relatedGroup)
                         .role(role)
                         .reverseRole(reverseRole)
-                        .target(new Attribute<>(e.getName(), e.getId()))
                         .remark(r.getRemark())
                         .build();
                 if (entityType == EntityType.ENTRY.getValue()) {
                     vo.setTargetType(EntityType.ENTRY.getValue());
+                    vo.setTarget(new Attribute<>(((Entry) e).getName(), e.getId()));
                     vo.setThumb(CommonImageUtil.getEntryThumb(((Entry) e).getThumb()));
                     vo.setSubName(entityUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
                 } else {
+                    vo.setTarget(new Attribute<>(((Item) e).getName(), e.getId()));
                     vo.setTargetType(EntityType.ITEM.getValue());
                     vo.setThumb(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));
                 }

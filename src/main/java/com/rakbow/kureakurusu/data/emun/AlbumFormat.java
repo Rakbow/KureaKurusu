@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.emun;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import io.github.linpeilie.annotations.AutoEnumMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,24 +13,22 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
+@AutoEnumMapper("value")
 public enum AlbumFormat {
 
-    UNCATEGORIZED(0,"enum.album_format.uncategorized"),
     VOCAL(1, "enum.album_format.vocal"),
-    OPENING_THEME(2, "enum.album_format.opening_theme"),
-    ENDING_THEME(3, "enum.album_format.ending_theme"),
-    INSERT_SONG(4, "enum.album_format.insert_song"),
-    SOUNDTRACK(5, "enum.album_format.soundtrack"),
-    CHARACTER_SONG(6, "enum.album_format.character_song"),
-    DRAMA(7, "enum.album_format.drama"),
+    ORIGINAL_SOUNDTRACK(2, "enum.album_format.original_soundtrack"),
+    ARRANGEMENT(3, "enum.album_format.arrangement"),
+    DRAMA(4, "enum.album_format.drama"),
+    LIVE_EVENT(5, "enum.album_format.live_event"),
+    REMIX(6, "enum.album_format.remix"),
+    ORIGINAL_WORK(7, "enum.album_format.original_work"),
     TALK(8, "enum.album_format.talk"),
-    REMIX(9, "enum.album_format.Remix"),
-    DOUJIN_REMIX(10, "enum.album_format.doujin_Remix"),
-    DERIVATIVE(11, "enum.album_format.derivative"),
-    ARRANGEMENT(12, "enum.album_format.arrangement"),
-    DOUJIN_ARRANGEMENT(13, "enum.album_format.doujin_arrangement"),
-    VIDEO(14, "enum.album_format.video"),
-    LIVE_EVENT(15, "enum.album_format.live_event");
+    REMASTER(9, "enum.album_format.remaster"),
+    PROTOTYPE_UNUSED(10, "enum.album_format.prototype_unused"),
+    SOUND_EFFECT(11, "enum.album_format.sound_effect"),
+    DATA(12, "enum.album_format.data"),
+    VIDEO(13, "enum.album_format.video");
 
     @EnumValue
     private final Integer value;
@@ -40,7 +39,7 @@ public enum AlbumFormat {
             if(format.value == value)
                 return format;
         }
-        return UNCATEGORIZED;
+        return VOCAL;
     }
 
 }

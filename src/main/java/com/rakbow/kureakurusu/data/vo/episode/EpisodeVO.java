@@ -13,8 +13,8 @@ public class EpisodeVO {
     private Long id;
     private long relatedType;
     private long relatedId;
-    private String title;
-    private String titleEn;
+    private String name;
+    private String nameEn;
     private String premiereDate;
     private String duration;
     private int discNo;

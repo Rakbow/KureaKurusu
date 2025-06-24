@@ -31,9 +31,8 @@ public class Episode extends Entity {
     private String name;//标题(原)
     private String nameEn;//标题(英)
     private String premiereDate;//首播日期
-    @AutoMapping(qualifiedByName = "getDuration")
+    @AutoMapping(qualifiedByName = "duration")
     private int duration;//时长 单位：秒
-    private int discNo;//碟片序号
     private int serial;//序号
     private String detail;//详情
     private int episodeType;//类型 0-音乐 1-剧集
@@ -47,7 +46,6 @@ public class Episode extends Entity {
         nameEn = "";
         premiereDate = "";
         duration = 0;
-        discNo = 1;
         serial = 1;
         detail = "";
         episodeType = 0;

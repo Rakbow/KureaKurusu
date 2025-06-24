@@ -102,13 +102,6 @@ public class DataFinder {
         return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Episode findEpisodeByDiscNoAndSerial(int discNo, int serial, List<Episode> list) {
-        episodeFinder.setDiscNo(discNo);
-        episodeFinder.setSerial(serial);
-        int idx = Collections.binarySearch(list, episodeFinder, DataSorter.episodeSortByDiscNoAndSerial);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
     public static EntityRelatedCount findResourceCountByTypeAndId(int type, long id, List<EntityRelatedCount> list) {
         resourceCountFinder.setEntityType(type);
         resourceCountFinder.setEntityId(id);

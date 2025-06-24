@@ -1,14 +1,9 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -21,13 +16,8 @@ import java.util.List;
 public class ItemAlbum extends SubItem {
 
     private Long id;
-    @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private int discs;
     private int tracks;
     private int runTime;
-    @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> albumFormat;//album type
-    @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> mediaFormat;//media format
 
 }

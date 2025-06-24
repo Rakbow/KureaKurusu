@@ -1,18 +1,23 @@
 package com.rakbow.kureakurusu;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.*;
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
-import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
+import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
+import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.*;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import jakarta.annotation.Resource;
 import org.junit.Test;
@@ -21,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,6 +37,8 @@ public class RedisTests {
 
     @Resource
     private ItemMapper itemMapper;
+    @Resource
+    private EntryMapper entryMapper;
     @Resource
     private ImageMapper imageMapper;
     @Resource
@@ -44,9 +52,13 @@ public class RedisTests {
     @Resource
     private PopularUtil popularUtil;
     @Resource
+    private HotnessCalculator hotnessCalculator;
+    @Resource
     private QiniuImageUtil qiniuImageUtil;
     @Resource
     private ResourceService resourceSrv;
+    @Resource
+    private RoleMapper roleMapper;
 
 //    @Test
 //    public void deleteAllCache() {
@@ -104,23 +116,58 @@ public class RedisTests {
 //    }
 
     @Test
-    public void calculateEntityPopular() {
+    public void calculateItemPopular() {
         int type = EntityType.ITEM.getValue();
-        // Class<? extends Entry> subClass = EntryUtil.getSubClass(type);
-        // BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
-        // List<Entry> entries = subMapper.selectList(null);
-
-        List<Item> items = itemMapper.selectList(null);
-
-        for (Item e : items) {
+        List<Item> entities = itemMapper.selectList(null);
+        int total = entities.size();
+        int cur = 0;
+        for (Item e : entities) {
+            cur++;
             long visit = visitUtil.get(type, e.getId());
-            // long like = likeUtil.get(type, e.getId());
-            // double hotness = EntityPopularCalculator.calculateHotness(visit, like, e.getAddedTime().getTime());
-            // if (hotness < 1) continue;
-            // System.out.println(STR."ID: \{e.getId()}| HOT: \{hotness}| VISIT: \{visit}| LIKE: \{like}| NAME: \{e.getName()}");
             if (visit == 1) continue;
-            popularUtil.updatePopularity(type, e.getId());
-            System.out.println(STR."\{e.getId()} success");
+            popularUtil.updateEntityPopularity(type, e.getId());
+            System.out.println(STR."\{cur}/\{total} \{e.getId()} success");
+        }
+    }
+
+    @Test
+    public void calculateEntryPopular() {
+        int entityType = EntityType.ENTRY.getValue();
+        for (EntryType type : EntryType.values()) {
+            List<Entry> entries = entryMapper.selectList(
+                    new MPJLambdaWrapper<Entry>()
+                            .selectAll(Entry.class)
+                            .selectCount(Relation::getId, "items")
+                            .leftJoin(Relation.class,
+                                    on -> on.eq(Relation::getRelatedEntityId, Entry::getId)
+                                            .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                                            .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                            )
+                            .groupBy(Entry::getId)
+                            .eq(Entry::getType, type)
+            );
+            int total = entries.size();
+            int cur = 0;
+            String key = null;
+            switch (type) {
+                case EntryType.PRODUCT -> key = RedisKey.PRODUCT_POPULAR_RANK;
+                case EntryType.PERSON -> key = RedisKey.PERSON_POPULAR_RANK;
+                case EntryType.CHARACTER -> key = RedisKey.CHARACTER_POPULAR_RANK;
+                case EntryType.CLASSIFICATION -> key = RedisKey.CLASSIFICATION_POPULAR_RANK;
+                case EntryType.MATERIAL -> key = RedisKey.MATERIAL_POPULAR_RANK;
+                case EntryType.EVENT -> key = RedisKey.EVENT_POPULAR_RANK;
+            }
+            redisUtil.delete(key);
+            for (Entry e : entries) {
+                cur++;
+                if(e.getItems() == 0) continue;
+                long visit = visitUtil.get(entityType, e.getId());
+                long like = likeUtil.get(entityType, e.getId());
+                double hotness = hotnessCalculator.calculateEntryHotness(visit, like, e.getItems());
+                redisUtil.updateZSet(key, e.getId(), hotness);
+                redisUtil.updateZSet(RedisKey.ENTRY_POPULAR_RANK, e.getId(), hotness);
+                System.out.println(STR."\{type.getValue()} \{cur}/\{total} \{e.getId()} success");
+            }
         }
     }
 
@@ -135,7 +182,7 @@ public class RedisTests {
 
         int total = items.size();
         AtomicInteger cur = new AtomicInteger();
-        for(Item i : items) {
+        for (Item i : items) {
             Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
                     .eq(Image::getEntityType, EntityType.ITEM.getValue())
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
@@ -195,6 +242,16 @@ public class RedisTests {
         // BaseMapper<Entry> subMapper = MyBatisUtil.getMapper(subClass);
         // List<Entry> entries = subMapper.selectList(null);
         // redisUtil.set(STR."entity_table_total:\{type}", entries.size());
+    }
+
+    @Test
+    public void resetOptionRedisCache() {
+        List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
+        roles.forEach(i -> {
+            MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
+            MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
+        });
+        redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:zh", MetaData.optionsZh.roleSet);
     }
 
 }

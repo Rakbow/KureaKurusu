@@ -14,6 +14,5 @@ public class EpisodeRelatedDTO extends DTO {
     private int relatedType;
     private long relatedId;
     private long id;
-    private int discNo;
 
 }

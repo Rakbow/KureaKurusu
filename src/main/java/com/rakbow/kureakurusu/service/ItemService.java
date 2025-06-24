@@ -324,7 +324,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         //save episode
         if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
-            albumSrv.quickCreateAlbumTrack(id, ((AlbumCreateDTO) item).getTrackList(), false);
+            albumSrv.quickCreateAlbumTrack(id, ((AlbumCreateDTO) item).getDisc(), false);
         }
 
         return id;

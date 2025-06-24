@@ -89,22 +89,15 @@ public class ItemController {
 
     //region extra api
 
-    @PostMapping("get-album-track")
+    @PostMapping("album-track-list")
     public ApiResult getAlbumTracks(@RequestBody AlbumTrackInfoQry qry) {
         return new ApiResult().load(albumSrv.getAlbumTracks(qry.getId()));
     }
 
     @PostMapping("album-track-quick-create")
     public ApiResult quickCreateAlbumTrack(@RequestBody AlbumTrackQuickCreateDTO dto) {
-        albumSrv.quickCreateAlbumTrack(dto.getId(), dto.getTracks(), true);
+        albumSrv.quickCreateAlbumTrack(dto.getId(), dto.getDisc(), true);
         return new ApiResult().ok("entity.crud.create.success");
-    }
-
-    @Deprecated
-    @PostMapping("album-track-update")
-    public ApiResult updateTrackInfo(@RequestBody AlbumUpdateTrackInfoDTO cmd) {
-        albumSrv.updateAlbumTrackInfo(cmd.getId(), cmd.getDiscs());
-        return new ApiResult().ok("entity.crud.update.success");
     }
 
     @PostMapping("album-track-files-upload")

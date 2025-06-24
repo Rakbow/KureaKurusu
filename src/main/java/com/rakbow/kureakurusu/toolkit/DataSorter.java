@@ -22,8 +22,6 @@ public class DataSorter {
     public static Comparator<Attribute<Long>> attributesLongValueSorter = Comparator.comparingLong(Attribute<Long>::getValue);
     public static Comparator<Attribute<Integer>> attributesIntValueSorter = Comparator.comparingInt(Attribute<Integer>::getValue);
     public static Comparator<Attribute<String>> attributesStringValueSorter = Comparator.comparing(Attribute<String>::getValue);
-    public static Comparator<Episode> episodeSortByDiscNoAndSerial = Comparator.comparingInt(Episode::getDiscNo)
-            .thenComparingInt(Episode::getSerial);
 
     public static Comparator<EntityRelatedCount> entityResourceCountEntityTypeEntityIdSorter = Comparator.comparingInt(EntityRelatedCount::getEntityType)
             .thenComparingLong(EntityRelatedCount::getEntityId);

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
-import com.rakbow.kureakurusu.data.emun.DataActionType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,21 +11,10 @@ import lombok.Data;
 @Data
 public class AlbumTrackVO {
 
-    private int discNo;
-    private int serial;
     private long id;
+    private long itemId;
+    private int serial;
     private String name;
-    private String nameEn;
     private String duration;
-
-    private int action;
-
-    public boolean isUpdate() {
-        return action == DataActionType.UPDATE.getValue();
-    }
-
-    public boolean isDelete() {
-        return action == DataActionType.REAL_DELETE.getValue();
-    }
 
 }

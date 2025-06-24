@@ -27,4 +27,9 @@ public class RedisKey {
     public static final String PREFIX_VISIT_TOKEN = "visit_token";
     public static final String PREFIX_VISIT = "visit";
 
+    //option
+    public static final String OPTION_ROLE_SET = "option:role_set";
+    public static final String OPTION_ALBUM_FORMAT_SET = "option:album_format_set";
+    public static final String OPTION_MEDIA_FORMAT_SET = "option:media_format_set";
+
 }

@@ -18,10 +18,7 @@ import org.mapstruct.Named;
 
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
-import java.util.Currency;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Rakbow
@@ -49,6 +46,20 @@ public interface MetaVOMapper {
         String label = I18nHelper.getMessage(labelKey);
         X value = (X) getValueMethod.invoke(t);
         return new Attribute<>(label, value);
+    }
+
+    @Named("toAttributes")
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    default <X, T extends Enum<T>> List<Attribute<X>> toAttributes(T t) {
+        List<Attribute<X>> res = new ArrayList<>();
+        Method getValueMethod = t.getClass().getMethod("getValue");
+        Method getLabelMethod = t.getClass().getMethod("getLabelKey");
+        String labelKey = getLabelMethod.invoke(t).toString();
+        String label = I18nHelper.getMessage(labelKey);
+        X value = (X) getValueMethod.invoke(t);
+        res.add(new Attribute<>(label, value));
+        return res;
     }
 
     @Named("getCurrency")
@@ -115,8 +126,8 @@ public interface MetaVOMapper {
         return DateHelper.nowStr();
     }
 
-    @Named("getDuration")
-    default String getDuration(int duration) {
+    @Named("duration")
+    default String duration(int duration) {
         return DateHelper.getDuration(duration);
     }
 
