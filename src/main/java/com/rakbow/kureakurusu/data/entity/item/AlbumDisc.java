@@ -25,7 +25,6 @@ import java.util.List;
 @AutoMapper(target = AlbumDiscVO.class, reverseConvertGenerate = false)
 public class AlbumDisc extends Entity {
 
-    private Long id;
     private long itemId;// album id
     private String catalogId;
     private int discNo;

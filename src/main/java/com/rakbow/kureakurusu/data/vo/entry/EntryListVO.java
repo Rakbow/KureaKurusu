@@ -24,6 +24,8 @@ public class EntryListVO extends EntityListVO {
     private String nameEn;
     private List<String> aliases;
     private List<String> links;
+    private String cover;
+    private String thumb;
 
     private long visitNum;
     private int items;

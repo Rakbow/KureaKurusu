@@ -31,18 +31,14 @@ public class ItemController {
 
     @PostMapping("create")
     public ApiResult create(@Valid @RequestBody ItemCreateDTO dto, BindingResult errors) {
-        //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
         srv.create(dto);
         return new ApiResult().ok("entity.crud.create.success");
     }
 
     @PostMapping("update")
     public ApiResult update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
-        //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //update
         srv.update(dto);
         return new ApiResult().ok("entity.crud.update.success");
     }
@@ -50,7 +46,7 @@ public class ItemController {
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
         srv.delete(dto.getIds());
-        return new ApiResult().ok("entity.curd.delete.success");
+        return new ApiResult().ok("entity.crud.delete.success");
     }
 
     //endregion
@@ -95,8 +91,8 @@ public class ItemController {
     }
 
     @PostMapping("album-track-quick-create")
-    public ApiResult quickCreateAlbumTrack(@RequestBody AlbumTrackQuickCreateDTO dto) {
-        albumSrv.quickCreateAlbumTrack(dto.getId(), dto.getDisc(), true);
+    public ApiResult quickCreateAlbumTrack(@RequestBody AlbumDiscCreateDTO dto) {
+        albumSrv.quickCreateAlbumTrack(dto, true);
         return new ApiResult().ok("entity.crud.create.success");
     }
 

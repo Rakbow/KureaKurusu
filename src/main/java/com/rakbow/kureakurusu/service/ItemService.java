@@ -323,8 +323,9 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
 
         //save episode
+        ((AlbumCreateDTO) item).getDisc().setItemId(id);
         if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
-            albumSrv.quickCreateAlbumTrack(id, ((AlbumCreateDTO) item).getDisc(), false);
+            albumSrv.quickCreateAlbumTrack(((AlbumCreateDTO) item).getDisc(), false);
         }
 
         return id;

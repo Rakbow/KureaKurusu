@@ -17,7 +17,6 @@ import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
 import com.rakbow.kureakurusu.service.ResourceService;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
@@ -90,7 +89,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 tracks.add(
                         AlbumTrackVO.builder()
                                 .id(e.getId())
-                                .itemId(e.getRelatedId())
+                                .discId(e.getRelatedId())
                                 .serial(e.getSerial())
                                 .name(e.getName())
                                 .duration(DateHelper.getDuration(e.getDuration()))
@@ -99,7 +98,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         );
 
         //build
-        Map<Long, List<AlbumTrackVO>> discTrackMap = tracks.stream().collect(Collectors.groupingBy(AlbumTrackVO::getItemId));
+        Map<Long, List<AlbumTrackVO>> discTrackMap = tracks.stream().collect(Collectors.groupingBy(AlbumTrackVO::getDiscId));
         int totalDuration = res.getDiscs().stream()
                 .peek(d -> {
                     d.setTracks(discTrackMap.get(d.getId()));
@@ -121,18 +120,18 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
     @SneakyThrows
     @Transactional
-    public void quickCreateAlbumTrack(long id, AlbumDiscCreateDTO discDTO, boolean updateAlbum) {
+    public void quickCreateAlbumTrack(AlbumDiscCreateDTO dto, boolean updateAlbum) {
 
         int runTime = 0;
         int duration;
 
         List<Episode> eps = new ArrayList<>();
-        AlbumDisc disc = converter.convert(discDTO, AlbumDisc.class);
-        long discId = discMapper.insert(disc);
-        for (AlbumTrackVO track : discDTO.getTracks()) {
+        AlbumDisc disc = converter.convert(dto, AlbumDisc.class);
+        discMapper.insert(disc);
+        for (AlbumTrackVO track : dto.getTracks()) {
             Episode ep = new Episode();
             ep.setRelatedType(EntityType.ALBUM_DISC.getValue());
-            ep.setRelatedId(discId);
+            ep.setRelatedId(disc.getId());
             ep.setName(track.getName());
             ep.setSerial(track.getSerial());
             duration = DateHelper.getDuration(track.getDuration());
@@ -149,12 +148,12 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
         //update album track disc duration
         if (!updateAlbum) return;
-        ItemAlbum album = mapper.selectById(discDTO.getItemId());
+        ItemAlbum album = mapper.selectById(dto.getItemId());
         int discNo = album.getDiscs() + 1;
         int trackNum = album.getTracks() + eps.size();
         runTime = album.getRunTime() + runTime;
         LambdaUpdateWrapper<ItemAlbum> wrapper = new LambdaUpdateWrapper<ItemAlbum>()
-                .eq(ItemAlbum::getId, id)
+                .eq(ItemAlbum::getId, dto.getItemId())
                 .set(ItemAlbum::getDiscs, discNo)
                 .set(ItemAlbum::getTracks, trackNum)
                 .set(ItemAlbum::getRunTime, runTime);

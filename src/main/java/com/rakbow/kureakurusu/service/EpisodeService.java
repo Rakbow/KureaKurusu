@@ -21,9 +21,11 @@ import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
-import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
-import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.DataFinder;
+import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.PopularUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -108,7 +110,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                             .name(album.getName())
                             .subName(STR."\{album.getReleaseDate()}  \{album.getCatalogId()}")
                             .tableName(EntityType.ITEM.getTableName())
-                            .thumb(resourceSrv.getEntityImageCache(dto.getRelatedType(), dto.getRelatedId(), ImageType.THUMB))
+                            .thumb(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), disc.getItemId(), ImageType.THUMB))
                             .build()
             );
         }

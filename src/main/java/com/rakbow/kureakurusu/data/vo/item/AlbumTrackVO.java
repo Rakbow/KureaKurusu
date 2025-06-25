@@ -12,7 +12,7 @@ import lombok.Data;
 public class AlbumTrackVO {
 
     private long id;
-    private long itemId;
+    private long discId;
     private int serial;
     private String name;
     private String duration;

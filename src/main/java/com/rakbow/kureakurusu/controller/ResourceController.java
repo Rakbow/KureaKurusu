@@ -70,7 +70,7 @@ public class ResourceController {
         return new ApiResult().ok("entity.crud.update.success");
     }
 
-    @DeleteMapping("images/delete")
+    @DeleteMapping("image/delete")
     public ApiResult deleteEntityImages(@RequestBody List<ImageVO> images) {
         srv.deleteEntityImage(images);
         return new ApiResult().ok("entity.crud.delete.success");
