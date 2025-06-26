@@ -17,11 +17,14 @@ public class ListQueryDTO {
     private String sortField;
     private int sortOrder;
 
+    private String keyword;
+
     public ListQueryDTO(ListQuery qry) {
         size = qry.isPage() ? qry.getRows() : -1;
         page = qry.isPage() ? qry.getFirst()/size + 1 : 1;
         sortField = qry.getSortField();
         sortOrder = qry.getSortOrder();
+        keyword = qry.getVal("keyword");
     }
 
     public boolean asc() {

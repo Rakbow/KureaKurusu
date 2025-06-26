@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.data.vo.item;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.vo.EntityListVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -8,13 +10,12 @@ import java.util.List;
  * @author Rakbow
  * @since 2024/5/5 7:50
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class ItemListVO {
+public class ItemListVO extends EntityListVO {
 
-    private long id;
     private int type;
     private Attribute<Integer> subType;
-    private String name;
     private List<String> aliases;
 
     private Attribute<Integer> releaseType;
@@ -25,18 +26,12 @@ public class ItemListVO {
     private String currency;
     private String region;
     private boolean bonus;
-    private String remark;
 
     private double width;
     private double length;
     private double height;
     private double weight;
 
-    private String addedTime;
-    private String editedTime;
-    private boolean status;
-
-    private long visitNum;
     private int fileCount;
     private int imageCount;
 

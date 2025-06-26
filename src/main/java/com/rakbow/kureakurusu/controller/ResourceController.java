@@ -42,7 +42,7 @@ public class ResourceController {
     }
 
     @PostMapping("image/upload")
-    public ApiResult addEntityImage(
+    public ApiResult uploadEntityImage(
             @RequestParam("entityType") int entityType,
             @RequestParam("entityId") int entityId,
             @RequestParam("infos") String infoStr,

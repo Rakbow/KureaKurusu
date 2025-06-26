@@ -1,18 +1,11 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.dto.AlbumListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.BookListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.GoodsListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.entity.item.*;
 import com.rakbow.kureakurusu.data.vo.item.*;
-import lombok.SneakyThrows;
 
-import java.lang.reflect.Constructor;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -98,14 +91,6 @@ public class ItemUtil {
         put(ItemType.FIGURE.getValue(), FigureVO.class);
     }};
 
-    private final static Map<Integer, Class<? extends ItemListQueryDTO>> itemListQryMap = new HashMap<>() {{
-        put(ItemType.ALBUM.getValue(), AlbumListQueryDTO.class);
-        put(ItemType.BOOK.getValue(), BookListQueryDTO.class);
-        put(ItemType.DISC.getValue(), DiscListQueryDTO.class);
-        put(ItemType.GOODS.getValue(), GoodsListQueryDTO.class);
-        put(ItemType.FIGURE.getValue(), FigureListQueryDTO.class);
-    }};
-
     public static Class<? extends SubItem> getSubClass(int type) {
         return subItemMap.get(type);
     }
@@ -120,13 +105,6 @@ public class ItemUtil {
 
     public static Class<? extends ItemVO> getDetailVO(int type) {
         return itemDetailVOMap.get(type);
-    }
-
-    @SneakyThrows
-    public static ItemListQueryDTO getItemListQueryDTO(ListQuery qry) {
-        Class<? extends ItemListQueryDTO> queryClass = itemListQryMap.get((int)qry.getVal("itemType"));
-        Constructor<? extends ItemListQueryDTO> constructor = queryClass.getConstructor(ListQuery.class);
-        return constructor.newInstance(qry);
     }
 
     public static List<String> expandAlbumRange(String rawCode) {

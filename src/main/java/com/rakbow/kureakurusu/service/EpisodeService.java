@@ -1,12 +1,13 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.AlbumDiscMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
+import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
@@ -14,16 +15,15 @@ import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.item.Album;
 import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
+import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.PopularUtil;
 import io.github.linpeilie.Converter;
@@ -34,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -43,13 +45,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
-    private final ItemService itemSrv;
     private final Converter converter;
     private final EntityUtil entityUtil;
     private final PopularUtil popularUtil;
     private final ResourceService resourceSrv;
 
     private final AlbumDiscMapper discMapper;
+    private final ItemMapper itemMapper;
     private final EntityType ENTITY_TYPE = EntityType.EPISODE;
 
     @Transactional
@@ -58,8 +60,17 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         Episode ep = getById(id);
         if (ep == null) throw ErrorFactory.entityNull();
         EpisodeVO vo = converter.convert(ep, EpisodeVO.class);
+        int relatedType = ep.getRelatedType();
+        long relatedId = ep.getRelatedId();
+        if (ep.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
+            AlbumDisc disc = discMapper.selectById(ep.getRelatedId());
+            if (disc == null) throw ErrorFactory.entityNull();
+            vo.setDiscNo(disc.getDiscNo());
+            relatedType = EntityType.ITEM.getValue();
+            relatedId = disc.getItemId();
+        }
         vo.setTraffic(entityUtil.buildTraffic(EntityType.EPISODE.getValue(), id));
-        vo.setCover(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), ep.getRelatedId(), ImageType.MAIN));
+        vo.setCover(resourceSrv.getEntityImageCache(relatedType, relatedId, ImageType.MAIN));
 
         //update popularity
         popularUtil.updateEntityPopularity(ENTITY_TYPE.getValue(), id);
@@ -71,24 +82,40 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     public SearchResult<EpisodeListVO> list(ListQuery dto) {
         EpisodeListQueryDTO param = new EpisodeListQueryDTO(dto);
-        QueryWrapper<Episode> wrapper = new QueryWrapper<Episode>()
+        MPJLambdaWrapper<Episode> wrapper = new MPJLambdaWrapper<Episode>()
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        if (param.getName() != null && !param.getName().isEmpty()) {
-            wrapper.like("name", param.getName()).or().like("name_en", param.getName());
+        if (param.getKeyword() != null && !param.getKeyword().isEmpty()) {
+            wrapper.like(Episode::getName, param.getKeyword()).or().like(Episode::getNameEn, param.getKeyword());
         }
         IPage<Episode> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
+        if(pages.getRecords().isEmpty()) return new SearchResult<>();
         List<EpisodeListVO> res = converter.convert(pages.getRecords(), EpisodeListVO.class);
 
         //get album info
-        List<Long> albumIds = pages.getRecords().stream().map(Episode::getRelatedId).distinct().toList();
-        List<Item> items = itemSrv.list(new LambdaQueryWrapper<Item>().in(Item::getId, albumIds));
-        for (EpisodeListVO e : res) {
-            Item item = DataFinder.findItemById(e.getRelatedId(), items);
-            if (item == null) continue;
-            e.getParent().setId(item.getId());
-            e.getParent().setName(item.getName());
-            e.getParent().setType(EntityType.ITEM.getValue());
-            e.getParent().setTableName(EntityType.ITEM.getTableName());
+        List<Long> discIds = pages.getRecords().stream().map(Episode::getRelatedId).distinct().toList();
+        List<AlbumDisc> discs = discMapper.selectByIds(discIds);
+        List<Long> itemIds = discs.stream().map(AlbumDisc::getItemId).distinct().toList();
+        List<Item> items = itemMapper.selectByIds(itemIds);
+
+
+        res.forEach(e -> discs.stream()
+                .filter(d -> d.getId() == e.getRelatedId())
+                .findFirst().ifPresent(d -> {
+                    // 1. 先找到对应的item并设置parent
+                    items.stream()
+                            .filter(i -> i.getId() == d.getItemId())
+                            .findFirst()
+                            .ifPresent(e::setParent);
+                    // 2. 然后可以进行其他赋值操作
+                    e.setDiscNo(d.getDiscNo());
+                }));
+
+        //get file count
+        List<Long> ids = res.stream().map(EpisodeListVO::getId).toList();
+        Map<Long, Integer> fileCountMap = resourceSrv.getFileCount(ENTITY_TYPE.getValue(), ids).stream()
+                .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
+        for (EpisodeListVO ep : res) {
+            ep.setFileCount(fileCountMap.getOrDefault(ep.getId(), 0));
         }
 
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
@@ -101,8 +128,8 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         if (dto.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
 
             AlbumDisc disc = discMapper.selectById(dto.getRelatedId());
-            if(disc == null) throw  ErrorFactory.entityNull();
-            Album album = itemSrv.getById(disc.getItemId());
+            if (disc == null) throw ErrorFactory.entityNull();
+            Item album = itemMapper.selectById(disc.getItemId());
             res.setParent(
                     EntityMiniVO.builder()
                             .type(EntityType.ITEM.getValue())

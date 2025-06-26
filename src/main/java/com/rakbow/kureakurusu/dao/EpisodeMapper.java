@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2024/01/08 15:18
  */
 @Mapper
-public interface EpisodeMapper extends BaseMapper<Episode> {
+public interface EpisodeMapper extends MPJBaseMapper<Episode> {
 }

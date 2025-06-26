@@ -9,6 +9,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.Role;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +25,11 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
     public SearchResult<Role> list(RoleListQueryDTO param) {
 
         MPJLambdaWrapper<Role> wrapper = new MPJLambdaWrapper<Role>()
-                .or().like(Role::getName, param.getKeyword())
-                .or().like(Role::getNameZh, param.getKeyword())
-                .or().like(Role::getNameEn, param.getKeyword())
+                .or(StringUtils.isNotEmpty(param.getKeyword()),
+                        w -> w.or().like(Role::getName, param.getKeyword())
+                                .or().like(Role::getNameZh, param.getKeyword())
+                                .or().like(Role::getNameEn, param.getKeyword())
+                )
                 .orderBy(param.isSort(), param.asc(), param.getSortField());
 
         IPage<Role> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);

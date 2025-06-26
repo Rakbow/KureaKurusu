@@ -165,15 +165,13 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 )
                 .groupBy(Entry::getId)
                 .eq(Entry::getType, param.getType())
+                .and(StringUtils.isNotEmpty(param.getKeyword()), i -> i
+                        .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword())
+                        .or().like(Entry::getName, param.getKeyword())
+                        .or().like(Entry::getNameZh, param.getKeyword())
+                        .or().like(Entry::getNameEn, param.getKeyword())
+                )
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        if (StringUtils.isNotEmpty(param.getName())) {
-            wrapper.and(i -> i
-                    .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getName())
-                    .or().like(Entry::getName, param.getName())
-                    .or().like(Entry::getNameZh, param.getName())
-                    .or().like(Entry::getNameEn, param.getName())
-            );
-        }
         IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryListVO> res = converter.convert(pages.getRecords(), EntryListVO.class);
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());

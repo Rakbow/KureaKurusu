@@ -26,7 +26,7 @@ public class Episode extends Entity {
 
     @Builder.Default
     private Long id;//表主键
-    private long relatedType;//关联类型 Album Product
+    private int relatedType;//关联类型 Album Product
     private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
     private String name;//标题(原)
     private String nameEn;//标题(英)

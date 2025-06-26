@@ -10,6 +10,7 @@ import lombok.Data;
 public class EntityListVO {
 
     private long id;
+    private String name;
     private String remark;
     private String addedTime;
     private String editedTime;

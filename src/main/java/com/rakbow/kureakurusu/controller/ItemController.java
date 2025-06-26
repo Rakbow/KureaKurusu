@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.item.BookService;
+import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -30,10 +31,15 @@ public class ItemController {
     //region basic crud
 
     @PostMapping("create")
-    public ApiResult create(@Valid @RequestBody ItemCreateDTO dto, BindingResult errors) {
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        srv.create(dto);
-        return new ApiResult().ok("entity.crud.create.success");
+    public ApiResult advanceCreate(
+            @RequestParam("param") String param,
+            @RequestParam("images") MultipartFile[] images
+    ) {
+        ItemSuperCreateDTO dto = JsonUtil.to(param, ItemSuperCreateDTO.class);
+        //check
+        // if (errors.hasErrors()) return new ApiResult().fail(errors);
+        //save
+        return new ApiResult().load(srv.create(dto, images));
     }
 
     @PostMapping("update")
@@ -67,18 +73,6 @@ public class ItemController {
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQuery dto) {
         return new ApiResult().load(srv.list(dto));
-    }
-
-    //endregion
-
-    //region advance crud
-
-    @PostMapping("create-advance")
-    public ApiResult advanceCreate(@Valid @RequestBody ItemSuperCreateDTO dto, BindingResult errors) {
-        //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        return new ApiResult().load(srv.advanceCreate(dto.getItem(), dto.getImages(), dto.getRelatedEntities(), dto.getGenerateThumb()));
     }
 
     //endregion

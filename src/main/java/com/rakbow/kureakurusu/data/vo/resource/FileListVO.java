@@ -12,7 +12,6 @@ import lombok.EqualsAndHashCode;
 @Data
 public class FileListVO extends EntityListVO {
 
-    private String name;
     private String extension;
     private String size;
     private String path;

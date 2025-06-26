@@ -1,8 +1,9 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
-import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -12,7 +13,11 @@ import lombok.EqualsAndHashCode;
 @Data
 public class GoodsListVO extends ItemListVO {
 
-    private Attribute<Integer> goodsType;
     private String scale;
+    private String various;
+    private String title;
+    private String titleEn;
+    private List<String> versions;
+    private List<String> versionsEn;
 
 }

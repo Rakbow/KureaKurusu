@@ -28,7 +28,6 @@ import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.toolkit.*;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +35,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,24 +77,31 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     @SneakyThrows
-    @SuppressWarnings("unchecked")
-    public <T extends SuperItem> T getById(long id) {
-        ItemTypeRelation relation = getItemTypeRelation(id);
-        if (relation == null) return null;
+    public long create(ItemSuperCreateDTO dto, MultipartFile[] images) {
+        ItemCreateDTO item = dto.getItem();
+        //save item
+        long id = insert(item);
+        //save related entities
+        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, dto.getRelatedEntities());
+        //save image
+        for (int i = 0; i < dto.getImages().size(); i++) {
+            dto.getImages().get(i).setFile(images[i]);
+        }
+        resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, dto.getImages(), dto.getGenerateThumb());
 
-        Class<? extends SubItem> s = ItemUtil.getSubClass(relation.getType());
-        Class<? extends SuperItem> t = ItemUtil.getSuperItem(relation.getType());
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(s, SUB_T_PREFIX)
-                .leftJoin(STR."\{MyBatisUtil.getTableName(s)}\{SUB_T_CONDITION}")
-                .eq(Item::getId, id);
-        return (T) mapper.selectJoinOne(t, wrapper);
+        //save episode
+        ((AlbumCreateDTO) item).getDisc().setItemId(id);
+        AlbumDiscCreateDTO disc = ((AlbumCreateDTO) item).getDisc();
+        if (item.getType().intValue() == ItemType.ALBUM.getValue() && !disc.getTracks().isEmpty()) {
+            albumSrv.quickCreateAlbumTrack(disc, false);
+        }
+
+        return id;
     }
 
     @Transactional
     @SneakyThrows
-    public long create(ItemCreateDTO dto) {
+    public long insert(ItemCreateDTO dto) {
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
         BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
@@ -161,6 +168,24 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     //endregion
 
     //region query
+
+    @Transactional
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    public <T extends SuperItem> T getById(long id) {
+        ItemTypeRelation relation = getItemTypeRelation(id);
+        if (relation == null) return null;
+
+        Class<? extends SubItem> s = ItemUtil.getSubClass(relation.getType());
+        Class<? extends SuperItem> t = ItemUtil.getSuperItem(relation.getType());
+        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                .selectAll(Item.class)
+                .selectAll(s, SUB_T_PREFIX)
+                .leftJoin(STR."\{MyBatisUtil.getTableName(s)}\{SUB_T_CONDITION}")
+                .eq(Item::getId, id);
+        return (T) mapper.selectJoinOne(t, wrapper);
+    }
+
     @Transactional
     @SneakyThrows
     public ItemDetailVO detail(long id) {
@@ -250,7 +275,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public SearchResult<? extends ItemListVO> list(ListQuery dto) {
 
-        ItemListQueryDTO param = ItemUtil.getItemListQueryDTO(dto);
+        ItemListQueryDTO param = new ItemListQueryDTO(dto);
 
         Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(param.getType());
@@ -261,15 +286,14 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .selectAll(subClass, SUB_T_PREFIX)
                 .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)}\{SUB_T_CONDITION}")
                 .eq(Item::getType, param.getType())
-                .like(StringUtils.isNotEmpty(param.getName()), Item::getName, param.getName())
-                .like(StringUtils.isNotEmpty(param.getAliases()),
-                        "JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getAliases()}%")
-                .eq(StringUtils.isNotEmpty(param.getRegion()), Item::getRegion, param.getRegion())
-                .like(StringUtils.isNotEmpty(param.getBarcode()), Item::getBarcode, param.getBarcode())
-                .like(StringUtils.isNotEmpty(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
-                .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
-                .eq(param.getBonus() != null, Item::getBonus, Boolean.TRUE.equals(param.getBonus()) ? 1 : 0)
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+                .and(StringUtils.isNotEmpty(param.getKeyword()),
+                        w -> w.or(i -> i.like(Item::getName, param.getKeyword())
+                                .or().like("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getKeyword()}%")
+                                .or().like(Item::getBarcode, param.getKeyword())
+                                .or().like(Item::getCatalogId, param.getKeyword())
+                        ))
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                .orderByDesc(!param.isSort(), Item::getId);
         //private query column to sql
         MyBatisUtil.itemListQueryWrapper(param, wrapper);
 
@@ -286,7 +310,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public void getItemResourceCount(List<? extends ItemListVO> items) {
-        if(items.isEmpty()) return;
+        if (items.isEmpty()) return;
         List<Long> ids = items.stream().map(ItemListVO::getId).toList();
         int entityType = ENTITY_TYPE.getValue();
         // 将资源统计列表转换为 Map<entityId, count>
@@ -295,9 +319,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Map<Long, Integer> imageCountMap = resourceSrv.getImageCount(entityType, ids).stream()
                 .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
         for (ItemListVO item : items) {
-            long id = item.getId();
-            item.setFileCount(fileCountMap.getOrDefault(id, 0));
-            item.setImageCount(imageCountMap.getOrDefault(id, 0));
+            item.setFileCount(fileCountMap.getOrDefault(item.getId(), 0));
+            item.setImageCount(imageCountMap.getOrDefault(item.getId(), 0));
         }
     }
 
@@ -308,27 +331,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         String redisKey = STR."item_type_related:\{id}";
         if (!redisUtil.hasKey(redisKey)) return null;
         return redisUtil.get(redisKey, ItemTypeRelation.class);
-    }
-
-    @Transactional
-    @SneakyThrows
-    public long advanceCreate(ItemCreateDTO item, List<ImageMiniDTO> images,
-                              List<RelatedEntityMiniDTO> relatedEntities, boolean generateThumb) {
-        //save item
-        long id = create(item);
-        //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, relatedEntities);
-        //save image
-        images.forEach(i -> i.setFile(CommonImageUtil.base64ToMultipartFile(i.getBase64Code())));
-        resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, images, generateThumb);
-
-        //save episode
-        ((AlbumCreateDTO) item).getDisc().setItemId(id);
-        if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
-            albumSrv.quickCreateAlbumTrack(((AlbumCreateDTO) item).getDisc(), false);
-        }
-
-        return id;
     }
 
 }

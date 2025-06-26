@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.episode;
 
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityListVO;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import lombok.Data;
@@ -17,9 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EpisodeListVO extends EntityListVO {
 
-    private int serial;
     private int discNo;
-    private String name;
+    private int serial;
     private String premiereDate;
     private String duration;
     private long relatedType;
@@ -27,4 +28,12 @@ public class EpisodeListVO extends EntityListVO {
 
     private EntityMiniVO parent = new EntityMiniVO();
 
+    private int fileCount;
+
+    public void setParent(Item item) {
+        parent.setId(item.getId());
+        parent.setName(item.getName());
+        parent.setType(EntityType.ITEM.getValue());
+        parent.setTableName(EntityType.ITEM.getTableName());
+    }
 }
