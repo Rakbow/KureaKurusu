@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
+import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.AlbumFormat;
@@ -12,10 +13,7 @@ import com.rakbow.kureakurusu.data.emun.MediaFormat;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.EnumHelper;
-import com.rakbow.kureakurusu.toolkit.LikeUtil;
-import com.rakbow.kureakurusu.toolkit.PopularUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -34,16 +32,12 @@ import java.util.Objects;
 @Service
 public class GeneralService {
 
-    //region util resource
     private final LikeUtil likeUtil;
     private final PopularUtil popularUtil;
-    //endregion
+    private final RedisUtil redisUtil;
 
-    //region mapper
     private final CommonMapper mapper;
     private final RoleMapper roleMapper;
-
-    //endregion
 
     /**
      * 刷新redis中的选项缓存
@@ -69,11 +63,15 @@ public class GeneralService {
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
-        List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
-        roles.forEach(i -> {
-            MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
-            MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
-        });
+
+        if(redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:zh")) {
+            String roleSetZhJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:zh"));
+            MetaData.optionsZh.roleSet = JsonUtil.toAttributes(roleSetZhJson, Long.class);
+        }
+        if(redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:en")) {
+            String roleSetEnJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:en"));
+            MetaData.optionsEn.roleSet = JsonUtil.toAttributes(roleSetEnJson, Long.class);
+        }
     }
 
     /**

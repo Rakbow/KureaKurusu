@@ -180,7 +180,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     public List<EntryListVO> getSubProducts(long id) {
         List<EntryListVO> res = new ArrayList<>();
-        if (MetaData.optionsZh.roleSet.isEmpty())
+        if (MetaData.getOptions().roleSet.isEmpty())
             return res;
         List<Entry> entries = list(
                 new MPJLambdaWrapper<Entry>().selectAll(Entry.class)

@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.OrderBy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -28,5 +29,8 @@ public class Role {
     @JsonIgnore
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;//激活状态
+
+    @TableField(exist = false)
+    private int citations;
 
 }

@@ -13,10 +13,8 @@ public class MetaData {
 
     public static MetaOption getOptions() {
         String lang = LocaleContextHolder.getLocale().getLanguage();
-        if(lang.equals("zh"))
-            return optionsZh;
         if(lang.equals("en"))
             return optionsEn;
-        else return null;
+        return optionsZh;
     }
 }

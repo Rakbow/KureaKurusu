@@ -1,14 +1,14 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.rakbow.kureakurusu.data.Attribute;
 import lombok.SneakyThrows;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JsonUtil {
 
@@ -22,6 +22,13 @@ public class JsonUtil {
     @SneakyThrows
     public static <T> List<T> toJavaList(Object obj, Class<T> clazz) {
         return mapper.readValue(obj.toString(), mapper.getTypeFactory().constructParametricType(List.class, clazz));
+    }
+
+    @SneakyThrows
+    public static <T> List<Attribute<T>> toAttributes(String json, Class<T> clazz) {
+        JavaType attributeType = mapper.getTypeFactory().constructParametricType(Attribute.class, clazz);
+        JavaType listType = mapper.getTypeFactory().constructCollectionType(List.class, attributeType);
+        return mapper.readValue(json, listType);
     }
 
     @SneakyThrows

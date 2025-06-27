@@ -43,4 +43,10 @@ public class RoleController {
         return new ApiResult().ok("entity.crud.update.success");
     }
 
+    @PostMapping("refresh")
+    public ApiResult refresh() {
+        srv.refresh();
+        return new ApiResult().ok("entity.crud.refresh.success");
+    }
+
 }

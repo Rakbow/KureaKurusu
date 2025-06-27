@@ -111,8 +111,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             for (Relation r : currentRelations) {
                 Entity e = DataFinder.findEntityById(r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
                 if (e == null) continue;
-                Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.optionsZh.roleSet);
-                Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.optionsZh.roleSet);
+                Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.getOptions().roleSet);
+                Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.getOptions().roleSet);
                 Attribute<Integer> relatedGroup = new Attribute<>(
                         I18nHelper.getMessage(RelatedGroup.get(r.getRelatedGroup().getValue()).getLabelKey()),
                         r.getRelatedGroup().getValue()
