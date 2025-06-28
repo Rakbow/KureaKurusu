@@ -82,6 +82,9 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         IPage<Relation> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         if (pages.getRecords().isEmpty())
             return new SearchResult<>();
+
+        List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
+
         //mark direction
         pages.getRecords().forEach(r -> {
             if (r.getRelatedEntityType() == param.getEntityType()
@@ -111,8 +114,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             for (Relation r : currentRelations) {
                 Entity e = DataFinder.findEntityById(r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
                 if (e == null) continue;
-                Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), MetaData.getOptions().roleSet);
-                Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), MetaData.getOptions().roleSet);
+                Attribute<Long> role = DataFinder.findAttributeByValue(r.getRoleId(), roleSet);
+                Attribute<Long> reverseRole = DataFinder.findAttributeByValue(r.getReverseRoleId(), roleSet);
                 Attribute<Integer> relatedGroup = new Attribute<>(
                         I18nHelper.getMessage(RelatedGroup.get(r.getRelatedGroup().getValue()).getLabelKey()),
                         r.getRelatedGroup().getValue()

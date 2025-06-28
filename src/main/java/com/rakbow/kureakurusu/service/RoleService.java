@@ -57,7 +57,7 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
     public void refresh() {
         MetaData.optionsZh.roleSet.clear();
         MetaData.optionsEn.roleSet.clear();
-        List<Role> roles = list();
+        List<Role> roles = list(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
         roles.forEach(i -> {
             MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
             MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
