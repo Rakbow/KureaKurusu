@@ -12,6 +12,7 @@ import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.GroupCacheEntryItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
@@ -157,11 +158,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         EntryListQueryDTO param = new EntryListQueryDTO(dto);
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .selectAll(Entry.class)
-                .selectCount(Relation::getId, "items")
-                .leftJoin(Relation.class,
-                        on -> on.eq(Relation::getRelatedEntityId, Entry::getId)
-                                .eq(Relation::getEntityType, EntityType.ITEM.getValue())
-                                .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                .select(GroupCacheEntryItem::getItems)
+                .leftJoin(GroupCacheEntryItem.class,
+                        on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId)
                 )
                 .groupBy(Entry::getId)
                 .eq(Entry::getType, param.getType())
@@ -171,7 +170,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                         .or().like(Entry::getNameZh, param.getKeyword())
                         .or().like(Entry::getNameEn, param.getKeyword())
                 )
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                .orderByDesc(GroupCacheEntryItem::getItems);
         IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryListVO> res = converter.convert(pages.getRecords(), EntryListVO.class);
         return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());

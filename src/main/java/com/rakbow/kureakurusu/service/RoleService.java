@@ -10,7 +10,7 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
-import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.entity.GroupCacheRoleRelation;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
@@ -37,9 +37,9 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
         MPJLambdaWrapper<Role> wrapper = new MPJLambdaWrapper<Role>()
                 .selectAll(Role.class)
-                .selectCount(Relation::getId, "citations")
-                .leftJoin(Relation.class,
-                        on -> on.eq(Relation::getRoleId, Role::getId)
+                .select(GroupCacheRoleRelation::getCount)
+                .leftJoin(GroupCacheRoleRelation.class,
+                        on -> on.eq(GroupCacheRoleRelation::getRoleId, Role::getId)
                 )
                 .groupBy(Role::getId)
                 .and(StringUtils.isNotEmpty(param.getKeyword()), i -> i
@@ -47,8 +47,9 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
                         .or().like(Role::getNameZh, param.getKeyword())
                         .or().like(Role::getNameEn, param.getKeyword())
                 )
+                .gt(Role::getId, 0)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                .orderByDesc(!param.isSort(), "citations");
+                .orderByDesc(!param.isSort(), GroupCacheRoleRelation::getCount);
 
         IPage<Role> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         return new SearchResult<>(pages);

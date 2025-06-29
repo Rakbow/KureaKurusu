@@ -19,7 +19,7 @@ public class RelationController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ListQuery qry) {
-        return new ApiResult().load(srv.getRelations(new RelationListQueryDTO(qry)));
+        return new ApiResult().load(srv.list(new RelationListQueryDTO(qry)));
     }
 
     @PostMapping("create")

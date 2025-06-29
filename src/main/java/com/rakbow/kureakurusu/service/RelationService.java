@@ -64,7 +64,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<RelationVO> getRelations(RelationListQueryDTO param) {
+    public SearchResult<RelationVO> list(RelationListQueryDTO param) {
         List<RelationVO> res = new ArrayList<>();
         List<Long> targetIds;
         BaseMapper<? extends Entity> subMapper;
@@ -75,9 +75,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                         w.or(i -> i.eq(Relation::getRelatedEntityType, param.getEntityType()).eq(Relation::getRelatedEntityId, param.getEntityId()))
                                 .or(i -> i.eq(Relation::getEntityType, param.getEntityType()).eq(Relation::getEntityId, param.getEntityId()))
                 )
-                .eq(ObjectUtils.isNotEmpty(param.getRelatedGroup()), Relation::getRelatedGroup, param.getRelatedGroup())
+                .ne(Relation::getEntityType, EntityType.ITEM)
+                .in(!param.getRelatedGroups().isEmpty(), Relation::getRelatedGroup, param.getRelatedGroups())
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                .orderByDesc(Relation::getId);
+                .orderByAsc(Relation::getRelatedEntityId);
 
         IPage<Relation> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         if (pages.getRecords().isEmpty())

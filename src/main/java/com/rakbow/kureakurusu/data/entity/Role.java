@@ -31,6 +31,6 @@ public class Role {
     private Boolean status;//激活状态
 
     @TableField(exist = false)
-    private int citations;
+    private int count;
 
 }
