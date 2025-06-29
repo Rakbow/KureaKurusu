@@ -20,13 +20,22 @@ public class Relation {
 
     @TableId(type = IdType.AUTO)
     private Long id;
+
+    @Deprecated
+    @TableField(exist = false)
     private RelatedGroup relatedGroup;
+
     private Long roleId;
-    private Long reverseRoleId;
+    private Long relatedRoleId;
+
     private int entityType;
+    private int entitySubType;
     private Long entityId;
+
     private int relatedEntityType;
+    private int relatedEntitySubType;
     private Long relatedEntityId;
+
     private String remark;
     private Boolean status;
 

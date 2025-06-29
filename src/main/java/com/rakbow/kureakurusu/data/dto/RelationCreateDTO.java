@@ -15,10 +15,13 @@ import java.util.List;
 public class RelationCreateDTO extends DTO {
 
     private int entityType;
+    private int entitySubType;
     private long entityId;
+
     private int relatedEntityType;
-    private int relatedGroup;
+    private int relatedEntitySubType;
     private List<RelationCreateMiniDTO> relatedEntries;
+
     private long roleId;
 
 }

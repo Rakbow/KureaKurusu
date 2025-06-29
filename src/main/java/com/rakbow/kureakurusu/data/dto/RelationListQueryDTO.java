@@ -19,13 +19,16 @@ public class RelationListQueryDTO extends ListQueryDTO {
 
     private int entityType;
     private long entityId;
-    private List<Integer> relatedGroups;
+
+    private int targetEntityType;
+    private List<Integer> targetEntitySubTypes;
 
     public RelationListQueryDTO(ListQuery qry) {
         super(qry);
         this.entityType = qry.getVal("entityType");
         this.entityId = ((Integer)qry.getVal("entityId")).longValue();
-        this.relatedGroups = qry.getVal("relatedGroups");
+        this.targetEntityType = qry.getVal("targetEntityType");
+        this.targetEntitySubTypes = qry.getVal("targetEntitySubTypes");
     }
 
 }

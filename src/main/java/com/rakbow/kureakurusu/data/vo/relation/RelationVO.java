@@ -13,14 +13,10 @@ import lombok.Data;
 public class RelationVO {
 
     private long id;//relation id
-    private String thumb;
-    private Attribute<Integer> relatedGroup;
+
+    private RelationTargetVO target;
     private Attribute<Long> role;
-    private Attribute<Long> reverseRole;
-    private int targetType;
-    private Attribute<Long> target;
-    private String subName;
+
     private String remark;
-    private String relatedTypeName;
 
 }
