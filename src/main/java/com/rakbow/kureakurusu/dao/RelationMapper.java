@@ -1,8 +1,12 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.github.yulichang.base.MPJBaseMapper;
+import com.rakbow.kureakurusu.data.dto.RelationListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author Rakbow
@@ -10,4 +14,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface RelationMapper extends MPJBaseMapper<Relation> {
+
+    List<Relation> list(@Param("param") RelationListQueryDTO param);
+    long count(@Param("param") RelationListQueryDTO param);
+
 }

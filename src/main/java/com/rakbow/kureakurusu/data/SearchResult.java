@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class SearchResult<T> {
 
     public SearchResult() {
         total = 0;
-        data = null;
+        data = new ArrayList<>();
         page = 0;
         pageSize = 10;
         searchTime = "";

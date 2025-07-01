@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.RelationMapper">
+
+    <select id="list" resultType="Relation">
+        <bind name="offset" value="(param.page - 1) * param.size" />
+        SELECT *
+        FROM (
+        (SELECT *
+        FROM relation
+        WHERE entity_type = #{param.targetEntityType}
+        <if test="param.targetEntitySubTypes.size() > 0">
+            AND entity_sub_type IN
+            <foreach item="item" index="index" collection="param.targetEntitySubTypes" open="("
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        AND related_entity_type = #{param.entityType}
+        AND related_entity_id = #{param.entityId})
+        UNION ALL
+        (SELECT *
+        FROM relation
+        WHERE related_entity_type = #{param.targetEntityType}
+        <if test="param.targetEntitySubTypes.size() > 0">
+            AND related_entity_sub_type IN
+            <foreach item="item" index="index" collection="param.targetEntitySubTypes" open="("
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        AND entity_type = #{param.entityType}
+        AND entity_id = #{param.entityId})
+        ) AS combined_results
+        ORDER BY related_entity_id, entity_id
+        <if test="param.size > 0">
+            LIMIT #{offset}, #{param.size}
+        </if>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(id)
+        FROM (
+        (SELECT *
+        FROM relation
+        WHERE entity_type = #{param.targetEntityType}
+        <if test="param.targetEntitySubTypes.size() > 0">
+            AND related_entity_sub_type IN
+            <foreach item="item" index="index" collection="param.targetEntitySubTypes" open="("
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        AND related_entity_type = #{param.entityType}
+        AND related_entity_id = #{param.entityId})
+        UNION ALL
+        (SELECT *
+        FROM relation
+        WHERE related_entity_type = #{param.targetEntityType}
+        <if test="param.targetEntitySubTypes.size() > 0">
+            AND related_entity_sub_type IN
+            <foreach item="item" index="index" collection="param.targetEntitySubTypes" open="("
+                     close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        AND entity_type = #{param.entityType}
+        AND entity_id = #{param.entityId})
+        ) AS count_table
+    </select>
+
+</mapper>

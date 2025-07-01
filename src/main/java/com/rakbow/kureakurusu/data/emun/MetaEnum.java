@@ -14,34 +14,17 @@ import java.util.Locale;
  */
 public interface MetaEnum {
 
-    int getId();
-    String getNameZh();
-    String getNameEn();
+    Integer getValue();
+    String getLabelKey();
 
-    static <T extends Enum<T> & MetaEnum> String getLocaleNameById(Class<T> enumClass, int id) {
-        String lang = LocaleContextHolder.getLocale().getLanguage();
-        for (T e : enumClass.getEnumConstants()) {
-            if (e.getId() == id) {
-                if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                    return e.getNameEn();
-                }else {
-                    return e.getNameZh();
-                }
+    // 通过value获取枚举实例的通用方法
+    static <T extends Enum<T> & MetaEnum> T get(Class<T> enumClass, int value) {
+        for (T enumConstant : enumClass.getEnumConstants()) {
+            if (enumConstant.getValue().equals(value)) {
+                return enumConstant;
             }
         }
-        return "Uncategorized";
-    }
-
-    static <T extends Enum<T> & MetaEnum> List<Attribute<Integer>> getAttributeSet(Class<T> enumClass, String lang) {
-        List<Attribute<Integer>> set = new ArrayList<>();
-        for (T e : enumClass.getEnumConstants()) {
-            if(StringUtils.equals(lang, Locale.CHINESE.getLanguage())) {
-                set.add(new Attribute<Integer>(e.getNameZh(), e.getId()));
-            }else if(StringUtils.equals(lang, Locale.ENGLISH.getLanguage())) {
-                set.add(new Attribute<Integer>(e.getNameEn(), e.getId()));
-            }
-        }
-        return set;
+        throw new IllegalArgumentException(STR."Invalid value: \{value}");
     }
 
 }

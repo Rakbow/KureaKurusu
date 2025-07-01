@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
@@ -17,7 +14,10 @@ import com.rakbow.kureakurusu.data.dto.RelatedEntityMiniDTO;
 import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
 import com.rakbow.kureakurusu.data.dto.RelationListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
-import com.rakbow.kureakurusu.data.emun.*;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.EntryType;
+import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
@@ -27,7 +27,10 @@ import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
-import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.DataFinder;
+import com.rakbow.kureakurusu.toolkit.EntityUtil;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +53,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final SqlSessionFactory sqlSessionFactory;
     private final Converter converter;
     private final EntryMapper entryMapper;
+    private final RelationMapper mapper;
     private final ItemMapper itemMapper;
     private final ResourceService resourceSrv;
     private final EntityUtil entityUtil;
@@ -62,23 +66,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public SearchResult<RelationVO> list(RelationListQueryDTO param) {
         int targetEntityType = param.getTargetEntityType();
         List<RelationVO> res = new ArrayList<>();
-        MPJLambdaWrapper<Relation> wrapper = new MPJLambdaWrapper<Relation>()
-                .and(w -> w.or(i -> i.eq(Relation::getRelatedEntityType, param.getEntityType())
-                                .eq(Relation::getRelatedEntityId, param.getEntityId())
-                                .eq(Relation::getEntityType, targetEntityType)
-                                .in(!param.getTargetEntitySubTypes().isEmpty(), Relation::getEntitySubType, param.getTargetEntitySubTypes()))
-                        .or(i -> i.eq(Relation::getEntityType, param.getEntityType())
-                                .eq(Relation::getEntityId, param.getEntityId())
-                                .eq(Relation::getRelatedEntityType, targetEntityType)
-                                .in(!param.getTargetEntitySubTypes().isEmpty(), Relation::getRelatedEntitySubType, param.getTargetEntitySubTypes()))
-                )
-                .orderByAsc(!param.isSort(), Relation::getRelatedEntityId, Relation::getEntityId)
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+        List<Relation> relations = mapper.list(param);
+        if (relations.isEmpty()) return new SearchResult<>();
+        long total = mapper.count(param);
 
-        IPage<Relation> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
-        if (pages.getRecords().isEmpty())
-            return new SearchResult<>();
-        List<Relation> relations = pages.getRecords();
         List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
 
         //mark direction
@@ -88,7 +79,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 r.setDirection(-1);
             }
         });
-
 
         List<Long> targetIds = relations.stream()
                 .map(r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()).distinct().toList();
@@ -103,41 +93,24 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<? extends Entity> targets = subMapper.selectByIds(targetIds);
 
         for (Relation r : relations) {
-            Entity e = DataFinder.findEntityById(r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId(), targets);
+            boolean positive = r.getDirection() == 1;
+
+            Entity e = DataFinder.findEntityById(positive ? r.getRelatedEntityId() : r.getEntityId(), targets);
             if (e == null) continue;
-            Attribute<Long> role;
-            Attribute<Long> targetRole;
-            Attribute<Integer> targetSubType;
 
+            Long roleId = positive ? r.getRoleId() : r.getRelatedRoleId();
+            Long targetRoleId = positive ? r.getRelatedRoleId() : r.getRoleId();
+            Attribute<Long> role = DataFinder.findAttributeByValue(roleId, roleSet);
+            Attribute<Long> targetRole = DataFinder.findAttributeByValue(targetRoleId, roleSet);
+
+            int subTypeValue = positive ? r.getRelatedEntitySubType() : r.getEntitySubType();
             String subTypeLabel;
-            Integer subTypeValue;
-
-            if (r.getDirection() == 1) {
-                role = DataFinder.findAttributeByValue(r.getRoleId(), roleSet);
-                targetRole = DataFinder.findAttributeByValue(r.getRelatedRoleId(), roleSet);
-
-                if (targetEntityType == EntityType.ENTRY.getValue()) {
-                    subTypeLabel = I18nHelper.getMessage(EntrySubType.get(r.getRelatedEntitySubType()).getLabelKey());
-                    subTypeValue = EntrySubType.get(r.getRelatedEntitySubType()).getValue();
-                } else {
-                    subTypeLabel = I18nHelper.getMessage(ItemSubType.get(r.getRelatedEntitySubType()).getLabelKey());
-                    subTypeValue = ItemSubType.get(r.getRelatedEntitySubType()).getValue();
-                }
-
+            if (targetEntityType == EntityType.ENTRY.getValue()) {
+                subTypeLabel = I18nHelper.getMessage(EntryType.get(subTypeValue).getLabelKey());
             } else {
-                role = DataFinder.findAttributeByValue(r.getRelatedRoleId(), roleSet);
-                targetRole = DataFinder.findAttributeByValue(r.getRoleId(), roleSet);
-
-                if (targetEntityType == EntityType.ENTRY.getValue()) {
-                    subTypeLabel = I18nHelper.getMessage(EntrySubType.get(r.getEntitySubType()).getLabelKey());
-                    subTypeValue = EntrySubType.get(r.getEntitySubType()).getValue();
-                } else {
-                    subTypeLabel = I18nHelper.getMessage(ItemSubType.get(r.getEntitySubType()).getLabelKey());
-                    subTypeValue = ItemSubType.get(r.getEntitySubType()).getValue();
-                }
-
+                subTypeLabel = I18nHelper.getMessage(ItemType.get(subTypeValue).getLabelKey());
             }
-            targetSubType = new Attribute<>(subTypeLabel, subTypeValue);
+            Attribute<Integer> targetSubType = new Attribute<>(subTypeLabel, subTypeValue);
             if (targetRole == null) targetRole = new Attribute<>("-", 0L);
             if (role == null) role = new Attribute<>("-", 0L);
 
@@ -169,28 +142,24 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
             res.add(vo);
         }
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(res, total, param.getPage(), param.getSize());
     }
 
     @Transactional
     public void create(RelationCreateDTO dto) {
         List<Relation> res = new ArrayList<>();
-        for (RelationCreateMiniDTO target : dto.getRelatedEntries()) {
-            Relation relation = new Relation();
-
-            relation.setRoleId(dto.getRoleId());
-
-            relation.setEntityType(dto.getEntityType());
-            relation.setEntitySubType(dto.getEntitySubType());
-            relation.setEntityId(dto.getEntityId());
-
-            relation.setRelatedEntityType(dto.getRelatedEntityType());
-            relation.setRelatedEntitySubType(dto.getRelatedEntitySubType());
-            relation.setRelatedEntityId(target.getId());
-
-            relation.setRemark(target.getRemark());
-            res.add(relation);
-        }
+        dto.getRelatedEntries().forEach(r ->
+                res.add(Relation.builder()
+                        .roleId(dto.getRelatedRoleId())
+                        .relatedRoleId(dto.getRoleId())
+                        .entityType(dto.getEntityType())
+                        .entitySubType(dto.getEntitySubType())
+                        .entityId(dto.getEntityId())
+                        .relatedEntityType(dto.getRelatedEntityType())
+                        .relatedEntitySubType(dto.getRelatedEntitySubType())
+                        .relatedEntityId(r.getId())
+                        .remark(r.getRemark())
+                        .build()));
         //batch insert
         MybatisBatch.Method<Relation> method = new MybatisBatch.Method<>(RelationMapper.class);
         MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, res);

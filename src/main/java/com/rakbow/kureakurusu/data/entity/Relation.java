@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.emun.RelatedGroup;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,9 +15,10 @@ import lombok.NoArgsConstructor;
  * @since 2024/6/22 15:53
  */
 @Data
+@Builder
 @TableName(value = "relation", autoResultMap = true)
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class Relation {
 
     @TableId(type = IdType.AUTO)

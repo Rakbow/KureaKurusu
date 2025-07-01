@@ -23,5 +23,6 @@ public class RelationCreateDTO extends DTO {
     private List<RelationCreateMiniDTO> relatedEntries;
 
     private long roleId;
+    private long relatedRoleId;
 
 }
