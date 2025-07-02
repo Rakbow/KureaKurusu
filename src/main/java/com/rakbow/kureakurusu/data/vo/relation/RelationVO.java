@@ -18,5 +18,6 @@ public class RelationVO {
     private Attribute<Long> role;
 
     private String remark;
+    private boolean direction;
 
 }

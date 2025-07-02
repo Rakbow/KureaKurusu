@@ -24,7 +24,8 @@ import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
-import com.rakbow.kureakurusu.data.vo.relation.RelationCreateMiniDTO;
+import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
+import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
@@ -41,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -138,6 +141,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     .role(targetRole)
                     .remark(r.getRemark())
                     .target(target)
+                    .direction(positive)
                     .build();
 
             res.add(vo);
@@ -183,11 +187,45 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public void update(RelationUpdateDTO dto) {
         update(
                 new LambdaUpdateWrapper<Relation>()
-                        .set(Relation::getRoleId, dto.getRoleId())
-                        .set(Relation::getRelatedRoleId, dto.getReverseRoleId())
+                        .set(Relation::getRoleId, dto.getDirection() ? dto.getRoleId() : dto.getRelatedRoleId())
+                        .set(Relation::getRelatedRoleId, dto.getDirection() ? dto.getRelatedRoleId() : dto.getRoleId())
                         .set(Relation::getRemark, dto.getRemark())
                         .eq(Relation::getId, dto.getId())
         );
+    }
+
+    @Transactional
+    public List<Personnel> getPersonnel(int entityType, long entityId) {
+        List<Personnel> res = new ArrayList<>();
+
+        RelationListQueryDTO param = new RelationListQueryDTO();
+        param.setEntityType(entityType);
+        param.setEntityId(entityId);
+        param.setTargetEntityType(EntityType.ENTRY.getValue());
+        param.setTargetEntitySubTypes(List.of(EntryType.PERSON.getValue()));
+
+        SearchResult<RelationVO> relations = list(param);
+        if (relations.data.isEmpty()) return res;
+
+        Map<Attribute<Long>, List<RelationVO>> relationGroup = relations.data.stream()
+                .collect(Collectors.groupingBy(r -> r.getTarget().getRole()));
+
+        res = relationGroup.entrySet().stream()
+                .map(entry -> {
+                    Personnel pl = new Personnel();
+                    pl.setRole(entry.getKey());
+                    pl.setPersons(entry.getValue().stream().map(r -> {
+                        PersonVO p = new PersonVO();
+                        p.setId(r.getTarget().getEntityId());
+                        p.setName(r.getTarget().getName());
+                        p.setSubName(r.getTarget().getSubName());
+                        p.setRemark(r.getRemark());
+                        return p;
+                    }).collect(Collectors.toList()));
+                    return pl;
+                })
+                .toList();
+        return res;
     }
 
     @Transactional

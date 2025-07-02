@@ -34,6 +34,11 @@ public class RelationController {
         return new ApiResult().ok("entity.crud.update.success");
     }
 
+    @PostMapping("personnel")
+    public ApiResult update(@RequestBody PersonnelDTO dto) {
+        return new ApiResult().load(srv.getPersonnel(dto.getEntityType(), dto.getEntityId()));
+    }
+
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
         srv.removeByIds(dto.getIds());

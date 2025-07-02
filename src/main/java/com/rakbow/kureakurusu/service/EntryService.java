@@ -109,6 +109,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 )));
             }
         } else {
+            //TODO OPTIMIZE
             if (param.getMode() != 0 && ObjectUtils.isNotEmpty(param.getType())) {
                 Set<Long> ids = popularUtil.getEntryPopularityRank(param.getType(), 7);
                 if (!ids.isEmpty()) {

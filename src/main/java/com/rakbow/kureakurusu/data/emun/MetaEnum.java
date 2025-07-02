@@ -1,13 +1,5 @@
 package com.rakbow.kureakurusu.data.emun;
 
-import com.rakbow.kureakurusu.data.Attribute;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 /**
  * @author Rakbow
  * @since 2023-05-19 19:02
