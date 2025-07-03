@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
@@ -47,6 +49,48 @@ public class CommonImageUtil {
         return QiniuImageUtil.getThumb(url, THUMB_SIZE_35);
     }
 
+    @SneakyThrows
+    public static ImageMiniDTO generateThumbTmp(ImageMiniDTO cover) {
+        ImageMiniDTO thumb = new ImageMiniDTO();
+        thumb.setName("Thumb");
+        thumb.setType(ImageType.THUMB.getValue());
+
+        MultipartFile originalFile = cover.getFile();
+
+        // 读取原图
+        BufferedImage original = ImageIO.read(originalFile.getInputStream());
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+        // 找最短边
+        int side = Math.min(width, height);
+
+        // 计算起点（中心为基准）
+        int x = (width - side) / 2;
+        int y = (height - side) / 2;
+
+        // 裁剪为正方形
+        BufferedImage cropped = original.getSubimage(x, y, side, side);
+        // 生成缩略图到内存
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        Thumbnails.of(cropped)
+                .size(70, 70)
+                .outputFormat("jpg")
+                .toOutputStream(os);
+
+        byte[] thumbBytes = os.toByteArray();
+        // 创建 MultipartFile 对象（MockMultipartFile 实现类）
+        MultipartFile thumbFile = new MockMultipartFile(
+                "file",// 字段名
+                "Thumb.jpg",// 文件名
+                "image/jpeg",// MIME 类型
+                thumbBytes// 内容
+        );
+
+        // 设置生成的 MultipartFile 到 DTO
+        thumb.setFile(thumbFile);
+        return thumb;
+    }
 
     @SneakyThrows
     public static ImageMiniDTO generateThumb(ImageMiniDTO cover) {

@@ -100,7 +100,7 @@ public class ResourceService {
         if (generateThumb) {
             ImageMiniDTO cover = images.stream().filter(i -> i.getType() == ImageType.MAIN.getValue()).findFirst().orElse(null);
             if (cover != null) {
-                ImageMiniDTO thumb = CommonImageUtil.generateThumb(cover);
+                ImageMiniDTO thumb = CommonImageUtil.generateThumbTmp(cover);
                 images.add(thumb);
             }
         }
@@ -123,8 +123,8 @@ public class ResourceService {
     }
 
     @Transactional
-    public void deleteEntityImage(List<ImageVO> images) {
-        String[] keys = images.stream().map(ImageVO::getUrl)
+    public void deleteEntityImage(List<ImageDeleteDTO> images) {
+        String[] keys = images.stream().map(ImageDeleteDTO::getUrl)
                 .map(url -> url.replace(Constant.FILE_DOMAIN, "")).toArray(String[]::new);
         //delete from qiniu server
         List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(keys);

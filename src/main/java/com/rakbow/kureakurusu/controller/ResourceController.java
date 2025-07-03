@@ -71,7 +71,7 @@ public class ResourceController {
     }
 
     @DeleteMapping("image/delete")
-    public ApiResult deleteEntityImages(@RequestBody List<ImageVO> images) {
+    public ApiResult deleteEntityImages(@RequestBody List<ImageDeleteDTO> images) {
         srv.deleteEntityImage(images);
         return new ApiResult().ok("entity.crud.delete.success");
     }
