@@ -171,10 +171,11 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public void batchCreate(int entityType, long entityId, List<RelatedEntityMiniDTO> relatedEntities) {
+    public void batchCreate(int entityType, long entityId, int entitySubType, List<RelatedEntityMiniDTO> relatedEntities) {
         List<Relation> relations = converter.convert(relatedEntities, Relation.class);
         relations.forEach(r -> {
             r.setEntityType(entityType);
+            r.setEntitySubType(entitySubType);
             r.setEntityId(entityId);
         });
         //batch insert

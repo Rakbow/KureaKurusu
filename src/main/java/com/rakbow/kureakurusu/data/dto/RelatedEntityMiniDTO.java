@@ -16,10 +16,12 @@ import lombok.NoArgsConstructor;
 @Data
 public class RelatedEntityMiniDTO extends DTO {
 
-    private long roleId;
-    private Integer relatedGroup;
+    private long relatedRoleId;
+
     private int relatedEntityType;
     private long relatedEntityId;
+    private int relatedEntitySubType;
+
     private String remark;
 
 }
