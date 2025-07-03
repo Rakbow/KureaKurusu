@@ -100,8 +100,8 @@ public class ItemController {
     }
 
     @PostMapping("convert-isbn")
-    public ApiResult convertISBN(@RequestBody String isbn10) {
-        return new ApiResult().load(bookSrv.convertISBN(isbn10));
+    public ApiResult convertISBN(@RequestBody ISBNConvertDTO dto) {
+        return new ApiResult().load(bookSrv.convertISBN(dto.getIsbn10()));
     }
 
     @PostMapping("get-extra-info")

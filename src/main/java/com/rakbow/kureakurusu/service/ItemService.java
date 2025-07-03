@@ -82,7 +82,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //save item
         long id = insert(item);
         //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, dto.getRelatedEntities());
+        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, dto.getItem().getType(), dto.getRelatedEntities());
         //save image
         for (int i = 0; i < dto.getImages().size(); i++) {
             dto.getImages().get(i).setFile(images[i]);
@@ -90,10 +90,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, dto.getImages(), dto.getGenerateThumb());
 
         //save episode
-        ((AlbumCreateDTO) item).getDisc().setItemId(id);
-        AlbumDiscCreateDTO disc = ((AlbumCreateDTO) item).getDisc();
-        if (item.getType().intValue() == ItemType.ALBUM.getValue() && !disc.getTracks().isEmpty()) {
-            albumSrv.quickCreateAlbumTrack(disc, false);
+        if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
+            if (!((AlbumCreateDTO) item).getDisc().getTracks().isEmpty()) {
+                ((AlbumCreateDTO) item).getDisc().setItemId(id);
+                AlbumDiscCreateDTO disc = ((AlbumCreateDTO) item).getDisc();
+                albumSrv.quickCreateAlbumTrack(disc, false);
+            }
         }
 
         return id;
