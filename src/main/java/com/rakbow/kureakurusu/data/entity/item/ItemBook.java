@@ -18,7 +18,6 @@ public class ItemBook extends SubItem {
 
     private Long id;//主键编号
 
-    private String summary;//简介
     private Language lang;//语言
 
     private int pages;

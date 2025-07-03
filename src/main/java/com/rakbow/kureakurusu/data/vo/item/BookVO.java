@@ -17,6 +17,5 @@ public class BookVO extends ItemVO {
     private int pages;
     private String size;
     private Attribute<String> lang;
-    private String summary;
 
 }

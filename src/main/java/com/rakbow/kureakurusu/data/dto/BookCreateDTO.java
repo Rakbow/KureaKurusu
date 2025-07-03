@@ -24,12 +24,10 @@ public class BookCreateDTO extends ItemCreateDTO {
     private int pages;
     private String size;
     private String lang;
-    private String summary;
 
     public BookCreateDTO() {
         setType(ItemType.BOOK.getValue());
         lang = Language.JAPANESE.getValue();
-        summary = "";
     }
 
 }

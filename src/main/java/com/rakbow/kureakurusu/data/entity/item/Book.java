@@ -28,11 +28,9 @@ public class Book extends SuperItem {
 
     @AutoMapping(qualifiedByName = "toAttribute")
     private Language lang;//语言
-    private String summary;//简介
 
     public Book() {
         super();
         this.lang = Language.JAPANESE;
-        this.summary = "";
     }
 }

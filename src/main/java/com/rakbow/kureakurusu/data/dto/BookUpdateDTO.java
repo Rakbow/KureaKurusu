@@ -26,12 +26,10 @@ public class BookUpdateDTO extends ItemUpdateDTO {
     private int pages;
     private String size;
     private String lang;
-    private String summary;
 
     public BookUpdateDTO() {
         setType(ItemType.BOOK.getValue());
         lang = Language.JAPANESE.getValue();
-        summary = "";
 
     }
 

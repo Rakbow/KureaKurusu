@@ -15,6 +15,5 @@ public class BookListVO extends ItemListVO {
     private int pages;
     private String size;
     private Attribute<String> lang;//语言
-    private String summary;//简介
 
 }
