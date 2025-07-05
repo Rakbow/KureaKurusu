@@ -13,13 +13,11 @@ public class FileListQueryDTO extends ListQueryDTO {
 
     private Integer entityType;
     private Integer entityId;
-    private String name;
 
     public FileListQueryDTO(ListQuery qry) {
         super(qry);
         entityType = qry.getVal("entityType");
         entityId = qry.getVal("entityId");
-        name = qry.getVal("name");
     }
 
 }
