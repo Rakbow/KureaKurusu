@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,7 +22,6 @@ import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
 import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
@@ -31,7 +29,6 @@ import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -60,9 +57,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final ItemMapper itemMapper;
     private final ResourceService resourceSrv;
     private final EntityUtil entityUtil;
-
-    private final List<EntryType> itemExtraInfoEntryTypes
-            = List.of(EntryType.CLASSIFICATION, EntryType.MATERIAL, EntryType.EVENT);
 
     @Transactional
     @SneakyThrows
@@ -226,44 +220,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     return pl;
                 })
                 .toList();
-        return res;
-    }
-
-    @Transactional
-    public ItemExtraInfo getItemExtraInfo(long id) {
-        ItemExtraInfo res = new ItemExtraInfo();
-        List<Relation> relations = list(
-                new LambdaQueryWrapper<Relation>()
-                        .in(Relation::getRelatedGroup, ItemUtil.ItemExcRelatedGroups)
-                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
-                        .eq(Relation::getEntityId, id)
-        );
-        if (relations.isEmpty())
-            return res;
-        List<Long> entryIds = relations.stream().map(Relation::getRelatedEntityId).distinct().toList();
-        List<Entry> entries = entryMapper.selectList(new LambdaQueryWrapper<Entry>()
-                .in(Entry::getType, itemExtraInfoEntryTypes).in(Entry::getId, entryIds));
-        for (Relation r : relations) {
-            Entry e = DataFinder.findEntryById(r.getRelatedEntityId(), entries);
-            if (e == null) continue;
-            RelationVO re = RelationVO.builder()
-                    .target(
-                            RelationTargetVO.builder()
-                                    .entityType(EntityType.ENTRY.getValue())
-                                    .entityId(e.getId())
-                                    .name(e.getName())
-                                    .build()
-                    )
-                    .remark(r.getRemark())
-                    .build();
-            if (e.getType() == EntryType.CLASSIFICATION) {
-                res.getClassifications().add(re);
-            } else if (e.getType() == EntryType.EVENT) {
-                res.getEvents().add(re);
-            } else if (e.getType() == EntryType.MATERIAL) {
-                res.getMaterials().add(re);
-            }
-        }
         return res;
     }
 

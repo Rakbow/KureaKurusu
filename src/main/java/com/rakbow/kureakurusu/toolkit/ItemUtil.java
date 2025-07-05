@@ -1,8 +1,7 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.emun.RelatedGroup;
-import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.entity.item.*;
 import com.rakbow.kureakurusu.data.vo.item.*;
 
@@ -54,10 +53,10 @@ public class ItemUtil {
         return specBuilder.toString();
     }
 
-    public final static List<Integer> ItemExcRelatedGroups = Arrays.asList(
-            RelatedGroup.CLASSIFICATION.getValue(),
-            RelatedGroup.EVENT.getValue(),
-            RelatedGroup.MATERIAL.getValue()
+    public final static List<Integer> ItemExtraEntitySubTypes = Arrays.asList(
+            EntryType.CLASSIFICATION.getValue(),
+            EntryType.EVENT.getValue(),
+            EntryType.MATERIAL.getValue()
     );
 
     private final static Map<Integer, Class<? extends SubItem>> subItemMap = new HashMap<>() {{

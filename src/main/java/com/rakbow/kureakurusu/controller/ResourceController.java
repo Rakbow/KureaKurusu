@@ -97,10 +97,9 @@ public class ResourceController {
             @RequestParam("entityType") int entityType,
             @RequestParam("entityId") long entityId,
             @RequestParam("files") MultipartFile[] files,
-            @RequestParam("names") List<String> names,
-            @RequestParam("remarks") List<String> remarks
+            @RequestParam("names") List<String> names
     ) {
-        srv.uploadFiles(entityType, entityId, files, names, remarks);
+        srv.uploadFiles(entityType, entityId, files, names);
         return new ApiResult().ok("entity.crud.update.success");
     }
 

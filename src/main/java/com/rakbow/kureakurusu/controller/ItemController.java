@@ -4,7 +4,6 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.ItemService;
-import com.rakbow.kureakurusu.service.RelationService;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.service.item.BookService;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
@@ -26,7 +25,6 @@ public class ItemController {
     private final ItemService srv;
     private final AlbumService albumSrv;
     private final BookService bookSrv;
-    private final RelationService reSrv;
 
     //region basic crud
 
@@ -102,11 +100,6 @@ public class ItemController {
     @PostMapping("convert-isbn")
     public ApiResult convertISBN(@RequestBody ISBNConvertDTO dto) {
         return new ApiResult().load(bookSrv.convertISBN(dto.getIsbn10()));
-    }
-
-    @PostMapping("get-extra-info")
-    public ApiResult getExtraInfo(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(reSrv.getItemExtraInfo(qry.getId()));
     }
 
     //endregion

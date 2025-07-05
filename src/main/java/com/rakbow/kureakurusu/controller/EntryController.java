@@ -73,4 +73,9 @@ public class EntryController {
         return new ApiResult().load(srv.getSubProducts(qry.getId()));
     }
 
+    @PostMapping("get-extra-info")
+    public ApiResult getExtraInfo(@RequestBody CommonDetailQry qry) {
+        return new ApiResult().load(srv.getItemExtraInfo(qry.getId()));
+    }
+
 }

@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -197,21 +196,16 @@ public class ResourceService {
     @SneakyThrows
     public SearchResult<FileListVO> getFileList(ListQuery dto) {
         FileListQueryDTO param = new FileListQueryDTO(dto);
-        Wrapper<FileInfo> wrapper;
-        if (param.getEntityType() == null && param.getEntityId() == null) {
-            wrapper = new QueryWrapper<FileInfo>()
-                    .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
-                    .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        } else {
-            wrapper = new MPJLambdaWrapper<FileInfo>()
-                    .selectAll(FileInfo.class)
+        MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
+                .like(StringUtils.isNotEmpty(param.getKeyword()), FileInfo::getName, param.getKeyword())
+                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                .orderByDesc(!param.isSort(), FileInfo::getId);
+        if (param.getEntityType() != null && param.getEntityId() != null) {
+            wrapper.selectAll(FileInfo.class)
                     .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
                     .eq(FileRelated::getEntityType, param.getEntityType())
-                    .eq(FileRelated::getEntityId, param.getEntityId())
-                    .like(StringUtils.isNotEmpty(param.getName()), "name", param.getName())
-                    .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
+                    .eq(FileRelated::getEntityId, param.getEntityId());
         }
-
 
         IPage<FileInfo> pages = fileMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
@@ -228,8 +222,7 @@ public class ResourceService {
 
     @Transactional
     @SneakyThrows
-    public void uploadFiles(int entityType, long entityId, MultipartFile[] files,
-                              List<String> names, List<String> remarks) {
+    public void uploadFiles(int entityType, long entityId, MultipartFile[] files, List<String> names) {
         List<FileRelated> addFileRelatedList = new ArrayList<>();
         String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern(DateHelper.DATE_FORMAT));
         Path saveDir = Paths.get(FILE_UPLOAD_DIR, datePath);
@@ -249,7 +242,6 @@ public class ResourceService {
             info.setExtension(FileUtil.getExtension(info.getName()));
             info.setSize(file.length());
             info.setPath(STR."\{FILE_UPLOAD_PREFIX}\{datePath}/\{newFileName}");
-            info.setRemark(remarks.get(idx));
 
             FileRelated related = new FileRelated();
             related.setEntityType(entityType);
@@ -288,7 +280,9 @@ public class ResourceService {
     public SearchResult<FileListVO> searchFiles(FileSearchParams param) {
         // 记录开始时间
         long start = System.currentTimeMillis();
-        LambdaQueryWrapper<FileInfo> wrapper = new LambdaQueryWrapper<FileInfo>().eq(FileInfo::getStatus, 1);
+        LambdaQueryWrapper<FileInfo> wrapper = new LambdaQueryWrapper<FileInfo>()
+                .eq(FileInfo::getStatus, 1)
+                .orderByDesc(FileInfo::getId);
         if (!param.getKeywords().isEmpty()) param.getKeywords().forEach(k -> wrapper.like(FileInfo::getName, k));
         IPage<FileInfo> pages = fileMapper.selectPage(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);

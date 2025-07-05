@@ -34,7 +34,6 @@ public class Item extends Entity {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     @AutoMapping(qualifiedByName = "toAttribute")
     private ItemType type;
-    @TableField(updateStrategy = FieldStrategy.NEVER)
     @AutoMapping(qualifiedByName = "toAttribute")
     private ItemSubType subType;
 

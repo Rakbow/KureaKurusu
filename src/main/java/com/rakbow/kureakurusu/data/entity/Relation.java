@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,10 +22,6 @@ public class Relation {
 
     @TableId(type = IdType.AUTO)
     private Long id;
-
-    @Deprecated
-    @TableField(exist = false)
-    private RelatedGroup relatedGroup;
 
     private Long roleId;
     private Long relatedRoleId;
