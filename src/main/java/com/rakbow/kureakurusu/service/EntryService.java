@@ -9,20 +9,23 @@ import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.emun.RelatedGroup;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.GroupCacheEntryItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
+import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
+import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
-import com.rakbow.kureakurusu.toolkit.PopularUtil;
+import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
@@ -36,8 +39,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -49,7 +50,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     private final Converter converter;
     private final EntityUtil entityUtil;
-    private final PopularUtil popularUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final static int ENTITY_TYPE = EntityType.ENTRY.getValue();
 
@@ -94,29 +94,33 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         // 记录开始时间
         long start = System.currentTimeMillis();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>().eq(Entry::getStatus, 1)
-                .eq(ObjectUtils.isNotEmpty(param.getType()), Entry::getType, param.getType())
-                .orderByDesc(Entry::getId);
+                .eq(ObjectUtils.isNotEmpty(param.getType()), Entry::getType, param.getType());
         if (!param.getKeywords().isEmpty()) {
             if (param.strict()) {
                 param.getKeywords().forEach(k ->
                         wrapper.or().eq(Entry::getName, k).or().eq(Entry::getNameZh, k).or().eq(Entry::getNameEn, k));
+                wrapper.orderByDesc(Entry::getId);
             } else {
                 wrapper.and(w -> param.getKeywords().forEach(k -> w.or(i -> i
                         .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
                         .or().like(Entry::getName, k)
                         .or().like(Entry::getNameZh, k)
                         .or().like(Entry::getNameEn, k)
-                )));
+                ))).orderByDesc(Entry::getId);
             }
         } else {
-            //TODO OPTIMIZE
-            if (param.getMode() != 0 && ObjectUtils.isNotEmpty(param.getType())) {
-                Set<Long> ids = popularUtil.getEntryPopularityRank(param.getType(), 7);
-                if (!ids.isEmpty()) {
-                    wrapper.in(Entry::getId, ids).orderBy(true, false, STR."FIELD(id, \{ids.stream()
-                            .map(String::valueOf).collect(Collectors.joining(","))})");
-                }
-            }
+            wrapper.selectAll(Entry.class)
+                    .select(GroupCacheEntryItem::getItems)
+                    .leftJoin(GroupCacheEntryItem.class, on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
+                    .groupBy(Entry::getId)
+                    .orderByDesc(GroupCacheEntryItem::getItems);
+            // if (param.getMode() != 0 && ObjectUtils.isNotEmpty(param.getType())) {
+            //     Set<Long> ids = popularUtil.getEntryPopularityRank(param.getType(), 7);
+            //     if (!ids.isEmpty()) {
+            //         wrapper.in(Entry::getId, ids).orderBy(true, false, STR."FIELD(id, \{ids.stream()
+            //                 .map(String::valueOf).collect(Collectors.joining(","))})");
+            //     }
+            // }
         }
         IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryMiniVO> res = new ArrayList<>(pages.getRecords().stream().map(EntryMiniVO::new).toList());
@@ -181,16 +185,51 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     public List<EntryListVO> getSubProducts(long id) {
         List<EntryListVO> res = new ArrayList<>();
-        if (MetaData.getOptions().roleSet.isEmpty())
-            return res;
         List<Entry> entries = list(
                 new MPJLambdaWrapper<Entry>().selectAll(Entry.class)
                         .innerJoin(Relation.class, on -> on.eq(Relation::getEntityId, Entry::getId)
-                                .eq(Relation::getRelatedGroup, RelatedGroup.PRODUCT)
+                                .eq(Relation::getRelatedEntitySubType, EntryType.PRODUCT)
                                 .eq(Relation::getRelatedEntityType, EntityType.ENTRY)
                                 .eq(Relation::getRelatedEntityId, id)
                         ).orderByAsc(Entry::getDate));
+        if(entries.isEmpty()) return res;
         res = converter.convert(entries, EntryListVO.class);
+        return res;
+    }
+
+    @Transactional
+    public ItemExtraInfo getItemExtraInfo(long id) {
+        ItemExtraInfo res = new ItemExtraInfo();
+        List<Entry> entries = list(
+                new MPJLambdaWrapper<Entry>().selectAll(Entry.class).select(Relation::getRemark)
+                        .innerJoin(Relation.class, on -> on.eq(Relation::getRelatedEntityId, Entry::getId)
+                                .in(Relation::getRelatedEntityType, EntityType.ENTRY)
+                                .in(Relation::getRelatedEntitySubType, ItemUtil.ItemExtraEntitySubTypes)
+                                .eq(Relation::getEntityType, EntityType.ITEM)
+                                .eq(Relation::getEntityId, id)
+                        )
+        );
+        if (entries.isEmpty())
+            return res;
+        for (Entry e : entries) {
+            RelationVO re = RelationVO.builder()
+                    .target(
+                            RelationTargetVO.builder()
+                                    .entityType(EntityType.ENTRY.getValue())
+                                    .entityId(e.getId())
+                                    .name(e.getName())
+                                    .build()
+                    )
+                    .remark(e.getRemark())
+                    .build();
+            if (e.getType() == EntryType.CLASSIFICATION) {
+                res.getClassifications().add(re);
+            } else if (e.getType() == EntryType.EVENT) {
+                res.getEvents().add(re);
+            } else if (e.getType() == EntryType.MATERIAL) {
+                res.getMaterials().add(re);
+            }
+        }
         return res;
     }
 
