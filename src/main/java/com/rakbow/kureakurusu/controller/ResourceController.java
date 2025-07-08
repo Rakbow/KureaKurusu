@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.controller;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.ResourceService;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
@@ -37,8 +36,8 @@ public class ResourceController {
     }
 
     @PostMapping("image/default-displayed")
-    public ApiResult getEntityImages(@RequestBody EntityQry qry) {
-        return new ApiResult().load(srv.getEntityDisplayImages(qry.getEntityType(), qry.getEntityId()));
+    public ApiResult getEntityImages(@RequestBody EntityQryDTO dto) {
+        return new ApiResult().load(srv.getEntityDisplayImages(dto.getEntityType(), dto.getEntityId()));
     }
 
     @PostMapping("image/upload")
@@ -77,6 +76,11 @@ public class ResourceController {
     }
 
     //endregion
+
+    @PostMapping("file/related")
+    public ApiResult fileRelated(@RequestBody EntityQryDTO dto) {
+        return new ApiResult().load(srv.getFileRelated(dto));
+    }
 
     @PostMapping("file/list")
     public ApiResult fileList(@RequestBody ListQuery dto) {

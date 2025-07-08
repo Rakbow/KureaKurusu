@@ -21,6 +21,7 @@ import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
+import com.rakbow.kureakurusu.data.vo.resource.FileRelatedVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -84,6 +85,7 @@ public class ResourceService {
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
                 .eq(Image::getEntityType, param.getEntityType())
                 .eq(Image::getEntityId, param.getEntityId())
+                .like(StringUtils.isNotEmpty(param.getKeyword()), Image::getName, param.getKeyword())
                 .eq(ObjectUtils.isNotEmpty(param.getType()) && param.getType() != -1 && param.getType() != -2, Image::getType, param.getType())
                 .in(ObjectUtils.isNotEmpty(param.getType()) && param.getType() == -2, Image::getType, defaultImageType)
                 .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
@@ -190,6 +192,25 @@ public class ResourceService {
         related.setFileInfo(info);
 
         return related;
+    }
+
+    @Transactional
+    @SneakyThrows
+    public FileRelatedVO getFileRelated(EntityQryDTO dto) {
+        MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
+                .selectAll(FileInfo.class)
+                .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
+                .eq(FileRelated::getEntityType, dto.getEntityType())
+                .eq(FileRelated::getEntityId, dto.getEntityId())
+                .orderByDesc(FileInfo::getId);
+
+        List<FileInfo> files = fileMapper.selectList(wrapper);
+        if(files.isEmpty()) new FileRelatedVO();
+
+        List<FileListVO> fileVOs = converter.convert(files, FileListVO.class);
+        long bytes = files.stream().mapToLong(FileInfo::getSize).sum();
+
+        return new FileRelatedVO(fileVOs, CommonUtil.getFileSize(bytes));
     }
 
     @Transactional
