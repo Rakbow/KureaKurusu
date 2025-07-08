@@ -6,10 +6,7 @@ import com.rakbow.kureakurusu.data.emun.Gender;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.EnumHelper;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -133,13 +130,7 @@ public interface MetaVOMapper {
 
     @Named("size")
     default String size(long bytes) {
-        double kb = bytes / 1024.0;
-        if (kb < 100) {
-            return String.format("%.2f KB", kb);
-        } else {
-            double mb = kb / 1024.0;
-            return String.format("%.2f MB", mb);
-        }
+        return CommonUtil.getFileSize(bytes);
     }
 
     @Named("getFileExt")
