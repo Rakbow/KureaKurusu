@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.EntityQry;
+import com.rakbow.kureakurusu.data.dto.EntityQryDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Entry;
@@ -68,7 +68,7 @@ public class GeneralController {
     //region other
 
     @PostMapping("like")
-    public ApiResult like(@RequestBody EntityQry qry, HttpServletResponse response) {
+    public ApiResult like(@RequestBody EntityQryDTO dto, HttpServletResponse response) {
         ApiResult res = new ApiResult();
         //get like token from cookie
         String likeToken = TokenInterceptor.getLikeToken();
@@ -79,7 +79,7 @@ public class GeneralController {
             cookie.setPath(contextPath);
             response.addCookie(cookie);
         }
-        if (srv.like(qry.getEntityType(), qry.getEntityId(), likeToken)) {
+        if (srv.like(dto.getEntityType(), dto.getEntityId(), likeToken)) {
             res.ok("entity.like.success");
         } else {
             throw new ApiException("entity.like.failed");

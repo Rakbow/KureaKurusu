@@ -1,16 +1,13 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.RoleMapper;
-import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.AlbumFormat;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.MediaFormat;
-import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -76,7 +72,6 @@ public class GeneralService {
 
     /**
      * 批量更新数据库实体激活状态
-     *
      * @author rakbow
      */
     @Transactional
@@ -85,9 +80,7 @@ public class GeneralService {
     }
 
     /**
-     * 点赞实体
-     *
-     * @param entityType,entityId,likeToken 实体表名,实体id,点赞token
+     * 点赞
      * @author rakbow
      */
     @Transactional

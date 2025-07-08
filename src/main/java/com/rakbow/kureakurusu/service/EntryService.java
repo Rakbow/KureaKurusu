@@ -14,7 +14,6 @@ import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.GroupCacheEntryItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
@@ -165,8 +164,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 .selectAll(Entry.class)
                 .select(GroupCacheEntryItem::getItems)
                 .leftJoin(GroupCacheEntryItem.class,
-                        on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId)
-                )
+                        on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
                 .groupBy(Entry::getId)
                 .eq(Entry::getType, param.getType())
                 .and(StringUtils.isNotEmpty(param.getKeyword()), i -> i
@@ -187,12 +185,13 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         List<EntryListVO> res = new ArrayList<>();
         List<Entry> entries = list(
                 new MPJLambdaWrapper<Entry>().selectAll(Entry.class)
-                        .innerJoin(Relation.class, on -> on.eq(Relation::getEntityId, Entry::getId)
-                                .eq(Relation::getRelatedEntitySubType, EntryType.PRODUCT)
-                                .eq(Relation::getRelatedEntityType, EntityType.ENTRY)
+                        .innerJoin(Relation.class, on ->
+                                on.eq(Relation::getEntityId, Entry::getId)
+                                .eq(Relation::getEntitySubType, EntryType.PRODUCT)
+                                .eq(Relation::getEntityType, EntityType.ENTRY)
                                 .eq(Relation::getRelatedEntityId, id)
                         ).orderByAsc(Entry::getDate));
-        if(entries.isEmpty()) return res;
+        if (entries.isEmpty()) return res;
         res = converter.convert(entries, EntryListVO.class);
         return res;
     }
