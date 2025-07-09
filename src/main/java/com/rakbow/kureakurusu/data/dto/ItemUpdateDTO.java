@@ -2,13 +2,10 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.rakbow.kureakurusu.data.emun.ReleaseType;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,18 +48,5 @@ public class ItemUpdateDTO extends DTO {
 
     private String remark;
     private boolean bonus;
-
-    public ItemUpdateDTO() {
-        name = "";
-        aliases = new ArrayList<>();
-        barcode = "";
-        catalogId = "";
-        releaseType = ReleaseType.STANDARD.getValue();
-        releaseDate = DateHelper.DEFAULT_DATE;
-        price = 0;
-        region = "";
-        remark = "";
-        bonus = false;
-    }
 
 }

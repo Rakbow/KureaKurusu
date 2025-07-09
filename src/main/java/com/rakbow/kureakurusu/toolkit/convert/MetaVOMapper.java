@@ -1,12 +1,11 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.common.Constant;
-import com.rakbow.kureakurusu.data.emun.Gender;
-import com.rakbow.kureakurusu.data.emun.Language;
-import com.rakbow.kureakurusu.data.emun.Region;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.toolkit.*;
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.EnumHelper;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -36,12 +35,12 @@ public interface MetaVOMapper {
     @Named("toAttribute")
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    default <X, T extends Enum<T>> Attribute<X> toAttribute(T t) {
-        Method getValueMethod = t.getClass().getMethod("getValue");
-        Method getLabelMethod = t.getClass().getMethod("getLabelKey");
-        String labelKey = getLabelMethod.invoke(t).toString();
+    default <X, E extends Enum<E>> Attribute<X> toAttribute(E e) {
+        Method getValueMethod = e.getClass().getMethod("getValue");
+        Method getLabelMethod = e.getClass().getMethod("getLabelKey");
+        String labelKey = getLabelMethod.invoke(e).toString();
         String label = I18nHelper.getMessage(labelKey);
-        X value = (X) getValueMethod.invoke(t);
+        X value = (X) getValueMethod.invoke(e);
         return new Attribute<>(label, value);
     }
 
@@ -62,20 +61,11 @@ public interface MetaVOMapper {
     @Named("getCurrency")
     default String getCurrency(String region) {
         if(StringUtils.isBlank(region)) return "JPY";
-        if(region.equals("global")) return "JPY";
-        if(region.equals("un")) return "JPY";
-        if(region.equals("eu")) return "EUR";
-        return Currency.getInstance(Locale.of("", region)).getCurrencyCode();
-    }
-
-    @Named("getEnumLabel")
-    default String getEnumLabel(String labelKey) {
-        return I18nHelper.getMessage(labelKey);
-    }
-
-    @Named("getStrList")
-    default List<String> getStrList(String json) {
-        return JsonUtil.toJavaList(json, String.class);
+        return switch (region) {
+            case "global" -> "JPY";
+            case "eu" -> "EUR";
+            default -> Currency.getInstance(Locale.of("", region)).getCurrencyCode();
+        };
     }
 
     @Named("getVOTime")
@@ -83,44 +73,9 @@ public interface MetaVOMapper {
         return DateHelper.timestampToString(timestamp);
     }
 
-    @Named("getBool")
-    default Boolean getBool(int value) {
-        return value == 1;
-    }
-
-    @Named("getBool")
-    default int getBool(boolean value) {
-        return value ? 1 : 0;
-    }
-
-    @Named("getIdsStr")
-    default String getIdsStr(List<Integer> ids) {
-        return JsonUtil.toJson(ids);
-    }
-
-    @Named("getGender")
-    default Gender getGender(int value) {
-        return Gender.get(value);
-    }
-
-    @Named("getRegion")
-    default Region getRegion(String value) {
-        return Region.get(value);
-    }
-
-    @Named("getLanguage")
-    default Language getLanguage(String value) {
-        return Language.get(value);
-    }
-
     @Named("getMediaFormat")
     default List<Attribute<Integer>> getMediaFormat(List<Integer> ids) {
         return EnumHelper.getAttributes(Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet, ids);
-    }
-
-    @Named("updateEditedTime")
-    default String updateEditedTime() {
-        return DateHelper.nowStr();
     }
 
     @Named("duration")
@@ -131,11 +86,6 @@ public interface MetaVOMapper {
     @Named("size")
     default String size(long bytes) {
         return CommonUtil.getFileSize(bytes);
-    }
-
-    @Named("getFileExt")
-    default String getFileExt(String name) {
-        return name.substring(name.lastIndexOf("."));
     }
 
     @Named("thumbImage")
