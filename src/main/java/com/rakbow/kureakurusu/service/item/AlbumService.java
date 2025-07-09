@@ -16,7 +16,8 @@ import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
-import com.rakbow.kureakurusu.service.ResourceService;
+import com.rakbow.kureakurusu.service.FileService;
+import com.rakbow.kureakurusu.service.ImageService;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
@@ -55,7 +56,8 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
     private final AlbumDiscMapper discMapper;
     private final ItemMapper itemMapper;
     private final FileInfoMapper fileMapper;
-    private final ResourceService resourceSrv;
+    private final ImageService imageSrv;
+    private final FileService fileSrv;
     private final SqlSessionFactory sqlSessionFactory;
     private final Converter converter;
     private final EntityType ENTITY_TYPE = EntityType.ITEM;
@@ -211,7 +213,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
             ep.setDetail(epDetail.toString());
             updateEps.add(ep);
 
-            FileRelated related = resourceSrv.generateFileRelated(EntityType.EPISODE.getValue(), ep.getId(), file);
+            FileRelated related = fileSrv.generateRelated(EntityType.EPISODE.getValue(), ep.getId(), file);
             addFileRelatedList.add(related);
             addFiles.add(related.getFileInfo());
 

@@ -55,7 +55,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final EntryMapper entryMapper;
     private final RelationMapper mapper;
     private final ItemMapper itemMapper;
-    private final ResourceService resourceSrv;
+    private final ImageService resourceSrv;
     private final EntityUtil entityUtil;
 
     @Transactional
@@ -124,7 +124,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 target.setName(((Entry) e).getName());
                 target.setSubName(entityUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
             } else {
-                target.setThumb(resourceSrv.getEntityImageCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));
+                target.setThumb(resourceSrv.getCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));
                 target.setName(((Item) e).getName());
                 target.setSubName(((Item) e).getBarcode());
             }

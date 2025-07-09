@@ -39,5 +39,7 @@ public class FileInfo extends Entity {
 
     @TableField(exist = false)
     private File file;
+    @TableField(exist = false)
+    private long relatedId;
 
 }

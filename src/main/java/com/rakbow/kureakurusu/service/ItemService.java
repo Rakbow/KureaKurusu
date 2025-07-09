@@ -51,7 +51,8 @@ import java.util.stream.Collectors;
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     //region inject
-    private final ResourceService resourceSrv;
+    private final ImageService imageSrv;
+    private final FileService fileSrv;
     private final RelationService relationSrv;
     private final AlbumService albumSrv;
 
@@ -87,7 +88,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         for (int i = 0; i < dto.getImages().size(); i++) {
             dto.getImages().get(i).setFile(images[i]);
         }
-        resourceSrv.uploadEntityImage(ENTITY_TYPE.getValue(), id, dto.getImages(), dto.getGenerateThumb());
+        imageSrv.upload(ENTITY_TYPE.getValue(), id, dto.getImages(), dto.getGenerateThumb());
 
         //save episode
         if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
@@ -204,7 +205,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .type(item.getType().getValue())
                 .item(vo)
                 .traffic(entityUtil.buildTraffic(ENTITY_TYPE.getValue(), id))
-                .cover(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))
+                .cover(imageSrv.getCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))
                 .build();
     }
 
@@ -266,8 +267,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
         //get image cache
         items.forEach(i -> {
-            i.setCover(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
-            i.setThumb(resourceSrv.getEntityImageCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
+            i.setCover(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
+            i.setThumb(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
         });
         return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize(),
                 String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
@@ -316,9 +317,9 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         List<Long> ids = items.stream().map(ItemListVO::getId).toList();
         int entityType = ENTITY_TYPE.getValue();
         // 将资源统计列表转换为 Map<entityId, count>
-        Map<Long, Integer> fileCountMap = resourceSrv.getFileCount(entityType, ids).stream()
+        Map<Long, Integer> fileCountMap = fileSrv.count(entityType, ids).stream()
                 .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
-        Map<Long, Integer> imageCountMap = resourceSrv.getImageCount(entityType, ids).stream()
+        Map<Long, Integer> imageCountMap = imageSrv.count(entityType, ids).stream()
                 .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
         for (ItemListVO item : items) {
             item.setFileCount(fileCountMap.getOrDefault(item.getId(), 0));
