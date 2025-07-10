@@ -33,8 +33,8 @@ public class ImageController {
     }
 
     @PostMapping("preview")
-    public ApiResult preview(@RequestBody EntityQryDTO dto) {
-        return new ApiResult().load(srv.preview(dto.getEntityType(), dto.getEntityId()));
+    public ApiResult preview(@RequestBody ImagePreviewDTO dto) {
+        return new ApiResult().load(srv.preview(dto));
     }
 
     @PostMapping("upload")

@@ -11,10 +11,7 @@ import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.Constant;
-import com.rakbow.kureakurusu.data.dto.ImageDeleteDTO;
-import com.rakbow.kureakurusu.data.dto.ImageListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
-import com.rakbow.kureakurusu.data.dto.ImageUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
@@ -115,10 +112,10 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         removeByIds(deleteIndexes.stream().map(index -> images.get(index).getId()).toList());
     }
 
-    public ImageDisplayVO preview(int entityType, long entityId) {
-        IPage<Image> pages = page(new Page<>(1, 6),
-                new LambdaQueryWrapper<Image>().eq(Image::getEntityType, entityType)
-                        .eq(Image::getEntityId, entityId)
+    public ImageDisplayVO preview(ImagePreviewDTO dto) {
+        IPage<Image> pages = page(new Page<>(1, dto.getCount()),
+                new LambdaQueryWrapper<Image>().eq(Image::getEntityType, dto.getEntityType())
+                        .eq(Image::getEntityId, dto.getEntityId())
                         .in(Image::getType, defaultImageType)
                         .orderByAsc(Image::getId)
         );

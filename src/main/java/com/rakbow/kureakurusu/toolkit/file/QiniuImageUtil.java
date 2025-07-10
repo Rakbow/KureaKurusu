@@ -105,6 +105,11 @@ public class QiniuImageUtil {
         return STR."\{imageUrl}\{THUMBNAIL_URL}\{width}x\{height}/extent/\{width}x\{height}/background/IzJmMzY0Zg==";
     }
 
+    public static String getThumbWithTransparentBackground(String url, double size) {
+
+        return STR."\{url}\{THUMBNAIL_URL}\{size}x\{size}/extent/\{size}x\{size}/background/IzAwMDAwMDAw";
+    }
+
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
     public String uploadEntryImage(int entityType, long entityId, ImageMiniDTO image) {

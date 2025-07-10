@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
-import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -50,7 +48,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
-    //region inject
     private final ImageService imageSrv;
     private final FileService fileSrv;
     private final RelationService relationSrv;
@@ -61,18 +58,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
-    private final ItemMapper mapper;
-    private final ImageMapper imageMapper;
-    private final RelationMapper relationMapper;
-    private final Converter converter;
-    private final EntityType ENTITY_TYPE = EntityType.ITEM;
-    //endregion
 
-    //region static const
+    private final ItemMapper mapper;
+    private final Converter converter;
+
+    private static final EntityType ENTITY_TYPE = EntityType.ITEM;
     private static final String SUB_T_PREFIX = "t1";
     private static final String SUB_T_CONDITION = " t1 on t1.id = t.id";
-
-    //endregion
 
     //region basic
 
@@ -143,7 +135,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //get original data
         List<Item> items = listByIds(ids);
         if (items.isEmpty()) return;
-        List<Image> images = imageMapper.selectList(
+        List<Image> images = imageSrv.list(
                 new LambdaQueryWrapper<Image>()
                         .eq(Image::getEntityType, ENTITY_TYPE)
                         .in(Image::getEntityId, ids)
@@ -161,7 +153,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         remove(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
         subMapper.delete(new LambdaQueryWrapper<SubItem>().in(SubItem::getId, ids));
 
-        relationMapper.delete(
+        relationSrv.remove(
                 new LambdaQueryWrapper<Relation>()
                         .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
                         .in(Relation::getEntityId, ids)

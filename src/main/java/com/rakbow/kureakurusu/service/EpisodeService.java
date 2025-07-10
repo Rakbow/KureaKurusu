@@ -48,7 +48,9 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     private final Converter converter;
     private final EntityUtil entityUtil;
     private final PopularUtil popularUtil;
-    private final ImageService resourceSrv;
+
+    private final ImageService imageSrv;
+    private final FileService fileSrv;
 
     private final AlbumDiscMapper discMapper;
     private final ItemMapper itemMapper;
@@ -70,7 +72,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
             relatedId = disc.getItemId();
         }
         vo.setTraffic(entityUtil.buildTraffic(EntityType.EPISODE.getValue(), id));
-        vo.setCover(resourceSrv.getCache(relatedType, relatedId, ImageType.MAIN));
+        vo.setCover(imageSrv.getCache(relatedType, relatedId, ImageType.MAIN));
 
         //update popularity
         popularUtil.updateEntityPopularity(ENTITY_TYPE.getValue(), id);
@@ -113,7 +115,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
         //get file count
         List<Long> ids = res.stream().map(EpisodeListVO::getId).toList();
-        Map<Long, Integer> fileCountMap = resourceSrv.getFileCount(ENTITY_TYPE.getValue(), ids).stream()
+        Map<Long, Integer> fileCountMap = fileSrv.count(ENTITY_TYPE.getValue(), ids).stream()
                 .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
         for (EpisodeListVO ep : res) {
             ep.setFileCount(fileCountMap.getOrDefault(ep.getId(), 0));
@@ -138,7 +140,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                             .name(album.getName())
                             .subName(STR."\{album.getReleaseDate()}  \{album.getCatalogId()}")
                             .tableName(EntityType.ITEM.getTableName())
-                            .thumb(resourceSrv.getCache(EntityType.ITEM.getValue(), disc.getItemId(), ImageType.THUMB))
+                            .thumb(imageSrv.getCache(EntityType.ITEM.getValue(), disc.getItemId(), ImageType.THUMB))
                             .build()
             );
         }

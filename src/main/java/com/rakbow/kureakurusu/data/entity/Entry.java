@@ -37,7 +37,6 @@ public class Entry extends Entity {
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private EntryType type;
     @AutoMapping(qualifiedByName = "toAttribute")
-    @TableField(updateStrategy = FieldStrategy.NEVER)
     private EntrySubType subType;
     @NotBlank(message = "{entity.crud.name.required_field}")
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)

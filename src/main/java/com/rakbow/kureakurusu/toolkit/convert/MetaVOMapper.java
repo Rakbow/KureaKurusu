@@ -95,7 +95,7 @@ public interface MetaVOMapper {
 
     @Named("displayImage")
     default String displayImage(String url) {
-        return QiniuImageUtil.getThumb(url, 1200, 900);
+        return QiniuImageUtil.getThumb(url, 1100, 700);
     }
 
 }
