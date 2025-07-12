@@ -33,8 +33,9 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
     private final RedisUtil redisUtil;
 
     @Transactional
-    public SearchResult<Role> list(RoleListQueryDTO param) {
-
+    public SearchResult<Role> list(RoleListQueryDTO dto) {
+        dto.init();
+        long start = System.currentTimeMillis();
         MPJLambdaWrapper<Role> wrapper = new MPJLambdaWrapper<Role>()
                 .selectAll(Role.class)
                 .select(GroupCacheRoleRelation::getCount)
@@ -42,17 +43,17 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
                         on -> on.eq(GroupCacheRoleRelation::getRoleId, Role::getId)
                 )
                 .groupBy(Role::getId)
-                .and(StringUtils.isNotEmpty(param.getKeyword()), i -> i
-                        .or().like(Role::getName, param.getKeyword())
-                        .or().like(Role::getNameZh, param.getKeyword())
-                        .or().like(Role::getNameEn, param.getKeyword())
+                .and(StringUtils.isNotEmpty(dto.getKeyword()), i -> i
+                        .or().like(Role::getName, dto.getKeyword())
+                        .or().like(Role::getNameZh, dto.getKeyword())
+                        .or().like(Role::getNameEn, dto.getKeyword())
                 )
                 .gt(Role::getId, 0)
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                .orderByDesc(!param.isSort(), GroupCacheRoleRelation::getCount);
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderByDesc(!dto.isSort(), GroupCacheRoleRelation::getCount);
 
-        IPage<Role> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
-        return new SearchResult<>(pages);
+        IPage<Role> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
+        return new SearchResult<>(pages.getRecords(), pages.getTotal(), start);
     }
 
     public void refresh() {

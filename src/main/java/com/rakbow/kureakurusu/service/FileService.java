@@ -67,32 +67,31 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
         if (!param.getKeywords().isEmpty()) param.getKeywords().forEach(k -> wrapper.like(FileInfo::getName, k));
         IPage<FileInfo> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize(),
-                String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
+        return new SearchResult<>(res, pages.getTotal(), start);
     }
 
     @Transactional
     @SneakyThrows
-    public SearchResult<FileListVO> list(ListQuery dto) {
-        FileListQueryDTO param = new FileListQueryDTO(dto);
+    public SearchResult<FileListVO> list(FileListQueryDTO dto) {
+        dto.init();
         MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
                 .selectAll(FileInfo.class)
-                .like(StringUtils.isNotEmpty(param.getKeyword()), FileInfo::getName, param.getKeyword())
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                .orderByDesc(!param.isSort(), FileInfo::getId);
+                .like(StringUtils.isNotEmpty(dto.getKeyword()), FileInfo::getName, dto.getKeyword())
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderByDesc(!dto.isSort(), FileInfo::getId);
 
         //get file related part
-        if (param.getEntityType() != null && param.getEntityId() != null) {
+        if (dto.getEntityType() != null && dto.getEntityId() != null) {
             wrapper.selectAs(FileRelated::getId, FileInfo::getRelatedId)
                     .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
-                    .eq(FileRelated::getEntityType, param.getEntityType())
-                    .eq(FileRelated::getEntityId, param.getEntityId());
+                    .eq(FileRelated::getEntityType, dto.getEntityType())
+                    .eq(FileRelated::getEntityId, dto.getEntityId());
         }
-
-        IPage<FileInfo> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
+        long start = System.currentTimeMillis();
+        IPage<FileInfo> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
 
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(res, pages.getTotal(), start);
     }
 
     @Transactional

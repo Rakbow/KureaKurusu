@@ -14,10 +14,10 @@ public class FileListQueryDTO extends ListQueryDTO {
     private Integer entityType;
     private Integer entityId;
 
-    public FileListQueryDTO(ListQuery qry) {
-        super(qry);
-        entityType = qry.getVal("entityType");
-        entityId = qry.getVal("entityId");
+    public void init() {
+        super.init();
+        entityType = super.getVal("entityType");
+        entityId = super.getVal("entityId");
     }
 
 }

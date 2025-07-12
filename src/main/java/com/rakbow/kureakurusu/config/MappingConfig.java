@@ -10,9 +10,7 @@ import org.mapstruct.ReportingPolicy;
  */
 @MapperConfig(
         componentModel = "spring",
-        uses = {
-                GlobalConverters.class // 👈 注册全局转换器
-        },
+        uses = GlobalConverters.class,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE
 )

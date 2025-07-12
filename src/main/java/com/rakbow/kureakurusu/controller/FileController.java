@@ -43,7 +43,7 @@ public class FileController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery dto) {
+    public ApiResult list(@RequestBody FileListQueryDTO dto) {
         return new ApiResult().load(srv.list(dto));
     }
 

@@ -9,15 +9,14 @@ import lombok.NoArgsConstructor;
  * @since 2024/5/4 9:04
  */
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 @Data
 public class ItemListQueryDTO extends ListQueryDTO {
 
     private int type;
 
-    public ItemListQueryDTO(ListQuery qry) {
-        super(qry);
-        type = qry.getVal("type");
+    public void init() {
+        super.init();
+        type = super.getVal("type");
     }
 
 }

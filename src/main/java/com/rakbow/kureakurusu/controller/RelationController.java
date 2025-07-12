@@ -18,8 +18,8 @@ public class RelationController {
     private final RelationService srv;
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery qry) {
-        return new ApiResult().load(srv.list(new RelationListQueryDTO(qry)));
+    public ApiResult list(@RequestBody RelationListQueryDTO dto) {
+        return new ApiResult().load(srv.list(dto));
     }
 
     @PostMapping("create")

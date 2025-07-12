@@ -11,7 +11,6 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
-import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Episode;
@@ -82,15 +81,16 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EpisodeListVO> list(ListQuery dto) {
-        EpisodeListQueryDTO param = new EpisodeListQueryDTO(dto);
+    public SearchResult<EpisodeListVO> list(EpisodeListQueryDTO dto) {
+        dto.init();
         MPJLambdaWrapper<Episode> wrapper = new MPJLambdaWrapper<Episode>()
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                .orderByDesc(!param.isSort(), Episode::getId);
-        if (param.getKeyword() != null && !param.getKeyword().isEmpty()) {
-            wrapper.like(Episode::getName, param.getKeyword()).or().like(Episode::getNameEn, param.getKeyword());
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderByDesc(!dto.isSort(), Episode::getId);
+        if (dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
+            wrapper.like(Episode::getName, dto.getKeyword()).or().like(Episode::getNameEn, dto.getKeyword());
         }
-        IPage<Episode> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
+        long start = System.currentTimeMillis();
+        IPage<Episode> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         if(pages.getRecords().isEmpty()) return new SearchResult<>();
         List<EpisodeListVO> res = converter.convert(pages.getRecords(), EpisodeListVO.class);
 
@@ -121,7 +121,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
             ep.setFileCount(fileCountMap.getOrDefault(ep.getId(), 0));
         }
 
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(res, pages.getTotal(), start);
     }
 
     @Transactional

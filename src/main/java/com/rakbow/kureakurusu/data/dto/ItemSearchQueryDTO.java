@@ -29,15 +29,15 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
     private String barcode;
     private String catalogId;
 
-    public ItemSearchQueryDTO(ListQuery qry) {
-        super(qry);
-        type = qry.getVal("type");
-        subType = qry.getVal("subType");
-        releaseType = qry.getVal("releaseType");
-        region = qry.getVal("region");
-        barcode = qry.getVal("barcode");
-        catalogId = qry.getVal("catalogId");
-        entries = qry.getVal("entries");
+    public void init() {
+        super.init();
+        type = super.getVal("type");
+        subType = super.getVal("subType");
+        releaseType = super.getVal("releaseType");
+        region = super.getVal("region");
+        barcode = super.getVal("barcode");
+        catalogId = super.getVal("catalogId");
+        entries = super.getVal("entries");
     }
 
     public boolean allSearch() {

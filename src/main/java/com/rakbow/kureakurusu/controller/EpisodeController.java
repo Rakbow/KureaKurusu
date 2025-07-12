@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
-import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.service.EpisodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class EpisodeController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery dto) {
+    public ApiResult list(@RequestBody EpisodeListQueryDTO dto) {
         return new ApiResult().load(srv.list(dto));
     }
 

@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.ListQuery;
 import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.service.RoleService;
@@ -25,8 +24,8 @@ public class RoleController {
     private final RoleService srv;
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery qry) {
-        return new ApiResult().load(srv.list(new RoleListQueryDTO(qry)));
+    public ApiResult list(@RequestBody RoleListQueryDTO dto) {
+        return new ApiResult().load(srv.list(dto));
     }
 
     @PostMapping("create")

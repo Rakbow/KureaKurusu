@@ -28,8 +28,8 @@ public class ImageController {
     //region image
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery dto) {
-        return new ApiResult().load(srv.list(new ImageListQueryDTO(dto)));
+    public ApiResult list(@RequestBody ImageListQueryDTO dto) {
+        return new ApiResult().load(srv.list(dto));
     }
 
     @PostMapping("preview")

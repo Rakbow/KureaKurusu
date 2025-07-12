@@ -60,17 +60,19 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     );
 
     @Transactional
-    public SearchResult<ImageVO> list(ImageListQueryDTO param) {
+    public SearchResult<ImageVO> list(ImageListQueryDTO dto) {
+        dto.init();
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
-                .eq(Image::getEntityType, param.getEntityType())
-                .eq(Image::getEntityId, param.getEntityId())
-                .like(StringUtils.isNotEmpty(param.getKeyword()), Image::getName, param.getKeyword())
-                .eq(ObjectUtils.isNotEmpty(param.getType()) && param.getType() != -1 && param.getType() != -2, Image::getType, param.getType())
-                .in(ObjectUtils.isNotEmpty(param.getType()) && param.getType() == -2, Image::getType, defaultImageType)
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()));
-        IPage<Image> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
+                .eq(Image::getEntityType, dto.getEntityType())
+                .eq(Image::getEntityId, dto.getEntityId())
+                .like(StringUtils.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
+                .eq(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
+                .in(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()));
+        long start = System.currentTimeMillis();
+        IPage<Image> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<ImageVO> res = converter.convert(pages.getRecords(), ImageVO.class);
-        return new SearchResult<>(res, pages.getTotal());
+        return new SearchResult<>(res, pages.getTotal(), start);
     }
 
     @SneakyThrows

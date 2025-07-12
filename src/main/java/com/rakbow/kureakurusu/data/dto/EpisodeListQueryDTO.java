@@ -13,9 +13,9 @@ public class EpisodeListQueryDTO extends ListQueryDTO {
 
     private Integer episodeType;
 
-    public EpisodeListQueryDTO(ListQuery qry) {
-        super(qry);
-        episodeType = qry.getVal("episodeType");
+    public void init() {
+        super.init();
+        episodeType = super.getVal("episodeType");
     }
 
 }

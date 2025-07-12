@@ -1,9 +1,9 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.config.MappingConfig;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
@@ -20,8 +20,8 @@ import lombok.*;
 @ToString(callSuper = true)
 @TableName(value = "episode", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = EpisodeVO.class, reverseConvertGenerate = false, uses = MappingConfig.class),
-        @AutoMapper(target = EpisodeListVO.class, reverseConvertGenerate = false, uses = MappingConfig.class)
+        @AutoMapper(target = EpisodeVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
+        @AutoMapper(target = EpisodeListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Episode extends Entity {
 

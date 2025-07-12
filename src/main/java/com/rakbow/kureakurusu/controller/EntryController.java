@@ -2,10 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.CommonDetailQry;
-import com.rakbow.kureakurusu.data.dto.EntrySearchParams;
-import com.rakbow.kureakurusu.data.dto.EntryUpdateDTO;
-import com.rakbow.kureakurusu.data.dto.ListQuery;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.EntryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +39,7 @@ public class EntryController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery dto) {
+    public ApiResult list(@RequestBody EntryListQueryDTO dto) {
         return new ApiResult().load(srv.list(dto));
     }
 

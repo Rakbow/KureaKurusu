@@ -90,7 +90,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     @SneakyThrows
     public SearchResult<EntryMiniVO> search(EntrySearchParams param) {
-        // 记录开始时间
         long start = System.currentTimeMillis();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>().eq(Entry::getStatus, 1)
                 .eq(ObjectUtils.isNotEmpty(param.getType()), Entry::getType, param.getType());
@@ -124,8 +123,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<EntryMiniVO> res = new ArrayList<>(pages.getRecords().stream().map(EntryMiniVO::new).toList());
 
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize(),
-                String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
+        return new SearchResult<>(res, pages.getTotal(), start);
     }
 
 
@@ -158,26 +156,27 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EntryListVO> list(ListQuery dto) {
-        EntryListQueryDTO param = new EntryListQueryDTO(dto);
+    public SearchResult<EntryListVO> list(EntryListQueryDTO dto) {
+        dto.init();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .selectAll(Entry.class)
                 .select(GroupCacheEntryItem::getItems)
                 .leftJoin(GroupCacheEntryItem.class,
                         on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
                 .groupBy(Entry::getId)
-                .eq(Entry::getType, param.getType())
-                .and(StringUtils.isNotEmpty(param.getKeyword()), i -> i
-                        .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", param.getKeyword())
-                        .or().like(Entry::getName, param.getKeyword())
-                        .or().like(Entry::getNameZh, param.getKeyword())
-                        .or().like(Entry::getNameEn, param.getKeyword())
+                .eq(Entry::getType, dto.getType())
+                .and(StringUtils.isNotEmpty(dto.getKeyword()), i -> i
+                        .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", dto.getKeyword())
+                        .or().like(Entry::getName, dto.getKeyword())
+                        .or().like(Entry::getNameZh, dto.getKeyword())
+                        .or().like(Entry::getNameEn, dto.getKeyword())
                 )
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
                 .orderByDesc(GroupCacheEntryItem::getItems);
-        IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
+        long start = System.currentTimeMillis();
+        IPage<Entry> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<EntryListVO> res = converter.convert(pages.getRecords(), EntryListVO.class);
-        return new SearchResult<>(res, pages.getTotal(), pages.getCurrent(), pages.getSize());
+        return new SearchResult<>(res, pages.getTotal(), start);
     }
 
     @Transactional

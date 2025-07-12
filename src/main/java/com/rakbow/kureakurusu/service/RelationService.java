@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,19 +63,21 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<RelationVO> list(RelationListQueryDTO param) {
-        int targetEntityType = param.getTargetEntityType();
+    public SearchResult<RelationVO> list(RelationListQueryDTO dto) {
+        dto.init();
+        long start = System.currentTimeMillis();
+        int targetEntityType = dto.getTargetEntityType();
         List<RelationVO> res = new ArrayList<>();
-        List<Relation> relations = mapper.list(param);
+        List<Relation> relations = mapper.list(dto);
         if (relations.isEmpty()) return new SearchResult<>();
-        long total = mapper.count(param);
+        long total = mapper.count(dto);
 
         List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
 
         //mark direction
         relations.forEach(r -> {
-            if (r.getRelatedEntityType() == param.getEntityType()
-                    && r.getRelatedEntityId() == param.getEntityId()) {
+            if (r.getRelatedEntityType() == dto.getEntityType()
+                    && r.getRelatedEntityId() == dto.getEntityId()) {
                 r.setDirection(-1);
             }
         });
@@ -142,7 +145,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
             res.add(vo);
         }
-        return new SearchResult<>(res, total, param.getPage(), param.getSize());
+        return new SearchResult<>(res, total, start);
     }
 
     @Transactional
@@ -196,10 +199,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<Personnel> res = new ArrayList<>();
 
         RelationListQueryDTO param = new RelationListQueryDTO();
-        param.setEntityType(entityType);
-        param.setEntityId(entityId);
-        param.setTargetEntityType(EntityType.ENTRY.getValue());
-        param.setTargetEntitySubTypes(List.of(EntryType.PERSON.getValue()));
+        param.getFilters().computeIfAbsent("entityType", _ -> new LinkedHashMap<>()).put("value", entityType);
+        param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
+        param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
+        param.getFilters().computeIfAbsent("targetEntitySubTypes", _ -> new LinkedHashMap<>()).put("value", List.of(EntryType.PERSON.getValue()));
 
         SearchResult<RelationVO> relations = list(param);
         if (relations.data.isEmpty()) return res;

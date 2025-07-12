@@ -64,12 +64,12 @@ public class ItemController {
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody ListQuery qry) {
-        return new ApiResult().load(srv.search(qry));
+    public ApiResult search(@RequestBody ItemSearchQueryDTO dto) {
+        return new ApiResult().load(srv.search(dto));
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ListQuery dto) {
+    public ApiResult list(@RequestBody ItemListQueryDTO dto) {
         return new ApiResult().load(srv.list(dto));
     }
 

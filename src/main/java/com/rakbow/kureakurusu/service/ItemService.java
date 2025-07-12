@@ -203,14 +203,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     }
 
     @Transactional
-    public SearchResult<ItemMiniVO> search(ListQuery qry) {
-        ItemSearchQueryDTO param = new ItemSearchQueryDTO(qry);
+    public SearchResult<ItemMiniVO> search(ItemSearchQueryDTO dto) {
+        dto.init();
         IPage<Item> pages;
-        Page<Item> page = new Page<>(param.getPage(), param.getSize(), !param.allSearch());
-        // 记录开始时间
+        Page<Item> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
         MPJLambdaWrapper<Item> wrapper;
         long start = System.currentTimeMillis();
-        if (param.hasRelatedEntries()) {
+        if (dto.hasRelatedEntries()) {
             //inner join relation
             wrapper = new MPJLambdaWrapper<Item>()
                     .selectAll(Item.class)
@@ -220,49 +219,46 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     )
                     .and(aw -> aw.or(w -> w
                             .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
-                            .in(Relation::getRelatedEntityId, param.getEntries())))
-                    .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
-                    .eq(ObjectUtils.isNotEmpty(param.getType()), Item::getType, param.getType())
-                    .eq(ObjectUtils.isNotEmpty(param.getSubType()), Item::getSubType, param.getSubType())
-                    .eq(ObjectUtils.isNotEmpty(param.getReleaseType()), Item::getReleaseType, param.getReleaseType())
-                    .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
-                    .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
-                    .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
-                    .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
-                    .orderByDesc(!param.isSort(), Item::getReleaseDate)
+                            .in(Relation::getRelatedEntityId, dto.getEntries())))
+                    .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
+                    .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
+                    .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
+                    .eq(ObjectUtils.isNotEmpty(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
+                    .eq(StringUtils.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
+                    .eq(StringUtils.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
+                    .eq(StringUtils.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
+                    .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                    .orderByDesc(!dto.isSort(), Item::getReleaseDate)
                     .groupBy(Item::getId)
-                    .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{param.getEntries().size()}");
+                    .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{dto.getEntries().size()}");
             pages = mapper.selectJoinPage(page, Item.class, wrapper);
         } else {
             wrapper = new MPJLambdaWrapper<Item>()
-                    .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
-                    .eq(ObjectUtils.isNotEmpty(param.getType()), Item::getType, param.getType())
-                    .eq(ObjectUtils.isNotEmpty(param.getSubType()), Item::getSubType, param.getSubType())
-                    .eq(ObjectUtils.isNotEmpty(param.getReleaseType()), Item::getReleaseType, param.getReleaseType())
-                    .eq(StringUtils.isNotEmpty(param.getRegion()), Item::getRegion, param.getRegion())
-                    .eq(StringUtils.isNotEmpty(param.getBarcode()), Item::getBarcode, param.getBarcode())
-                    .eq(StringUtils.isNotEmpty(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
-                    .orderByDesc(!param.isSort(), Item::getId);
+                    .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
+                    .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
+                    .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
+                    .eq(ObjectUtils.isNotEmpty(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
+                    .eq(StringUtils.isNotEmpty(dto.getRegion()), Item::getRegion, dto.getRegion())
+                    .eq(StringUtils.isNotEmpty(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
+                    .eq(StringUtils.isNotEmpty(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
+                    .orderByDesc(!dto.isSort(), Item::getId);
             pages = page(page, wrapper);
         }
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
-        if (param.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
+        if (dto.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
         List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
         //get image cache
         items.forEach(i -> {
             i.setCover(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
             i.setThumb(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
         });
-        return new SearchResult<>(items, pages.getTotal(), pages.getCurrent(), pages.getSize(),
-                String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0));
+        return new SearchResult<>(items, pages.getTotal(), start);
     }
 
     @Transactional
     @SneakyThrows
-    public SearchResult<? extends ItemListVO> list(ListQuery dto) {
-
-        ItemListQueryDTO param = new ItemListQueryDTO(dto);
-
+    public SearchResult<? extends ItemListVO> list(ItemListQueryDTO param) {
+        param.init();
         Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
         Class<? extends SubItem> subClass = ItemUtil.getSubClass(param.getType());
         Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
@@ -282,7 +278,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .orderByDesc(!param.isSort(), Item::getId);
         //private query column to sql
         MyBatisUtil.itemListQueryWrapper(param, wrapper);
-
+        long start = System.currentTimeMillis();
         IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), superClass, wrapper);
 
         List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
@@ -290,7 +286,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //get related resource count
         getItemResourceCount(items);
 
-        return new SearchResult<>(items, page.getTotal(), page.getCurrent(), page.getSize());
+        return new SearchResult<>(items, page.getTotal(), start);
     }
 
     @Transactional
