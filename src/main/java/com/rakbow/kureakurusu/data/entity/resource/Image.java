@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rakbow.kureakurusu.config.MappingConfig;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
@@ -26,7 +27,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @TableName(value = "image", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = ImageVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = ImageVO.class, reverseConvertGenerate = false, uses = MappingConfig.class)
 })
 public class Image extends Entity {
 

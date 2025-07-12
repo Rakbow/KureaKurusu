@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.entity.resource;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.rakbow.kureakurusu.config.MappingConfig;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -21,7 +22,7 @@ import java.io.File;
 @NoArgsConstructor
 @TableName(value = "file_info", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = FileListVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = FileListVO.class, reverseConvertGenerate = false, uses = MappingConfig.class)
 })
 public class FileInfo extends Entity {
 

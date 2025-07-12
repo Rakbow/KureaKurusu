@@ -24,10 +24,6 @@ public class AlbumDiscVO {
     private List<AlbumTrackVO> tracks;//音轨列表
     private String duration;//碟片时长 hh:mm:ss
 
-    private String addedTime;
-    private String editedTime;
-    private boolean status;
-
     public AlbumDiscVO() {
         discNo = 1;
         tracks = new ArrayList<>();

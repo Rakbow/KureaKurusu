@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.config.MappingConfig;
 import com.rakbow.kureakurusu.data.emun.EntrySubType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.Gender;
@@ -28,8 +29,8 @@ import java.util.List;
 @Data
 @TableName(value = "entry", autoResultMap = true)
 @AutoMappers({
-        @AutoMapper(target = EntryListVO.class, reverseConvertGenerate = false),
-        @AutoMapper(target = EntryVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = EntryListVO.class, reverseConvertGenerate = false, uses = MappingConfig.class),
+        @AutoMapper(target = EntryVO.class, reverseConvertGenerate = false, uses = MappingConfig.class)
 })
 public class Entry extends Entity {
 

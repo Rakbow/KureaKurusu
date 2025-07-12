@@ -22,11 +22,9 @@ public class Entity {
 
     private String remark;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    @AutoMapping(qualifiedByName = "getVOTime")
     @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     private Timestamp addedTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    @AutoMapping(qualifiedByName = "getVOTime")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Timestamp editedTime;
     @JsonDeserialize(using = BooleanToIntDeserializer.class)

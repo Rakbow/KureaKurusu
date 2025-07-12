@@ -15,6 +15,7 @@ import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class Item extends Entity {
     private String releaseDate;
     private double price;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
+    @AutoMapping(target = "currency", qualifiedByName = "getCurrency")
     private String region;//ISO-3166 region code
     private ReleaseType releaseType;//release type
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
