@@ -30,6 +30,7 @@ import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -202,60 +203,50 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     }
 
     @Transactional
-    public SearchResult<ItemMiniVO> search(ItemSearchParams param) {
+    public SearchResult<ItemMiniVO> search(ListQuery qry) {
+        ItemSearchQueryDTO param = new ItemSearchQueryDTO(qry);
         IPage<Item> pages;
-        Page<Item> page = new Page<>(param.getPage(), param.getSize());
+        Page<Item> page = new Page<>(param.getPage(), param.getSize(), !param.allSearch());
         // 记录开始时间
+        MPJLambdaWrapper<Item> wrapper;
         long start = System.currentTimeMillis();
-        if (param.hasRelatedEntry()) {
+        if (param.hasRelatedEntries()) {
             //inner join relation
-            MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+            wrapper = new MPJLambdaWrapper<Item>()
                     .selectAll(Item.class)
-                    .innerJoin(Relation.class, Relation::getEntityId, Item::getId)
-                    .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
-                    .and(aw -> {
-                        for (Long entryId : param.getEntries()) {
-                            aw.or(w -> w
-                                    .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
-                                    .eq(Relation::getRelatedEntityId, entryId));
-                        }
-                    })
+                    .innerJoin(Relation.class, on -> on
+                            .eq(Relation::getEntityId, Item::getId)
+                            .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
+                    )
+                    .and(aw -> aw.or(w -> w
+                            .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                            .in(Relation::getRelatedEntityId, param.getEntries())))
                     .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
-                    .eq(param.getType() != null, Item::getType, param.getType())
-                    .eq(param.getSubType() != null, Item::getSubType, param.getSubType())
-                    .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
+                    .eq(ObjectUtils.isNotEmpty(param.getType()), Item::getType, param.getType())
+                    .eq(ObjectUtils.isNotEmpty(param.getSubType()), Item::getSubType, param.getSubType())
+                    .eq(ObjectUtils.isNotEmpty(param.getReleaseType()), Item::getReleaseType, param.getReleaseType())
                     .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
                     .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
                     .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
-                    .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
                     .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
                     .orderByDesc(!param.isSort(), Item::getReleaseDate)
                     .groupBy(Item::getId)
                     .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{param.getEntries().size()}");
             pages = mapper.selectJoinPage(page, Item.class, wrapper);
         } else {
-            if (param.isAllSearch()) {
-                page = new Page<>(param.getPage(), param.getSize(), false);
-            }
-            pages = page(
-                    page,
-                    new LambdaQueryWrapper<Item>()
-                            .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
-                            .eq(param.getType() != null, Item::getType, param.getType())
-                            .eq(param.getSubType() != null, Item::getSubType, param.getSubType())
-                            .eq(param.getReleaseType() != null, Item::getReleaseType, param.getReleaseType())
-                            .eq(StringUtils.isNotBlank(param.getRegion()), Item::getRegion, param.getRegion())
-                            .eq(StringUtils.isNotBlank(param.getBarcode()), Item::getBarcode, param.getBarcode())
-                            .eq(StringUtils.isNotBlank(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
-                            .eq(param.getBonus() != null, Item::getBonus, param.getBonus())
-                            .orderByDesc(!param.isSort(), Item::getId)
-            );
-            if (param.isAllSearch()) {
-                pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
-            }
+            wrapper = new MPJLambdaWrapper<Item>()
+                    .like(StringUtils.isNotBlank(param.getKeyword()), Item::getName, param.getKeyword())
+                    .eq(ObjectUtils.isNotEmpty(param.getType()), Item::getType, param.getType())
+                    .eq(ObjectUtils.isNotEmpty(param.getSubType()), Item::getSubType, param.getSubType())
+                    .eq(ObjectUtils.isNotEmpty(param.getReleaseType()), Item::getReleaseType, param.getReleaseType())
+                    .eq(StringUtils.isNotEmpty(param.getRegion()), Item::getRegion, param.getRegion())
+                    .eq(StringUtils.isNotEmpty(param.getBarcode()), Item::getBarcode, param.getBarcode())
+                    .eq(StringUtils.isNotEmpty(param.getCatalogId()), Item::getCatalogId, param.getCatalogId())
+                    .orderByDesc(!param.isSort(), Item::getId);
+            pages = page(page, wrapper);
         }
-        if (pages.getRecords().isEmpty())
-            return new SearchResult<>();
+        if (pages.getRecords().isEmpty()) return new SearchResult<>();
+        if (param.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
         List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
         //get image cache
         items.forEach(i -> {

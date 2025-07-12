@@ -22,6 +22,7 @@ public class ItemMiniVO {
     private String barcode;
     private String catalogId;
     private double price;
+    private String currency;
     private String region;
 
     private String addedTime;

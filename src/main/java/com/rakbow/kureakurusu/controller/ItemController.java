@@ -64,8 +64,8 @@ public class ItemController {
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody ItemSearchParams param) {
-        return new ApiResult().load(srv.search(param));
+    public ApiResult search(@RequestBody ListQuery qry) {
+        return new ApiResult().load(srv.search(qry));
     }
 
     @PostMapping("list")

@@ -34,7 +34,7 @@ public class CommonImageUtil {
         if (imageType == ImageType.MAIN.getValue()) {
             return QiniuImageUtil.getThumb(cover, DEFAULT_ITEM_COVER_SIZE);
         }else {
-            return QiniuImageUtil.getThumb(cover, THUMB_SIZE_64);
+            return QiniuImageUtil.getThumb(cover, 60);
         }
     }
 

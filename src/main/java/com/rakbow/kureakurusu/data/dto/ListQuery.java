@@ -21,8 +21,11 @@ public class ListQuery extends QueryDTO {
     @SuppressWarnings("unchecked")
     public <T> T getVal(String key) {
         Object value = null;
-        if(this.filters.containsKey(key))
+        if(this.filters.containsKey(key)) {
+            Object field = this.filters.get(key);
+            if(field == null) return null;
             value = this.filters.get(key).get(VALUE_KEY);
+        }
         if(value == null || value.toString().isEmpty())
             return null;
         return (T) value;
