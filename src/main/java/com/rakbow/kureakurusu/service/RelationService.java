@@ -3,16 +3,16 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.RelatedEntityMiniDTO;
-import com.rakbow.kureakurusu.data.dto.RelationCreateDTO;
-import com.rakbow.kureakurusu.data.dto.RelationListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.RelationUpdateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
@@ -22,6 +22,7 @@ import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.meta.MetaData;
+import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
 import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
@@ -195,7 +196,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public List<Personnel> getPersonnel(int entityType, long entityId) {
+    public List<Personnel> personnel(int entityType, long entityId) {
         List<Personnel> res = new ArrayList<>();
 
         RelationListQueryDTO param = new RelationListQueryDTO();
@@ -226,6 +227,32 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 })
                 .toList();
         return res;
+    }
+
+    @Transactional
+    public SearchResult<ItemMiniVO> relatedItems(RelatedItemQueryDTO dto) {
+        IPage<Item> pages;
+        Page<Item> page = new Page<>(1, dto.getSize());
+        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                .selectAll(Item.class)
+                .innerJoin(Relation.class, on -> on
+                        .eq(Relation::getEntityId, Item::getId)
+                        .eq(Relation::getEntityType, EntityType.ITEM.getValue())
+                )
+                .and(aw -> aw.or(w -> w
+                        .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                        .eq(Relation::getRelatedEntityId, dto.getId())))
+                .orderByDesc(Item::getReleaseDate);
+        pages = itemMapper.selectJoinPage(page, Item.class, wrapper);
+
+        if (pages.getRecords().isEmpty()) return new SearchResult<>();
+        List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
+        //get image cache
+        items.forEach(i -> {
+            i.setCover(imageSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.MAIN));
+            i.setThumb(imageSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.THUMB));
+        });
+        return new SearchResult<>(items, pages.getTotal());
     }
 
 }

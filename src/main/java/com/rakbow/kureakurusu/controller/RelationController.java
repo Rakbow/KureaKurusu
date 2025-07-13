@@ -35,8 +35,13 @@ public class RelationController {
     }
 
     @PostMapping("personnel")
-    public ApiResult update(@RequestBody PersonnelDTO dto) {
-        return new ApiResult().load(srv.getPersonnel(dto.getEntityType(), dto.getEntityId()));
+    public ApiResult personnel(@RequestBody PersonnelDTO dto) {
+        return new ApiResult().load(srv.personnel(dto.getEntityType(), dto.getEntityId()));
+    }
+
+    @PostMapping("items")
+    public ApiResult relatedItems(@RequestBody RelatedItemQueryDTO dto) {
+        return new ApiResult().load(srv.relatedItems(dto));
     }
 
     @DeleteMapping("delete")

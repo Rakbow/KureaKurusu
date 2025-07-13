@@ -22,6 +22,11 @@ public class SearchResult<T> {
         this.time = String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0);
     }
 
+    public SearchResult(List<T> data, long total) {
+        this.total = total;
+        this.data = data;
+    }
+
     public SearchResult() {
         total = 0;
         data = new ArrayList<>();

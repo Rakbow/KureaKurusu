@@ -11,9 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class RelatedItemQueryDTO extends QueryDTO {
 
-    private int entityType;
-    private long entityId;
-    private int page;
+    private long id;
     private int size;
     
 }
