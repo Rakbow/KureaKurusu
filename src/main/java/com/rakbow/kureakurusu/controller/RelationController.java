@@ -44,6 +44,11 @@ public class RelationController {
         return new ApiResult().load(srv.relatedItems(dto));
     }
 
+    @PostMapping("entries")
+    public ApiResult relatedEntries(@RequestBody RelatedEntryQueryDTO dto) {
+        return new ApiResult().load(srv.relatedEntries(dto));
+    }
+
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
         srv.removeByIds(dto.getIds());

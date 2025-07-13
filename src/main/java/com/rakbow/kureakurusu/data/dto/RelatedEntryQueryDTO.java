@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2024/12/30 20:11
@@ -13,12 +15,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RelatedEntityQueryDTO extends QueryDTO {
+public class RelatedEntryQueryDTO extends QueryDTO {
 
-    private int relatedGroup;
     private int entityType;
     private long entityId;
-    private int first;
-    private int row;
+
+    private List<List<Integer>> entryTypeSets;
+
+    private int size;
 
 }

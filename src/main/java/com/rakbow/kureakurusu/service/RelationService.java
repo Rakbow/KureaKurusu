@@ -43,6 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Rakbow
@@ -253,6 +254,91 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             i.setThumb(imageSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.THUMB));
         });
         return new SearchResult<>(items, pages.getTotal());
+    }
+
+    @Transactional
+    @SneakyThrows
+    public List<SearchResult<RelationVO>> relatedEntries(RelatedEntryQueryDTO dto) {
+        int targetEntityType = EntityType.ENTRY.getValue();
+        List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
+
+        List<SearchResult<RelationVO>> resultSet = IntStream.range(0, dto.getEntryTypeSets().size())
+                .mapToObj(_ -> new SearchResult<RelationVO>()).toList();
+        List<List<Relation>> relationSets = new ArrayList<>();
+        List<Long> entryIds = new ArrayList<>();
+        int curIndex = -1;
+        for (List<Integer> entryTypes : dto.getEntryTypeSets()) {
+            curIndex++;
+            List<RelationVO> res = new ArrayList<>();
+
+            RelationListQueryDTO subDTO = new RelationListQueryDTO();
+            subDTO.setPage(1);
+            subDTO.setSize(dto.getSize());
+            subDTO.setEntityType(dto.getEntityType());
+            subDTO.setEntityId(dto.getEntityId());
+            subDTO.setTargetEntityType(targetEntityType);
+            subDTO.setTargetEntitySubTypes(entryTypes);
+
+            List<Relation> relations = mapper.list(subDTO);
+            relationSets.add(relations);
+            if (relations.isEmpty()) continue;
+            resultSet.get(curIndex).total = mapper.count(subDTO);
+            relations.forEach(r -> {
+                if (r.getRelatedEntityType() == dto.getEntityType()
+                        && r.getRelatedEntityId() == dto.getEntityId()) {
+                    r.setDirection(-1);
+                }
+            });
+            entryIds.addAll(
+                    relations.stream().map(
+                            r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()
+                    ).distinct().toList()
+            );
+        }
+        List<Entry> entries = entryMapper.selectByIds(entryIds);
+        curIndex = 0;
+        for(List<Relation> relations : relationSets) {
+            for (Relation r : relations) {
+                boolean positive = r.getDirection() == 1;
+                Entry e = DataFinder.findEntryById(positive ? r.getRelatedEntityId() : r.getEntityId(), entries);
+                if (e == null) continue;
+
+                Long roleId = positive ? r.getRoleId() : r.getRelatedRoleId();
+                Long targetRoleId = positive ? r.getRelatedRoleId() : r.getRoleId();
+                Attribute<Long> role = DataFinder.findAttributeByValue(roleId, roleSet);
+                Attribute<Long> targetRole = DataFinder.findAttributeByValue(targetRoleId, roleSet);
+
+                int subTypeValue = positive ? r.getRelatedEntitySubType() : r.getEntitySubType();
+                String subTypeLabel = I18nHelper.getMessage(EntryType.get(subTypeValue).getLabelKey());
+                Attribute<Integer> targetSubType = new Attribute<>(subTypeLabel, subTypeValue);
+                if (targetRole == null) targetRole = new Attribute<>("-", 0L);
+                if (role == null) role = new Attribute<>("-", 0L);
+
+
+                RelationTargetVO target = RelationTargetVO.builder()
+                        .entityType(targetEntityType)
+                        .entityId(e.getId())
+                        .role(targetRole)
+                        .subType(targetSubType)
+                        .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
+                        .name(e.getName())
+                        .subName(entityUtil.getSubName(e.getNameZh(), e.getNameEn()))
+                        .build();
+
+                RelationVO vo = RelationVO.builder()
+                        .id(r.getId())
+                        .role(role)
+                        .role(targetRole)
+                        .remark(r.getRemark())
+                        .target(target)
+                        .direction(positive)
+                        .build();
+
+                resultSet.get(curIndex).data.add(vo);
+            }
+            curIndex++;
+        }
+        return resultSet;
     }
 
 }
