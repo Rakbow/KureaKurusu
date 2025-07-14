@@ -93,8 +93,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 .select(GroupCacheEntryItem::getItems)
                 .leftJoin(GroupCacheEntryItem.class, on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
                 .groupBy(Entry::getId)
-                .orderByDesc(GroupCacheEntryItem::getItems)
-                .orderByAsc(Entry::getId);
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderByDesc(!dto.isSort(), GroupCacheEntryItem::getItems)
+                .orderByAsc(!dto.isSort(), Entry::getId);
         if (!dto.getKeywords().isEmpty()) {
             wrapper.and(w -> dto.getKeywords().forEach(k -> w.or(i -> i
                     .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
