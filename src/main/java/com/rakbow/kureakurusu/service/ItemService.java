@@ -207,12 +207,20 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         dto.init();
         IPage<Item> pages;
         Page<Item> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
-        MPJLambdaWrapper<Item> wrapper;
+        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
+                .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
+                .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
+                .eq(ObjectUtils.isNotEmpty(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
+                .eq(StringUtils.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
+                .eq(StringUtils.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
+                .eq(StringUtils.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
+                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderByDesc(!dto.isSort(), Item::getId);
         long start = System.currentTimeMillis();
         if (dto.hasRelatedEntries()) {
             //inner join relation
-            wrapper = new MPJLambdaWrapper<Item>()
-                    .selectAll(Item.class)
+            wrapper.selectAll(Item.class)
                     .innerJoin(Relation.class, on -> on
                             .eq(Relation::getEntityId, Item::getId)
                             .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
@@ -220,28 +228,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     .and(aw -> aw.or(w -> w
                             .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
                             .in(Relation::getRelatedEntityId, dto.getEntries())))
-                    .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
-                    .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
-                    .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
-                    .eq(ObjectUtils.isNotEmpty(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
-                    .eq(StringUtils.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
-                    .eq(StringUtils.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
-                    .eq(StringUtils.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
-                    .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
-                    .orderByDesc(!dto.isSort(), Item::getReleaseDate)
                     .groupBy(Item::getId)
                     .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{dto.getEntries().size()}");
             pages = mapper.selectJoinPage(page, Item.class, wrapper);
         } else {
-            wrapper = new MPJLambdaWrapper<Item>()
-                    .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
-                    .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
-                    .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
-                    .eq(ObjectUtils.isNotEmpty(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
-                    .eq(StringUtils.isNotEmpty(dto.getRegion()), Item::getRegion, dto.getRegion())
-                    .eq(StringUtils.isNotEmpty(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
-                    .eq(StringUtils.isNotEmpty(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
-                    .orderByDesc(!dto.isSort(), Item::getId);
             pages = page(page, wrapper);
         }
         if (pages.getRecords().isEmpty()) return new SearchResult<>();

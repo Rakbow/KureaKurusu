@@ -44,7 +44,7 @@ public class EntryController {
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody EntrySearchParams param) {
+    public ApiResult search(@RequestBody EntrySearchQueryDTO param) {
         return new ApiResult().load(srv.search(param));
     }
 

@@ -70,14 +70,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @SneakyThrows
     @Transactional
     public List<EntryMiniVO> getMiniVO(List<Long> ids) {
-        List<EntryMiniVO> res = new ArrayList<>();
         List<Entry> entries = listByIds(ids);
-        entries.forEach(e -> {
-            EntryMiniVO vo = new EntryMiniVO(e);
-            vo.setThumb(CommonImageUtil.getEntryThumb(e.getThumb()));
-            res.add(vo);
-        });
-        return res;
+        return new ArrayList<>(entries.stream().map(EntryMiniVO::new).toList());
     }
 
     @Transactional
@@ -89,38 +83,27 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EntryMiniVO> search(EntrySearchParams param) {
+    public SearchResult<EntryMiniVO> search(EntrySearchQueryDTO dto) {
+        dto.init();
         long start = System.currentTimeMillis();
-        MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>().eq(Entry::getStatus, 1)
-                .eq(ObjectUtils.isNotEmpty(param.getType()), Entry::getType, param.getType());
-        if (!param.getKeywords().isEmpty()) {
-            if (param.strict()) {
-                param.getKeywords().forEach(k ->
-                        wrapper.or().eq(Entry::getName, k).or().eq(Entry::getNameZh, k).or().eq(Entry::getNameEn, k));
-                wrapper.orderByDesc(Entry::getId);
-            } else {
-                wrapper.and(w -> param.getKeywords().forEach(k -> w.or(i -> i
-                        .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
-                        .or().like(Entry::getName, k)
-                        .or().like(Entry::getNameZh, k)
-                        .or().like(Entry::getNameEn, k)
-                ))).orderByDesc(Entry::getId);
-            }
-        } else {
-            wrapper.selectAll(Entry.class)
-                    .select(GroupCacheEntryItem::getItems)
-                    .leftJoin(GroupCacheEntryItem.class, on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
-                    .groupBy(Entry::getId)
-                    .orderByDesc(GroupCacheEntryItem::getItems);
-            // if (param.getMode() != 0 && ObjectUtils.isNotEmpty(param.getType())) {
-            //     Set<Long> ids = popularUtil.getEntryPopularityRank(param.getType(), 7);
-            //     if (!ids.isEmpty()) {
-            //         wrapper.in(Entry::getId, ids).orderBy(true, false, STR."FIELD(id, \{ids.stream()
-            //                 .map(String::valueOf).collect(Collectors.joining(","))})");
-            //     }
-            // }
+        MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
+                .eq(Entry::getStatus, 1)
+                .eq(ObjectUtils.isNotEmpty(dto.getType()), Entry::getType, dto.getType())
+                .selectAll(Entry.class)
+                .select(GroupCacheEntryItem::getItems)
+                .leftJoin(GroupCacheEntryItem.class, on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
+                .groupBy(Entry::getId)
+                .orderByDesc(GroupCacheEntryItem::getItems)
+                .orderByAsc(Entry::getId);
+        if (!dto.getKeywords().isEmpty()) {
+            wrapper.and(w -> dto.getKeywords().forEach(k -> w.or(i -> i
+                    .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
+                    .or().like(Entry::getName, k)
+                    .or().like(Entry::getNameZh, k)
+                    .or().like(Entry::getNameEn, k)
+            )));
         }
-        IPage<Entry> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
+        IPage<Entry> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<EntryMiniVO> res = new ArrayList<>(pages.getRecords().stream().map(EntryMiniVO::new).toList());
 
         return new SearchResult<>(res, pages.getTotal(), start);
@@ -186,9 +169,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 new MPJLambdaWrapper<Entry>().selectAll(Entry.class)
                         .innerJoin(Relation.class, on ->
                                 on.eq(Relation::getEntityId, Entry::getId)
-                                .eq(Relation::getEntitySubType, EntryType.PRODUCT)
-                                .eq(Relation::getEntityType, EntityType.ENTRY)
-                                .eq(Relation::getRelatedEntityId, id)
+                                        .eq(Relation::getEntitySubType, EntryType.PRODUCT)
+                                        .eq(Relation::getEntityType, EntityType.ENTRY)
+                                        .eq(Relation::getRelatedEntityId, id)
                         ).orderByAsc(Entry::getDate));
         if (entries.isEmpty()) return res;
         res = converter.convert(entries, EntryListVO.class);

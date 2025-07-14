@@ -13,7 +13,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -60,17 +59,11 @@ public interface MetaVOMapper {
 
     @Named("getCurrency")
     default String getCurrency(String region) {
-        if(StringUtils.isBlank(region)) return "JPY";
-        return switch (region) {
-            case "global" -> "JPY";
-            case "eu" -> "EUR";
-            default -> Currency.getInstance(Locale.of("", region)).getCurrencyCode();
-        };
-    }
-
-    @Named("getVOTime")
-    default String getVOTime(Timestamp timestamp) {
-        return DateHelper.timestampToString(timestamp);
+        if(StringUtils.isBlank(region) || StringUtils.equals(region, "un")) {
+            return "JPY";
+        }else {
+            return Currency.getInstance(Locale.of("", region)).getCurrencyCode();
+        }
     }
 
     @Named("getMediaFormat")

@@ -34,6 +34,7 @@ import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +101,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             boolean positive = r.getDirection() == 1;
 
             Entity e = DataFinder.findEntityById(positive ? r.getRelatedEntityId() : r.getEntityId(), targets);
-            if (e == null) continue;
+            if (ObjectUtils.isEmpty(e)) continue;
 
             Long roleId = positive ? r.getRoleId() : r.getRelatedRoleId();
             Long targetRoleId = positive ? r.getRelatedRoleId() : r.getRoleId();
@@ -269,8 +270,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         int curIndex = -1;
         for (List<Integer> entryTypes : dto.getEntryTypeSets()) {
             curIndex++;
-            List<RelationVO> res = new ArrayList<>();
-
             RelationListQueryDTO subDTO = new RelationListQueryDTO();
             subDTO.setPage(1);
             subDTO.setSize(dto.getSize());
@@ -278,7 +277,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             subDTO.setEntityId(dto.getEntityId());
             subDTO.setTargetEntityType(targetEntityType);
             subDTO.setTargetEntitySubTypes(entryTypes);
-
             List<Relation> relations = mapper.list(subDTO);
             relationSets.add(relations);
             if (relations.isEmpty()) continue;
@@ -289,15 +287,13 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     r.setDirection(-1);
                 }
             });
-            entryIds.addAll(
-                    relations.stream().map(
-                            r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()
-                    ).distinct().toList()
-            );
+            entryIds.addAll(relations.stream().map(
+                    r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()
+            ).distinct().toList());
         }
         List<Entry> entries = entryMapper.selectByIds(entryIds);
         curIndex = 0;
-        for(List<Relation> relations : relationSets) {
+        for (List<Relation> relations : relationSets) {
             for (Relation r : relations) {
                 boolean positive = r.getDirection() == 1;
                 Entry e = DataFinder.findEntryById(positive ? r.getRelatedEntityId() : r.getEntityId(), entries);
