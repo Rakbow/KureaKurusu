@@ -1,9 +1,7 @@
-package com.rakbow.kureakurusu.data.vo;
+package com.rakbow.kureakurusu.data.vo.entry;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +25,7 @@ public class EntryMiniVO {
     private Attribute<Integer> gender;
     private String date;
 
-    public EntryMiniVO(Entry entry) {
+    public EntryMiniVO(EntrySimpleVO entry) {
         this.id = entry.getId();
         this.type = new Attribute<>(entry.getType());
         this.subType = new Attribute<>(entry.getSubType());

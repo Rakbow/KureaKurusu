@@ -15,10 +15,7 @@ import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.GroupCacheEntryItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
-import com.rakbow.kureakurusu.data.vo.EntryMiniVO;
-import com.rakbow.kureakurusu.data.vo.entry.EntryDetailVO;
-import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
-import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
+import com.rakbow.kureakurusu.data.vo.entry.*;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -50,6 +47,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     private final Converter converter;
     private final EntityUtil entityUtil;
     private final QiniuImageUtil qiniuImageUtil;
+    private final EntryMapper mapper;
     private final static int ENTITY_TYPE = EntityType.ENTRY.getValue();
 
     @SneakyThrows
@@ -70,8 +68,10 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @SneakyThrows
     @Transactional
     public List<EntryMiniVO> getMiniVO(List<Long> ids) {
-        List<Entry> entries = listByIds(ids);
-        return new ArrayList<>(entries.stream().map(EntryMiniVO::new).toList());
+        List<EntrySimpleVO> entries = mapper.selectJoinList(EntrySimpleVO.class,
+                new MPJLambdaWrapper<Entry>().in(Entry::getId, ids).selectAsClass(Entry.class, EntrySimpleVO.class)
+        );
+        return entries.stream().map(EntryMiniVO::new).toList();
     }
 
     @Transactional
@@ -89,10 +89,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getStatus, 1)
                 .eq(ObjectUtils.isNotEmpty(dto.getType()), Entry::getType, dto.getType())
-                .selectAll(Entry.class)
+                .selectAsClass(Entry.class, EntrySimpleVO.class)
                 .select(GroupCacheEntryItem::getItems)
                 .leftJoin(GroupCacheEntryItem.class, on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
-                .groupBy(Entry::getId)
                 .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
                 .orderByDesc(!dto.isSort(), GroupCacheEntryItem::getItems)
                 .orderByAsc(!dto.isSort(), Entry::getId);
@@ -104,8 +103,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                     .or().like(Entry::getNameEn, k)
             )));
         }
-        IPage<Entry> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
-        List<EntryMiniVO> res = new ArrayList<>(pages.getRecords().stream().map(EntryMiniVO::new).toList());
+        IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);
+        List<EntryMiniVO> res = pages.getRecords().stream().map(EntryMiniVO::new).toList();
 
         return new SearchResult<>(res, pages.getTotal(), start);
     }

@@ -19,10 +19,7 @@ import com.rakbow.kureakurusu.data.entity.item.SubItem;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
-import com.rakbow.kureakurusu.data.vo.item.ItemDetailVO;
-import com.rakbow.kureakurusu.data.vo.item.ItemListVO;
-import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
-import com.rakbow.kureakurusu.data.vo.item.ItemVO;
+import com.rakbow.kureakurusu.data.vo.item.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.toolkit.*;
@@ -205,9 +202,9 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     public SearchResult<ItemMiniVO> search(ItemSearchQueryDTO dto) {
         dto.init();
-        IPage<Item> pages;
-        Page<Item> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
+        Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
+                .selectAsClass(Item.class, ItemSimpleVO.class)
                 .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
                 .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
                 .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
@@ -230,10 +227,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                             .in(Relation::getRelatedEntityId, dto.getEntries())))
                     .groupBy(Item::getId)
                     .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{dto.getEntries().size()}");
-            pages = mapper.selectJoinPage(page, Item.class, wrapper);
-        } else {
-            pages = page(page, wrapper);
         }
+        IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
         if (dto.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
         List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
