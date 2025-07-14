@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity.item;
 
 import com.rakbow.kureakurusu.data.vo.item.AlbumListVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumVO;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
@@ -18,7 +19,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @AutoMappers({
         @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false),
-        @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Album extends SuperItem {
 

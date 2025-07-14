@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity.item;
 import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
 import com.rakbow.kureakurusu.data.vo.item.BookVO;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
@@ -19,7 +20,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @AutoMappers({
         @AutoMapper(target = BookListVO.class, reverseConvertGenerate = false),
-        @AutoMapper(target = BookVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = BookVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Book extends SuperItem {
 

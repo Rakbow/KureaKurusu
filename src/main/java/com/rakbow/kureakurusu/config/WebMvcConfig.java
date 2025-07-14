@@ -7,9 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import jakarta.annotation.Resource;
+
+import java.util.Locale;
 
 /**
  * @author Rakbow
@@ -32,9 +35,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public org.springframework.web.servlet.LocaleResolver localeResolver(){
-        //添加自己重写的CookieLocaleResolver
-        return new LocaleResolver();
+    public LocaleResolver localeResolver(){
+        LocaleResolver resolver = new LocaleResolver();
+        resolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        resolver.setCookieName("lang");
+        return resolver;
     }
     //配置拦截器获取URL中的key=“lang” （?lang=zh_CN）
     @Bean

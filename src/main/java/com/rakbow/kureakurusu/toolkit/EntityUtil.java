@@ -5,7 +5,6 @@ import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,11 +38,5 @@ public class EntityUtil {
     public long getEntityTotalCache(EntityType type) {
         String key = String.format(RedisKey.ENTITY_TOTAL_COUNT, type.getValue());
         return Long.parseLong(redisUtil.get(key).toString());
-    }
-
-    public String getSubName(String nameZh, String nameEn) {
-        if(StringUtils.isNotEmpty(nameZh)) return nameZh;
-        else if(StringUtils.isNotEmpty(nameEn)) return nameEn;
-        else return StringUtils.EMPTY;
     }
 }

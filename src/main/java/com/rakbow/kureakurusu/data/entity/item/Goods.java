@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity.item;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.rakbow.kureakurusu.data.vo.item.GoodsListVO;
 import com.rakbow.kureakurusu.data.vo.item.GoodsVO;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -22,7 +23,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @AutoMappers({
         @AutoMapper(target = GoodsListVO.class, reverseConvertGenerate = false),
-        @AutoMapper(target = GoodsVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = GoodsVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Goods extends SuperItem {
 

@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Rakbow
@@ -31,7 +32,7 @@ public class EnumHelper {
                 // 将结果转换为字符串
                 String labelKey = result.toString();
 
-                String label = I18nHelper.getMessage(labelKey, lang);
+                String label = I18nHelper.getMessage(labelKey, Locale.forLanguageTag(lang));
 
                 Attribute<Integer> attribute = new Attribute<>(label, value);
 

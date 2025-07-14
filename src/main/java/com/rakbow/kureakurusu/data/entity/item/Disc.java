@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.data.entity.item;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.rakbow.kureakurusu.data.vo.item.DiscListVO;
 import com.rakbow.kureakurusu.data.vo.item.DiscVO;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -23,7 +24,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @AutoMappers({
         @AutoMapper(target = DiscListVO.class, reverseConvertGenerate = false),
-        @AutoMapper(target = DiscVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = DiscVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Disc extends SuperItem {
 

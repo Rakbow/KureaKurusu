@@ -27,6 +27,7 @@ import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
 import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
@@ -130,7 +131,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             if (targetEntityType == EntityType.ENTRY.getValue()) {
                 target.setThumb(CommonImageUtil.getEntryThumb(((Entry) e).getThumb()));
                 target.setName(((Entry) e).getName());
-                target.setSubName(entityUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
+                target.setSubName(CommonUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
             } else {
                 target.setThumb(imageSrv.getCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));
                 target.setName(((Item) e).getName());
@@ -291,6 +292,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()
             ).distinct().toList());
         }
+        if(entryIds.isEmpty()) return resultSet;
+
         List<Entry> entries = entryMapper.selectByIds(entryIds);
         curIndex = 0;
         for (List<Relation> relations : relationSets) {
@@ -318,7 +321,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                         .subType(targetSubType)
                         .thumb(CommonImageUtil.getEntryThumb(e.getThumb()))
                         .name(e.getName())
-                        .subName(entityUtil.getSubName(e.getNameZh(), e.getNameEn()))
+                        .subName(CommonUtil.getSubName(e.getNameZh(), e.getNameEn()))
                         .build();
 
                 RelationVO vo = RelationVO.builder()
