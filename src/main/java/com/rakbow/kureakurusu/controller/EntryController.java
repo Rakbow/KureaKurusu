@@ -29,6 +29,12 @@ public class EntryController {
         return new ApiResult().load(srv.detail(id));
     }
 
+    @PostMapping("create")
+    public ApiResult create(@Valid @RequestBody EntrySuperCreateDTO dto, BindingResult errors) {
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        return new ApiResult().load(srv.create(dto));
+    }
+
     @PostMapping("update")
     public ApiResult update(@Valid @RequestBody EntryUpdateDTO dto, BindingResult errors) {
         //check

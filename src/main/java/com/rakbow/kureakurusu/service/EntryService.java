@@ -11,6 +11,7 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.GroupCacheEntryItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
@@ -48,6 +49,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     private final EntityUtil entityUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final EntryMapper mapper;
+    private final RelationService relationSrv;
     private final static int ENTITY_TYPE = EntityType.ENTRY.getValue();
 
     @SneakyThrows
@@ -72,6 +74,18 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 new MPJLambdaWrapper<Entry>().in(Entry::getId, ids).selectAsClass(Entry.class, EntrySimpleVO.class)
         );
         return entries.stream().map(EntryMiniVO::new).toList();
+    }
+
+    @Transactional
+    @SneakyThrows
+    public long create(EntrySuperCreateDTO dto) {
+        //save entry
+        Entry entry = converter.convert(dto.getEntry(), Entry.class);
+        save(entry);
+        //save related entities
+        relationSrv.batchCreate(ENTITY_TYPE, entry.getId(), entry.getType().getValue(), dto.getRelatedEntries());
+
+        return entry.getId();
     }
 
     @Transactional
