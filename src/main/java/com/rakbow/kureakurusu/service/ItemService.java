@@ -217,8 +217,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         long start = System.currentTimeMillis();
         if (dto.hasRelatedEntries()) {
             //inner join relation
-            wrapper.selectAll(Item.class)
-                    .innerJoin(Relation.class, on -> on
+            wrapper.innerJoin(Relation.class, on -> on
                             .eq(Relation::getEntityId, Item::getId)
                             .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
                     )
