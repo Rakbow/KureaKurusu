@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class RelatedEntityMiniDTO extends DTO {
 
+    private long roleId;
     private long relatedRoleId;
 
     private int relatedEntityType;

@@ -47,7 +47,7 @@
         FROM relation
         WHERE entity_type = #{param.targetEntityType}
         <if test="param.targetEntitySubTypes.size() > 0">
-            AND related_entity_sub_type IN
+            AND entity_sub_type IN
             <foreach item="item" index="index" collection="param.targetEntitySubTypes" open="("
                      close=")" separator=",">
                 #{item}

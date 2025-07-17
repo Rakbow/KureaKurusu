@@ -4,29 +4,38 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.dto.ImageDeleteDTO;
+import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.service.ResourceService;
+import com.rakbow.kureakurusu.service.ImageService;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import jakarta.annotation.Resource;
+import lombok.SneakyThrows;
+import net.coobird.thumbnailator.Thumbnails;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -56,7 +65,7 @@ public class RedisTests {
     @Resource
     private QiniuImageUtil qiniuImageUtil;
     @Resource
-    private ResourceService resourceSrv;
+    private ImageService resourceSrv;
     @Resource
     private RoleMapper roleMapper;
 
@@ -172,8 +181,9 @@ public class RedisTests {
     }
 
     @Test
+    @SneakyThrows
     public void batchUpdateItemCoverAndThumbRedisCache() {
-        List<Item> items = itemMapper.selectList(null);
+        List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getType, ItemType.DISC.getValue()));
         redisUtil.delete("entity_image_cache:*");
         String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{EntityType.ITEM.getValue()}:%s";
         String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{EntityType.ITEM.getValue()}:%s";
@@ -189,24 +199,59 @@ public class RedisTests {
             Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
                     .eq(Image::getEntityType, EntityType.ITEM.getValue())
                     .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
-            // if(thumb != null) {
-            //     curThumb = thumb.getUrl();
-            // }else if(cover != null) {
-            //     String coverBase64Code = CommonImageUtil.getBase64CodeByUrl(cover.getUrl());
-            //     String thumbBase64Code = CommonImageUtil.generateThumb(coverBase64Code);
-            //     ImageMiniDTO thumbDto = new ImageMiniDTO();
-            //     // thumbDto.setBase64Code(thumbBase64Code);
-            //     thumbDto.setName("Thumb");
-            //     thumbDto.setType(ImageType.THUMB.getValue());
-            //     Image thumbImage = qiniuImageUtil.uploadImages(EntityType.ITEM.getValue(), i.getId(), List.of(thumbDto)).getFirst();
-            //     imageMapper.insert(thumbImage);
-            //     curThumb = thumbImage.getUrl();
-            // }else {
-            //     curThumb = CommonConstant.EMPTY_IMAGE_URL;
-            // }
 
-            redisUtil.set(String.format(coverKey, i.getId()), cover == null ? CommonConstant.EMPTY_IMAGE_URL : cover.getUrl());
-            redisUtil.set(String.format(thumbKey, i.getId()), thumb == null ? CommonConstant.EMPTY_IMAGE_URL : thumb.getUrl());
+            if(cover == null || thumb == null) continue;
+            // 读取缩略图像
+            BufferedImage image = ImageIO.read(new URL(thumb.getUrl()));
+            int width = image.getWidth();
+            int height = image.getHeight();
+            //若不为长方形，删除原图，重新生成缩略图
+            if(width == height) continue;
+
+            //删除原图(数据库，七牛云，redis缓存)
+            resourceSrv.delete(List.of(new ImageDeleteDTO(thumb.getId(), thumb.getUrl())));
+            redisUtil.delete(String.format(thumbKey, i.getId()));
+
+            //生成新thumb
+            ImageMiniDTO newThumb = new ImageMiniDTO();
+            newThumb.setName("Thumb");
+            newThumb.setType(ImageType.THUMB.getValue());
+
+            // 找最短边
+            int side = Math.min(width, height);
+
+            // 计算起点（中心为基准）
+            int x = (width - side) / 2;
+            int y = (height - side) / 2;
+
+            // 裁剪为正方形
+            BufferedImage cropped = image.getSubimage(x, y, side, side);
+            // 生成缩略图到内存
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            Thumbnails.of(cropped)
+                    .size(70, 70)
+                    .outputFormat("jpg")
+                    .toOutputStream(os);
+
+            byte[] thumbBytes = os.toByteArray();
+            // 创建 MultipartFile 对象（MockMultipartFile 实现类）
+            MultipartFile thumbFile = new MockMultipartFile(
+                    "file",// 字段名
+                    "Thumb.jpg",// 文件名
+                    "image/jpeg",// MIME 类型
+                    thumbBytes// 内容
+            );
+
+            // 设置生成的 MultipartFile 到 DTO
+            newThumb.setFile(thumbFile);
+
+            //upload to qiniu
+            List<Image> addImages = qiniuImageUtil.uploadImages(EntityType.ITEM.getValue(), i.getId(), List.of(newThumb));
+            Image newThumbImage = addImages.getFirst();
+            imageMapper.insert(newThumbImage);
+
+            redisUtil.set(String.format(thumbKey, i.getId()), newThumbImage.getUrl());
+
             System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
         }
     }

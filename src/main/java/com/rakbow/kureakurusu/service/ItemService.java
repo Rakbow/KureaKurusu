@@ -73,7 +73,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         //save item
         long id = insert(item);
         //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, dto.getItem().getType(), dto.getRelatedEntities());
+        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, dto.getItem().getType(), dto.getRelatedEntries());
         //save image
         for (int i = 0; i < dto.getImages().size(); i++) {
             dto.getImages().get(i).setFile(images[i]);
