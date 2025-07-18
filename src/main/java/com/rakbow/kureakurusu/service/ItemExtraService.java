@@ -1,9 +1,8 @@
-package com.rakbow.kureakurusu.service.item;
+package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.dto.AlbumDiscCreateDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
@@ -16,14 +15,14 @@ import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
-import com.rakbow.kureakurusu.service.FileService;
-import com.rakbow.kureakurusu.service.ImageService;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.validator.routines.ISBNValidator;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -47,22 +46,21 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
-
-    //region inject
+public class ItemExtraService {
 
     private final EpisodeMapper epMapper;
-    private final ItemAlbumMapper mapper;
+    private final ItemAlbumMapper albumMapper;
     private final AlbumDiscMapper discMapper;
     private final ItemMapper itemMapper;
     private final FileInfoMapper fileMapper;
-    private final ImageService imageSrv;
+
     private final FileService fileSrv;
+
     private final SqlSessionFactory sqlSessionFactory;
     private final Converter converter;
     private final EntityType ENTITY_TYPE = EntityType.ITEM;
 
-    //endregion
+    //region album
 
     @Transactional
     public AlbumTrackInfoVO getAlbumTracks(long id) {
@@ -116,10 +114,6 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         return res;
     }
 
-    //endregion
-
-    //region advance crud
-
     @SneakyThrows
     @Transactional
     public void quickCreateAlbumTrack(AlbumDiscCreateDTO dto, boolean updateAlbum) {
@@ -150,7 +144,7 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
 
         //update album track disc duration
         if (!updateAlbum) return;
-        ItemAlbum album = mapper.selectById(dto.getItemId());
+        ItemAlbum album = albumMapper.selectById(dto.getItemId());
         int discNo = album.getDiscs() + 1;
         int trackNum = album.getTracks() + eps.size();
         runTime = album.getRunTime() + runTime;
@@ -159,10 +153,8 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
                 .set(ItemAlbum::getDiscs, discNo)
                 .set(ItemAlbum::getTracks, trackNum)
                 .set(ItemAlbum::getRunTime, runTime);
-        mapper.update(null, wrapper);
+        albumMapper.update(null, wrapper);
     }
-
-    //endregion
 
     //TODO
     @SneakyThrows
@@ -234,5 +226,28 @@ public class AlbumService extends ServiceImpl<ItemAlbumMapper, ItemAlbum> {
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
         frBatchInsert.execute(fileRelatedMethod.insert());
     }
+
+    //endregion
+
+    //region book
+
+    /**
+     * convert isbn-10 to isbn-13
+     *
+     * @param isbn10 isbn10
+     * @return isbn13
+     * @author rakbow
+     */
+    @SneakyThrows
+    public String convertISBN(String isbn10) {
+
+        ISBNValidator validator = new ISBNValidator();
+        isbn10 = isbn10.replaceAll("-", "");
+        if (validator.isValidISBN10(isbn10))
+            throw new ApiException("book.crud.isbn10.invalid");
+        return validator.convertToISBN13(isbn10);
+    }
+
+    //endregion
 
 }

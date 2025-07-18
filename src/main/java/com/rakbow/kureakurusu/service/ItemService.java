@@ -21,7 +21,6 @@ import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.item.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
-import com.rakbow.kureakurusu.service.item.AlbumService;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
@@ -49,7 +48,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final ImageService imageSrv;
     private final FileService fileSrv;
     private final RelationService relationSrv;
-    private final AlbumService albumSrv;
+    private final ItemExtraService albumSrv;
 
     private final RedisUtil redisUtil;
     private final PopularUtil popularUtil;

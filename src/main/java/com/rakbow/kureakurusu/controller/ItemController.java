@@ -4,8 +4,7 @@ import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.ItemService;
-import com.rakbow.kureakurusu.service.item.AlbumService;
-import com.rakbow.kureakurusu.service.item.BookService;
+import com.rakbow.kureakurusu.service.ItemExtraService;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ItemController {
 
     private final ItemService srv;
-    private final AlbumService albumSrv;
-    private final BookService bookSrv;
+    private final ItemExtraService extraSrv;
 
     //region basic crud
 
@@ -79,12 +77,12 @@ public class ItemController {
 
     @PostMapping("album-track-list")
     public ApiResult getAlbumTracks(@RequestBody AlbumTrackInfoQry qry) {
-        return new ApiResult().load(albumSrv.getAlbumTracks(qry.getId()));
+        return new ApiResult().load(extraSrv.getAlbumTracks(qry.getId()));
     }
 
     @PostMapping("album-track-quick-create")
     public ApiResult quickCreateAlbumTrack(@RequestBody AlbumDiscCreateDTO dto) {
-        albumSrv.quickCreateAlbumTrack(dto, true);
+        extraSrv.quickCreateAlbumTrack(dto, true);
         return new ApiResult().ok("entity.crud.create.success");
     }
 
@@ -93,13 +91,13 @@ public class ItemController {
             @RequestParam("files") MultipartFile[] files,
             @RequestParam("albumId") long albumId
     ) {
-        albumSrv.uploadAlbumTrackFiles(files, albumId);
+        extraSrv.uploadAlbumTrackFiles(files, albumId);
         return new ApiResult().ok("entity.crud.create.success");
     }
 
     @PostMapping("convert-isbn")
     public ApiResult convertISBN(@RequestBody ISBNConvertDTO dto) {
-        return new ApiResult().load(bookSrv.convertISBN(dto.getIsbn10()));
+        return new ApiResult().load(extraSrv.convertISBN(dto.getIsbn10()));
     }
 
     //endregion
