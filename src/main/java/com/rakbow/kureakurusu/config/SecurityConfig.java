@@ -76,7 +76,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // 清除session
-                .logout(logout -> logout.clearAuthentication(true).invalidateHttpSession(true))
+                // .logout(logout -> logout.clearAuthentication(true).invalidateHttpSession(true))
+                .logout(AbstractHttpConfigurer::disable)
 
                 //权限不足时
                 .exceptionHandling(auth -> auth

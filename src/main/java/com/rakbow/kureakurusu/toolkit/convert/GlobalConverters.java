@@ -34,6 +34,11 @@ public class GlobalConverters {
         return new Attribute<>(label, value);
     }
 
+    @SneakyThrows
+    public <E extends Enum<E>> int to(E e) {
+        return (Integer) e.getClass().getMethod("getValue").invoke(e);
+    }
+
     @Named("entryThumb")
     public String entryThumb(String thumb) {
         return CommonImageUtil.getEntryThumb(thumb);

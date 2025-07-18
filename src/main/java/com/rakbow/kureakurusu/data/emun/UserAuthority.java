@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserAuthority {
 
-    VISITOR(0, "enum.user_authority.visitor"),//未登录
+    VISITOR(0, "enum.user_authority.visitor"),
     USER(1, "enum.user_authority.user"),
     JUNIOR_EDITOR(2, "enum.user_authority.junior_editor"),
     SENIOR_EDITOR(3, "enum.user_authority.senior_editor"),

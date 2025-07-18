@@ -6,21 +6,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
 import com.rakbow.kureakurusu.data.common.LoginResult;
-import com.rakbow.kureakurusu.data.common.LoginUser;
+import com.rakbow.kureakurusu.data.common.UserMiniVO;
 import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
 import com.rakbow.kureakurusu.data.entity.LoginTicket;
 import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.exception.ApiException;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
-import jakarta.servlet.http.Cookie;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +37,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     private final UserMapper mapper;
 //    private final MailClient mailClient;
     private final LoginTicketMapper loginTicketMapper;
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
     private final RedisUtil redisUtil;
+
+    private final Converter converter;
 
     @SneakyThrows
     @Transactional
@@ -80,11 +78,13 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     @SneakyThrows
     @Transactional
-    public LoginResult login(LoginDTO dto) {
+    public LoginResult login(LoginDTO dto, String kaptcha) {
 
-        //check empty
-        if (StringUtils.isBlank(dto.getUsername())) throw new ApiException("login.username.empty");
-        if (StringUtils.isBlank(dto.getPassword())) throw new ApiException("login.password.empty");
+        //check captcha
+        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(dto.getVerifyCode())
+                || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
+            throw new ApiException("login.verify_code.error");
+
         //check user exist
         User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
         if (user == null) throw new ApiException("login.user.not_exist");
@@ -93,33 +93,27 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         //check user password
         String password = CommonUtil.md5(STR."\{dto.getPassword()}\{user.getSalt()}");
         if (!user.getPassword().equals(password)) throw new ApiException("login.password.error");
-
+        //count expired time
+        int expires = (dto.getRememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS) * 1000;
         //generate login ticket
-        LoginTicket loginTicket = new LoginTicket();
-        loginTicket.setUserId(user.getId());
-        loginTicket.setTicket(CommonUtil.generateUUID(0));
-        int expiredSeconds = dto.getRememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS * 1000;
-        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
+        LoginTicket loginTicket = LoginTicket.builder()
+                .uid(user.getId())
+                .ticket(CommonUtil.generateUUID(0))
+                .expired(new Date(System.currentTimeMillis() + expires ))
+                .build();
         loginTicketMapper.insert(loginTicket);
 
         //save ticket to redis
-        redisUtil.set(STR."login_ticket\{RISK}\{loginTicket.getTicket()}", loginTicket.getUserId(), expiredSeconds * 1000L);
-
-        //generate cookie
-        Cookie cookie = new Cookie("ticket", loginTicket.getTicket());
-        cookie.setPath(contextPath);
-        cookie.setMaxAge(expiredSeconds);
+        redisUtil.set(STR."login_ticket\{RISK}\{loginTicket.getTicket()}", loginTicket.getUid(), expires);
 
         //generate loginUser
-        LoginUser loginUser = new LoginUser();
-        loginUser.create(user);
+        UserMiniVO userMiniVO = converter.convert(user, UserMiniVO.class);
 
         //generate login result
-
         return LoginResult.builder()
-                .user(loginUser)
-                .cookie(cookie)
+                .user(userMiniVO)
                 .ticket(loginTicket.getTicket())
+                .expires(expires)
                 .build();
     }
 

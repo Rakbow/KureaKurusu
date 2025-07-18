@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.common;
 
-import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResult {
 
-    private Cookie cookie;
+    private UserMiniVO user;
     private String ticket;
-    private LoginUser user;
+    private int expires;
 
 }

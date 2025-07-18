@@ -2,11 +2,14 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.rakbow.kureakurusu.data.common.UserMiniVO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
 import com.rakbow.kureakurusu.data.emun.UserAuthority;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
+import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 /**
@@ -15,6 +18,7 @@ import lombok.Data;
  */
 @Data
 @TableName(value = "user", autoResultMap = true)
+@AutoMapper(target = UserMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 public class User {
 
     private Long id;
@@ -26,7 +30,7 @@ public class User {
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;
     private String activationCode;
-    private String headerUrl;
+    private String avatar;
     private String createDate;
 
     public User() {
@@ -38,7 +42,7 @@ public class User {
         type = UserAuthority.USER;
         status = true;
         activationCode = "";
-        headerUrl = "";
+        avatar = "";
         createDate = DateHelper.nowStr();
     }
 

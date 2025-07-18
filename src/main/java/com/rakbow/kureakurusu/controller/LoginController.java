@@ -10,12 +10,14 @@ import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -24,7 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 
-import static com.rakbow.kureakurusu.data.common.Constant.RISK;
+import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @author Rakbow
@@ -59,29 +61,29 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public ApiResult login(@RequestBody LoginDTO dto, HttpSession session, HttpServletResponse response) {
-        ApiResult res = new ApiResult();
-        //check captcha
-        String kaptcha = (String) session.getAttribute("kaptcha");
-        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(dto.getVerifyCode()) || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
-            throw new ApiException("login.verify_code.error");
-        //login
-        LoginResult loginResult = userSrv.login(dto);
+    public ApiResult login(@Valid @RequestBody LoginDTO dto,
+                           HttpSession session, HttpServletResponse response, BindingResult errors) {
+        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        LoginResult loginRes = userSrv.login(dto, session.getAttribute("kaptcha").toString());
+        //generate cookie
+        Cookie cookie = new Cookie("ticket", loginRes.getTicket());
+        cookie.setPath(contextPath);
+        cookie.setMaxAge(loginRes.getExpires());
         //load cookie to response
-        response.addCookie(loginResult.getCookie());
-        //return
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("token", loginResult.getTicket());
-        data.put("user", loginResult.getUser());
-        res.loadData(data);
-        return res;
+        response.addCookie(cookie);
+        return new ApiResult().load(loginRes);
     }
 
     @PostMapping("logout")
-    public ApiResult logout(@CookieValue("ticket") String ticket, HttpServletResponse response) {
+    public ApiResult logout(@CookieValue("ticket") String ticket,
+                            HttpSession session,
+                            HttpServletResponse response) {
         //logout
         userSrv.logout(ticket);
+        //clear Spring Security context
         SecurityContextHolder.clearContext();
+        //clear session
+        session.invalidate();
         //clear cookie
         Cookie cookie = new Cookie("ticket", null);
         cookie.setPath(contextPath);

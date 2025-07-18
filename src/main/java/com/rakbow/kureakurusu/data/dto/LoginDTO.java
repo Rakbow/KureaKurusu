@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +14,9 @@ public class LoginDTO extends DTO {
 
     private String verifyCode;
     private Boolean rememberMe;
+    @NotBlank(message = "{login.username.empty}")
     private String username;
+    @NotBlank(message = "{login.password.empty}")
     private String password;
 
 }
