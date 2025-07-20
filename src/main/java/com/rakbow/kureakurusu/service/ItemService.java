@@ -84,7 +84,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             if (!((AlbumCreateDTO) item).getDisc().getTracks().isEmpty()) {
                 ((AlbumCreateDTO) item).getDisc().setItemId(id);
                 AlbumDiscCreateDTO disc = ((AlbumCreateDTO) item).getDisc();
-                albumSrv.quickCreateAlbumTrack(disc, false);
+                albumSrv.albumTrackQuickCreate(disc, false);
             }
         }
 

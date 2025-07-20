@@ -81,18 +81,18 @@ public class ItemController {
     }
 
     @PostMapping("album-track-quick-create")
-    public ApiResult quickCreateAlbumTrack(@RequestBody AlbumDiscCreateDTO dto) {
-        extraSrv.quickCreateAlbumTrack(dto, true);
+    public ApiResult albumTrackQuickCreate(@RequestBody AlbumDiscCreateDTO dto) {
+        extraSrv.albumTrackQuickCreate(dto, true);
         return new ApiResult().ok("entity.crud.create.success");
     }
 
-    @PostMapping("album-track-files-upload")
-    public ApiResult uploadAlbumTrackFiles(
+    @PostMapping("album-track-quick-upload")
+    public ApiResult albumTrackQuickUpload(
             @RequestParam("files") MultipartFile[] files,
-            @RequestParam("albumId") long albumId
+            @ModelAttribute AlbumTrackQuickUploadDTO dto
     ) {
-        extraSrv.uploadAlbumTrackFiles(files, albumId);
-        return new ApiResult().ok("entity.crud.create.success");
+        extraSrv.albumTrackQuickUpload(files, dto);
+        return new ApiResult().ok("entity.crud.upload.success");
     }
 
     @PostMapping("convert-isbn")

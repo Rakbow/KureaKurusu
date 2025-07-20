@@ -1,12 +1,10 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.entity.*;
+import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
-import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
+import com.rakbow.kureakurusu.data.entity.Episode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,11 +17,8 @@ import java.util.List;
 public class DataFinder {
 
     public static Episode episodeFinder = new Episode();
-    public static Item itemFinder = new Item();
     public static Entry entryFinder = new Entry();
     public static Entity entityFinder = new Entity();
-
-    public static EntityRelatedCount resourceCountFinder = new EntityRelatedCount();
 
     //region album
 
@@ -36,12 +31,6 @@ public class DataFinder {
     public static Entry findEntryById(Long id, List<Entry> list) {
         entryFinder.setId(id);
         int idx = Collections.binarySearch(list, entryFinder, DataSorter.entryIdSorter);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
-    public static Item findItemById(Long id, List<Item> list) {
-        itemFinder.setId(id);
-        int idx = Collections.binarySearch(list, itemFinder, DataSorter.itemIdSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
 
@@ -70,42 +59,11 @@ public class DataFinder {
         return idx >= 0 ? list.get(idx) : null;
     }
 
-    public static Attribute<String> findAttributeByValue(String value, List<Attribute<String>> list) {
-        Attribute<String> finder = new Attribute<>();
-        finder.setValue(value);
-        int idx = Collections.binarySearch(list, finder, DataSorter.attributesStringValueSorter);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
-    public static List<Attribute<Integer>> findAttributesByValues(int[] values, List<Attribute<Integer>> list) {
-
-        List<Attribute<Integer>> res = new ArrayList<>();
-
-        if (values.length == 0) return res;
-
-        Attribute<Integer> finder = new Attribute<>();
-        for (int value : values) {
-            finder.setValue(value);
-            int idx = Collections.binarySearch(list, finder, DataSorter.attributesIntValueSorter);
-            if (idx >= 0) {
-                res.add(list.get(idx));
-            }
-        }
-        return res;
-    }
-
     //endregion
 
-    public static Episode findEpisodeById(long id, List<Episode> list) {
-        episodeFinder.setId(id);
-        int idx = Collections.binarySearch(list, episodeFinder, DataSorter.episodeIdSorter);
-        return idx >= 0 ? list.get(idx) : null;
-    }
-
-    public static EntityRelatedCount findResourceCountByTypeAndId(int type, long id, List<EntityRelatedCount> list) {
-        resourceCountFinder.setEntityType(type);
-        resourceCountFinder.setEntityId(id);
-        int idx = Collections.binarySearch(list, resourceCountFinder, DataSorter.entityResourceCountEntityTypeEntityIdSorter);
+    public static Episode findEpisodeBySerial(int Serial, List<Episode> list) {
+        episodeFinder.setSerial(Serial);
+        int idx = Collections.binarySearch(list, episodeFinder, DataSorter.episodeSerialSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
 

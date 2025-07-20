@@ -26,17 +26,17 @@ import lombok.*;
 public class Episode extends Entity {
 
     @Builder.Default
-    private Long id;//表主键
-    private int relatedType;//关联类型 Album Product
-    private long relatedId;//关联id 音乐 Album.id 剧集 Product.id
-    private String name;//标题(原)
-    private String nameEn;//标题(英)
-    private String premiereDate;//首播日期
+    private Long id;
+    private int relatedType;//Album Product
+    private long relatedId;//AlbumDisc.id Product.id
+    private String name;
+    private String nameEn;
+    private String premiereDate;
     @AutoMapping(qualifiedByName = "duration")
-    private int duration;//时长 单位：秒
-    private int serial;//序号
-    private String detail;//详情
-    private int episodeType;//类型 0-音乐 1-剧集
+    private int duration;//second
+    private int serial;
+    private String detail;
+    private int episodeType;//0-music 1-animation episode
 
     public Episode() {
         super();

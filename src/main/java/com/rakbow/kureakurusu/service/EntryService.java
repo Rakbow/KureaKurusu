@@ -110,7 +110,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 .orderByDesc(!dto.isSort(), GroupCacheEntryItem::getItems)
                 .orderByAsc(!dto.isSort(), Entry::getId);
         if (!dto.getKeywords().isEmpty()) {
-            wrapper.and(w -> dto.getKeywords().forEach(k -> w.or(i -> i
+            wrapper.and(w -> dto.getKeywords().forEach(k ->
+                    w.or(i -> i
                     .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
                     .or().like(Entry::getName, k)
                     .or().like(Entry::getNameZh, k)

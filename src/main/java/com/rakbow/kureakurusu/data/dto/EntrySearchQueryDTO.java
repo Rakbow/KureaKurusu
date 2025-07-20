@@ -27,7 +27,10 @@ public class EntrySearchQueryDTO extends ListQueryDTO {
         super.init();
         type = super.getVal("type");
         if(ObjectUtils.isNotEmpty(super.getKeyword()))
-            keywords = Arrays.stream(super.getKeyword().split(",")).toList();
+            keywords = Arrays.stream(super.getKeyword().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
     }
 
 }
