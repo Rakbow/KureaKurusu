@@ -49,7 +49,7 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
                         .or().like(Role::getNameEn, dto.getKeyword())
                 )
                 .gt(Role::getId, 0)
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), GroupCacheRoleRelation::getCount);
 
         IPage<Role> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);

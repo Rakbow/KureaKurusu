@@ -224,7 +224,7 @@ public class ItemExtraService {
      * @author rakbow
      */
     @SneakyThrows
-    public String convertISBN(String isbn10) {
+    public String convertISBN13(String isbn10) {
 
         ISBNValidator validator = new ISBNValidator();
         isbn10 = isbn10.replaceAll("-", "");

@@ -84,7 +84,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     public SearchResult<EpisodeListVO> list(EpisodeListQueryDTO dto) {
         dto.init();
         MPJLambdaWrapper<Episode> wrapper = new MPJLambdaWrapper<Episode>()
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Episode::getId);
         if (dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
             wrapper.like(Episode::getName, dto.getKeyword()).or().like(Episode::getNameEn, dto.getKeyword());

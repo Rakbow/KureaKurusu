@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ItemController {
 
     private final ItemService srv;
-    private final ItemExtraService extraSrv;
+    private final ItemExtraService extSrv;
 
     //region basic crud
 
@@ -77,12 +77,12 @@ public class ItemController {
 
     @PostMapping("album-track-list")
     public ApiResult getAlbumTracks(@RequestBody AlbumTrackInfoQry qry) {
-        return new ApiResult().load(extraSrv.getAlbumTracks(qry.getId()));
+        return new ApiResult().load(extSrv.getAlbumTracks(qry.getId()));
     }
 
     @PostMapping("album-track-quick-create")
     public ApiResult albumTrackQuickCreate(@RequestBody AlbumDiscCreateDTO dto) {
-        extraSrv.albumTrackQuickCreate(dto, true);
+        extSrv.albumTrackQuickCreate(dto, true);
         return new ApiResult().ok("entity.crud.create.success");
     }
 
@@ -91,13 +91,13 @@ public class ItemController {
             @RequestParam("files") MultipartFile[] files,
             @ModelAttribute AlbumTrackQuickUploadDTO dto
     ) {
-        extraSrv.albumTrackQuickUpload(files, dto);
+        extSrv.albumTrackQuickUpload(files, dto);
         return new ApiResult().ok("entity.crud.upload.success");
     }
 
     @PostMapping("convert-isbn")
-    public ApiResult convertISBN(@RequestBody ISBNConvertDTO dto) {
-        return new ApiResult().load(extraSrv.convertISBN(dto.getIsbn10()));
+    public ApiResult convertISBN13(@RequestBody ISBNConvertDTO dto) {
+        return new ApiResult().load(extSrv.convertISBN13(dto.getIsbn10()));
     }
 
     //endregion

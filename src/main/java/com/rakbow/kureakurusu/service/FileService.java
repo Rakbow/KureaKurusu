@@ -77,7 +77,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
         MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
                 .selectAll(FileInfo.class)
                 .like(StringUtils.isNotEmpty(dto.getKeyword()), FileInfo::getName, dto.getKeyword())
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), FileInfo::getId);
 
         //get file related part

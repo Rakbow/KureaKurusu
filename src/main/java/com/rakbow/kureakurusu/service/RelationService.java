@@ -29,8 +29,8 @@ import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
-import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final ItemMapper itemMapper;
 
     private final ImageService imageSrv;
-    private final EntityUtil entityUtil;
+    private final RedisUtil redisUtil;
 
     @Transactional
     @SneakyThrows
@@ -199,40 +199,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public List<Personnel> personnel(int entityType, long entityId) {
-        List<Personnel> res = new ArrayList<>();
-
-        RelationListQueryDTO param = new RelationListQueryDTO();
-        param.getFilters().computeIfAbsent("entityType", _ -> new LinkedHashMap<>()).put("value", entityType);
-        param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
-        param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
-        param.getFilters().computeIfAbsent("targetEntitySubTypes", _ -> new LinkedHashMap<>()).put("value", List.of(EntryType.PERSON.getValue()));
-
-        SearchResult<RelationVO> relations = list(param);
-        if (relations.data.isEmpty()) return res;
-
-        Map<Attribute<Long>, List<RelationVO>> relationGroup = relations.data.stream()
-                .collect(Collectors.groupingBy(r -> r.getTarget().getRole()));
-
-        res = relationGroup.entrySet().stream()
-                .map(entry -> {
-                    Personnel pl = new Personnel();
-                    pl.setRole(entry.getKey());
-                    pl.setPersons(entry.getValue().stream().map(r -> {
-                        PersonVO p = new PersonVO();
-                        p.setId(r.getTarget().getEntityId());
-                        p.setName(r.getTarget().getName());
-                        p.setSubName(r.getTarget().getSubName());
-                        p.setRemark(r.getRemark());
-                        return p;
-                    }).collect(Collectors.toList()));
-                    return pl;
-                })
-                .toList();
-        return res;
-    }
-
-    @Transactional
     public SearchResult<ItemMiniVO> relatedItems(RelatedItemQueryDTO dto) {
         IPage<Item> pages;
         Page<Item> page = new Page<>(1, dto.getSize());
@@ -339,5 +305,53 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         }
         return resultSet;
     }
+
+    @Transactional
+    public List<Personnel> personnel(int entityType, long entityId) {
+        List<Personnel> res = new ArrayList<>();
+
+        RelationListQueryDTO param = new RelationListQueryDTO();
+        param.getFilters().computeIfAbsent("entityType", _ -> new LinkedHashMap<>()).put("value", entityType);
+        param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
+        param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
+        param.getFilters().computeIfAbsent("targetEntitySubTypes", _ -> new LinkedHashMap<>()).put("value", List.of(EntryType.PERSON.getValue()));
+
+        SearchResult<RelationVO> relations = list(param);
+        if (relations.data.isEmpty()) return res;
+
+        Map<Attribute<Long>, List<RelationVO>> relationGroup = relations.data.stream()
+                .collect(Collectors.groupingBy(r -> r.getTarget().getRole()));
+
+        res = relationGroup.entrySet().stream()
+                .map(entry -> {
+                    Personnel pl = new Personnel();
+                    pl.setRole(entry.getKey());
+                    pl.setPersons(entry.getValue().stream().map(r -> {
+                        PersonVO p = new PersonVO();
+                        p.setId(r.getTarget().getEntityId());
+                        p.setName(r.getTarget().getName());
+                        p.setSubName(r.getTarget().getSubName());
+                        p.setRemark(r.getRemark());
+                        return p;
+                    }).collect(Collectors.toList()));
+                    return pl;
+                })
+                .toList();
+        return res;
+    }
+
+    // @Transactional
+    // public void refreshPersonnel(int entityType, long entityId) {
+    //     String key = STR."entity_personnel:\{entityType}:\{entityId}";
+    //
+    //     RelationListQueryDTO param = new RelationListQueryDTO();
+    //     param.getFilters().computeIfAbsent("entityType", _ -> new LinkedHashMap<>()).put("value", entityType);
+    //     param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
+    //     param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
+    //     param.getFilters().computeIfAbsent("targetEntitySubTypes", _ -> new LinkedHashMap<>()).put("value", List.of(EntryType.PERSON.getValue()));
+    //
+    //     SearchResult<RelationVO> relations = list(param);
+    //     redisUtil.set(key, relations.data);
+    // }
 
 }

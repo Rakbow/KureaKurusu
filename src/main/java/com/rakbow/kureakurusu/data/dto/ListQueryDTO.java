@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -53,6 +54,10 @@ public class ListQueryDTO extends QueryDTO {
         if(value == null || value.toString().isEmpty())
             return null;
         return (T) value;
+    }
+
+    public String getSortField() {
+        return CommonUtil.camelToUnderline(this.sortField);
     }
 
 }

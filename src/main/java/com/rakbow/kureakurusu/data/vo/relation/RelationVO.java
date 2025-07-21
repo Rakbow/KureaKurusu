@@ -1,8 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.relation;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 /**
  * @author Rakbow
@@ -10,6 +9,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RelationVO {
 
     private long id;//relation id

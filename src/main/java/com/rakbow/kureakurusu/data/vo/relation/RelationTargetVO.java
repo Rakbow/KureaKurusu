@@ -1,8 +1,10 @@
 package com.rakbow.kureakurusu.data.vo.relation;
 
 import com.rakbow.kureakurusu.data.Attribute;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Rakbow
@@ -10,6 +12,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RelationTargetVO {
 
     private int entityType;

@@ -68,7 +68,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
                 .like(StringUtils.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
                 .eq(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
                 .in(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()));
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField());
         long start = System.currentTimeMillis();
         IPage<Image> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<ImageVO> res = converter.convert(pages.getRecords(), ImageVO.class);

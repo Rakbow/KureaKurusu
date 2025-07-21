@@ -11,16 +11,13 @@ import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.Entry;
-import com.rakbow.kureakurusu.data.entity.GroupCacheEntryItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.entry.*;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -104,10 +101,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 .eq(Entry::getStatus, 1)
                 .eq(ObjectUtils.isNotEmpty(dto.getType()), Entry::getType, dto.getType())
                 .selectAsClass(Entry.class, EntrySimpleVO.class)
-                .select(GroupCacheEntryItem::getItems)
-                .leftJoin(GroupCacheEntryItem.class, on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
-                .orderByDesc(!dto.isSort(), GroupCacheEntryItem::getItems)
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
+                .orderByDesc(!dto.isSort(), Entry::getItems)
                 .orderByAsc(!dto.isSort(), Entry::getId);
         if (!dto.getKeywords().isEmpty()) {
             wrapper.and(w -> dto.getKeywords().forEach(k ->
@@ -157,11 +152,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public SearchResult<EntryListVO> list(EntryListQueryDTO dto) {
         dto.init();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
-                .selectAll(Entry.class)
-                .select(GroupCacheEntryItem::getItems)
-                .leftJoin(GroupCacheEntryItem.class,
-                        on -> on.eq(GroupCacheEntryItem::getEntryId, Entry::getId))
-                .groupBy(Entry::getId)
                 .eq(Entry::getType, dto.getType())
                 .and(StringUtils.isNotEmpty(dto.getKeyword()), i -> i
                         .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", dto.getKeyword())
@@ -169,8 +159,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                         .or().like(Entry::getNameZh, dto.getKeyword())
                         .or().like(Entry::getNameEn, dto.getKeyword())
                 )
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
-                .orderByDesc(GroupCacheEntryItem::getItems);
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
+                .orderByDesc(!dto.isSort(), Entry::getItems);
         long start = System.currentTimeMillis();
         IPage<Entry> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<EntryListVO> res = converter.convert(pages.getRecords(), EntryListVO.class);

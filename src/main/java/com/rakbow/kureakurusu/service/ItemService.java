@@ -48,7 +48,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final ImageService imageSrv;
     private final FileService fileSrv;
     private final RelationService relationSrv;
-    private final ItemExtraService albumSrv;
+    private final ItemExtraService extSrv;
 
     private final RedisUtil redisUtil;
     private final PopularUtil popularUtil;
@@ -84,7 +84,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             if (!((AlbumCreateDTO) item).getDisc().getTracks().isEmpty()) {
                 ((AlbumCreateDTO) item).getDisc().setItemId(id);
                 AlbumDiscCreateDTO disc = ((AlbumCreateDTO) item).getDisc();
-                albumSrv.albumTrackQuickCreate(disc, false);
+                extSrv.albumTrackQuickCreate(disc, false);
             }
         }
 
@@ -211,7 +211,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .eq(StringUtils.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
                 .eq(StringUtils.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
                 .eq(StringUtils.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
-                .orderBy(dto.isSort(), dto.asc(), CommonUtil.camelToUnderline(dto.getSortField()))
+                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Item::getId);
         long start = System.currentTimeMillis();
         if (dto.hasRelatedEntries()) {
@@ -257,7 +257,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                                 .or().like(Item::getBarcode, param.getKeyword())
                                 .or().like(Item::getCatalogId, param.getKeyword())
                         ))
-                .orderBy(param.isSort(), param.asc(), CommonUtil.camelToUnderline(param.getSortField()))
+                .orderBy(param.isSort(), param.asc(), param.getSortField())
                 .orderByDesc(!param.isSort(), Item::getId);
         //private query column to sql
         MyBatisUtil.itemListQueryWrapper(param, wrapper);
