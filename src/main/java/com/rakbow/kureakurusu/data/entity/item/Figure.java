@@ -22,7 +22,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AutoMappers({
-        @AutoMapper(target = FigureListVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = FigureListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = FigureVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Figure extends SuperItem {

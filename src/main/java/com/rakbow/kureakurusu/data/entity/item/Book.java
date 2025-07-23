@@ -19,7 +19,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AutoMappers({
-        @AutoMapper(target = BookListVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = BookListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = BookVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Book extends SuperItem {
@@ -27,7 +27,6 @@ public class Book extends SuperItem {
     private int pages;
     private String size;
 
-    @AutoMapping(qualifiedByName = "toAttribute")
     private Language lang;//语言
 
     public Book() {

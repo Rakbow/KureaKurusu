@@ -18,7 +18,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @AutoMappers({
-        @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = AlbumListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = AlbumVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Album extends SuperItem {

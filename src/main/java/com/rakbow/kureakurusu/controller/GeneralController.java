@@ -7,7 +7,6 @@ import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
-import com.rakbow.kureakurusu.service.ChangelogService;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.ExcelUtil;
@@ -66,9 +65,14 @@ public class GeneralController {
 
     //region other
 
-    @PostMapping("changelog")
-    public ApiResult changelog(@RequestBody ChangelogListQueryDTO dto) {
-        return new ApiResult().load(srv.changelog(dto));
+    @PostMapping("changelog-list")
+    public ApiResult changelogs(@RequestBody ChangelogListQueryDTO dto) {
+        return new ApiResult().load(srv.changelogs(dto));
+    }
+
+    @PostMapping("changelog-mini")
+    public ApiResult changelog(@RequestBody EntityMinDTO dto) {
+        return new ApiResult().load(srv.mini(dto.getEntityType(), dto.getEntityId()));
     }
 
     @PostMapping("like")

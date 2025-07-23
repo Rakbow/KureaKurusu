@@ -21,7 +21,6 @@ public abstract class SuperItem extends Entity {
 
     private Long id = 0L;
     private ItemType type;
-    @AutoMapping(qualifiedByName = "toAttribute")
     private ItemSubType subType;
 
     private String name;
@@ -29,7 +28,6 @@ public abstract class SuperItem extends Entity {
     private List<String> aliases;
 
     private String releaseDate;
-    @AutoMapping(qualifiedByName = "toAttribute")
     private ReleaseType releaseType;
     private double price;
     @AutoMapping(target = "currency", qualifiedByName = "getCurrency")

@@ -23,7 +23,7 @@ import java.util.List;
 @Data
 @ToString(callSuper = true)
 @AutoMappers({
-        @AutoMapper(target = DiscListVO.class, reverseConvertGenerate = false),
+        @AutoMapper(target = DiscListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = DiscVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Disc extends SuperItem {

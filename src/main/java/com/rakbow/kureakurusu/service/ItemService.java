@@ -194,7 +194,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         popularUtil.updateEntityPopularity(ENTITY_TYPE.getValue(), id);
 
         return ItemDetailVO.builder()
-                .type(item.getType().getValue())
                 .item(vo)
                 .traffic(entityUtil.buildTraffic(ENTITY_TYPE.getValue(), id))
                 .cover(imageSrv.getCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))

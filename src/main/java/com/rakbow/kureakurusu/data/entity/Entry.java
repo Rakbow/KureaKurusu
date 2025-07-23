@@ -34,10 +34,8 @@ import java.util.List;
 })
 public class Entry extends Entity {
 
-    @AutoMapping(qualifiedByName = "toAttribute")
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private EntryType type;
-    @AutoMapping(qualifiedByName = "toAttribute")
     private EntrySubType subType;
     @NotBlank(message = "{entity.crud.name.required_field}")
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
@@ -51,7 +49,6 @@ public class Entry extends Entity {
     @TableField(typeHandler = StrListHandler.class)
     private List<String> links;
 
-    @AutoMapping(qualifiedByName = "toAttribute")
     private Gender gender;
     private String date;
 

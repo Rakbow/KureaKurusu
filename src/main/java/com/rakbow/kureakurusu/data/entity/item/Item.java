@@ -1,12 +1,15 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.emun.ItemSubType;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -15,7 +18,6 @@ import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
@@ -28,14 +30,12 @@ import java.util.List;
 @TableName(value = "item", autoResultMap = true)
 @NoArgsConstructor
 @AutoMappers({
-        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false)
+        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Item extends Entity {
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    @AutoMapping(qualifiedByName = "toAttribute")
     private ItemType type;
-    @AutoMapping(qualifiedByName = "toAttribute")
     private ItemSubType subType;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)

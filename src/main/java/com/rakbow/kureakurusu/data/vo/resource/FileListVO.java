@@ -17,5 +17,7 @@ public class FileListVO extends EntityListVO {
     private String extension;
     private String size;
     private String path;
+    private String addedTime;
+    private String editedTime;
 
 }

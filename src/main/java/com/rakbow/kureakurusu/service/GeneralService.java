@@ -4,12 +4,12 @@ import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
+import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
 import com.rakbow.kureakurusu.data.vo.ChangelogVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
@@ -119,8 +119,12 @@ public class GeneralService {
         return res;
     }
 
-    public SearchResult<ChangelogVO> changelog(ChangelogListQueryDTO dto) {
+    public SearchResult<ChangelogVO> changelogs(ChangelogListQueryDTO dto) {
         return logSrv.list(dto);
+    }
+
+    public ChangelogMiniVO mini(int type, long id) {
+        return logSrv.mini(type, id);
     }
 
 }

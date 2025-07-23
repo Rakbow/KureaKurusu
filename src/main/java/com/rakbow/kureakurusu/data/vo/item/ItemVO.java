@@ -13,7 +13,7 @@ import java.util.List;
 public class ItemVO {
 
     private long id;
-    private int type;
+    private Attribute<Integer> type;
     private Attribute<Integer> subType;
 
     private String name;
@@ -36,9 +36,6 @@ public class ItemVO {
 
     private String remark;
     private String detail;
-
-    private String addedTime;
-    private String editedTime;
 
     private boolean status;
 

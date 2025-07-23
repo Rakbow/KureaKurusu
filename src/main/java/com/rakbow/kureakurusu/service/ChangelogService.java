@@ -7,13 +7,11 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.ChangelogMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.ChangelogField;
 import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
 import com.rakbow.kureakurusu.data.entity.Changelog;
-import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.data.vo.ChangelogVO;
-import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
+import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.Converter;
@@ -22,7 +20,9 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -64,6 +64,23 @@ public class ChangelogService extends ServiceImpl<ChangelogMapper, Changelog> {
                 .operateTime(DateHelper.now())
                 .build()
         );
+    }
+
+    @Transactional
+    @SneakyThrows
+    public ChangelogMiniVO mini(int type, long id) {
+
+        ChangelogMiniVO res = new ChangelogMiniVO();
+        MPJLambdaWrapper<Changelog> wrapper = new MPJLambdaWrapper<>();
+        wrapper.select("count(id) as total", "MIN(operate_time) AS createTime", "MAX(operate_time) AS lastModifyTime")
+                .eq(Changelog::getEntityType, type)
+                .eq(Changelog::getEntityId, id);
+
+        List<Map<String, Object>> result = listMaps(wrapper);
+        res.setCreateTime(DateHelper.timestampToString((Timestamp) result.getFirst().get("createTime")));
+        res.setLastModifyTime(DateHelper.timestampToString((Timestamp) result.getFirst().get("lastModifyTime")));
+        res.setTotal((long) result.getFirst().get("total"));
+        return res;
     }
 
 }

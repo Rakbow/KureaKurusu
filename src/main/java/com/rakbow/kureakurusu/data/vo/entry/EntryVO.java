@@ -29,8 +29,6 @@ public class EntryVO {
 
     private String detail;
     private String remark;
-    private String addedTime;
-    private String editedTime;
     private Boolean status;
 
 }
