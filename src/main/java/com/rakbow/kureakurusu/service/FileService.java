@@ -10,6 +10,8 @@ import com.rakbow.kureakurusu.dao.FileInfoMapper;
 import com.rakbow.kureakurusu.dao.FileRelatedMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.emun.ChangelogField;
+import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
@@ -51,6 +53,8 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
     private final FileRelatedMapper fileRelatedMapper;
     private final Converter converter;
     private final SqlSessionFactory sqlSessionFactory;
+
+    private final ChangelogService logSrv;
 
     @Value("${system.path.upload.file}")
     private String FILE_UPLOAD_DIR;
@@ -131,6 +135,8 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
         MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
         frBatchInsert.execute(fileRelatedMethod.insert());
+
+        logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPLOAD);
     }
 
     @Transactional
@@ -154,14 +160,16 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
         MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
         MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
         frBatchInsert.execute(fileRelatedMethod.insert());
+
+        logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPDATE);
     }
 
     @Transactional
     @SneakyThrows
-    public void deleteRelated(List<Long> ids) {
-        fileRelatedMapper.deleteByIds(ids);
+    public void deleteRelated(FileRelatedDeleteDTO dto) {
+        fileRelatedMapper.deleteByIds(dto.getIds());
+        logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.FILE, ChangelogOperate.DELETE);
     }
-
 
     @SneakyThrows
     public FileRelated generateRelated(int entityType, long entityId, File file) {

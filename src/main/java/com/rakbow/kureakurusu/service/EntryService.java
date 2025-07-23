@@ -8,9 +8,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.EntryType;
-import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
@@ -47,6 +45,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     private final QiniuImageUtil qiniuImageUtil;
     private final EntryMapper mapper;
     private final RelationService relationSrv;
+    private final ChangelogService logSrv;
     private final static int ENTITY_TYPE = EntityType.ENTRY.getValue();
 
     @SneakyThrows
@@ -82,6 +81,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         //save related entities
         relationSrv.batchCreate(ENTITY_TYPE, entry.getId(), entry.getType().getValue(), dto.getRelatedEntries());
 
+        logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
+
         return entry.getId();
     }
 
@@ -90,6 +91,8 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public void update(EntryUpdateDTO dto) {
         Entry entry = converter.convert(dto, Entry.class);
         updateById(entry);
+
+        logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
     }
 
     @Transactional
@@ -144,6 +147,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         finalUrl = qiniuImageUtil.uploadEntryImage(ENTITY_TYPE, id, image);
         //update entry
         update(null, new UpdateWrapper<Entry>().eq("id", id).set(fieldName, finalUrl));
+
+        logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.IMAGE, ChangelogOperate.UPDATE);
+
         return finalUrl;
     }
 

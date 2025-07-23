@@ -1,15 +1,16 @@
 package com.rakbow.kureakurusu.service;
 
 import com.rakbow.kureakurusu.dao.CommonMapper;
-import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
-import com.rakbow.kureakurusu.data.emun.AlbumFormat;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.MediaFormat;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
+import com.rakbow.kureakurusu.data.vo.ChangelogVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,11 +30,11 @@ import java.util.Objects;
 public class GeneralService {
 
     private final LikeUtil likeUtil;
-    private final PopularUtil popularUtil;
     private final RedisUtil redisUtil;
 
     private final CommonMapper mapper;
-    private final RoleMapper roleMapper;
+
+    private final ChangelogService logSrv;
 
     /**
      * 刷新redis中的选项缓存
@@ -106,6 +107,8 @@ public class GeneralService {
     @SneakyThrows
     public void updateEntityDetail(UpdateDetailDTO dto) {
         mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
+
+        logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.DETAIL, ChangelogOperate.UPDATE);
     }
 
     public Map<String, Object> getOptions() {
@@ -114,6 +117,10 @@ public class GeneralService {
         res.put("mediaFormatSet", Objects.requireNonNull(MetaData.getOptions()).mediaFormatSet);
         res.put("roleSet", Objects.requireNonNull(MetaData.getOptions()).roleSet);
         return res;
+    }
+
+    public SearchResult<ChangelogVO> changelog(ChangelogListQueryDTO dto) {
+        return logSrv.list(dto);
     }
 
 }

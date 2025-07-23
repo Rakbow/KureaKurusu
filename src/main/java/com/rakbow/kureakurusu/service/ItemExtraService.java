@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.dto.AlbumDiscCreateDTO;
 import com.rakbow.kureakurusu.data.dto.AlbumTrackQuickUploadDTO;
+import com.rakbow.kureakurusu.data.emun.ChangelogField;
+import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
@@ -55,6 +57,7 @@ public class ItemExtraService {
     private final FileInfoMapper fileMapper;
 
     private final FileService fileSrv;
+    private final ChangelogService logSrv;
 
     private final SqlSessionFactory sqlSessionFactory;
     private final Converter converter;
@@ -149,6 +152,8 @@ public class ItemExtraService {
                 .set(ItemAlbum::getTracks, trackNum)
                 .set(ItemAlbum::getRunTime, runTime);
         albumMapper.update(null, wrapper);
+
+        logSrv.create(EntityType.ITEM.getValue(), dto.getItemId(), ChangelogField.EPISODE, ChangelogOperate.CREATE);
     }
 
     @SneakyThrows

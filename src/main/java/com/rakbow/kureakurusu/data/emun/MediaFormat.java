@@ -16,7 +16,7 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum MediaFormat {
 
-    OTHER(0, "enum.media_format.other"),
+    DEFAULT(0, "enum.default"),
     CD(1, "enum.media_format.cd"),
     DVD(2, "enum.media_format.dvd"),
     BLU_RAY(3, "enum.media_format.blu_ray"),
@@ -50,7 +50,7 @@ public enum MediaFormat {
             if(format.value == value)
                 return format;
         }
-        return OTHER;
+        return DEFAULT;
     }
 
 }

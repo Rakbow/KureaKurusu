@@ -10,9 +10,7 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SubItem;
@@ -49,6 +47,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final FileService fileSrv;
     private final RelationService relationSrv;
     private final ItemExtraService extSrv;
+    private final ChangelogService logSrv;
 
     private final RedisUtil redisUtil;
     private final PopularUtil popularUtil;
@@ -88,6 +87,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             }
         }
 
+        logSrv.create(ENTITY_TYPE.getValue(), id, ChangelogField.DEFAULT, ChangelogOperate.CREATE);
+
         return id;
     }
 
@@ -124,6 +125,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
         updateById(item);
         subMapper.updateById(subItem);
+
+        logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
     }
 
     @Transactional
@@ -201,7 +204,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     public SearchResult<ItemMiniVO> search(ItemSearchQueryDTO dto) {
         dto.init();
-        Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
+        // Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
+        Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAsClass(Item.class, ItemSimpleVO.class)
                 .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
@@ -211,6 +215,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .eq(StringUtils.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
                 .eq(StringUtils.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
                 .eq(StringUtils.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
+                .eq(Item::getStatus, 1)
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Item::getId);
         long start = System.currentTimeMillis();
@@ -228,7 +233,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         }
         IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
-        if (dto.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
+        // if (dto.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
         List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
         //get image cache
         items.forEach(i -> {
@@ -263,7 +268,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         MyBatisUtil.itemListQueryWrapper(param, wrapper);
         long start = System.currentTimeMillis();
         IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), superClass, wrapper);
-
         List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
 
         //get related resource count

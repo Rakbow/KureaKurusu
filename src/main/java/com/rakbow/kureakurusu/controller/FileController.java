@@ -64,8 +64,8 @@ public class FileController {
     }
 
     @DeleteMapping("related-delete")
-    public ApiResult deleteRelated(@RequestBody List<Long> ids) {
-        srv.deleteRelated(ids);
+    public ApiResult deleteRelated(@RequestBody FileRelatedDeleteDTO dto) {
+        srv.deleteRelated(dto);
         return new ApiResult().ok("entity.crud.delete.success");
     }
 

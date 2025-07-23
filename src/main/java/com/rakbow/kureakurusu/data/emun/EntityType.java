@@ -18,7 +18,7 @@ public enum EntityType {
     ENTRY(1, "enum.entity.entry", "entry"),
     ROLE(3, "enum.entity.role", "role"),
     EPISODE(4, "enum.entity.episode", "episode"),
-    ALBUM_DISC(5, "enum.entity.default", "album_disc"),
+    ALBUM_DISC(5, "enum.default", "album_disc"),
     FILE(98, "enum.entity.file", "file_info"),
     USER(101, "enum.entity.user", "user");
 

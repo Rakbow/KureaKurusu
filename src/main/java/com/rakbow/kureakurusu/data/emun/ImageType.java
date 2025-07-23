@@ -14,7 +14,7 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum ImageType {
 
-    DEFAULT(0, "enum.image_type.default"),
+    DEFAULT(0, "enum.default"),
     THUMB(1, "enum.image_type.thumb"),
     MAIN(2, "enum.image_type.main"),
     OTHER(99, "enum.image_type.other");

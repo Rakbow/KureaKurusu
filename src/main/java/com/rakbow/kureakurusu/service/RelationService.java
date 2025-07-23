@@ -13,10 +13,7 @@ import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.EntryType;
-import com.rakbow.kureakurusu.data.emun.ImageType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
@@ -63,7 +60,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final ItemMapper itemMapper;
 
     private final ImageService imageSrv;
-    private final RedisUtil redisUtil;
+    private final ChangelogService logSrv;
 
     @Transactional
     @SneakyThrows
@@ -171,6 +168,9 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         MybatisBatch.Method<Relation> method = new MybatisBatch.Method<>(RelationMapper.class);
         MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, res);
         batchInsert.execute(method.insert());
+
+        logSrv.create(dto.getEntityType(), dto.getEntityId(),
+                ChangelogField.getByEntryType(dto.getRelatedEntitySubType()), ChangelogOperate.UPDATE);
     }
 
     @Transactional

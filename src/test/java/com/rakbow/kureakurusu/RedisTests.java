@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.dao.*;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.dto.ImageDeleteDTO;
+import com.rakbow.kureakurusu.data.dto.ImageDeleteMiniDTO;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.EntryType;
@@ -180,81 +180,81 @@ public class RedisTests {
         }
     }
 
-    @Test
-    @SneakyThrows
-    public void batchUpdateItemCoverAndThumbRedisCache() {
-        List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getType, ItemType.DISC.getValue()));
-        redisUtil.delete("entity_image_cache:*");
-        String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{EntityType.ITEM.getValue()}:%s";
-        String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{EntityType.ITEM.getValue()}:%s";
-
-        String curThumb;
-
-        int total = items.size();
-        AtomicInteger cur = new AtomicInteger();
-        for (Item i : items) {
-            Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
-                    .eq(Image::getEntityType, EntityType.ITEM.getValue())
-                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
-            Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
-                    .eq(Image::getEntityType, EntityType.ITEM.getValue())
-                    .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
-
-            if(cover == null || thumb == null) continue;
-            // 读取缩略图像
-            BufferedImage image = ImageIO.read(new URL(thumb.getUrl()));
-            int width = image.getWidth();
-            int height = image.getHeight();
-            //若不为长方形，删除原图，重新生成缩略图
-            if(width == height) continue;
-
-            //删除原图(数据库，七牛云，redis缓存)
-            resourceSrv.delete(List.of(new ImageDeleteDTO(thumb.getId(), thumb.getUrl())));
-            redisUtil.delete(String.format(thumbKey, i.getId()));
-
-            //生成新thumb
-            ImageMiniDTO newThumb = new ImageMiniDTO();
-            newThumb.setName("Thumb");
-            newThumb.setType(ImageType.THUMB.getValue());
-
-            // 找最短边
-            int side = Math.min(width, height);
-
-            // 计算起点（中心为基准）
-            int x = (width - side) / 2;
-            int y = (height - side) / 2;
-
-            // 裁剪为正方形
-            BufferedImage cropped = image.getSubimage(x, y, side, side);
-            // 生成缩略图到内存
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            Thumbnails.of(cropped)
-                    .size(70, 70)
-                    .outputFormat("jpg")
-                    .toOutputStream(os);
-
-            byte[] thumbBytes = os.toByteArray();
-            // 创建 MultipartFile 对象（MockMultipartFile 实现类）
-            MultipartFile thumbFile = new MockMultipartFile(
-                    "file",// 字段名
-                    "Thumb.jpg",// 文件名
-                    "image/jpeg",// MIME 类型
-                    thumbBytes// 内容
-            );
-
-            // 设置生成的 MultipartFile 到 DTO
-            newThumb.setFile(thumbFile);
-
-            //upload to qiniu
-            List<Image> addImages = qiniuImageUtil.uploadImages(EntityType.ITEM.getValue(), i.getId(), List.of(newThumb));
-            Image newThumbImage = addImages.getFirst();
-            imageMapper.insert(newThumbImage);
-
-            redisUtil.set(String.format(thumbKey, i.getId()), newThumbImage.getUrl());
-
-            System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
-        }
-    }
+    // @Test
+    // @SneakyThrows
+    // public void batchUpdateItemCoverAndThumbRedisCache() {
+    //     List<Item> items = itemMapper.selectList(new LambdaQueryWrapper<Item>().eq(Item::getType, ItemType.DISC.getValue()));
+    //     redisUtil.delete("entity_image_cache:*");
+    //     String coverKey = STR."entity_image_cache:\{ImageType.MAIN.getValue()}:\{EntityType.ITEM.getValue()}:%s";
+    //     String thumbKey = STR."entity_image_cache:\{ImageType.THUMB.getValue()}:\{EntityType.ITEM.getValue()}:%s";
+    //
+    //     String curThumb;
+    //
+    //     int total = items.size();
+    //     AtomicInteger cur = new AtomicInteger();
+    //     for (Item i : items) {
+    //         Image cover = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+    //                 .eq(Image::getEntityType, EntityType.ITEM.getValue())
+    //                 .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.MAIN));
+    //         Image thumb = imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+    //                 .eq(Image::getEntityType, EntityType.ITEM.getValue())
+    //                 .eq(Image::getEntityId, i.getId()).eq(Image::getType, ImageType.THUMB));
+    //
+    //         if(cover == null || thumb == null) continue;
+    //         // 读取缩略图像
+    //         BufferedImage image = ImageIO.read(new URL(thumb.getUrl()));
+    //         int width = image.getWidth();
+    //         int height = image.getHeight();
+    //         //若不为长方形，删除原图，重新生成缩略图
+    //         if(width == height) continue;
+    //
+    //         //删除原图(数据库，七牛云，redis缓存)
+    //         resourceSrv.delete(List.of(new ImageDeleteMiniDTO(thumb.getId(), thumb.getUrl())));
+    //         redisUtil.delete(String.format(thumbKey, i.getId()));
+    //
+    //         //生成新thumb
+    //         ImageMiniDTO newThumb = new ImageMiniDTO();
+    //         newThumb.setName("Thumb");
+    //         newThumb.setType(ImageType.THUMB.getValue());
+    //
+    //         // 找最短边
+    //         int side = Math.min(width, height);
+    //
+    //         // 计算起点（中心为基准）
+    //         int x = (width - side) / 2;
+    //         int y = (height - side) / 2;
+    //
+    //         // 裁剪为正方形
+    //         BufferedImage cropped = image.getSubimage(x, y, side, side);
+    //         // 生成缩略图到内存
+    //         ByteArrayOutputStream os = new ByteArrayOutputStream();
+    //         Thumbnails.of(cropped)
+    //                 .size(70, 70)
+    //                 .outputFormat("jpg")
+    //                 .toOutputStream(os);
+    //
+    //         byte[] thumbBytes = os.toByteArray();
+    //         // 创建 MultipartFile 对象（MockMultipartFile 实现类）
+    //         MultipartFile thumbFile = new MockMultipartFile(
+    //                 "file",// 字段名
+    //                 "Thumb.jpg",// 文件名
+    //                 "image/jpeg",// MIME 类型
+    //                 thumbBytes// 内容
+    //         );
+    //
+    //         // 设置生成的 MultipartFile 到 DTO
+    //         newThumb.setFile(thumbFile);
+    //
+    //         //upload to qiniu
+    //         List<Image> addImages = qiniuImageUtil.uploadImages(EntityType.ITEM.getValue(), i.getId(), List.of(newThumb));
+    //         Image newThumbImage = addImages.getFirst();
+    //         imageMapper.insert(newThumbImage);
+    //
+    //         redisUtil.set(String.format(thumbKey, i.getId()), newThumbImage.getUrl());
+    //
+    //         System.out.println(STR."\{cur.incrementAndGet()}/\{total} id: \{i.getId()} success");
+    //     }
+    // }
 
     @Test
     public void batchUpdateEntryCoverAndThumbRedisCache() {

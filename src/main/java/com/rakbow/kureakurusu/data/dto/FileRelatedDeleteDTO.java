@@ -6,13 +6,13 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2025/7/23 16:29
+ * @since 2025/7/23 16:22
  */
 @Data
-public class ImageDeleteDTO {
+public class FileRelatedDeleteDTO {
 
     private int entityType;
     private long entityId;
-    private List<ImageDeleteMiniDTO> images;
+    private List<Long> ids;
 
 }

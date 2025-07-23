@@ -14,7 +14,7 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum EntrySubType {
 
-    OTHER(0, "enum.entry_sub_type.other"),
+    DEFAULT(0, "enum.default"),
     ANIME(1, "enum.entry_sub_type.anime"),
     NOVEL(2, "enum.entry_sub_type.novel"),
     COMIC(3, "enum.entry_sub_type.manga"),
@@ -32,7 +32,7 @@ public enum EntrySubType {
             if(type.value == value)
                 return type;
         }
-        return OTHER;
+        return DEFAULT;
     }
 
 }

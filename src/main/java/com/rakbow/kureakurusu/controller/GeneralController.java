@@ -2,13 +2,12 @@ package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.EntityQryDTO;
-import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
-import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
+import com.rakbow.kureakurusu.service.ChangelogService;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.ExcelUtil;
@@ -66,6 +65,11 @@ public class GeneralController {
     //endregion
 
     //region other
+
+    @PostMapping("changelog")
+    public ApiResult changelog(@RequestBody ChangelogListQueryDTO dto) {
+        return new ApiResult().load(srv.changelog(dto));
+    }
 
     @PostMapping("like")
     public ApiResult like(@RequestBody EntityQryDTO dto, HttpServletResponse response) {

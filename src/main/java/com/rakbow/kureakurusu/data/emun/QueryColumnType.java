@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.entity;
+package com.rakbow.kureakurusu.data.emun;
 
 /**
  * @author Rakbow

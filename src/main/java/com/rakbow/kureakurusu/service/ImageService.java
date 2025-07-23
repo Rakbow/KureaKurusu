@@ -12,13 +12,14 @@ import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.emun.ChangelogField;
+import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -48,6 +49,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
     private final Converter converter;
+    private final ChangelogService logSrv;
 
     private final static List<Integer> defaultImageType = Arrays.asList(
             ImageType.MAIN.getValue(),
@@ -97,6 +99,8 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         if (entityType == EntityType.ITEM.getValue()) {
             resetCache(entityType, entityId);
         }
+
+        logSrv.create(entityType, entityId, ChangelogField.IMAGE, ChangelogOperate.UPLOAD);
     }
 
     @Transactional
@@ -105,13 +109,15 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     }
 
     @Transactional
-    public void delete(List<ImageDeleteDTO> images) {
-        String[] keys = images.stream().map(ImageDeleteDTO::getUrl)
+    public void delete(ImageDeleteDTO dto) {
+        String[] keys = dto.getImages().stream().map(ImageDeleteMiniDTO::getUrl)
                 .map(url -> url.replace(Constant.FILE_DOMAIN, "")).toArray(String[]::new);
         //delete from qiniu server
         List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(keys);
         //delete from database
-        removeByIds(deleteIndexes.stream().map(index -> images.get(index).getId()).toList());
+        removeByIds(deleteIndexes.stream().map(index -> dto.getImages().get(index).getId()).toList());
+
+        logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.IMAGE, ChangelogOperate.DELETE);
     }
 
     public ImageDisplayVO preview(ImagePreviewDTO dto) {

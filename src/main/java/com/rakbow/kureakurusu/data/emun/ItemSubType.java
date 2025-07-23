@@ -14,7 +14,7 @@ import lombok.Getter;
 @AutoEnumMapper("value")
 public enum ItemSubType {
 
-    DEFAULT(0, "enum.item_sub_type.default"),
+    DEFAULT(0, "enum.default"),
 
     MISC(1, "enum.item_sub_type.misc"),
     HANGED_UP(2, "enum.item_sub_type.hanged_up"),
