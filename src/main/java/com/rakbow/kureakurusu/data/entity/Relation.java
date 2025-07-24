@@ -35,7 +35,6 @@ public class Relation {
     private Long relatedEntityId;
 
     private String remark;
-    private Boolean status;
 
     @TableField(exist = false)
     private int direction = 1;

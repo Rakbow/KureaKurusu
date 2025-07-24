@@ -13,6 +13,7 @@ import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
@@ -22,7 +23,7 @@ import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.PopularUtil;
 import io.github.linpeilie.Converter;
@@ -92,26 +93,10 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         long start = System.currentTimeMillis();
         IPage<Episode> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         if(pages.getRecords().isEmpty()) return new SearchResult<>();
+
+        getRelatedAlbums(pages.getRecords());
+
         List<EpisodeListVO> res = converter.convert(pages.getRecords(), EpisodeListVO.class);
-
-        //get album info
-        List<Long> discIds = pages.getRecords().stream().map(Episode::getRelatedId).distinct().toList();
-        List<AlbumDisc> discs = discMapper.selectByIds(discIds);
-        List<Long> itemIds = discs.stream().map(AlbumDisc::getItemId).distinct().toList();
-        List<Item> items = itemMapper.selectByIds(itemIds);
-
-
-        res.forEach(e -> discs.stream()
-                .filter(d -> d.getId() == e.getRelatedId())
-                .findFirst().ifPresent(d -> {
-                    // 1. 先找到对应的item并设置parent
-                    items.stream()
-                            .filter(i -> i.getId() == d.getItemId())
-                            .findFirst()
-                            .ifPresent(e::setParent);
-                    // 2. 然后可以进行其他赋值操作
-                    e.setDiscNo(d.getDiscNo());
-                }));
 
         //get file count
         List<Long> ids = res.stream().map(EpisodeListVO::getId).toList();
@@ -139,7 +124,6 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
                             .id(album.getId())
                             .name(album.getName())
                             .subName(STR."\{album.getReleaseDate()}  \{album.getCatalogId()}")
-                            .tableName(EntityType.ITEM.getTableName())
                             .thumb(imageSrv.getCache(EntityType.ITEM.getValue(), disc.getItemId(), ImageType.THUMB))
                             .build()
             );
@@ -176,6 +160,23 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         }
 
         return list.subList(start, end);
+    }
+
+    public void getRelatedAlbums(List<Episode> eps) {
+        List<Long> discIds = eps.stream().map(Episode::getRelatedId).distinct().toList();
+        List<AlbumDisc> discs = discMapper.selectByIds(discIds);
+        List<Long> itemIds = discs.stream().map(AlbumDisc::getItemId).distinct().toList();
+        List<Item> items = itemMapper.selectByIds(itemIds);
+        Entity disc;
+        Entity album;
+        for(Episode ep : eps) {
+            disc = DataFinder.findEntityById(ep.getRelatedId(), discs);
+            if(disc == null) continue;
+            ep.setDiscNo(((AlbumDisc) disc).getDiscNo());
+            album = DataFinder.findEntityById(((AlbumDisc) disc).getItemId(), items);
+            if(album == null) continue;
+            ep.setParent((Item) album);
+        }
     }
 
 }

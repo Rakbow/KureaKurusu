@@ -20,8 +20,6 @@ public class DataFinder {
     public static Entry entryFinder = new Entry();
     public static Entity entityFinder = new Entity();
 
-    //region album
-
     public static Entity findEntityById(Long id, List<? extends Entity> list) {
         entityFinder.setId(id);
         int idx = Collections.binarySearch(list, entityFinder, DataSorter.entityIdSorter);
@@ -33,8 +31,6 @@ public class DataFinder {
         int idx = Collections.binarySearch(list, entryFinder, DataSorter.entryIdSorter);
         return idx >= 0 ? list.get(idx) : null;
     }
-
-    //endregion
 
     //region product
 

@@ -27,7 +27,6 @@ import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -130,7 +129,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 target.setName(((Entry) e).getName());
                 target.setSubName(CommonUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
             } else {
-                target.setThumb(imageSrv.getCache(EntityType.ITEM.getValue(), e.getId(), ImageType.MAIN));
+                target.setThumb(imageSrv.getCache(EntityType.ITEM.getValue(), e.getId(), ImageType.THUMB));
                 target.setName(((Item) e).getName());
                 target.setSubName(((Item) e).getBarcode());
             }

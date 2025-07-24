@@ -1,6 +1,10 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
@@ -38,6 +42,11 @@ public class Episode extends Entity {
     private String detail;
     private int episodeType;//0-music 1-animation episode
 
+    @TableField(exist = false)
+    private int discNo;
+    @TableField(exist = false)
+    private EntityMiniVO parent = new EntityMiniVO();
+
     public Episode() {
         super();
         id = 0L;
@@ -50,6 +59,12 @@ public class Episode extends Entity {
         serial = 1;
         detail = "";
         episodeType = 0;
+    }
+
+    public void setParent(Item item) {
+        parent.setId(item.getId());
+        parent.setName(item.getName());
+        parent.setType(EntityType.ITEM.getValue());
     }
 
 }

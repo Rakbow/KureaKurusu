@@ -15,10 +15,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EntityMiniVO {
 
-    private String thumb;
     private Integer type;
     private Long id;
-    private String tableName;
+    private String thumb;
     private String name;
     private String subName;
 
