@@ -9,10 +9,7 @@ import com.rakbow.kureakurusu.service.ListService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Rakbow
@@ -24,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ListController {
 
     private final ListService srv;
+
+    @PostMapping("detail/{id}")
+    public ApiResult detail(@PathVariable("id") long id) {
+        return new ApiResult().load(srv.detail(id));
+    }
 
     @PostMapping("create")
     public ApiResult create(@Valid @RequestBody FavList dto, BindingResult errors) {

@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,10 +23,13 @@ import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.favList.FavListItemTargetVO;
 import com.rakbow.kureakurusu.data.vo.favList.FavListItemVO;
+import com.rakbow.kureakurusu.data.vo.favList.FavListVO;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
+import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
@@ -43,16 +47,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
-    private final ImageService imageSrv;
+    private final ImageService imgSrv;
     private final EpisodeService epSrv;
     private final SqlSessionFactory sqlSessionFactory;
     private final FavListItemMapper iMapper;
     private final ItemMapper itemMapper;
     private final EpisodeMapper epMapper;
+    private final Converter converter;
+
+    public FavListVO detail(long id) {
+        FavList list = getById(id);
+        if(list == null) throw  ErrorFactory.entityNull();
+        return converter.convert(list, FavListVO.class);
+    }
 
     public void create(FavList list) {
         list.setCreator(AuthorityInterceptor.getCurrentUser().getUsername());
         list.setCreateTime(DateHelper.now());
+        list.setUpdateTime(DateHelper.now());
         save(list);
     }
 
@@ -76,6 +88,8 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
         for (long itemId : dto.getItemIds()) {
             items.add(new FavListItem(dto.getListId(), dto.getType(), itemId));
         }
+        update(new LambdaUpdateWrapper<FavList>().set(FavList::getUpdateTime, DateHelper.now())
+                .eq(FavList::getId, dto.getListId()));
         //batch insert
         MybatisBatch.Method<FavListItem> method = new MybatisBatch.Method<>(FavListItemMapper.class);
         MybatisBatch<FavListItem> batchInsert = new MybatisBatch<>(sqlSessionFactory, items);
@@ -95,7 +109,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
         List<FavListItemVO> res = new ArrayList<>();
         List<FavListItem> items = page.getRecords();
-        List<Long> targetIds = items.stream().map(FavListItem::getId).toList();
+        List<Long> targetIds = items.stream().map(FavListItem::getEntityId).toList();
         BaseMapper<? extends Entity> subMapper;
         int targetEntityType = dto.getType();
         if (targetEntityType == EntityType.ITEM.getValue()) {
@@ -110,7 +124,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
             epSrv.getRelatedAlbums((List<Episode>) targets);
         }
         for (FavListItem i : items) {
-            Entity e = DataFinder.findEntityById(i.getId(), targets);
+            Entity e = DataFinder.findEntityById(i.getEntityId(), targets);
             if (ObjectUtils.isEmpty(e)) continue;
 
             FavListItemTargetVO target = FavListItemTargetVO.builder()
@@ -120,11 +134,13 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
                     .build();
 
             if (targetEntityType == EntityType.ITEM.getValue()) {
-                target.setThumb(imageSrv.getCache(targetEntityType, e.getId(), ImageType.THUMB));
+                target.setThumb(imgSrv.getCache(targetEntityType, e.getId(), ImageType.THUMB));
                 target.setSubType(new Attribute<>(((Item) e).getSubType()));
             } else if (targetEntityType == EntityType.ENTRY.getValue()) {
                 target.setThumb(CommonImageUtil.getEntryThumb(((Entry) e).getThumb()));
                 target.setSubType(new Attribute<>(((Entry) e).getSubType()));
+            }else {
+                target.setSubInfo(DateHelper.getDuration(((Episode) e).getDuration()));
             }
 
             FavListItemVO vo = FavListItemVO.builder()

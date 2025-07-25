@@ -19,6 +19,7 @@ public class FavListItemTargetVO {
     private int entityType;
     private long entityId;
     private String name;
+    private String subInfo;
     private String thumb;
 
     private Attribute<Integer> subType;
