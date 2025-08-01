@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 })
 public class FavList extends Entity {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)

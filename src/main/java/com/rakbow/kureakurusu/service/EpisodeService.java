@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,7 +15,9 @@ import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Entity;
+import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Episode;
+import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
@@ -86,9 +89,15 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         dto.init();
         MPJLambdaWrapper<Episode> wrapper = new MPJLambdaWrapper<Episode>()
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
-                .orderByDesc(!dto.isSort(), Episode::getId);
+                .orderByAsc(!dto.isSort(), Episode::getId);
         if (dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
             wrapper.like(Episode::getName, dto.getKeyword()).or().like(Episode::getNameEn, dto.getKeyword());
+        }
+        if(dto.getAlbumId() != -1){
+            List<AlbumDisc> disc =
+                    discMapper.selectList(new LambdaUpdateWrapper<AlbumDisc>().eq(AlbumDisc::getItemId, dto.getAlbumId()));
+            wrapper.eq(Episode::getRelatedType, EntityType.ALBUM_DISC.getValue())
+                    .in(Episode::getRelatedId, disc.stream().map(AlbumDisc::getId).toList());
         }
         long start = System.currentTimeMillis();
         IPage<Episode> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
