@@ -97,7 +97,7 @@ public class ItemController {
 
     @PostMapping("convert-isbn")
     public ApiResult convertISBN13(@RequestBody ISBNConvertDTO dto) {
-        return new ApiResult().load(extSrv.convertISBN13(dto.getIsbn10()));
+        return new ApiResult().load(extSrv.convertISBN13(dto.isbn10()));
     }
 
     //endregion

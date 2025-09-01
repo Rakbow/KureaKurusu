@@ -77,7 +77,6 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
     @Transactional
     @SneakyThrows
     public SearchResult<FileListVO> list(FileListQueryDTO dto) {
-        dto.init();
         MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
                 .selectAll(FileInfo.class)
                 .like(StringUtils.isNotEmpty(dto.getKeyword()), FileInfo::getName, dto.getKeyword())

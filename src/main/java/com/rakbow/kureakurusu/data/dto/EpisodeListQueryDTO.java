@@ -15,7 +15,6 @@ public class EpisodeListQueryDTO extends ListQueryDTO {
     private Long albumId;
 
     public void init() {
-        super.init();
         episodeType = super.getVal("episodeType");
         albumId = ((Integer) super.getVal("albumId")).longValue();
     }

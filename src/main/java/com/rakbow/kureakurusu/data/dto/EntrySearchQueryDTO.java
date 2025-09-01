@@ -24,7 +24,6 @@ public class EntrySearchQueryDTO extends ListQueryDTO {
     private List<String> keywords = new ArrayList<>();
 
     public void init() {
-        super.init();
         type = super.getVal("type");
         if(ObjectUtils.isNotEmpty(super.getKeyword()))
             keywords = Arrays.stream(super.getKeyword().split(","))

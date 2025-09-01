@@ -14,7 +14,6 @@ import java.util.LinkedHashMap;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
 public class ListQueryDTO extends QueryDTO {
 
     private int page;
@@ -26,10 +25,12 @@ public class ListQueryDTO extends QueryDTO {
 
     private static String VALUE_KEY = "value";
 
-    public void init() {
+    public ListQueryDTO() {
         size = isPage() ? getSize() : -1;
         keyword = getVal("keyword");
     }
+
+    public void init() {}
 
     public boolean asc() {
         return this.sortOrder == 1;
@@ -40,7 +41,7 @@ public class ListQueryDTO extends QueryDTO {
     }
 
     public boolean isPage() {
-        return this.getSize() != 0;
+        return this.getSize() > 0;
     }
 
     @SuppressWarnings("unchecked")

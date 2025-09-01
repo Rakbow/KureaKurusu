@@ -15,7 +15,6 @@ public class FileListQueryDTO extends ListQueryDTO {
     private Integer entityId;
 
     public void init() {
-        super.init();
         entityType = super.getVal("entityType");
         entityId = super.getVal("entityId");
     }

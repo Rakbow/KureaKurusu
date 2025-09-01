@@ -63,7 +63,6 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
 
     @Transactional
     public SearchResult<ImageVO> list(ImageListQueryDTO dto) {
-        dto.init();
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
                 .eq(Image::getEntityType, dto.getEntityType())
                 .eq(Image::getEntityId, dto.getEntityId())

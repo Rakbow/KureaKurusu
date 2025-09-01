@@ -202,7 +202,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @Transactional
     public SearchResult<ItemMiniVO> search(ItemSearchQueryDTO dto) {
-        dto.init();
         // Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
         Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()

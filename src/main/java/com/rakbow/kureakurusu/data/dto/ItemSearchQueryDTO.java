@@ -30,7 +30,6 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
     private String catalogId;
 
     public void init() {
-        super.init();
         type = super.getVal("type");
         subType = super.getVal("subType");
         releaseType = super.getVal("releaseType");

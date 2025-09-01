@@ -69,7 +69,6 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     }
 
     public SearchResult<FavList> lists(FavListQueryDTO dto) {
-        dto.init();
         long start = System.currentTimeMillis();
         User user = AuthorityInterceptor.getCurrentUser();
         IPage<FavList> pages = page(
@@ -99,7 +98,6 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public SearchResult<FavListItemVO> getItems(FavListItemListQueryDTO dto) {
-        dto.init();
         long start = System.currentTimeMillis();
         IPage<FavListItem> page = iMapper.selectPage(
                 new Page<>(dto.getPage(), dto.getSize()),

@@ -20,7 +20,6 @@ public class ImageListQueryDTO extends ListQueryDTO {
     private Integer entityId;
 
     public void init() {
-        super.init();
         this.type = super.getVal("type");
         this.entityType = super.getVal("entityType");
         this.entityId = super.getVal("entityId");

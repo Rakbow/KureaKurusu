@@ -98,7 +98,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     @SneakyThrows
     public SearchResult<EntryMiniVO> search(EntrySearchQueryDTO dto) {
-        dto.init();
         long start = System.currentTimeMillis();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getStatus, 1)
@@ -156,7 +155,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     @SneakyThrows
     public SearchResult<EntryListVO> list(EntryListQueryDTO dto) {
-        dto.init();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getType, dto.getType())
                 .and(StringUtils.isNotEmpty(dto.getKeyword()), i -> i

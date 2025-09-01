@@ -64,7 +64,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @Transactional
     @SneakyThrows
     public SearchResult<RelationVO> list(RelationListQueryDTO dto) {
-        dto.init();
         long start = System.currentTimeMillis();
         int targetEntityType = dto.getTargetEntityType();
         List<RelationVO> res = new ArrayList<>();

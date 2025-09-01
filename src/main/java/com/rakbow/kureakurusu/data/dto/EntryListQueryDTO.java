@@ -14,7 +14,6 @@ public class EntryListQueryDTO extends ListQueryDTO {
     private int type;
 
     public void init() {
-        super.init();
         type = super.getVal("type");
     }
 

@@ -37,7 +37,6 @@ public class ChangelogService extends ServiceImpl<ChangelogMapper, Changelog> {
     @Transactional
     @SneakyThrows
     public SearchResult<ChangelogVO> list(ChangelogListQueryDTO dto) {
-        dto.init();
         long start = System.currentTimeMillis();
         IPage<Changelog> pages = page(
                 new Page<>(dto.getPage(), dto.getSize()),

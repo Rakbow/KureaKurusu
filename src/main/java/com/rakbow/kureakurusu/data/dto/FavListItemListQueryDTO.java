@@ -15,7 +15,6 @@ public class FavListItemListQueryDTO extends ListQueryDTO {
     private int type;
 
     public void init() {
-        super.init();
         listId = ((Integer) super.getVal("listId")).longValue();
         type = super.getVal("type");
     }

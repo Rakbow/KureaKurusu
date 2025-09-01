@@ -18,7 +18,6 @@ public class RoleListQueryDTO extends ListQueryDTO {
     private String keyword;
 
     public void init() {
-        super.init();
         this.keyword = super.getVal("keyword");
     }
 

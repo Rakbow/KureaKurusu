@@ -34,7 +34,6 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
     @Transactional
     public SearchResult<Role> list(RoleListQueryDTO dto) {
-        dto.init();
         long start = System.currentTimeMillis();
         MPJLambdaWrapper<Role> wrapper = new MPJLambdaWrapper<Role>()
                 .selectAll(Role.class)

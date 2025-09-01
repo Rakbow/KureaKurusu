@@ -86,7 +86,6 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @Transactional
     @SneakyThrows
     public SearchResult<EpisodeListVO> list(EpisodeListQueryDTO dto) {
-        dto.init();
         MPJLambdaWrapper<Episode> wrapper = new MPJLambdaWrapper<Episode>()
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByAsc(!dto.isSort(), Episode::getId);
