@@ -309,6 +309,10 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         List<Personnel> res = new ArrayList<>();
 
         RelationListQueryDTO param = new RelationListQueryDTO();
+        param.setEntityType(entityType);
+        param.setEntityId(entityId);
+        param.setTargetEntityType(EntityType.ENTRY.getValue());
+        param.setTargetEntitySubTypes(List.of(EntryType.PERSON.getValue()));
         param.getFilters().computeIfAbsent("entityType", _ -> new LinkedHashMap<>()).put("value", entityType);
         param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
         param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
