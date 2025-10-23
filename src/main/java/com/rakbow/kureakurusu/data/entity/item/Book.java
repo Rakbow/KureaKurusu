@@ -1,12 +1,10 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.rakbow.kureakurusu.data.emun.Language;
 import com.rakbow.kureakurusu.data.vo.item.BookListVO;
 import com.rakbow.kureakurusu.data.vo.item.BookVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
-import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -27,10 +25,10 @@ public class Book extends SuperItem {
     private int pages;
     private String size;
 
-    private Language lang;//语言
+    // private Language lang;//语言
 
     public Book() {
         super();
-        this.lang = Language.JAPANESE;
+        // this.lang = Language.JAPANESE;
     }
 }

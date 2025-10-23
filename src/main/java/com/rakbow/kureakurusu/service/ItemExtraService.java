@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
-import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
 import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
@@ -52,9 +52,9 @@ import java.util.stream.Collectors;
 public class ItemExtraService {
 
     private final EpisodeMapper epMapper;
-    private final ItemAlbumMapper albumMapper;
     private final AlbumDiscMapper discMapper;
     private final FileInfoMapper fileMapper;
+    private final ItemMapper mapper;
 
     private final FileService fileSrv;
     private final ChangelogService logSrv;
@@ -142,17 +142,16 @@ public class ItemExtraService {
 
         //update album track disc duration
         if (!updateAlbum) return;
-        ItemAlbum album = albumMapper.selectById(dto.getItemId());
+        Item album = mapper.selectById(dto.getItemId());
         int discNo = album.getDiscs() + 1;
         int trackNum = album.getTracks() + eps.size();
         runTime = album.getRunTime() + runTime;
-        LambdaUpdateWrapper<ItemAlbum> wrapper = new LambdaUpdateWrapper<ItemAlbum>()
-                .eq(ItemAlbum::getId, dto.getItemId())
-                .set(ItemAlbum::getDiscs, discNo)
-                .set(ItemAlbum::getTracks, trackNum)
-                .set(ItemAlbum::getRunTime, runTime);
-        albumMapper.update(null, wrapper);
-
+        LambdaUpdateWrapper<Item> wrapper = new LambdaUpdateWrapper<Item>()
+                .eq(Item::getId, dto.getItemId())
+                .set(Item::getDiscs, discNo)
+                .set(Item::getTracks, trackNum)
+                .set(Item::getRunTime, runTime);
+        mapper.update(null, wrapper);
         logSrv.create(EntityType.ITEM.getValue(), dto.getItemId(), ChangelogField.EPISODE, ChangelogOperate.CREATE);
     }
 

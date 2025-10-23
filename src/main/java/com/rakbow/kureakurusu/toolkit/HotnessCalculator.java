@@ -28,8 +28,8 @@ public class HotnessCalculator {
     @Value("${hotness.product.midThreshold}") private int midBaseThreshold;
     @Value("${hotness.product.highThreshold}") private int highBaseThreshold;
 
-    @Value("${hotness.like.scale}") private double likeScale;
-    @Value("${hotness.view.scale}") private int viewScale;
+    @Value("${hotness.scale.like}") private double likeScale;
+    @Value("${hotness.scale.view}") private int viewScale;
 
     /**
      * 计算单个内容的热度值

@@ -41,7 +41,7 @@ public class EntryController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.update(dto);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @PostMapping("list")

@@ -31,7 +31,7 @@ public class ListController {
     public ApiResult create(@Valid @RequestBody FavList dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.create(dto);
-        return new ApiResult().ok("entity.crud.create.success");
+        return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("lists")
@@ -42,7 +42,7 @@ public class ListController {
     @PostMapping("add-items")
     public ApiResult addItems(@RequestBody ListItemCreateDTO dto) {
         srv.addItems(dto);
-        return new ApiResult().ok("entity.crud.create.success");
+        return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("get-items")

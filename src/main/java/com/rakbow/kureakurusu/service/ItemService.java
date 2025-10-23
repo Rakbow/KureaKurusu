@@ -1,19 +1,16 @@
 package com.rakbow.kureakurusu.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
-import com.rakbow.kureakurusu.data.ItemTypeRelation;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.emun.*;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.entity.item.SubItem;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
@@ -30,10 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Rakbow
@@ -49,7 +48,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final ItemExtraService extSrv;
     private final ChangelogService logSrv;
 
-    private final RedisUtil redisUtil;
     private final PopularUtil popularUtil;
     private final QiniuImageUtil qiniuImageUtil;
     private final VisitUtil visitUtil;
@@ -59,56 +57,32 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final Converter converter;
 
     private static final EntityType ENTITY_TYPE = EntityType.ITEM;
-    private static final String SUB_T_PREFIX = "t1";
-    private static final String SUB_T_CONDITION = " t1 on t1.id = t.id";
 
     //region basic
 
     @Transactional
     @SneakyThrows
     public long create(ItemSuperCreateDTO dto, MultipartFile[] images) {
-        ItemCreateDTO item = dto.getItem();
+        ItemCreateDTO itemDTO = dto.getItem();
         //save item
-        long id = insert(item);
+        Item item = converter.convert(itemDTO, Item.class);
+        save(item);
         //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE.getValue(), id, dto.getItem().getType(), dto.getRelatedEntries());
+        relationSrv.batchCreate(ENTITY_TYPE.getValue(), item.getId(), dto.getItem().getType(), dto.getRelatedEntries());
         //save image
-        for (int i = 0; i < dto.getImages().size(); i++) {
-            dto.getImages().get(i).setFile(images[i]);
-        }
-        imageSrv.upload(ENTITY_TYPE.getValue(), id, dto.getImages(), dto.getGenerateThumb());
+        IntStream.range(0, dto.getImages().size()).forEach(i -> dto.getImages().get(i).setFile(images[i]));
+        imageSrv.upload(ENTITY_TYPE.getValue(), item.getId(), dto.getImages(), dto.getGenerateThumb());
 
         //save episode
-        if (item.getType().intValue() == ItemType.ALBUM.getValue()) {
-            if (!((AlbumCreateDTO) item).getDisc().getTracks().isEmpty()) {
-                ((AlbumCreateDTO) item).getDisc().setItemId(id);
-                AlbumDiscCreateDTO disc = ((AlbumCreateDTO) item).getDisc();
+        if (itemDTO.getType().intValue() == ItemType.ALBUM.getValue()) {
+            if (!((AlbumCreateDTO) itemDTO).getDisc().getTracks().isEmpty()) {
+                ((AlbumCreateDTO) itemDTO).getDisc().setItemId(item.getId());
+                AlbumDiscCreateDTO disc = ((AlbumCreateDTO) itemDTO).getDisc();
                 extSrv.albumTrackQuickCreate(disc, false);
             }
         }
 
-        logSrv.create(ENTITY_TYPE.getValue(), id, ChangelogField.DEFAULT, ChangelogOperate.CREATE);
-
-        return id;
-    }
-
-    @Transactional
-    @SneakyThrows
-    public long insert(ItemCreateDTO dto) {
-        Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
-        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
-
-        Item item = converter.convert(dto, Item.class);
-        SubItem subItem = converter.convert(dto, subClass);
-
-        save(item);
-        subItem.setId(item.getId());
-        subMapper.insert(subItem);
-
-        //add redis ItemTypeRelation key
-        ItemTypeRelation relation = new ItemTypeRelation(item);
-        String key = STR."item_type_related:\{item.getId()}";
-        redisUtil.set(key, relation);
+        logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
 
         return item.getId();
     }
@@ -117,15 +91,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @SneakyThrows
     public void update(ItemUpdateDTO dto) {
 
-        Class<? extends SubItem> subClass = ItemUtil.getSubClass(dto.getType());
-        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
-
         Item item = converter.convert(dto, Item.class);
-        SubItem subItem = converter.convert(dto, subClass);
-
         updateById(item);
-        subMapper.updateById(subItem);
-
         logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
     }
 
@@ -146,12 +113,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             //delete visit record
             visitUtil.del(ENTITY_TYPE.getValue(), item.getId());
         }
-        int type = items.getFirst().getType().getValue();
-        Class<? extends SubItem> subClass = ItemUtil.getSubClass(type);
-        BaseMapper<SubItem> subMapper = MyBatisUtil.getMapper(subClass);
 
         remove(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
-        subMapper.delete(new LambdaQueryWrapper<SubItem>().in(SubItem::getId, ids));
 
         relationSrv.remove(
                 new LambdaQueryWrapper<Relation>()
@@ -164,30 +127,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     //region query
 
-    @Transactional
     @SneakyThrows
-    @SuppressWarnings("unchecked")
-    public <T extends SuperItem> T getById(long id) {
-        ItemTypeRelation relation = getItemTypeRelation(id);
-        if (relation == null) return null;
-
-        Class<? extends SubItem> s = ItemUtil.getSubClass(relation.getType());
-        Class<? extends SuperItem> t = ItemUtil.getSuperItem(relation.getType());
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(s, SUB_T_PREFIX)
-                .leftJoin(STR."\{MyBatisUtil.getTableName(s)}\{SUB_T_CONDITION}")
-                .eq(Item::getId, id);
-        return (T) mapper.selectJoinOne(t, wrapper);
-    }
-
-    @Transactional
-    @SneakyThrows
+    @Transactional(readOnly = true)
     public ItemDetailVO detail(long id) {
-        SuperItem item = getById(id);
+        Item item = getById(id);
         if (item == null) throw ErrorFactory.itemNull();
-        Class<? extends ItemVO> targetVOClass = ItemUtil.getDetailVO(item.getType().getValue());
-        ItemVO vo = converter.convert(item, targetVOClass);
+        ItemVO vo = converter.convert(item, ItemVO.class);
         vo.setSpec(ItemUtil.generateSpec(vo.getWidth(), vo.getLength(), vo.getHeight(), vo.getWeight()));
 
         //update entity popularity
@@ -200,7 +145,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .build();
     }
 
-    @Transactional
+    @SneakyThrows
+    @Transactional(readOnly = true)
     public SearchResult<ItemMiniVO> search(ItemSearchQueryDTO dto) {
         // Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
         Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
@@ -216,7 +162,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .eq(Item::getStatus, 1)
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Item::getId);
-        long start = System.currentTimeMillis();
         if (dto.hasRelatedEntries()) {
             //inner join relation
             wrapper.innerJoin(Relation.class, on -> on
@@ -227,7 +172,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                             .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
                             .in(Relation::getRelatedEntityId, dto.getEntries())))
                     .groupBy(Item::getId)
-                    .having(STR."COUNT(\{SUB_T_PREFIX}.related_entity_type) = \{dto.getEntries().size()}");
+                    .having(STR."COUNT(t1.related_entity_type) = \{dto.getEntries().size()}");
         }
         IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
@@ -238,21 +183,24 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             i.setCover(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
             i.setThumb(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
         });
-        return new SearchResult<>(items, pages.getTotal(), start);
+        return new SearchResult<>(items, pages.getTotal());
     }
 
-    @Transactional
     @SneakyThrows
+    @Transactional(readOnly = true)
     public SearchResult<? extends ItemListVO> list(ItemListQueryDTO param) {
         param.init();
         Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
-        Class<? extends SubItem> subClass = ItemUtil.getSubClass(param.getType());
         Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
 
+        List<String> columns = ItemUtil.getAllFields(superClass).stream()
+                .map(Field::getName)
+                .map(CommonUtil::camelToUnderline)
+                .distinct()
+                .toList();
+
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAll(Item.class)
-                .selectAll(subClass, SUB_T_PREFIX)
-                .leftJoin(STR."\{MyBatisUtil.getTableName(subClass)}\{SUB_T_CONDITION}")
+                .select(columns.toArray(new String[0]))
                 .eq(Item::getType, param.getType())
                 .and(StringUtils.isNotEmpty(param.getKeyword()),
                         w -> w.or(i -> i.like(Item::getName, param.getKeyword())
@@ -264,18 +212,17 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                 .orderByDesc(!param.isSort(), Item::getId);
         //private query column to sql
         MyBatisUtil.itemListQueryWrapper(param, wrapper);
-        long start = System.currentTimeMillis();
         IPage<? extends SuperItem> page = mapper.selectJoinPage(new Page<>(param.getPage(), param.getSize()), superClass, wrapper);
         List<? extends ItemListVO> items = converter.convert(page.getRecords(), itemListVOClass);
 
         //get related resource count
         getItemResourceCount(items);
 
-        return new SearchResult<>(items, page.getTotal(), start);
+        return new SearchResult<>(items, page.getTotal());
     }
 
-    @Transactional
     @SneakyThrows
+    @Transactional(readOnly = true)
     public void getItemResourceCount(List<? extends ItemListVO> items) {
         if (items.isEmpty()) return;
         List<Long> ids = items.stream().map(ItemListVO::getId).toList();
@@ -292,12 +239,5 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     }
 
     //endregion
-
-    @SneakyThrows
-    public ItemTypeRelation getItemTypeRelation(long id) {
-        String redisKey = STR."item_type_related:\{id}";
-        if (!redisUtil.hasKey(redisKey)) return null;
-        return redisUtil.get(redisKey, ItemTypeRelation.class);
-    }
 
 }

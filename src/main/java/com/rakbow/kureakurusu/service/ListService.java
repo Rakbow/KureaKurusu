@@ -69,7 +69,6 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     }
 
     public SearchResult<FavList> lists(FavListQueryDTO dto) {
-        long start = System.currentTimeMillis();
         User user = AuthorityInterceptor.getCurrentUser();
         IPage<FavList> pages = page(
                 new Page<>(dto.getPage(), dto.getSize()),
@@ -79,7 +78,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
                         .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                         .orderByDesc(!dto.isSort(), FavList::getCreateTime)
         );
-        return new SearchResult<>(pages.getRecords(), pages.getTotal(), start);
+        return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
 
     public void addItems(ListItemCreateDTO dto) {
@@ -98,7 +97,6 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public SearchResult<FavListItemVO> getItems(FavListItemListQueryDTO dto) {
-        long start = System.currentTimeMillis();
         IPage<FavListItem> page = iMapper.selectPage(
                 new Page<>(dto.getPage(), dto.getSize()),
                 new LambdaQueryWrapper<FavListItem>().eq(FavListItem::getListId, dto.getListId())
@@ -155,7 +153,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
             res.add(vo);
         }
 
-        return new SearchResult<>(res, page.getTotal(), start);
+        return new SearchResult<>(res, page.getTotal());
     }
 
 }

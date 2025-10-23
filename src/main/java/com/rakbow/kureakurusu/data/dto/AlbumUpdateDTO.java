@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.data.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
@@ -17,8 +16,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AutoMappers({
-        @AutoMapper(target = Item.class, reverseConvertGenerate = false),
-        @AutoMapper(target = ItemAlbum.class, reverseConvertGenerate = false)
+        @AutoMapper(target = Item.class, reverseConvertGenerate = false)
 })
 public class AlbumUpdateDTO extends ItemUpdateDTO {
 

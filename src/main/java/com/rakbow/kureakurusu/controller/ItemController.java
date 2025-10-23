@@ -32,23 +32,20 @@ public class ItemController {
             @RequestParam("images") MultipartFile[] images
     ) {
         ItemSuperCreateDTO dto = JsonUtil.to(param, ItemSuperCreateDTO.class);
-        //check
-        // if (errors.hasErrors()) return new ApiResult().fail(errors);
-        //save
-        return new ApiResult().load(srv.create(dto, images));
+        return ApiResult.ok(srv.create(dto, images));
     }
 
     @PostMapping("update")
     public ApiResult update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.update(dto);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
         srv.delete(dto.getIds());
-        return new ApiResult().ok("entity.crud.delete.success");
+        return ApiResult.ok("entity.crud.delete.success");
     }
 
     //endregion
@@ -83,7 +80,7 @@ public class ItemController {
     @PostMapping("album-track-quick-create")
     public ApiResult albumTrackQuickCreate(@RequestBody AlbumDiscCreateDTO dto) {
         extSrv.albumTrackQuickCreate(dto, true);
-        return new ApiResult().ok("entity.crud.create.success");
+        return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("album-track-quick-upload")
@@ -92,7 +89,7 @@ public class ItemController {
             @ModelAttribute AlbumTrackQuickUploadDTO dto
     ) {
         extSrv.albumTrackQuickUpload(files, dto);
-        return new ApiResult().ok("entity.crud.upload.success");
+        return ApiResult.ok("entity.crud.upload.success");
     }
 
     @PostMapping("convert-isbn")

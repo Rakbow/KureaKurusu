@@ -30,7 +30,7 @@ public class FileController {
             @RequestParam("names") List<String> names
     ) {
         srv.upload(entityType, entityId, files, names);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @PostMapping("update")
@@ -39,7 +39,7 @@ public class FileController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.update(dto);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @PostMapping("list")
@@ -60,13 +60,13 @@ public class FileController {
     @PostMapping("related-create")
     public ApiResult createRelated(@RequestBody FileCreateDTO dto) {
         srv.createRelated(dto.getEntityType(), dto.getEntityId(), dto.getFileIds());
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("related-delete")
     public ApiResult deleteRelated(@RequestBody FileRelatedDeleteDTO dto) {
         srv.deleteRelated(dto);
-        return new ApiResult().ok("entity.crud.delete.success");
+        return ApiResult.ok("entity.crud.delete.success");
     }
 
 }

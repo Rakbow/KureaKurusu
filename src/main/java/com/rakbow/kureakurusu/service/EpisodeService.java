@@ -15,9 +15,7 @@ import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
 import com.rakbow.kureakurusu.data.emun.EntityType;
 import com.rakbow.kureakurusu.data.emun.ImageType;
 import com.rakbow.kureakurusu.data.entity.Entity;
-import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
@@ -98,7 +96,6 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
             wrapper.eq(Episode::getRelatedType, EntityType.ALBUM_DISC.getValue())
                     .in(Episode::getRelatedId, disc.stream().map(AlbumDisc::getId).toList());
         }
-        long start = System.currentTimeMillis();
         IPage<Episode> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         if(pages.getRecords().isEmpty()) return new SearchResult<>();
 
@@ -114,7 +111,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
             ep.setFileCount(fileCountMap.getOrDefault(ep.getId(), 0));
         }
 
-        return new SearchResult<>(res, pages.getTotal(), start);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
     @Transactional

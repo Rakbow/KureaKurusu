@@ -63,15 +63,13 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
     @Transactional
     @SneakyThrows
     public SearchResult<FileListVO> search(FileSearchParams param) {
-        // 记录开始时间
-        long start = System.currentTimeMillis();
         LambdaQueryWrapper<FileInfo> wrapper = new LambdaQueryWrapper<FileInfo>()
                 .eq(FileInfo::getStatus, 1)
                 .orderByDesc(FileInfo::getId);
         if (!param.getKeywords().isEmpty()) param.getKeywords().forEach(k -> wrapper.like(FileInfo::getName, k));
         IPage<FileInfo> pages = page(new Page<>(param.getPage(), param.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
-        return new SearchResult<>(res, pages.getTotal(), start);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
     @Transactional
@@ -90,11 +88,10 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
                     .eq(FileRelated::getEntityType, dto.getEntityType())
                     .eq(FileRelated::getEntityId, dto.getEntityId());
         }
-        long start = System.currentTimeMillis();
         IPage<FileInfo> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
 
-        return new SearchResult<>(res, pages.getTotal(), start);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
     @Transactional

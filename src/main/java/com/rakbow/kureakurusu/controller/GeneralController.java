@@ -52,13 +52,13 @@ public class GeneralController {
     @PostMapping("update-entity-status")
     public ApiResult updateEntityStatus(@RequestBody UpdateStatusDTO dto) {
         srv.updateEntityStatus(dto);
-        return new ApiResult().ok("entity.crud.status.update.success");
+        return ApiResult.ok("entity.crud.status.update.success");
     }
 
     @PostMapping("update-entity-detail")
     public ApiResult updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
         srv.updateEntityDetail(dto);
-        return new ApiResult().ok("entity.crud.detail.update.success");
+        return ApiResult.ok("entity.crud.detail.update.success");
     }
 
     //endregion

@@ -32,20 +32,20 @@ public class RoleController {
     public ApiResult create(@Valid @RequestBody Role role, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.save(role);
-        return new ApiResult().ok("entity.crud.create.success");
+        return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("update")
     public ApiResult update(@Valid @RequestBody Role role, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.updateById(role);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @PostMapping("refresh")
     public ApiResult refresh() {
         srv.refresh();
-        return new ApiResult().ok("entity.crud.refresh.success");
+        return ApiResult.ok("entity.crud.refresh.success");
     }
 
 }

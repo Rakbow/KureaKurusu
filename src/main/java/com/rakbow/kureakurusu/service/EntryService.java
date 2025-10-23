@@ -98,7 +98,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @Transactional
     @SneakyThrows
     public SearchResult<EntryMiniVO> search(EntrySearchQueryDTO dto) {
-        long start = System.currentTimeMillis();
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getStatus, 1)
                 .eq(ObjectUtils.isNotEmpty(dto.getType()), Entry::getType, dto.getType())
@@ -118,7 +117,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);
         List<EntryMiniVO> res = pages.getRecords().stream().map(EntryMiniVO::new).toList();
 
-        return new SearchResult<>(res, pages.getTotal(), start);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
 
@@ -165,10 +164,9 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 )
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Entry::getItems);
-        long start = System.currentTimeMillis();
         IPage<Entry> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<EntryListVO> res = converter.convert(pages.getRecords(), EntryListVO.class);
-        return new SearchResult<>(res, pages.getTotal(), start);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
     @Transactional

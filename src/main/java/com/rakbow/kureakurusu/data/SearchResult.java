@@ -16,12 +16,6 @@ public class SearchResult<T> {
     public long total;
     public String time;
 
-    public SearchResult(List<T> data, long total, long start) {
-        this.total = total;
-        this.data = data;
-        this.time = String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0);
-    }
-
     public SearchResult(List<T> data, long total) {
         this.total = total;
         this.data = data;

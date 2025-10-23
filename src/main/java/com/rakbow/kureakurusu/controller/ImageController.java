@@ -54,7 +54,7 @@ public class ImageController {
         if (images.isEmpty()) throw ErrorFactory.fileEmpty();
         //save
         srv.upload(entityType, entityId, images, generateThumb);
-        return new ApiResult().ok("entity.crud.create.success");
+        return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("update")
@@ -63,13 +63,13 @@ public class ImageController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
         srv.update(dto);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody ImageDeleteDTO dto) {
         srv.delete(dto);
-        return new ApiResult().ok("entity.crud.delete.success");
+        return ApiResult.ok("entity.crud.delete.success");
     }
 
     //endregion

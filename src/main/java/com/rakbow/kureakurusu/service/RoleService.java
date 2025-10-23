@@ -13,7 +13,6 @@ import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.GroupCacheRoleRelation;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +33,6 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
     @Transactional
     public SearchResult<Role> list(RoleListQueryDTO dto) {
-        long start = System.currentTimeMillis();
         MPJLambdaWrapper<Role> wrapper = new MPJLambdaWrapper<Role>()
                 .selectAll(Role.class)
                 .select(GroupCacheRoleRelation::getCount)
@@ -52,7 +50,7 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
                 .orderByDesc(!dto.isSort(), GroupCacheRoleRelation::getCount);
 
         IPage<Role> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
-        return new SearchResult<>(pages.getRecords(), pages.getTotal(), start);
+        return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
 
     public void refresh() {

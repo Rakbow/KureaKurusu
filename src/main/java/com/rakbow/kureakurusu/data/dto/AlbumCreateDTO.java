@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.entity.item.ItemAlbum;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,8 +18,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AutoMappers({
-        @AutoMapper(target = Item.class, reverseConvertGenerate = false),
-        @AutoMapper(target = ItemAlbum.class, reverseConvertGenerate = false)
+        @AutoMapper(target = Item.class, reverseConvertGenerate = false)
 })
 public class AlbumCreateDTO extends ItemCreateDTO {
 

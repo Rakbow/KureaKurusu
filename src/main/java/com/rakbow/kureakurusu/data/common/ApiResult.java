@@ -42,14 +42,16 @@ public class ApiResult {
         this.data = data;
     }
 
-    public ApiResult ok(String messageKey) {
-        this.message = I18nHelper.getMessage(messageKey);
-        return this;
+    public static ApiResult ok(Object data) {
+        ApiResult r =  new ApiResult();
+        r.data = data;
+        return r;
     }
 
-    public ApiResult ok(String messageKey, String... args) {
-        this.message = I18nHelper.getMessage(messageKey, args);
-        return this;
+    public static ApiResult ok(String messageKey) {
+        ApiResult r =  new ApiResult();
+        r.message = I18nHelper.getMessage(messageKey);
+        return r;
     }
 
     public ApiResult ok(Object data, String messageKey) {

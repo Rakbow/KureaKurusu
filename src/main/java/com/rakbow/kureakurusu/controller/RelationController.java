@@ -25,13 +25,13 @@ public class RelationController {
     @PostMapping("create")
     public ApiResult create(@RequestBody RelationCreateDTO dto) {
         srv.create(dto);
-        return new ApiResult().ok("entity.crud.create.success");
+        return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("update")
     public ApiResult update(@RequestBody RelationUpdateDTO dto) {
         srv.update(dto);
-        return new ApiResult().ok("entity.crud.update.success");
+        return ApiResult.ok("entity.crud.update.success");
     }
 
     @PostMapping("personnel")
@@ -52,7 +52,7 @@ public class RelationController {
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
         srv.removeByIds(dto.getIds());
-        return new ApiResult().ok("entity.crud.delete.success");
+        return ApiResult.ok("entity.crud.delete.success");
     }
 
 }

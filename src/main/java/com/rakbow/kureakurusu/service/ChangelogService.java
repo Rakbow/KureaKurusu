@@ -10,8 +10,8 @@ import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
 import com.rakbow.kureakurusu.data.emun.ChangelogField;
 import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
 import com.rakbow.kureakurusu.data.entity.Changelog;
-import com.rakbow.kureakurusu.data.vo.ChangelogVO;
 import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
+import com.rakbow.kureakurusu.data.vo.ChangelogVO;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.Converter;
@@ -37,7 +37,6 @@ public class ChangelogService extends ServiceImpl<ChangelogMapper, Changelog> {
     @Transactional
     @SneakyThrows
     public SearchResult<ChangelogVO> list(ChangelogListQueryDTO dto) {
-        long start = System.currentTimeMillis();
         IPage<Changelog> pages = page(
                 new Page<>(dto.getPage(), dto.getSize()),
                 new MPJLambdaWrapper<Changelog>()
@@ -47,7 +46,7 @@ public class ChangelogService extends ServiceImpl<ChangelogMapper, Changelog> {
                         .orderByDesc(!dto.isSort(), Changelog::getOperateTime)
         );
         List<ChangelogVO> res = converter.convert(pages.getRecords(), ChangelogVO.class);
-        return new SearchResult<>(res, pages.getTotal(), start);
+        return new SearchResult<>(res, pages.getTotal());
     }
 
     @Transactional

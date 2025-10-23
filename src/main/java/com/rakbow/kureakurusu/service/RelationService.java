@@ -64,7 +64,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @Transactional
     @SneakyThrows
     public SearchResult<RelationVO> list(RelationListQueryDTO dto) {
-        long start = System.currentTimeMillis();
         int targetEntityType = dto.getTargetEntityType();
         List<RelationVO> res = new ArrayList<>();
         List<Relation> relations = mapper.list(dto);
@@ -125,11 +124,11 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
             if (targetEntityType == EntityType.ENTRY.getValue()) {
                 target.setThumb(CommonImageUtil.getEntryThumb(((Entry) e).getThumb()));
-                target.setName(((Entry) e).getName());
+                target.setName(e.getName());
                 target.setSubName(CommonUtil.getSubName(((Entry) e).getNameZh(), ((Entry) e).getNameEn()));
             } else {
                 target.setThumb(imageSrv.getCache(EntityType.ITEM.getValue(), e.getId(), ImageType.THUMB));
-                target.setName(((Item) e).getName());
+                target.setName(e.getName());
                 target.setSubName(((Item) e).getBarcode());
             }
 
@@ -144,7 +143,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
             res.add(vo);
         }
-        return new SearchResult<>(res, total, start);
+        return new SearchResult<>(res, total);
     }
 
     @Transactional

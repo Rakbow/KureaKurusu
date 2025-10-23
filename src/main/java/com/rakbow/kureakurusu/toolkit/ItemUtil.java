@@ -5,11 +5,9 @@ import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.*;
 import com.rakbow.kureakurusu.data.vo.item.*;
 
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Rakbow
@@ -60,13 +58,6 @@ public class ItemUtil {
             EntryType.MATERIAL.getValue()
     );
 
-    private final static Map<Integer, Class<? extends SubItem>> subItemMap = new HashMap<>() {{
-        put(ItemType.ALBUM.getValue(), ItemAlbum.class);
-        put(ItemType.BOOK.getValue(), ItemBook.class);
-        put(ItemType.DISC.getValue(), ItemDisc.class);
-        put(ItemType.GOODS.getValue(), ItemGoods.class);
-        put(ItemType.FIGURE.getValue(), ItemFigure.class);
-    }};
     private final static Map<Integer, Class<? extends SuperItem>> SuperItemMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), Album.class);
         put(ItemType.BOOK.getValue(), Book.class);
@@ -83,18 +74,6 @@ public class ItemUtil {
         put(ItemType.FIGURE.getValue(), FigureListVO.class);
     }};
 
-    private final static Map<Integer, Class<? extends ItemVO>> itemDetailVOMap = new HashMap<>() {{
-        put(ItemType.ALBUM.getValue(), AlbumVO.class);
-        put(ItemType.BOOK.getValue(), BookVO.class);
-        put(ItemType.DISC.getValue(), DiscVO.class);
-        put(ItemType.GOODS.getValue(), GoodsVO.class);
-        put(ItemType.FIGURE.getValue(), FigureVO.class);
-    }};
-
-    public static Class<? extends SubItem> getSubClass(int type) {
-        return subItemMap.get(type);
-    }
-
     public static Class<? extends SuperItem> getSuperItem(int type) {
         return SuperItemMap.get(type);
     }
@@ -103,8 +82,13 @@ public class ItemUtil {
         return itemListVOMap.get(type);
     }
 
-    public static Class<? extends ItemVO> getDetailVO(int type) {
-        return itemDetailVOMap.get(type);
+    public static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (clazz != null && clazz != Object.class) {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return fields;
     }
 
 }

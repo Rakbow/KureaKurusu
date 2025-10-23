@@ -30,14 +30,14 @@ public class UserController {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //register
         srv.register(dto);
-        return new ApiResult().ok("user.register.success");
+        return ApiResult.ok("user.register.success");
     }
 
     //activation user
     @PostMapping("activation")
     public ApiResult activation(@RequestBody UserActivationDTO dto) {
         srv.activation(dto);
-        return new ApiResult().ok("user.activation.success");
+        return ApiResult.ok("user.activation.success");
     }
 
 }

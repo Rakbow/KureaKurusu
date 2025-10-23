@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.data.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.entity.item.ItemDisc;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotEmpty;
@@ -21,8 +20,7 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AutoMappers({
-        @AutoMapper(target = Item.class, reverseConvertGenerate = false),
-        @AutoMapper(target = ItemDisc.class, reverseConvertGenerate = false)
+        @AutoMapper(target = Item.class, reverseConvertGenerate = false)
 })
 public class DiscUpdateDTO extends ItemUpdateDTO {
 

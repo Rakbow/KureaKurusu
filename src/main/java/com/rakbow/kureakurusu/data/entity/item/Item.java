@@ -9,7 +9,9 @@ import com.rakbow.kureakurusu.data.emun.ItemType;
 import com.rakbow.kureakurusu.data.emun.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
+import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -30,7 +32,8 @@ import java.util.List;
 @TableName(value = "item", autoResultMap = true)
 @NoArgsConstructor
 @AutoMappers({
-        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
+        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
+        @AutoMapper(target = ItemVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Item extends Entity {
 
@@ -39,7 +42,7 @@ public class Item extends Entity {
     private ItemSubType subType;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    private Long orgId;
+    private long orgId;
 
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
@@ -67,5 +70,30 @@ public class Item extends Entity {
     private double length;// mm
     private double height;// mm
     private double weight;// g
+
+    //album
+    private int discs;//total disc number of album
+    private int tracks;//total track number of album
+    private int runTime;//total running time of album
+
+    //book
+    private String size;//book size
+    private int pages;//total page number of book
+
+    //video
+    private int episodes;//episode number of video
+    @AutoMapping(qualifiedByName = "getMediaFormat", targetClass = ItemVO.class)
+    @TableField(typeHandler = IntegerListHandler.class)
+    private List<Integer> mediaFormat;//media format of video
+
+    //figure goods
+    private String various;
+    private String scale;
+    private String title;
+    private String titleEn;
+    @TableField(typeHandler = StrListHandler.class)
+    private List<String> versions;
+    @TableField(typeHandler = StrListHandler.class)
+    private List<String> versionsEn;
 
 }
