@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 !**/src/test/java
+application.yml
+!src/main/resources/application.yml
+!src/main/resources/application-dev.yml
 
 ### STS ###
 .apt_generated
@@ -32,5 +35,3 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/application-develop.properties
-/src/main/resources/application-produce.properties
