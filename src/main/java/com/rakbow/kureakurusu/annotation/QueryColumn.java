@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.annotation;
 
-import com.rakbow.kureakurusu.data.emun.QueryColumnType;
+import com.rakbow.kureakurusu.data.enums.QueryColumnType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

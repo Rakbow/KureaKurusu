@@ -2,8 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +16,9 @@ import java.io.OutputStream;
  * @author Rakbow
  * @since 2022-07-25 2:10
  */
+@Slf4j
 @Controller
 public class HomeController {
-
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     //region ------引入实例------
     @Value("${system.path.img}")

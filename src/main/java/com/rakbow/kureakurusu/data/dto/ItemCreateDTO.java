@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.rakbow.kureakurusu.data.emun.ReleaseType;
+import com.rakbow.kureakurusu.data.enums.ReleaseType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -24,7 +24,7 @@ import java.util.List;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = AlbumCreateDTO.class, name = "1"),
         @JsonSubTypes.Type(value = BookCreateDTO.class, name = "2"),
-        @JsonSubTypes.Type(value = DiscCreateDTO.class, name = "3")
+        @JsonSubTypes.Type(value = VideoCreateDTO.class, name = "3")
 })
 public class ItemCreateDTO extends DTO {
 

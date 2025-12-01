@@ -22,17 +22,17 @@ public class EpisodeController {
     @UniqueVisitor
     @PostMapping("detail/{id}")
     public ApiResult detail(@PathVariable("id") long id) {
-        return new ApiResult().load(srv.detail(id));
+        return ApiResult.ok(srv.detail(id));
     }
 
     @PostMapping("list")
     public ApiResult list(@RequestBody EpisodeListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("related")
     public ApiResult related(@RequestBody EpisodeRelatedDTO dto) {
-        return new ApiResult().load(srv.related(dto));
+        return ApiResult.ok(srv.related(dto));
     }
 
 }

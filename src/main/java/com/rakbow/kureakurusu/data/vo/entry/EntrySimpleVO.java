@@ -1,9 +1,8 @@
 package com.rakbow.kureakurusu.data.vo.entry;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.rakbow.kureakurusu.data.emun.EntrySubType;
-import com.rakbow.kureakurusu.data.emun.EntryType;
-import com.rakbow.kureakurusu.data.emun.Gender;
+import com.rakbow.kureakurusu.data.enums.EntrySubType;
+import com.rakbow.kureakurusu.data.enums.EntryType;
 import lombok.Data;
 
 /**
@@ -21,7 +20,7 @@ public class EntrySimpleVO {
     private String nameZh;
     private String nameEn;
 
-    private Gender gender;
+    private int gender;
     private String date;
 
     private String thumb;

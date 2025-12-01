@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;

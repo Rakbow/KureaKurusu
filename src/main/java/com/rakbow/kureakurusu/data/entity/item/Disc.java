@@ -1,43 +1,37 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.rakbow.kureakurusu.data.vo.item.DiscListVO;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.enums.MediaFormat;
+import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.item.DiscVO;
-import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
-import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2022-11-27 18:49
+ * @since 2025/6/24 12:39
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(callSuper = true)
-@AutoMappers({
-        @AutoMapper(target = DiscListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
-        @AutoMapper(target = DiscVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
-})
-public class Disc extends SuperItem {
+@TableName(value = "disc", autoResultMap = true)
+@NoArgsConstructor
+@AutoMapper(target = DiscVO.class, reverseConvertGenerate = false)
+public class Disc extends Entity {
 
-    @AutoMapping(qualifiedByName = "getMediaFormat")
+    private long itemId;// album id
+    private String catalogId;
+    private int discNo;
+    @AutoMapping(qualifiedByName = "toAttribute")
+    private MediaFormat mediaFormat;
     @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> mediaFormat;//媒体类型
+    @AutoMapping(qualifiedByName = "getAlbumFormat")
+    private List<Integer> albumFormat;
 
-    private int discs;
-    private int episodes;
-    private int runTime;
-
-    public Disc() {
-        super();
-        this.mediaFormat = new ArrayList<>();
-    }
 }

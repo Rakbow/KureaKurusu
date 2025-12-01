@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
-import com.rakbow.kureakurusu.data.emun.ItemSubType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.enums.ItemSubType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;

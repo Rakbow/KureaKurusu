@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.emun;
+package com.rakbow.kureakurusu.data.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import io.github.linpeilie.annotations.AutoEnumMapper;
@@ -16,7 +16,7 @@ public enum ItemType {
 
     ALBUM(1, "enum.item.album"),
     BOOK(2, "enum.item.book"),
-    DISC(3, "enum.item.disc"),
+    VIDEO(3, "enum.item.video"),
     GAME(4, "enum.item.game"),
     GOODS(5, "enum.item.goods"),
     FIGURE(6, "enum.item.figure");

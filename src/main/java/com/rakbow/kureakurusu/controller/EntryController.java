@@ -26,13 +26,13 @@ public class EntryController {
     @UniqueVisitor
     @PostMapping("detail/{id}")
     public ApiResult detail(@PathVariable("id") long id) {
-        return new ApiResult().load(srv.detail(id));
+        return ApiResult.ok(srv.detail(id));
     }
 
     @PostMapping("create")
     public ApiResult create(@Valid @RequestBody EntrySuperCreateDTO dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        return new ApiResult().load(srv.create(dto));
+        return ApiResult.ok(srv.create(dto));
     }
 
     @PostMapping("update")
@@ -46,12 +46,12 @@ public class EntryController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody EntryListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("search")
     public ApiResult search(@RequestBody EntrySearchQueryDTO param) {
-        return new ApiResult().load(srv.search(param));
+        return ApiResult.ok(srv.search(param));
     }
 
     @PostMapping("upload-image")
@@ -68,17 +68,17 @@ public class EntryController {
 
     @PostMapping("mini")
     public ApiResult mini(@RequestBody List<Long> ids) {
-        return new ApiResult().load(srv.getMiniVO(ids));
+        return ApiResult.ok(srv.getMiniVO(ids));
     }
 
     @PostMapping("get-sub-products")
     public ApiResult getSubProducts(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(srv.getSubProducts(qry.getId()));
+        return ApiResult.ok(srv.getSubProducts(qry.getId()));
     }
 
     @PostMapping("get-extra-info")
     public ApiResult getExtraInfo(@RequestBody CommonDetailQry qry) {
-        return new ApiResult().load(srv.getItemExtraInfo(qry.getId()));
+        return ApiResult.ok(srv.getItemExtraInfo(qry.getId()));
     }
 
 }

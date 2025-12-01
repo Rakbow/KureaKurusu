@@ -2,17 +2,16 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.EntrySubType;
-import com.rakbow.kureakurusu.data.emun.EntryType;
-import com.rakbow.kureakurusu.data.emun.Gender;
+import com.rakbow.kureakurusu.data.enums.EntrySubType;
+import com.rakbow.kureakurusu.data.enums.EntryType;
 import com.rakbow.kureakurusu.data.vo.entry.EntryListVO;
 import com.rakbow.kureakurusu.data.vo.entry.EntryVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
-import io.github.linpeilie.annotations.AutoMapping;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,7 +24,7 @@ import java.util.List;
  * @since 2023-05-02 3:55
  */
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
+
 @Data
 @TableName(value = "entry", autoResultMap = true)
 @AutoMappers({
@@ -49,7 +48,7 @@ public class Entry extends Entity {
     @TableField(typeHandler = StrListHandler.class)
     private List<String> links;
 
-    private Gender gender;
+    private int gender;
     private String date;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
@@ -72,5 +71,7 @@ public class Entry extends Entity {
     private Long orgEntityId;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private int items;
+    @TableLogic
+    private int del;
 
 }

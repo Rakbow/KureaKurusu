@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * @author Rakbow
- * @since 2024/3/4 13:44
+ * @since 2025/6/6 19:35
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -18,12 +18,14 @@ import lombok.EqualsAndHashCode;
 @AutoMappers({
         @AutoMapper(target = Item.class, reverseConvertGenerate = false)
 })
-public class BookUpdateDTO extends ItemUpdateDTO {
+public class VideoUpdateDTO extends ItemUpdateDTO {
 
-    private int pages;
+    private int discs;
+    private int episodes;
+    private int runTime;
 
-    public BookUpdateDTO() {
-        setType(ItemType.BOOK.getValue());
+    public VideoUpdateDTO() {
+        setType(ItemType.VIDEO.getValue());
     }
 
 }

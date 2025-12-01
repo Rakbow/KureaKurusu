@@ -19,7 +19,7 @@ public class RelationController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody RelationListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("create")
@@ -36,17 +36,17 @@ public class RelationController {
 
     @PostMapping("personnel")
     public ApiResult personnel(@RequestBody PersonnelDTO dto) {
-        return new ApiResult().load(srv.personnel(dto.getEntityType(), dto.getEntityId()));
+        return ApiResult.ok(srv.personnel(dto.getEntityType(), dto.getEntityId()));
     }
 
     @PostMapping("items")
     public ApiResult relatedItems(@RequestBody RelatedItemQueryDTO dto) {
-        return new ApiResult().load(srv.relatedItems(dto));
+        return ApiResult.ok(srv.relatedItems(dto));
     }
 
     @PostMapping("entries")
     public ApiResult relatedEntries(@RequestBody RelatedEntryQueryDTO dto) {
-        return new ApiResult().load(srv.relatedEntries(dto));
+        return ApiResult.ok(srv.relatedEntries(dto));
     }
 
     @DeleteMapping("delete")

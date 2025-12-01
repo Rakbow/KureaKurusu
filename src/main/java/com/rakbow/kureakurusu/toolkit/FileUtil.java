@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import com.rakbow.kureakurusu.data.emun.FileType;
+import com.rakbow.kureakurusu.data.enums.FileType;
 import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 

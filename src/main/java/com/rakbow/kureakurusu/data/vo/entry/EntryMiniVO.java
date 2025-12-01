@@ -22,7 +22,7 @@ public class EntryMiniVO {
     private String name;
     private String subName;
     private String thumb;
-    private Attribute<Integer> gender;
+    private int gender;
     private String date;
 
     public EntryMiniVO(EntrySimpleVO entry) {
@@ -33,7 +33,7 @@ public class EntryMiniVO {
         this.subName = CommonUtil.getSubName(entry.getNameEn(), entry.getNameZh());
         this.thumb = CommonImageUtil.getEntryThumb(entry.getThumb());
         this.date = entry.getDate();
-        this.gender = new Attribute<>(entry.getGender());
+        this.gender = 0;
     }
 
 }

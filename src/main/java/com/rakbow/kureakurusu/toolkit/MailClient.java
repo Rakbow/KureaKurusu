@@ -1,25 +1,21 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-
 /**
  * @author Rakbow
  * @since 2022-08-02 0:56
  */
+@Slf4j
 @Component
 public class MailClient {
-
-    //记录日志
-    private static final Logger logger = LoggerFactory.getLogger(MailClient.class);
 
     @Autowired
     private JavaMailSender mailSender;
@@ -41,7 +37,7 @@ public class MailClient {
             helper.setText(content, true);
             mailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
-            logger.error("发送邮件失败:" + e.getMessage());
+            log.error("发送邮件失败: {}", e.getMessage());
         }
     }
 

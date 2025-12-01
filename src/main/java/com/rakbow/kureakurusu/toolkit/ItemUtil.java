@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import com.rakbow.kureakurusu.data.emun.EntryType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.enums.EntryType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.*;
 import com.rakbow.kureakurusu.data.vo.item.*;
 
@@ -61,7 +61,7 @@ public class ItemUtil {
     private final static Map<Integer, Class<? extends SuperItem>> SuperItemMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), Album.class);
         put(ItemType.BOOK.getValue(), Book.class);
-        put(ItemType.DISC.getValue(), Disc.class);
+        put(ItemType.VIDEO.getValue(), Video.class);
         put(ItemType.GOODS.getValue(), Goods.class);
         put(ItemType.FIGURE.getValue(), Figure.class);
     }};
@@ -69,7 +69,7 @@ public class ItemUtil {
     private final static Map<Integer, Class<? extends ItemListVO>> itemListVOMap = new HashMap<>() {{
         put(ItemType.ALBUM.getValue(), AlbumListVO.class);
         put(ItemType.BOOK.getValue(), BookListVO.class);
-        put(ItemType.DISC.getValue(), DiscListVO.class);
+        put(ItemType.VIDEO.getValue(), VideoListVO.class);
         put(ItemType.GOODS.getValue(), GoodsListVO.class);
         put(ItemType.FIGURE.getValue(), FigureListVO.class);
     }};

@@ -1,10 +1,8 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import io.github.linpeilie.annotations.AutoMapper;
-import io.github.linpeilie.annotations.AutoMapping;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,8 +25,7 @@ public class EntryUpdateDTO extends DTO {
     private String nameZh;
     private String nameEn;
     private String date;
-    @AutoMapping(source = "gender.value")
-    private Attribute<Integer> gender;
+    private Integer gender;
     private List<String> aliases;
     private List<String> links;
     private String remark;

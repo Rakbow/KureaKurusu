@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 public class AlbumUpdateDTO extends ItemUpdateDTO {
 
     private int discs;
-    private int tracks;
+    private int episodes;
     private int runTime;
 
     public AlbumUpdateDTO() {

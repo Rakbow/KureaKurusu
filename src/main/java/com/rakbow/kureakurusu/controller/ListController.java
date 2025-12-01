@@ -24,7 +24,7 @@ public class ListController {
 
     @PostMapping("detail/{id}")
     public ApiResult detail(@PathVariable("id") long id) {
-        return new ApiResult().load(srv.detail(id));
+        return ApiResult.ok(srv.detail(id));
     }
 
     @PostMapping("create")
@@ -36,7 +36,7 @@ public class ListController {
 
     @PostMapping("lists")
     public ApiResult lists(@RequestBody FavListQueryDTO dto) {
-        return new ApiResult().load(srv.lists(dto));
+        return ApiResult.ok(srv.lists(dto));
     }
 
     @PostMapping("add-items")
@@ -47,7 +47,7 @@ public class ListController {
 
     @PostMapping("get-items")
     public ApiResult getItems(@RequestBody FavListItemListQueryDTO dto) {
-        return new ApiResult().load(srv.getItems(dto));
+        return ApiResult.ok(srv.getItems(dto));
     }
 
 }

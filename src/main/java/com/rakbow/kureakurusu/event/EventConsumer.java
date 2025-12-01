@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventConsumer{
 
-//    private static final Logger log = LoggerFactory.getLogger(EventConsumer.class);
 //
 //    @Resource
 //    private MessageService messageService;

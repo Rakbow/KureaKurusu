@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 public class AlbumListVO extends ItemListVO {
 
     private int discs;
-    private int tracks;
+    private int episodes;
     private int runTime;
 
 }

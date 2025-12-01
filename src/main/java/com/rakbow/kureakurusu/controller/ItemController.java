@@ -55,17 +55,17 @@ public class ItemController {
     @UniqueVisitor
     @PostMapping("detail/{id}")
     public ApiResult detail(@PathVariable("id") long id) {
-        return new ApiResult().load(srv.detail(id));
+        return ApiResult.ok(srv.detail(id));
     }
 
     @PostMapping("search")
     public ApiResult search(@RequestBody ItemSearchQueryDTO dto) {
-        return new ApiResult().load(srv.search(dto));
+        return ApiResult.ok(srv.search(dto));
     }
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ItemListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     //endregion
@@ -74,11 +74,11 @@ public class ItemController {
 
     @PostMapping("album-track-list")
     public ApiResult getAlbumTracks(@RequestBody AlbumTrackInfoQry qry) {
-        return new ApiResult().load(extSrv.getAlbumTracks(qry.getId()));
+        return ApiResult.ok(extSrv.getAlbumTracks(qry.getId()));
     }
 
     @PostMapping("album-track-quick-create")
-    public ApiResult albumTrackQuickCreate(@RequestBody AlbumDiscCreateDTO dto) {
+    public ApiResult albumTrackQuickCreate(@RequestBody DiscCreateDTO dto) {
         extSrv.albumTrackQuickCreate(dto, true);
         return ApiResult.ok("entity.crud.create.success");
     }
@@ -94,7 +94,7 @@ public class ItemController {
 
     @PostMapping("convert-isbn")
     public ApiResult convertISBN13(@RequestBody ISBNConvertDTO dto) {
-        return new ApiResult().load(extSrv.convertISBN13(dto.isbn10()));
+        return ApiResult.ok(extSrv.convertISBN13(dto.isbn10()));
     }
 
     //endregion

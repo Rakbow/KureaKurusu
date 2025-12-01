@@ -1,10 +1,9 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.google.code.kaptcha.Producer;
-import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.common.LoginResult;
-import com.rakbow.kureakurusu.exception.ApiException;
+import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.Cookie;
@@ -12,9 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
@@ -24,19 +21,18 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 
-import static com.rakbow.kureakurusu.data.common.Constant.*;
+import static com.rakbow.kureakurusu.data.common.Constant.RISK;
 
 /**
  * @author Rakbow
  * @since 2022-08-02 0:20
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     private final UserService userSrv;
     private final Producer kaptchaProducer;
     @Value("${server.servlet.context-path}")
@@ -71,7 +67,7 @@ public class LoginController {
         cookie.setMaxAge(loginRes.getExpires());
         //load cookie to response
         response.addCookie(cookie);
-        return new ApiResult().load(loginRes);
+        return ApiResult.ok(loginRes);
     }
 
     @PostMapping("logout")

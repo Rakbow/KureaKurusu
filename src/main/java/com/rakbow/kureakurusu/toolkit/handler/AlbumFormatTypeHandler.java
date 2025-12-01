@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit.handler;
 
-import com.rakbow.kureakurusu.data.emun.AlbumFormat;
+import com.rakbow.kureakurusu.data.enums.AlbumFormat;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;

@@ -12,6 +12,6 @@ import lombok.EqualsAndHashCode;
 public class AlbumTrackQuickCreateDTO extends DTO {
 
     private long id;
-    private AlbumDiscCreateDTO disc;//碟片列表
+    private DiscCreateDTO disc;//碟片列表
 
 }

@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.exception.ApiException;
 

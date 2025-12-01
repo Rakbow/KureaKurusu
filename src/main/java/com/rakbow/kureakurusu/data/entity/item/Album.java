@@ -24,7 +24,7 @@ import lombok.ToString;
 public class Album extends SuperItem {
 
     private int discs;
-    private int tracks;
+    private int episodes;
     private int runTime;//second
 
     public Album() {

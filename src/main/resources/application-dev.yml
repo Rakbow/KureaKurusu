@@ -1,0 +1,115 @@
+# ServerProperties
+server:
+  port: 8081
+  servlet:
+    context-path:
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 2000MB
+  thymeleaf:
+    cache: false
+  main:
+    allow-bean-definition-overriding: true
+    #allow-circular-references: true
+
+  messages:
+    basename: messages
+    fallback-to-system-locale: true
+    encoding: UTF-8
+  #DataSource
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rm-wz9y598d0flaabdq95o.mysql.rds.aliyuncs.com:3306/kureakurusu?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+#    usr: jdbc:mysql://localhost:3306/rakbow?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: rakbow
+    password: Qq2564870393!
+
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      idle-timeout: 30000
+  # MailProperties
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: rakbow@163.com
+    password: FQIENURJFEJESVCA
+  # RedisProperties
+  data:
+    redis:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      password:
+      timeout: 5000
+  redis:
+    cache-expire: 2592000
+
+  # MybatisProperties
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.rakbow.kureakurusu.data.entity
+  configuration:
+    use-generated-keys: true
+    map-underscore-to-camel-case: true
+  type-handlers-package: com.rakbow.kureakurusu.util.handler
+  global-config:
+    db-config:
+      insert-strategy: not_null
+      update-strategy: not_null
+
+# logger
+logging:
+  level:
+    com.rakbow.kureakurusu: debug
+
+# spring.mail.protocol=smtps
+#spring.mail.properties.mail.smtp.ssl.enable: true
+#spring.mail.properties.mail.smtp.ssl.trust: smtp.163.com
+#spring.mail.properties.mail.smtp.auth: true
+#spring.mail.properties.mail.smtp.starttls.enable: true
+#spring.mail.properties.mail.smtp.starttls.required: true
+#spring.mail.properties.mail.debug: false
+
+
+# kureakurusu
+system:
+  path:
+    img: D:/Project/Java/kureakurusu/src/main/resources/static/img
+    upload:
+      file: H:/temp_work/rakbow_upload_file/upload/file
+
+# Qiniu
+qiniu:
+  access-key: thgOdmFkpFj-VijSZyFlhf7c_dFupPlGSmTqJRqu
+  secret-key: mpArlCdpIMnyh9FFkE2x2DWTaCZSe8_t08268Uii
+  bucketName: rakbow-static
+  domain: https://static.rakbow.com/
+
+# ========== 热度算法核心权重 ==========
+hotness:
+  weights:
+    # 浏览权重
+    view: 0.4
+    # 点赞权重
+    like: 2.5
+    # 商品关联权重
+    product: 5.0
+  # ========== 物品数三阶段阈值 ==========
+  product:
+    # 低基数阈值（小微企业上限）
+    lowThreshold: 100
+    # 中基数阈值（中型企业上限）
+    midThreshold: 300
+    # 高基数阈值（大型企业起点）
+    highThreshold: 2000
+  # ========== 归一化参数 ==========
+  scale:
+    # 点赞数Sigmoid缩放参数
+    like: 3
+    # 浏览数对数归一化基数
+    view: 30

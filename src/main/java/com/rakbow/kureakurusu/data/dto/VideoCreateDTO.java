@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -14,15 +13,14 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2025/6/6 19:35
+ * @since 2025/6/6 18:21
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AutoMappers({
         @AutoMapper(target = Item.class, reverseConvertGenerate = false)
 })
-public class DiscUpdateDTO extends ItemUpdateDTO {
+public class VideoCreateDTO extends ItemCreateDTO {
 
     private int discs;
     private int episodes;
@@ -30,8 +28,8 @@ public class DiscUpdateDTO extends ItemUpdateDTO {
     @NotEmpty(message = "{entity.crud.media_format.required_field}")
     private List<Integer> mediaFormat;
 
-    public DiscUpdateDTO() {
-        setType(ItemType.DISC.getValue());
+    public VideoCreateDTO() {
+        setType(ItemType.VIDEO.getValue());
         mediaFormat = new ArrayList<>();
     }
 

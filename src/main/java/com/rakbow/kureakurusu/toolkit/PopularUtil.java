@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.EntryType;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.EntryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

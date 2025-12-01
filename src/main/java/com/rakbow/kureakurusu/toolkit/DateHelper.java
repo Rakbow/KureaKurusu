@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -81,6 +82,7 @@ public class DateHelper {
     }
 
     public static String getDuration(int seconds) {
+        if(seconds == 0) return "";
         int hours = seconds / 3600;
         int minutes = (seconds % 3600) / 60;
         int remainingSeconds = seconds % 60;
@@ -93,6 +95,7 @@ public class DateHelper {
     }
 
     public static int getDuration(String timeStr) {
+        if(StringUtils.isBlank(timeStr)) return 0;
         String time = timeStr.replace(TAB, "").trim();
         String[] parts = time.split(":");
 

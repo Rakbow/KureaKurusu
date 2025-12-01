@@ -44,17 +44,17 @@ public class FileController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody FileListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("search")
     public ApiResult search(@RequestBody FileSearchParams param) {
-        return new ApiResult().load(srv.search(param));
+        return ApiResult.ok(srv.search(param));
     }
 
     @PostMapping("related")
     public ApiResult related(@RequestBody EntityQryDTO dto) {
-        return new ApiResult().load(srv.related(dto));
+        return ApiResult.ok(srv.related(dto));
     }
 
     @PostMapping("related-create")

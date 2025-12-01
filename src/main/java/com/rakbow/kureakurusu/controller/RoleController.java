@@ -25,7 +25,7 @@ public class RoleController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody RoleListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("create")

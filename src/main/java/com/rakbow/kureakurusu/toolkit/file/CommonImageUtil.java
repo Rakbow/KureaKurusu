@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.toolkit.file;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
-import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
 import lombok.SneakyThrows;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;

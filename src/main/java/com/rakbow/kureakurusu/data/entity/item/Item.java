@@ -2,16 +2,16 @@ package com.rakbow.kureakurusu.data.entity.item;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.rakbow.kureakurusu.data.emun.ItemSubType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.emun.ReleaseType;
+import com.rakbow.kureakurusu.data.enums.ItemSubType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
+import com.rakbow.kureakurusu.data.enums.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
-import com.rakbow.kureakurusu.toolkit.handler.IntegerListHandler;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -42,7 +42,7 @@ public class Item extends Entity {
     private ItemSubType subType;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    private long orgId;
+    private long orgId;// myFigureCollection id
 
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
@@ -54,7 +54,7 @@ public class Item extends Entity {
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
     private String barcode;// EAN/JAN/ISBN-13
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
-    private String catalogId;// album game disc catalog id
+    private String catalogId;// album/game/video catalog id
     private String releaseDate;
     private double price;
     @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
@@ -71,20 +71,12 @@ public class Item extends Entity {
     private double height;// mm
     private double weight;// g
 
-    //album
+    //album video
     private int discs;//total disc number of album
-    private int tracks;//total track number of album
+    private int episodes;//episode number of album and video
     private int runTime;//total running time of album
-
     //book
-    private String size;//book size
     private int pages;//total page number of book
-
-    //video
-    private int episodes;//episode number of video
-    @AutoMapping(qualifiedByName = "getMediaFormat", targetClass = ItemVO.class)
-    @TableField(typeHandler = IntegerListHandler.class)
-    private List<Integer> mediaFormat;//media format of video
 
     //figure goods
     private String various;
@@ -95,5 +87,8 @@ public class Item extends Entity {
     private List<String> versions;
     @TableField(typeHandler = StrListHandler.class)
     private List<String> versionsEn;
+
+    @TableLogic
+    private int del;
 
 }

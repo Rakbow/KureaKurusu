@@ -8,16 +8,14 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.emun.*;
+import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
-import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.item.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.*;
-import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -49,8 +47,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     private final ChangelogService logSrv;
 
     private final PopularUtil popularUtil;
-    private final QiniuImageUtil qiniuImageUtil;
-    private final VisitUtil visitUtil;
     private final EntityUtil entityUtil;
 
     private final ItemMapper mapper;
@@ -77,7 +73,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         if (itemDTO.getType().intValue() == ItemType.ALBUM.getValue()) {
             if (!((AlbumCreateDTO) itemDTO).getDisc().getTracks().isEmpty()) {
                 ((AlbumCreateDTO) itemDTO).getDisc().setItemId(item.getId());
-                AlbumDiscCreateDTO disc = ((AlbumCreateDTO) itemDTO).getDisc();
+                DiscCreateDTO disc = ((AlbumCreateDTO) itemDTO).getDisc();
                 extSrv.albumTrackQuickCreate(disc, false);
             }
         }
@@ -90,7 +86,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public void update(ItemUpdateDTO dto) {
-
         Item item = converter.convert(dto, Item.class);
         updateById(item);
         logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
@@ -99,28 +94,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public void delete(List<Long> ids) {
-        //get original data
-        List<Item> items = listByIds(ids);
-        if (items.isEmpty()) return;
-        List<Image> images = imageSrv.list(
-                new LambdaQueryWrapper<Image>()
-                        .eq(Image::getEntityType, ENTITY_TYPE)
-                        .in(Image::getEntityId, ids)
-        );
-        for (Item item : items) {
-            //delete all image
-            qiniuImageUtil.deleteAllImage(images);
-            //delete visit record
-            visitUtil.del(ENTITY_TYPE.getValue(), item.getId());
-        }
-
         remove(new LambdaQueryWrapper<Item>().in(Item::getId, ids));
-
-        relationSrv.remove(
-                new LambdaQueryWrapper<Relation>()
-                        .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
-                        .in(Relation::getEntityId, ids)
-        );
     }
 
     //endregion

@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
-import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +12,5 @@ import lombok.EqualsAndHashCode;
 public class BookListVO extends ItemListVO {
 
     private int pages;
-    private String size;
-    private Attribute<String> lang;//语言
 
 }

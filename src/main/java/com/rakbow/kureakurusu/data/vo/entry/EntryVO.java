@@ -22,7 +22,7 @@ public class EntryVO {
     private List<String> links;
 
     private String date;
-    private Attribute<Integer> gender;
+    private int gender;
 
     private String cover;
     private String thumb;

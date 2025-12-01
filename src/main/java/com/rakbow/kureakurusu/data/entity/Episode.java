@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;

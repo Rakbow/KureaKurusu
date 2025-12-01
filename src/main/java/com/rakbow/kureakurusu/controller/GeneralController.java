@@ -46,7 +46,7 @@ public class GeneralController {
 
     @GetMapping("get-options")
     public ApiResult getOption() {
-        return new ApiResult().load(srv.getOptions());
+        return ApiResult.ok(srv.getOptions());
     }
 
     @PostMapping("update-entity-status")
@@ -67,12 +67,12 @@ public class GeneralController {
 
     @PostMapping("changelog-list")
     public ApiResult changelogs(@RequestBody ChangelogListQueryDTO dto) {
-        return new ApiResult().load(srv.changelogs(dto));
+        return ApiResult.ok(srv.changelogs(dto));
     }
 
     @PostMapping("changelog-mini")
     public ApiResult changelog(@RequestBody EntityMinDTO dto) {
-        return new ApiResult().load(srv.mini(dto.getEntityType(), dto.getEntityId()));
+        return ApiResult.ok(srv.mini(dto.getEntityType(), dto.getEntityId()));
     }
 
     @PostMapping("like")

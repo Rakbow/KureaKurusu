@@ -8,15 +8,14 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2025/6/6 18:23
+ * @since 2025/6/6 18:24
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DiscListVO extends ItemListVO {
+public class VideoVO extends ItemVO {
 
     private int discs;
     private int episodes;
     private int runTime;
-    private List<Attribute<Integer>> mediaFormat;
 
 }

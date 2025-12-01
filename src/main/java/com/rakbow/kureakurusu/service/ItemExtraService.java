@@ -4,17 +4,17 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.dao.*;
-import com.rakbow.kureakurusu.data.dto.AlbumDiscCreateDTO;
+import com.rakbow.kureakurusu.data.dto.DiscCreateDTO;
 import com.rakbow.kureakurusu.data.dto.AlbumTrackQuickUploadDTO;
-import com.rakbow.kureakurusu.data.emun.ChangelogField;
-import com.rakbow.kureakurusu.data.emun.ChangelogOperate;
-import com.rakbow.kureakurusu.data.emun.EntityType;
+import com.rakbow.kureakurusu.data.enums.ChangelogField;
+import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
+import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
+import com.rakbow.kureakurusu.data.entity.item.Disc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
-import com.rakbow.kureakurusu.data.vo.item.AlbumDiscVO;
+import com.rakbow.kureakurusu.data.vo.item.DiscVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
 import com.rakbow.kureakurusu.exception.ApiException;
@@ -68,16 +68,16 @@ public class ItemExtraService {
     public AlbumTrackInfoVO getAlbumTracks(long id) {
 
         AlbumTrackInfoVO res = new AlbumTrackInfoVO();
-        List<AlbumDisc> discs = discMapper.selectList(
-                new LambdaQueryWrapper<AlbumDisc>().eq(AlbumDisc::getItemId, id).orderByAsc(AlbumDisc::getDiscNo)
+        List<Disc> discs = discMapper.selectList(
+                new LambdaQueryWrapper<Disc>().eq(Disc::getItemId, id).orderByAsc(Disc::getDiscNo)
         );
         if (discs.isEmpty()) return res;
-        res.setDiscs(converter.convert(discs, AlbumDiscVO.class));
+        res.setDiscs(converter.convert(discs, DiscVO.class));
         //get all episode
         List<Episode> episodes = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, EntityType.ALBUM_DISC)
-                        .in(Episode::getRelatedId, discs.stream().map(AlbumDisc::getId).toList())
+                        .in(Episode::getRelatedId, discs.stream().map(Disc::getId).toList())
                         .orderByAsc(Episode::getSerial)
         );
         if (episodes.isEmpty()) return res;
@@ -114,13 +114,13 @@ public class ItemExtraService {
 
     @SneakyThrows
     @Transactional
-    public void albumTrackQuickCreate(AlbumDiscCreateDTO dto, boolean updateAlbum) {
+    public void albumTrackQuickCreate(DiscCreateDTO dto, boolean updateAlbum) {
 
         int runTime = 0;
         int duration;
 
         List<Episode> eps = new ArrayList<>();
-        AlbumDisc disc = converter.convert(dto, AlbumDisc.class);
+        Disc disc = converter.convert(dto, Disc.class);
         discMapper.insert(disc);
         for (AlbumTrackVO track : dto.getTracks()) {
             Episode ep = new Episode();
@@ -144,12 +144,12 @@ public class ItemExtraService {
         if (!updateAlbum) return;
         Item album = mapper.selectById(dto.getItemId());
         int discNo = album.getDiscs() + 1;
-        int trackNum = album.getTracks() + eps.size();
+        int trackNum = album.getEpisodes() + eps.size();
         runTime = album.getRunTime() + runTime;
         LambdaUpdateWrapper<Item> wrapper = new LambdaUpdateWrapper<Item>()
                 .eq(Item::getId, dto.getItemId())
                 .set(Item::getDiscs, discNo)
-                .set(Item::getTracks, trackNum)
+                .set(Item::getEpisodes, trackNum)
                 .set(Item::getRunTime, runTime);
         mapper.update(null, wrapper);
         logSrv.create(EntityType.ITEM.getValue(), dto.getItemId(), ChangelogField.EPISODE, ChangelogOperate.CREATE);

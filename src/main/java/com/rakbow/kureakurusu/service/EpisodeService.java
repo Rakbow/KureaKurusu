@@ -12,11 +12,11 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
-import com.rakbow.kureakurusu.data.emun.EntityType;
-import com.rakbow.kureakurusu.data.emun.ImageType;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Episode;
-import com.rakbow.kureakurusu.data.entity.item.AlbumDisc;
+import com.rakbow.kureakurusu.data.entity.item.Disc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
@@ -66,7 +66,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         int relatedType = ep.getRelatedType();
         long relatedId = ep.getRelatedId();
         if (ep.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
-            AlbumDisc disc = discMapper.selectById(ep.getRelatedId());
+            Disc disc = discMapper.selectById(ep.getRelatedId());
             if (disc == null) throw ErrorFactory.entityNull();
             vo.setDiscNo(disc.getDiscNo());
             relatedType = EntityType.ITEM.getValue();
@@ -91,10 +91,10 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
             wrapper.like(Episode::getName, dto.getKeyword()).or().like(Episode::getNameEn, dto.getKeyword());
         }
         if(dto.getAlbumId() != -1){
-            List<AlbumDisc> disc =
-                    discMapper.selectList(new LambdaUpdateWrapper<AlbumDisc>().eq(AlbumDisc::getItemId, dto.getAlbumId()));
+            List<Disc> disc =
+                    discMapper.selectList(new LambdaUpdateWrapper<Disc>().eq(Disc::getItemId, dto.getAlbumId()));
             wrapper.eq(Episode::getRelatedType, EntityType.ALBUM_DISC.getValue())
-                    .in(Episode::getRelatedId, disc.stream().map(AlbumDisc::getId).toList());
+                    .in(Episode::getRelatedId, disc.stream().map(Disc::getId).toList());
         }
         IPage<Episode> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         if(pages.getRecords().isEmpty()) return new SearchResult<>();
@@ -120,7 +120,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         EpisodeRelatedVO res = new EpisodeRelatedVO();
         if (dto.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
 
-            AlbumDisc disc = discMapper.selectById(dto.getRelatedId());
+            Disc disc = discMapper.selectById(dto.getRelatedId());
             if (disc == null) throw ErrorFactory.entityNull();
             Item album = itemMapper.selectById(disc.getItemId());
             res.setParent(
@@ -169,16 +169,16 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
     public void getRelatedAlbums(List<Episode> eps) {
         List<Long> discIds = eps.stream().map(Episode::getRelatedId).distinct().toList();
-        List<AlbumDisc> discs = discMapper.selectByIds(discIds);
-        List<Long> itemIds = discs.stream().map(AlbumDisc::getItemId).distinct().toList();
+        List<Disc> discs = discMapper.selectByIds(discIds);
+        List<Long> itemIds = discs.stream().map(Disc::getItemId).distinct().toList();
         List<Item> items = itemMapper.selectByIds(itemIds);
         Entity disc;
         Entity album;
         for(Episode ep : eps) {
             disc = DataFinder.findEntityById(ep.getRelatedId(), discs);
             if(disc == null) continue;
-            ep.setDiscNo(((AlbumDisc) disc).getDiscNo());
-            album = DataFinder.findEntityById(((AlbumDisc) disc).getItemId(), items);
+            ep.setDiscNo(((Disc) disc).getDiscNo());
+            album = DataFinder.findEntityById(((Disc) disc).getItemId(), items);
             if(album == null) continue;
             ep.setParent((Item) album);
         }

@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.data.entity.item;
 
-import com.rakbow.kureakurusu.data.emun.ItemSubType;
-import com.rakbow.kureakurusu.data.emun.ItemType;
-import com.rakbow.kureakurusu.data.emun.ReleaseType;
+import com.rakbow.kureakurusu.data.enums.ItemSubType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
+import com.rakbow.kureakurusu.data.enums.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import io.github.linpeilie.annotations.AutoMapping;
 import lombok.Data;

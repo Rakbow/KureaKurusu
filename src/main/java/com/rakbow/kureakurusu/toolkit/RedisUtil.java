@@ -3,8 +3,7 @@ package com.rakbow.kureakurusu.toolkit;
 import com.rakbow.kureakurusu.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,11 +21,11 @@ import java.util.concurrent.TimeUnit;
  * @author Rakbow
  * @since 2023-01-09 13:13
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(RedisUtil.class);
     private final RedisTemplate<String, Object> template;
 
     //region common

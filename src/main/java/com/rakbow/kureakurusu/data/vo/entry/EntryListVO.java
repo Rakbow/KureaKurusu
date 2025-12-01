@@ -18,7 +18,7 @@ public class EntryListVO extends EntityListVO {
     private Attribute<Integer> type;
     private Attribute<Integer> subType;
     private String date;
-    private Attribute<Integer> gender;
+    private int gender;
     private String nameZh;
     private String nameEn;
     private List<String> aliases;

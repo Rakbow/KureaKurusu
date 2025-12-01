@@ -39,19 +39,16 @@ public class ItemVO {
 
     private boolean status;
 
-    private String spec;
-
     private int discs;
-    private int tracks;
     private int runTime;
 
     private int pages;
-    private String size;
 
     private int episodes;
-    private List<Attribute<Integer>> mediaFormat;
 
     private String scale;
     private List<String> versions;
+
+    private String spec;
 
 }

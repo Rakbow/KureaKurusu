@@ -6,7 +6,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
-import com.rakbow.kureakurusu.data.emun.*;
+import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;

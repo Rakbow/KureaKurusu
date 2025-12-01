@@ -2,12 +2,11 @@ package com.rakbow.kureakurusu.aspect;
 
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,11 +19,10 @@ import java.util.Date;
  * @author Rakbow
  * @since 2022-09-12 20:04
  */
+@Slf4j
 @Component
 @Aspect
 public class ServiceLogAspect {
-
-    private static final Logger logger = LoggerFactory.getLogger(ServiceLogAspect.class);
 
     @Pointcut("execution(* com.rakbow.kureakurusu.service.*.*(..))")
     public void pointcut() {
@@ -39,7 +37,7 @@ public class ServiceLogAspect {
             String ip = request.getRemoteHost();
             String now = new SimpleDateFormat(DateHelper.DATE_TIME_FORMAT).format(new Date());
             String target = STR."\{joinPoint.getSignature().getDeclaringTypeName()}.\{joinPoint.getSignature().getName()}";
-            logger.info(String.format(I18nHelper.getMessage("system.service.log"), ip, now, target));
+            log.info(String.format(I18nHelper.getMessage("system.service.log"), ip, now, target));
         }
     }
 

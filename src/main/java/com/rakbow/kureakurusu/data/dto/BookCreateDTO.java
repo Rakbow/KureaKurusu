@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.rakbow.kureakurusu.data.emun.ItemType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -20,11 +20,9 @@ public class BookCreateDTO extends ItemCreateDTO {
 
     private int pages;
     private String size;
-    // private String lang;
 
     public BookCreateDTO() {
         setType(ItemType.BOOK.getValue());
-        // lang = Language.JAPANESE.getValue();
     }
 
 }

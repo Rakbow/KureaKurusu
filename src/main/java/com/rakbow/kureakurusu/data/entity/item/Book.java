@@ -23,12 +23,8 @@ import lombok.ToString;
 public class Book extends SuperItem {
 
     private int pages;
-    private String size;
-
-    // private Language lang;//语言
 
     public Book() {
         super();
-        // this.lang = Language.JAPANESE;
     }
 }

@@ -29,12 +29,12 @@ public class ImageController {
 
     @PostMapping("list")
     public ApiResult list(@RequestBody ImageListQueryDTO dto) {
-        return new ApiResult().load(srv.list(dto));
+        return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("preview")
     public ApiResult preview(@RequestBody ImagePreviewDTO dto) {
-        return new ApiResult().load(srv.preview(dto));
+        return ApiResult.ok(srv.preview(dto));
     }
 
     @PostMapping("upload")

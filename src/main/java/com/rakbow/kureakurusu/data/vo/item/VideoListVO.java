@@ -1,17 +1,18 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
+import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
- * 转换量最大的VO，一般用于详情页面
- *
  * @author Rakbow
- * @since 2023-01-11 10:42
+ * @since 2025/6/6 18:23
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AlbumVO extends ItemVO {
+public class VideoListVO extends ItemListVO {
 
     private int discs;
     private int episodes;
