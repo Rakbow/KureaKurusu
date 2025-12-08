@@ -59,9 +59,11 @@ public interface MetaVOMapper {
 
     @Named("getCurrency")
     default String getCurrency(String region) {
-        if(StringUtils.isBlank(region) || StringUtils.equals(region, "un")) {
+        if (StringUtils.isBlank(region) || StringUtils.equals(region, "un")) {
             return "JPY";
-        }else {
+        } else if ("eu".equals(region)) {
+            return "EUR";
+        } else {
             return Currency.getInstance(Locale.of("", region)).getCurrencyCode();
         }
     }

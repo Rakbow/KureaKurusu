@@ -179,7 +179,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                                         .eq(Relation::getEntitySubType, EntryType.PRODUCT)
                                         .eq(Relation::getEntityType, EntityType.ENTRY)
                                         .eq(Relation::getRelatedEntityId, id)
-                        ).orderByAsc(Entry::getDate));
+                        ).orderByAsc(Entry::getStartDate));
         if (entries.isEmpty()) return res;
         res = converter.convert(entries, EntryListVO.class);
         return res;

@@ -15,7 +15,6 @@ import io.github.linpeilie.annotations.AutoMappers;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -49,7 +48,8 @@ public class Entry extends Entity {
     private List<String> links;
 
     private int gender;
-    private String date;
+    private String startDate;
+    private String endDate;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private String cover;

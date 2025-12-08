@@ -135,7 +135,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             RelationVO vo = RelationVO.builder()
                     .id(r.getId())
                     .role(role)
-                    .role(targetRole)
                     .remark(r.getRemark())
                     .target(target)
                     .direction(positive)

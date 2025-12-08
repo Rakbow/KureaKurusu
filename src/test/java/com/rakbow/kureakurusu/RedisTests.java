@@ -269,7 +269,10 @@ public class RedisTests {
             MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
             MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
         });
+        redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}:zh");
         redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:zh", MetaData.optionsZh.roleSet);
+        redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}:en");
+        redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:en", MetaData.optionsEn.roleSet);
     }
 
 }

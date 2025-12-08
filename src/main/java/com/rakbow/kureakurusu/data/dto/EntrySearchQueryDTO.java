@@ -21,15 +21,21 @@ import java.util.List;
 public class EntrySearchQueryDTO extends ListQueryDTO {
 
     private Integer type;
+    private String keyword;
     private List<String> keywords = new ArrayList<>();
 
     public void init() {
         type = super.getVal("type");
-        if(ObjectUtils.isNotEmpty(super.getKeyword()))
-            keywords = Arrays.stream(super.getKeyword().split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .toList();
+        keyword = super.getVal("keyword");
+        if(ObjectUtils.isNotEmpty(keyword))
+            if(keyword.contains(",")) {
+                keywords = Arrays.stream(super.getKeyword().split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .toList();
+            }else {
+                keywords.add(keyword);
+            }
     }
 
 }

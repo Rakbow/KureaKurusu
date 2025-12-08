@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.UploadImage;
 import com.rakbow.kureakurusu.data.common.ActionResult;
+import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.enums.FileType;
 import com.rakbow.kureakurusu.data.enums.ImageType;
@@ -49,7 +50,7 @@ public class QiniuImageUtil {
             ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(), img.getPrefixKey());
             if (!ar.state) throw new Exception(ar.message);
             Image image = new Image();
-            image.setUrl(ar.data.toString());
+            image.setUrl(ar.data.toString().replace(Constant.FILE_DOMAIN, ""));
             image.setSize(img.getSize());
             image.setEntityType(entityType);
             image.setEntityId(entityId);

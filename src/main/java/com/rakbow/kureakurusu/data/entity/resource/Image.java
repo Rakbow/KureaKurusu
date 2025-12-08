@@ -1,9 +1,6 @@
 package com.rakbow.kureakurusu.data.entity.resource;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rakbow.kureakurusu.data.common.Constant;
@@ -36,7 +33,9 @@ import java.sql.Timestamp;
 })
 public class Image extends Entity {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
+    private Integer idx;
     @TableField(updateStrategy = FieldStrategy.NEVER)
     private int entityType;
     @TableField(updateStrategy = FieldStrategy.NEVER)

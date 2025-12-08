@@ -69,6 +69,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
                 .like(StringUtils.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
                 .eq(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
                 .in(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)
+                .orderByAsc(!dto.isSort(), Image::getIdx)
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField());
         IPage<Image> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<ImageVO> res = converter.convert(pages.getRecords(), ImageVO.class);
@@ -123,14 +124,18 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
                 new LambdaQueryWrapper<Image>().eq(Image::getEntityType, dto.getEntityType())
                         .eq(Image::getEntityId, dto.getEntityId())
                         .in(Image::getType, defaultImageType)
-                        .orderByAsc(Image::getId)
+                        .orderByAsc(Image::getIdx)
         );
         return new ImageDisplayVO(converter.convert(pages.getRecords(), ImageVO.class), pages.getTotal());
     }
 
     public String getCache(int entityType, long entityId, ImageType imageType) {
-        String url = redisUtil.get(
-                STR."\{RedisKey.ENTITY_IMAGE_CACHE}\{imageType.getValue()}:\{entityType}:\{entityId}", String.class);
+        String key = STR."\{RedisKey.ENTITY_IMAGE_CACHE}\{imageType.getValue()}:\{entityType}:\{entityId}";
+        String url = redisUtil.get(key, String.class);
+        if(StringUtils.isEmpty(url)) {
+            resetCache(entityType,  entityId);
+            url = redisUtil.get(key, String.class);
+        }
         return CommonImageUtil.getItemImage(imageType.getValue(), url);
     }
 

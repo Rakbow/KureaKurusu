@@ -37,6 +37,7 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
         barcode = super.getVal("barcode");
         catalogId = super.getVal("catalogId");
         entries = super.getVal("entries");
+        super.setKeyword(super.getVal("keyword"));
     }
 
     public boolean allSearch() {

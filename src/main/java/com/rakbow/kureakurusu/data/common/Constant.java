@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public interface Constant {
 
-    String FILE_DOMAIN = "https://static.rakbow.com/";
+    String FILE_DOMAIN = "https://oss.rakbow.com/";
 
     String TAB = "\t";
     String CARRIAGE_RETURN = "\r";

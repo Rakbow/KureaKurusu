@@ -6,6 +6,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
+import com.rakbow.kureakurusu.data.entity.Link;
 import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,6 +28,7 @@ import java.util.Objects;
  * @since 2023-05-19 18:56
  */
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class GeneralService {
 
@@ -33,6 +36,7 @@ public class GeneralService {
     private final RedisUtil redisUtil;
 
     private final CommonMapper mapper;
+    private final LinkService lnkSrv;
 
     private final ChangelogService logSrv;
 
@@ -49,7 +53,6 @@ public class GeneralService {
     // }
 
     //region common
-    @Transactional
     public void loadMetaData() {
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
@@ -75,7 +78,6 @@ public class GeneralService {
      * 批量更新数据库实体激活状态
      * @author rakbow
      */
-    @Transactional
     public void updateEntityStatus(UpdateStatusDTO dto) {
         mapper.updateEntityStatus(EntityType.getTableName(dto.getEntity()), dto.getIds(), dto.status());
     }
@@ -84,7 +86,6 @@ public class GeneralService {
      * 点赞
      * @author rakbow
      */
-    @Transactional
     public boolean like(int entityType, long entityId, String likeToken) {
         //点过赞
         if (likeUtil.isLike(entityType, entityId, likeToken)) {
@@ -103,7 +104,6 @@ public class GeneralService {
      *
      * @author rakbow
      */
-    @Transactional
     @SneakyThrows
     public void updateEntityDetail(UpdateDetailDTO dto) {
         mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
@@ -125,6 +125,10 @@ public class GeneralService {
 
     public ChangelogMiniVO mini(int type, long id) {
         return logSrv.mini(type, id);
+    }
+
+    public List<Link> links(int entityType, long entityId) {
+        return lnkSrv.list(entityType, entityId);
     }
 
 }
