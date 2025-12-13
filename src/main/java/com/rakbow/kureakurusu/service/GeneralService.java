@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.service;
 
 import com.rakbow.kureakurusu.dao.CommonMapper;
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
@@ -12,6 +13,8 @@ import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
 import com.rakbow.kureakurusu.data.vo.ChangelogVO;
+import com.rakbow.kureakurusu.data.vo.LinkVO;
+import com.rakbow.kureakurusu.data.vo.LinksVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -127,8 +130,8 @@ public class GeneralService {
         return logSrv.mini(type, id);
     }
 
-    public List<Link> links(int entityType, long entityId) {
-        return lnkSrv.list(entityType, entityId);
+    public List<LinksVO> links(int entityType, long entityId) {
+        return lnkSrv.group(entityType, entityId);
     }
 
 }

@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class PersonnelDTO extends DTO {
+public class EntityDTO extends DTO {
 
     private int entityType;
     private long entityId;

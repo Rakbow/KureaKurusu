@@ -35,7 +35,7 @@ public class RelationController {
     }
 
     @PostMapping("personnel")
-    public ApiResult personnel(@RequestBody PersonnelDTO dto) {
+    public ApiResult personnel(@RequestBody EntityDTO dto) {
         return ApiResult.ok(srv.personnel(dto.getEntityType(), dto.getEntityId()));
     }
 

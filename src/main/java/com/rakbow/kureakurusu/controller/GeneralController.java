@@ -109,5 +109,11 @@ public class GeneralController {
         return res;
     }
 
+    @SneakyThrows
+    @PostMapping("links")
+    public ApiResult links(@RequestBody EntityDTO dto) {
+        return ApiResult.ok(srv.links(dto.getEntityType(), dto.getEntityId()));
+    }
+
     //endregion
 }
