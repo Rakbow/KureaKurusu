@@ -1,21 +1,16 @@
 package com.rakbow.kureakurusu.task;
 
-import org.jetbrains.annotations.NotNull;
-import org.quartz.JobExecutionContext;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.springframework.stereotype.Component;
-
 /**
  * 每24小时更新一次浏览,点赞和收藏数据到数据库中
  *
  * @author Rakbow
  * @since 2023-02-22 0:36
  */
-@Component
-public class EntityInfoTask extends QuartzJobBean {
-
-    @Override
-    protected void executeInternal(@NotNull JobExecutionContext context) {
+// @Component
+// public class EntityInfoTask extends QuartzJobBean {
+//
+//     @Override
+//     protected void executeInternal(@NotNull JobExecutionContext context) {
 //        // 定时任务逻辑
 //        // TODO
 //        System.out.println("------redis缓存数据获取中------");
@@ -37,6 +32,6 @@ public class EntityInfoTask extends QuartzJobBean {
 //            statisticMapper.updateLikeCount(like.getEntityType(), like.getEntityId(), like.getLikeCount());
 //        });
 //        System.out.println("------实体浏览点赞数据更新完毕------");
-    }
+//     }
 
-}
+// }

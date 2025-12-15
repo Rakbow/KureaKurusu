@@ -17,10 +17,10 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.FavListItemListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.FavListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ListItemCreateDTO;
-import com.rakbow.kureakurusu.data.enums.EntityType;
-import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.entity.*;
 import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.vo.favList.FavListItemTargetVO;
 import com.rakbow.kureakurusu.data.vo.favList.FavListItemVO;
 import com.rakbow.kureakurusu.data.vo.favList.FavListVO;
@@ -32,12 +32,12 @@ import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -121,7 +121,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
         }
         for (FavListItem i : items) {
             Entity e = DataFinder.findEntityById(i.getEntityId(), targets);
-            if (ObjectUtils.isEmpty(e)) continue;
+            if (Objects.isNull(e)) continue;
 
             FavListItemTargetVO target = FavListItemTargetVO.builder()
                     .entityType(targetEntityType)

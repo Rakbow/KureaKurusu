@@ -10,11 +10,11 @@ import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.service.GeneralService;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.ExcelUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,7 +80,7 @@ public class GeneralController {
         ApiResult res = new ApiResult();
         //get like token from cookie
         String likeToken = TokenInterceptor.getLikeToken();
-        if (StringUtils.isBlank(likeToken)) {
+        if (StringUtil.isBlank(likeToken)) {
             //generate like token and return
             likeToken = CommonUtil.generateUUID(0);
             Cookie cookie = new Cookie("like_token", likeToken);
@@ -88,11 +88,10 @@ public class GeneralController {
             response.addCookie(cookie);
         }
         if (srv.like(dto.getEntityType(), dto.getEntityId(), likeToken)) {
-            res.ok("entity.like.success");
+            return ApiResult.ok("entity.like.success");
         } else {
             throw new ApiException("entity.like.failed");
         }
-        return res;
     }
 
     //endregion

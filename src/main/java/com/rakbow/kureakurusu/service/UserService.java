@@ -15,10 +15,10 @@ import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +70,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         //check
         if (user.getStatus())
             throw new ApiException("user.activation.duplicate");
-        if (!StringUtils.equals(user.getActivationCode(), dto.getCode()))
+        if (!StringUtil.equals(user.getActivationCode(), dto.getCode()))
             throw new ApiException("user.activation.failure");
         //activation
         mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, dto.getUserId()).set(User::getStatus, 1));
@@ -81,7 +81,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     public LoginResult login(LoginDTO dto, String kaptcha) {
 
         //check captcha
-        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(dto.getVerifyCode())
+        if (StringUtil.isBlank(kaptcha) || StringUtil.isBlank(dto.getVerifyCode())
                 || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
             throw new ApiException("login.verify_code.error");
 

@@ -1,8 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -72,7 +70,7 @@ public class SensitiveFilter{
      * @return 过滤后的文本
      */
     public String filter(String text) {
-        if (StringUtils.isBlank(text)) {
+        if (StringUtil.isBlank(text)) {
             return null;
         }
 
@@ -131,7 +129,7 @@ public class SensitiveFilter{
     // 判断是否为符号
     private boolean isSymbol(Character c) {
         // 0x2E80~0x9FFF 是东亚文字范围
-        return !CharUtils.isAsciiAlphanumeric(c) && (c < 0x2E80 || c > 0x9FFF);
+        return !CharUtil.isAsciiAlphanumeric(c) && (c < 0x2E80 || c > 0x9FFF);
     }
 
     // 前缀树

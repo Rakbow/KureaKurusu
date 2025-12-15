@@ -10,21 +10,17 @@ import com.rakbow.kureakurusu.dao.FileInfoMapper;
 import com.rakbow.kureakurusu.dao.FileRelatedMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.enums.ChangelogField;
-import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
+import com.rakbow.kureakurusu.data.enums.ChangelogField;
+import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import com.rakbow.kureakurusu.data.vo.resource.FileRelatedVO;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.FileUtil;
-import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -77,7 +73,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
     public SearchResult<FileListVO> list(FileListQueryDTO dto) {
         MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
                 .selectAll(FileInfo.class)
-                .like(StringUtils.isNotEmpty(dto.getKeyword()), FileInfo::getName, dto.getKeyword())
+                .like(StringUtil.isNotEmpty(dto.getKeyword()), FileInfo::getName, dto.getKeyword())
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), FileInfo::getId);
 

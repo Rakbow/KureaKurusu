@@ -1,8 +1,8 @@
 package com.rakbow.kureakurusu.controller.advice;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler({Exception.class})
     public ApiResult exceptionHandler(Exception e) {
-        String msg = StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
+        String msg = StringUtil.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
         log.error(msg, e);
         return new ApiResult().fail(msg);
     }

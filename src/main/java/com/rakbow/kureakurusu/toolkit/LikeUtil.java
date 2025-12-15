@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -73,7 +72,7 @@ public class LikeUtil {
      * 判断是否点过赞
      * */
     public boolean isLike(int entityType, long entityId, String likeToken) {
-        if(StringUtils.isBlank(likeToken)) return false;
+        if(StringUtil.isBlank(likeToken)) return false;
         String key = getEntityLikeTmpTokenKey(entityType, entityId, likeToken);
         return redisUtil.hasKey(key);
     }

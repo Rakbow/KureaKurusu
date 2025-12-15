@@ -2,12 +2,12 @@ package com.rakbow.kureakurusu.toolkit.support;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.toolkit.CollectionUtil;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +25,7 @@ public class DataStatusPermissionHandler implements DataPermissionHandler {
 
     @Override
     public Expression getSqlSegment(Expression where, String mappedStatementId) {
-        if (ArrayUtils.contains(IGNORE_INTERFACE, mappedStatementId)) return where;
+        if (CollectionUtil.contains(IGNORE_INTERFACE, mappedStatementId)) return where;
         if (AuthorityInterceptor.isJunior()) return where;
         EqualsTo equalsTo = new EqualsTo(new Column("status"), new LongValue("1"));
         // 如果原来没有where条件, 就添加一个where条件

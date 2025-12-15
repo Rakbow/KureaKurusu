@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import org.apache.commons.math3.util.FastMath;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -108,7 +107,7 @@ public class HotnessCalculator {
             return viewCount * 0.02;
         }
         // 中等浏览量：对数处理
-        return FastMath.log1p(viewCount) / FastMath.log1p(viewScale);
+        return Math.log1p(viewCount) / Math.log1p(viewScale);
     }
 
     /**
@@ -122,7 +121,7 @@ public class HotnessCalculator {
             return 0.1 + (likeCount * 0.04);
         }
         // 中等点赞数：Sigmoid处理
-        return 2 / (1 + FastMath.exp(-likeCount / likeScale)) - 1;
+        return 2 / (1 + Math.exp(-likeCount / likeScale)) - 1;
     }
 
     // ================== 高级功能 ================== //

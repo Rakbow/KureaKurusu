@@ -4,10 +4,10 @@ import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.service.UserService;
 import com.rakbow.kureakurusu.toolkit.CookieUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,7 +37,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
         //get ticket from cookie
         String ticket = CookieUtil.getValue(request, "ticket");
-        if (StringUtils.isBlank(ticket)) return true;
+        if (StringUtil.isBlank(ticket)) return true;
         User user = null;
         //get login ticket from redis
         String redisTicketKey = STR."login_ticket\{RISK}\{ticket}";

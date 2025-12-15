@@ -9,9 +9,9 @@ import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.FileUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -137,7 +137,7 @@ public class QiniuImageUtil {
         if (originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         }
-        if (StringUtils.equals(extension, "jpeg")) extension = "jpg";
+        if (StringUtil.equals(extension, "jpeg")) extension = "jpg";
         // 检测格式是否支持
         if (FileUtil.isFileFormatAllowed(extension, FileType.IMAGE)) {
             throw new ApiException("file.format.unsupported", FileType.IMAGE.getNameZh());

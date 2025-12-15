@@ -1,18 +1,11 @@
 package com.rakbow.kureakurusu.config;
 
-import com.rakbow.kureakurusu.task.EntityAmountTask;
-import com.rakbow.kureakurusu.task.EntityInfoTask;
-import com.rakbow.kureakurusu.task.VisitRankTask;
-import org.quartz.*;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 /**
  * @author Rakbow
  * @since 2023-02-22 0:37
  */
-@Configuration
-public class QuartzConfig {
+// @Configuration
+// public class QuartzConfig {
 
 //     //region 24小时更新数据
 //     @Bean
@@ -89,5 +82,5 @@ public class QuartzConfig {
 //     }
     //endregion
 
-}
+// }
 

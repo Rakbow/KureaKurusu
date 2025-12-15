@@ -91,4 +91,55 @@ public class ItemUtil {
         return fields;
     }
 
+    public static boolean isValidISBN10(String isbn) {
+        if (isbn == null) {
+            return false;
+        }
+
+        // 去除常见分隔符
+        isbn = isbn.replace("-", "").replace(" ", "");
+
+        if (isbn.length() != 10) {
+            return false;
+        }
+
+        int sum = 0;
+        for (int i = 0; i < 10; i++) {
+            char c = isbn.charAt(i);
+
+            int value;
+            if (i == 9 && (c == 'X' || c == 'x')) {
+                value = 10;
+            } else if (Character.isDigit(c)) {
+                value = c - '0';
+            } else {
+                return false;
+            }
+
+            sum += value * (10 - i);
+        }
+
+        return sum % 11 == 0;
+    }
+
+    public static String convertToISBN13(String isbn10) {
+        if (!isValidISBN10(isbn10)) {
+            throw new IllegalArgumentException("Invalid ISBN-10");
+        }
+
+        isbn10 = isbn10.replace("-", "").replace(" ", "");
+
+        // 978 + 前9位
+        String base = STR."978\{isbn10.substring(0, 9)}";
+
+        int sum = 0;
+        for (int i = 0; i < 12; i++) {
+            int digit = base.charAt(i) - '0';
+            sum += (i % 2 == 0) ? digit : digit * 3;
+        }
+
+        int checkDigit = (10 - (sum % 10)) % 10;
+        return base + checkDigit;
+    }
+
 }

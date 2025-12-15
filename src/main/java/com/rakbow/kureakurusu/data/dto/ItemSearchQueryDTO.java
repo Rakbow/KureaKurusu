@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -42,13 +41,13 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
 
     public boolean allSearch() {
         return this.entries.isEmpty()
-                && ObjectUtils.isEmpty(this.type)
-                && ObjectUtils.isEmpty(this.subType)
-                && ObjectUtils.isEmpty(this.releaseType)
-                && StringUtils.isEmpty(this.getKeyword())
-                && StringUtils.isEmpty(this.region)
-                && StringUtils.isEmpty(this.barcode)
-                && StringUtils.isEmpty(this.catalogId);
+                && Objects.nonNull(this.type)
+                && Objects.nonNull(this.subType)
+                && Objects.nonNull(this.releaseType)
+                && Objects.nonNull(this.getKeyword())
+                && Objects.nonNull(this.region)
+                && Objects.nonNull(this.barcode)
+                && Objects.nonNull(this.catalogId);
     }
 
     public boolean hasRelatedEntries() {

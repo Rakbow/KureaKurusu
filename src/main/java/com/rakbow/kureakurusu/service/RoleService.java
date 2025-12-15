@@ -14,8 +14,8 @@ import com.rakbow.kureakurusu.data.entity.GroupCacheRoleRelation;
 import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +40,7 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
                         on -> on.eq(GroupCacheRoleRelation::getRoleId, Role::getId)
                 )
                 .groupBy(Role::getId)
-                .and(StringUtils.isNotEmpty(dto.getKeyword()), i -> i
+                .and(StringUtil.isNotEmpty(dto.getKeyword()), i -> i
                         .or().like(Role::getName, dto.getKeyword())
                         .or().like(Role::getNameZh, dto.getKeyword())
                         .or().like(Role::getNameEn, dto.getKeyword())

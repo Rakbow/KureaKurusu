@@ -2,8 +2,8 @@ package com.rakbow.kureakurusu.toolkit.handler;
 
 import com.rakbow.kureakurusu.data.enums.AlbumFormat;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -52,7 +52,7 @@ public class AlbumFormatTypeHandler extends BaseTypeHandler<List<AlbumFormat>> {
 
     @SneakyThrows
     private List<AlbumFormat> parseJsonArray(String json) {
-        if (StringUtils.isBlank(json)) return Collections.emptyList();
+        if (StringUtil.isBlank(json)) return Collections.emptyList();
         return JsonUtil.toJavaList(json, Integer.class).stream()
                 .map(AlbumFormat::get)
                 .collect(Collectors.toList());

@@ -2,13 +2,9 @@ package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.EnumHelper;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
@@ -59,7 +55,7 @@ public interface MetaVOMapper {
 
     @Named("getCurrency")
     default String getCurrency(String region) {
-        if (StringUtils.isBlank(region) || StringUtils.equals(region, "un")) {
+        if (StringUtil.isBlank(region) || StringUtil.equals(region, "un")) {
             return "JPY";
         } else if ("eu".equals(region)) {
             return "EUR";

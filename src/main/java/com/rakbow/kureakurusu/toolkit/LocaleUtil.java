@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Arrays;
@@ -18,19 +17,19 @@ public class LocaleUtil {
 
         String lang = LocaleContextHolder.getLocale().getLanguage();
         if(!Arrays.asList(SUPPORTED_LOCALE).contains(lang)) return true;
-        return StringUtils.equals(lang, Locale.CHINESE.getLanguage());
+        return StringUtil.equals(lang, Locale.CHINESE.getLanguage());
     }
 
     public static boolean isZh(String lang) {
-        return StringUtils.equals(lang, Locale.CHINESE.getLanguage());
+        return StringUtil.equals(lang, Locale.CHINESE.getLanguage());
     }
 
     public static boolean isEn() {
-        return StringUtils.equals(LocaleContextHolder.getLocale().getLanguage(), Locale.ENGLISH.getLanguage());
+        return StringUtil.equals(LocaleContextHolder.getLocale().getLanguage(), Locale.ENGLISH.getLanguage());
     }
 
     public static boolean isEn(String lang) {
-        return StringUtils.equals(lang, Locale.ENGLISH.getLanguage());
+        return StringUtil.equals(lang, Locale.ENGLISH.getLanguage());
     }
 
 }

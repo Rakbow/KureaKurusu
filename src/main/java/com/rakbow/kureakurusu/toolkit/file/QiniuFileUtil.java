@@ -1,15 +1,7 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
-import com.rakbow.kureakurusu.data.common.ActionResult;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Rakbow
@@ -49,7 +41,7 @@ public class QiniuFileUtil {
     //
     //     for (String s : deleteResult) {
     //         // 删除数组元素
-    //         files.removeIf(file -> StringUtils.equals(file.getUrl(), s));
+    //         files.removeIf(file -> StringUtil.equals(file.getUrl(), s));
     //     }
     //
     //     return files;

@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.annotation.QueryColumn;
-import com.rakbow.kureakurusu.data.enums.QueryColumnType;
 import com.rakbow.kureakurusu.data.dto.ItemListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.enums.QueryColumnType;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 
@@ -30,7 +29,7 @@ public class MyBatisUtil {
     }
 
     public static <T, S> BaseMapper<S> getMapper(Class<T> clazz) {
-        String key = StringUtils.uncapitalize(clazz.getSimpleName());
+        String key = StringUtil.uncapitalize(clazz.getSimpleName());
         return SpringUtil.getBean(STR."\{key}Mapper");
     }
 
@@ -43,7 +42,7 @@ public class MyBatisUtil {
                 field.setAccessible(true);
                 Object value = field.get(dto);
                 String colName = column.name();
-                if(StringUtils.isBlank(column.name()))
+                if(StringUtil.isBlank(column.name()))
                     colName = CommonUtil.camelToUnderline(field.getName());
                 if (value == null || value.toString().isEmpty()) continue;
                 if (column.type() == QueryColumnType.STRING) {

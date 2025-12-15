@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Rakbow
@@ -20,7 +20,7 @@ public class EntitySearchParams {
     }
 
     public boolean isSort() {
-        return StringUtils.isNotBlank(this.sortField);
+        return StringUtil.isNotBlank(this.sortField);
     }
 
 }

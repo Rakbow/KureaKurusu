@@ -1,9 +1,9 @@
 package com.rakbow.kureakurusu.data.dto;
 
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedHashMap;
 
@@ -36,7 +36,7 @@ public class ListQueryDTO extends QueryDTO {
     }
 
     public boolean isSort() {
-        return StringUtils.isNotBlank(this.sortField);
+        return StringUtil.isNotBlank(this.sortField);
     }
 
     public boolean isPage() {

@@ -1,21 +1,16 @@
 package com.rakbow.kureakurusu.task;
 
-import org.jetbrains.annotations.NotNull;
-import org.quartz.JobExecutionContext;
-import org.springframework.scheduling.quartz.QuartzJobBean;
-import org.springframework.stereotype.Component;
-
 /**
  * 每1小时更新一次，将浏览数排名前十更新
  *
  * @author Rakbow
  * @since 2023-02-23 10:36
  */
-@Component
-public class VisitRankTask extends QuartzJobBean {
+// @Component
+// public class VisitRankTask extends QuartzJobBean {
 
-    @Override
-    protected void executeInternal(@NotNull JobExecutionContext context) {
+    // @Override
+    // protected void executeInternal(@NotNull JobExecutionContext context) {
 //        // 定时任务逻辑
 //        // TODO
 //        System.out.println("------redis缓存数据获取中------");
@@ -35,6 +30,6 @@ public class VisitRankTask extends QuartzJobBean {
 //            visitUtil.setEntityVisitRanking(visit.getEntityType(), visit.getEntityId(), visit.getVisitCount());
 //        });
 //        System.out.println("------浏览排名更新完毕------");
-    }
+//     }
 
-}
+// }

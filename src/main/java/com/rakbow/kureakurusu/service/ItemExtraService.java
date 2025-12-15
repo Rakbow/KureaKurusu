@@ -4,28 +4,24 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.dao.*;
-import com.rakbow.kureakurusu.data.dto.DiscCreateDTO;
 import com.rakbow.kureakurusu.data.dto.AlbumTrackQuickUploadDTO;
-import com.rakbow.kureakurusu.data.enums.ChangelogField;
-import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
-import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.dto.DiscCreateDTO;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.Disc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
-import com.rakbow.kureakurusu.data.vo.item.DiscVO;
+import com.rakbow.kureakurusu.data.enums.ChangelogField;
+import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
+import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
+import com.rakbow.kureakurusu.data.vo.item.DiscVO;
 import com.rakbow.kureakurusu.exception.ApiException;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
-import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.FileUtil;
+import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.ISBNValidator;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -174,7 +170,7 @@ public class ItemExtraService {
                         .eq(Episode::getRelatedType, EntityType.ALBUM_DISC.getValue())
                         .eq(Episode::getRelatedId, dto.getId())
         );
-        String filePrefix = StringUtils.isNotBlank(dto.getDiscCatalogId()) ?
+        String filePrefix = StringUtil.isNotBlank(dto.getDiscCatalogId()) ?
                 dto.getDiscCatalogId() : STR."\{dto.getAlbumCatalogId()}_\{dto.getDiscNo()}";
         for (MultipartFile f : files) {
             file = FileUtil.convertToTempFile(f);
@@ -230,11 +226,10 @@ public class ItemExtraService {
     @SneakyThrows
     public String convertISBN13(String isbn10) {
 
-        ISBNValidator validator = new ISBNValidator();
         isbn10 = isbn10.replaceAll("-", "");
-        if (validator.isValidISBN10(isbn10))
+        if (ItemUtil.isValidISBN10(isbn10))
             throw new ApiException("book.crud.isbn10.invalid");
-        return validator.convertToISBN13(isbn10);
+        return ItemUtil.convertToISBN13(isbn10);
     }
 
     //endregion

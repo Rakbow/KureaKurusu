@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -27,7 +27,7 @@ public class EntrySearchQueryDTO extends ListQueryDTO {
     public void init() {
         type = super.getVal("type");
         keyword = super.getVal("keyword");
-        if(ObjectUtils.isNotEmpty(keyword))
+        if(Objects.nonNull(keyword))
             if(keyword.contains(",")) {
                 keywords = Arrays.stream(super.getKeyword().split(","))
                         .map(String::trim)

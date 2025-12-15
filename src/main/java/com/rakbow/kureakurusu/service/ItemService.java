@@ -8,10 +8,10 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
+import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.item.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -19,8 +19,6 @@ import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +27,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -126,13 +125,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAsClass(Item.class, ItemSimpleVO.class)
-                .like(StringUtils.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
-                .eq(ObjectUtils.isNotEmpty(dto.getType()), Item::getType, dto.getType())
-                .eq(ObjectUtils.isNotEmpty(dto.getSubType()), Item::getSubType, dto.getSubType())
-                .eq(ObjectUtils.isNotEmpty(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
-                .eq(StringUtils.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
-                .eq(StringUtils.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
-                .eq(StringUtils.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
+                .like(StringUtil.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
+                .eq(Objects.nonNull(dto.getType()), Item::getType, dto.getType())
+                .eq(Objects.nonNull(dto.getSubType()), Item::getSubType, dto.getSubType())
+                .eq(Objects.nonNull(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
+                .eq(StringUtil.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
+                .eq(StringUtil.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
+                .eq(StringUtil.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
                 .eq(Item::getStatus, 1)
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Item::getId);
@@ -176,7 +175,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .select(columns.toArray(new String[0]))
                 .eq(Item::getType, param.getType())
-                .and(StringUtils.isNotEmpty(param.getKeyword()),
+                .and(StringUtil.isNotEmpty(param.getKeyword()),
                         w -> w.or(i -> i.like(Item::getName, param.getKeyword())
                                 .or().like("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]'))", STR."%\{param.getKeyword()}%")
                                 .or().like(Item::getBarcode, param.getKeyword())

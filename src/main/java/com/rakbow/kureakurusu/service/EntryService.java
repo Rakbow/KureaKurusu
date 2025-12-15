@@ -8,9 +8,9 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.entry.*;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
@@ -18,19 +18,19 @@ import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -100,19 +100,29 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public SearchResult<EntryMiniVO> search(EntrySearchQueryDTO dto) {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getStatus, 1)
-                .eq(ObjectUtils.isNotEmpty(dto.getType()), Entry::getType, dto.getType())
+                .eq(Objects.nonNull(dto.getType()), Entry::getType, dto.getType())
                 .selectAsClass(Entry.class, EntrySimpleVO.class)
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                 .orderByDesc(!dto.isSort(), Entry::getItems)
                 .orderByAsc(!dto.isSort(), Entry::getId);
         if (!dto.getKeywords().isEmpty()) {
-            wrapper.and(w -> dto.getKeywords().forEach(k ->
-                    w.or(i -> i
-                    .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
-                    .or().like(Entry::getName, k)
-                    .or().like(Entry::getNameZh, k)
-                    .or().like(Entry::getNameEn, k)
-            )));
+            String keywords = String.join(" ", dto.getKeywords());
+            //全文索引
+            wrapper.apply("MATCH(name, name_zh, name_en) AGAINST({0} IN BOOLEAN MODE)", STR."\{keywords}*");
+            //JSON搜索作为补充
+            wrapper.or(w -> {
+                for (String keyword : dto.getKeywords()) {
+                    w.apply("JSON_SEARCH(aliases, 'one', {0}) IS NOT NULL", STR."%\{keyword}%");
+                }
+            });
+
+            // wrapper.and(w -> dto.getKeywords().forEach(k ->
+            //         w.or(i -> i
+            //         .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
+            //         .or().like(Entry::getName, k)
+            //         .or().like(Entry::getNameZh, k)
+            //         .or().like(Entry::getNameEn, k)
+            // )));
         }
         IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);
         List<EntryMiniVO> res = pages.getRecords().stream().map(EntryMiniVO::new).toList();
@@ -130,12 +140,12 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         String fieldName;
         if (type == ImageType.MAIN.getValue()) {
             fieldName = "cover";
-            if (StringUtils.isNotEmpty(entry.getCover())) {
+            if (StringUtil.isNotEmpty(entry.getCover())) {
                 qiniuImageUtil.deleteEntryImage(entry.getCover());
             }
         } else if (type == ImageType.THUMB.getValue()) {
             fieldName = "thumb";
-            if (StringUtils.isNotEmpty(entry.getThumb())) {
+            if (StringUtil.isNotEmpty(entry.getThumb())) {
                 qiniuImageUtil.deleteEntryImage(entry.getThumb());
             }
         } else {
@@ -156,7 +166,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public SearchResult<EntryListVO> list(EntryListQueryDTO dto) {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getType, dto.getType())
-                .and(StringUtils.isNotEmpty(dto.getKeyword()), i -> i
+                .and(StringUtil.isNotEmpty(dto.getKeyword()), i -> i
                         .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", dto.getKeyword())
                         .or().like(Entry::getName, dto.getKeyword())
                         .or().like(Entry::getNameZh, dto.getKeyword())

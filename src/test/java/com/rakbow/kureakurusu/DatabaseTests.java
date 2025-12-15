@@ -4,16 +4,16 @@ import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * @author Rakbow
  * @since 2024/5/24 11:12
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ContextConfiguration(classes = KureaKurusuApp.class)
 public class DatabaseTests {

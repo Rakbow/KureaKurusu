@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -52,13 +51,14 @@ public class RedisUtil {
     }
 
     /**
+    /**
      * 判断key是否存在
      *
      * @param key 键
      * @return true 存在 false不存在
      */
     public boolean hasKey(String key) {
-        if (!StringUtils.hasLength(key)) return false;
+        if (!StringUtil.hasLength(key)) return false;
         return Boolean.TRUE.equals(template.hasKey(key));
     }
 

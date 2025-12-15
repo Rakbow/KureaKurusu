@@ -7,9 +7,9 @@ import com.rakbow.kureakurusu.data.entity.EntityResourceInfo;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class ResourceService {
         if (Objects.isNull(info)) {
             Item item = itemMapper.selectById(entityId);
             String releasePath = generatePath(item.getReleaseDate());
-            String folderName = StringUtils.isNotBlank(item.getCatalogId()) ? item.getCatalogId() : STR."ALBUM-\{item.getId()}";
+            String folderName = StringUtil.isNotBlank(item.getCatalogId()) ? item.getCatalogId() : STR."ALBUM-\{item.getId()}";
 
             info = new EntityResourceInfo();
             info.setEntityType(entityType);

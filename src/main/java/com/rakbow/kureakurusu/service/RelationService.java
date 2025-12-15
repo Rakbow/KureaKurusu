@@ -13,11 +13,11 @@ import com.rakbow.kureakurusu.dao.RelationMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
 import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
@@ -31,15 +31,11 @@ import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -96,7 +92,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             boolean positive = r.getDirection() == 1;
 
             Entity e = DataFinder.findEntityById(positive ? r.getRelatedEntityId() : r.getEntityId(), targets);
-            if (ObjectUtils.isEmpty(e)) continue;
+            if (Objects.isNull(e)) continue;
 
             Long roleId = positive ? r.getRoleId() : r.getRelatedRoleId();
             Long targetRoleId = positive ? r.getRelatedRoleId() : r.getRoleId();

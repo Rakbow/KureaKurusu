@@ -12,23 +12,22 @@ import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.enums.ChangelogField;
 import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.ImageType;
-import com.rakbow.kureakurusu.data.entity.resource.Image;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -66,9 +66,9 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
                 .eq(Image::getEntityType, dto.getEntityType())
                 .eq(Image::getEntityId, dto.getEntityId())
-                .like(StringUtils.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
-                .eq(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
-                .in(ObjectUtils.isNotEmpty(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)
+                .like(StringUtil.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
+                .eq(Objects.nonNull(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
+                .in(Objects.nonNull(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)
                 .orderByAsc(!dto.isSort(), Image::getIdx)
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField());
         IPage<Image> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
@@ -132,7 +132,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     public String getCache(int entityType, long entityId, ImageType imageType) {
         String key = STR."\{RedisKey.ENTITY_IMAGE_CACHE}\{imageType.getValue()}:\{entityType}:\{entityId}";
         String url = redisUtil.get(key, String.class);
-        if(StringUtils.isEmpty(url)) {
+        if(StringUtil.isEmpty(url)) {
             resetCache(entityType,  entityId);
             url = redisUtil.get(key, String.class);
         }

@@ -4,12 +4,12 @@ import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.HttpUtil;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import com.rakbow.kureakurusu.toolkit.VisitUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -46,7 +46,7 @@ public class UniqueVisitorAspect {
 
         //if visit token empty, generate it and set in cookie
         String visitToken = TokenInterceptor.getVisitToken();
-        if (StringUtils.isEmpty(visitToken)) {
+        if (StringUtil.isEmpty(visitToken)) {
             visitToken = CommonUtil.generateUUID(0);
             Cookie cookie = new Cookie("visit_token", visitToken);
             cookie.setPath(contextPath);

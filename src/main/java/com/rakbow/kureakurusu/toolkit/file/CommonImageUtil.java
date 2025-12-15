@@ -4,9 +4,9 @@ import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
 import com.rakbow.kureakurusu.data.enums.ImageType;
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.SneakyThrows;
 import net.coobird.thumbnailator.Thumbnails;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,12 +40,12 @@ public class CommonImageUtil {
 
     //TODO
     public static String getEntryCover(String orgUrl) {
-        String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
+        String url = StringUtil.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
         return QiniuImageUtil.getNoHeightLimitThumbUrl(url, DEFAULT_ENTRY_COVER_SIZE);
     }
 
     public static String getEntryThumb(String orgUrl) {
-        String url = StringUtils.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
+        String url = StringUtil.isBlank(orgUrl) ? CommonConstant.EMPTY_IMAGE_URL : STR."\{Constant.FILE_DOMAIN}\{orgUrl}";
         return QiniuImageUtil.getThumb(url, THUMB_SIZE_35);
     }
 
