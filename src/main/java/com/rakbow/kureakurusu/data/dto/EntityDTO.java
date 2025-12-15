@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 public class EntityDTO extends DTO {
 
     private int entityType;
+    private int entitySubType;
     private long entityId;
 
 }

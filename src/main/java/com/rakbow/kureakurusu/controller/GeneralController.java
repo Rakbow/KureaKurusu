@@ -97,7 +97,7 @@ public class GeneralController {
 
     //endregion
 
-    //region import
+    //region other
 
     @SneakyThrows
     @PostMapping("import-entity")
@@ -113,6 +113,13 @@ public class GeneralController {
     @PostMapping("links")
     public ApiResult links(@RequestBody EntityDTO dto) {
         return ApiResult.ok(srv.links(dto.getEntityType(), dto.getEntityId()));
+    }
+
+    @SneakyThrows
+    @PostMapping("local-path")
+    public ApiResult localPath(@RequestBody EntityDTO dto) {
+        srv.localPath(dto);
+        return ApiResult.ok();
     }
 
     //endregion

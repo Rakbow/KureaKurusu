@@ -5,6 +5,7 @@ import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
+import com.rakbow.kureakurusu.data.dto.EntityDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Link;
@@ -40,6 +41,7 @@ public class GeneralService {
 
     private final CommonMapper mapper;
     private final LinkService lnkSrv;
+    private final ResourceService resSrv;
 
     private final ChangelogService logSrv;
 
@@ -132,6 +134,10 @@ public class GeneralService {
 
     public List<LinksVO> links(int entityType, long entityId) {
         return lnkSrv.group(entityType, entityId);
+    }
+
+    public void localPath(EntityDTO dto) {
+        resSrv.getLocalPath(dto.getEntityType(), dto.getEntitySubType(), dto.getEntityId());
     }
 
 }

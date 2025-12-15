@@ -8,7 +8,6 @@ import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import io.github.linpeilie.annotations.AutoMapping;
-import io.github.linpeilie.annotations.AutoMappings;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
