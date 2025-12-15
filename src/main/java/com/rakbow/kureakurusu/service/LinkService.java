@@ -3,7 +3,6 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rakbow.kureakurusu.dao.LinkMapper;
-import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.entity.Link;
 import com.rakbow.kureakurusu.data.vo.LinkVO;
 import com.rakbow.kureakurusu.data.vo.LinksVO;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

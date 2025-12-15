@@ -59,8 +59,13 @@ public class ResourceService {
         Path path = Paths.get(STR."\{albumRawPath}\{info.getPath()}")
                 .toAbsolutePath()
                 .normalize();
+        Path ripPath = Paths.get(path.toString().replace("raw", "rip"))
+                .toAbsolutePath()
+                .normalize();
         Files.createDirectories(path);
+        Files.createDirectories(ripPath);
         new ProcessBuilder("explorer.exe", path.toString()).start();
+        new ProcessBuilder("explorer.exe", ripPath.toString()).start();
     }
 
     @SneakyThrows
