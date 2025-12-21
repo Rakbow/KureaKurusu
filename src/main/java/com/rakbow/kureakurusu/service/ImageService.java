@@ -64,8 +64,8 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     @Transactional
     public SearchResult<ImageVO> list(ImageListQueryDTO dto) {
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
-                .eq(Image::getEntityType, dto.getEntityType())
-                .eq(Image::getEntityId, dto.getEntityId())
+                .eq(Image::getEntityType, dto.getRelEntityType())
+                .eq(Image::getEntityId, dto.getRelEntityId())
                 .like(StringUtil.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
                 .eq(Objects.nonNull(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
                 .in(Objects.nonNull(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)
@@ -99,7 +99,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
             resetCache(entityType, entityId);
         }
 
-        logSrv.create(entityType, entityId, ChangelogField.IMAGE, ChangelogOperate.UPLOAD);
+        // logSrv.create(entityType, entityId, ChangelogField.IMAGE, ChangelogOperate.UPLOAD);
     }
 
     @Transactional
@@ -116,7 +116,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         //delete from database
         removeByIds(deleteIndexes.stream().map(index -> dto.getImages().get(index).getId()).toList());
 
-        logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.IMAGE, ChangelogOperate.DELETE);
+        // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.IMAGE, ChangelogOperate.DELETE);
     }
 
     public ImageDisplayVO preview(ImagePreviewDTO dto) {

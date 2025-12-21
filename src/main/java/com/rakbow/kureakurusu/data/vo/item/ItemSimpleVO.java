@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @AutoMappers({
-        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
+        @AutoMapper(target = ItemSearchVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class ItemSimpleVO {
 

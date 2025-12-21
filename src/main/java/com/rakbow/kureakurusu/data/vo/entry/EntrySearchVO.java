@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class EntryMiniVO {
+public class EntrySearchVO {
 
     private Long id;
     private Attribute<Integer> type;
@@ -23,17 +23,19 @@ public class EntryMiniVO {
     private String subName;
     private String thumb;
     private int gender;
-    private String date;
+    private String startDate;
+    private String endDate;
 
-    public EntryMiniVO(EntrySimpleVO entry) {
+    public EntrySearchVO(EntrySimpleVO entry) {
         this.id = entry.getId();
         this.type = new Attribute<>(entry.getType());
         this.subType = new Attribute<>(entry.getSubType());
         this.name = entry.getName();
         this.subName = CommonUtil.getSubName(entry.getNameEn(), entry.getNameZh());
         this.thumb = CommonImageUtil.getEntryThumb(entry.getThumb());
-        this.date = entry.getDate();
-        this.gender = 0;
+        this.startDate = entry.getStartDate();
+        this.endDate = entry.getEndDate();
+        this.gender = entry.getGender();
     }
 
 }

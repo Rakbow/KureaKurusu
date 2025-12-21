@@ -23,6 +23,7 @@ import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
+import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
@@ -181,6 +182,23 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
             album = DataFinder.findEntityById(((Disc) disc).getItemId(), items);
             if(album == null) continue;
             ep.setParent((Item) album);
+        }
+    }
+
+    public void getRelatedParents(List<EpisodeSearchVO> eps) {
+        List<Long> discIds = eps.stream().map(EpisodeSearchVO::getDiscId).distinct().toList();
+        List<Disc> discs = discMapper.selectByIds(discIds);
+        List<Long> albumIds = discs.stream().map(Disc::getItemId).distinct().toList();
+        List<Item> albums = itemMapper.selectByIds(albumIds);
+        Entity disc;
+        Entity album;
+        for(EpisodeSearchVO ep : eps) {
+            disc = DataFinder.findEntityById(ep.getDiscId(), discs);
+            if(disc == null) continue;
+            ep.setDiscNo(((Disc) disc).getDiscNo());
+            album = DataFinder.findEntityById(((Disc) disc).getItemId(), albums);
+            if(album == null) continue;
+            ep.setParent(album);
         }
     }
 

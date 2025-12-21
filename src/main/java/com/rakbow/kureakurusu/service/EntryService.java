@@ -65,11 +65,11 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @SneakyThrows
     @Transactional
-    public List<EntryMiniVO> getMiniVO(List<Long> ids) {
+    public List<EntrySearchVO> getMiniVO(List<Long> ids) {
         List<EntrySimpleVO> entries = mapper.selectJoinList(EntrySimpleVO.class,
                 new MPJLambdaWrapper<Entry>().in(Entry::getId, ids).selectAsClass(Entry.class, EntrySimpleVO.class)
         );
-        return entries.stream().map(EntryMiniVO::new).toList();
+        return entries.stream().map(EntrySearchVO::new).toList();
     }
 
     @Transactional
@@ -81,7 +81,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         //save related entities
         relationSrv.batchCreate(ENTITY_TYPE, entry.getId(), entry.getType().getValue(), dto.getRelatedEntries());
 
-        logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
+        // logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
 
         return entry.getId();
     }
@@ -92,40 +92,55 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         Entry entry = converter.convert(dto, Entry.class);
         updateById(entry);
 
-        logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
+        // logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
     }
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EntryMiniVO> search(EntrySearchQueryDTO dto) {
-        MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
-                .eq(Entry::getStatus, 1)
-                .eq(Objects.nonNull(dto.getType()), Entry::getType, dto.getType())
-                .selectAsClass(Entry.class, EntrySimpleVO.class)
-                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
-                .orderByDesc(!dto.isSort(), Entry::getItems)
-                .orderByAsc(!dto.isSort(), Entry::getId);
-        if (!dto.getKeywords().isEmpty()) {
-            String keywords = String.join(" ", dto.getKeywords());
-            //全文索引
-            wrapper.apply("MATCH(name, name_zh, name_en) AGAINST({0} IN BOOLEAN MODE)", STR."\{keywords}*");
-            //JSON搜索作为补充
-            wrapper.or(w -> {
-                for (String keyword : dto.getKeywords()) {
-                    w.apply("JSON_SEARCH(aliases, 'one', {0}) IS NOT NULL", STR."%\{keyword}%");
-                }
-            });
+    public SearchResult<EntrySearchVO> search(EntrySearchQueryDTO dto) {
+        MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<>() {{
+            selectAsClass(Entry.class, EntrySimpleVO.class);
+            eq(Entry::getStatus, 1);
+            eq(Objects.nonNull(dto.getType()), Entry::getType, dto.getType());
+            eq(Objects.nonNull(dto.getSubType()), Entry::getSubType, dto.getSubType());
+            orderBy(dto.isSort(), dto.asc(), dto.getSortField());
+            orderByDesc(!dto.isSort(), Entry::getItems);
+        }};
 
-            // wrapper.and(w -> dto.getKeywords().forEach(k ->
-            //         w.or(i -> i
-            //         .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
-            //         .or().like(Entry::getName, k)
-            //         .or().like(Entry::getNameZh, k)
-            //         .or().like(Entry::getNameEn, k)
-            // )));
+        if (!dto.getKeywords().isEmpty()) {
+            // wrapper.and(w -> {
+            //     dto.getKeywords().forEach(k -> {
+            //         if (k.contains(" ")) {
+            //             // 短语搜索（空格是内容）
+            //             w.apply("MATCH(name, name_zh, name_en) AGAINST({0} IN BOOLEAN MODE)", STR."\"\{k}\"");
+            //         } else {
+            //             // 普通前缀词搜索
+            //             w.apply("MATCH(name, name_zh, name_en) AGAINST({0} IN BOOLEAN MODE)", STR."\{k}*");
+            //         }
+            //     });
+            // });
+
+            // String keywords = String.join(" ", dto.getKeywords());
+            // //全文索引
+            // wrapper.apply("MATCH(name, name_zh, name_en) AGAINST({0} IN BOOLEAN MODE)",
+            //         STR."\"\{keywords}\"");
+            // //JSON搜索作为补充
+            // wrapper.and(w -> {
+            //     for (String keyword : dto.getKeywords()) {
+            //         w.apply("JSON_SEARCH(aliases, 'one', {0}) IS NOT NULL", STR."%\{keyword}%");
+            //     }
+            // });
+
+            wrapper.and(w -> dto.getKeywords().forEach(k ->
+                    w.or(i -> i
+                    .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
+                    .or().like(Entry::getName, k)
+                    .or().like(Entry::getNameZh, k)
+                    .or().like(Entry::getNameEn, k)
+            )));
         }
         IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);
-        List<EntryMiniVO> res = pages.getRecords().stream().map(EntryMiniVO::new).toList();
+        List<EntrySearchVO> res = pages.getRecords().stream().map(EntrySearchVO::new).toList();
 
         return new SearchResult<>(res, pages.getTotal());
     }
@@ -156,7 +171,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
         //update entry
         update(null, new UpdateWrapper<Entry>().eq("id", id).set(fieldName, finalUrl));
 
-        logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.IMAGE, ChangelogOperate.UPDATE);
+        // logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.IMAGE, ChangelogOperate.UPDATE);
 
         return finalUrl;
     }

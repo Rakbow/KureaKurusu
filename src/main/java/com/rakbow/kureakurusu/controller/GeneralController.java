@@ -65,10 +65,10 @@ public class GeneralController {
 
     //region other
 
-    @PostMapping("changelog-list")
-    public ApiResult changelogs(@RequestBody ChangelogListQueryDTO dto) {
-        return ApiResult.ok(srv.changelogs(dto));
-    }
+    // @PostMapping("changelog-list")
+    // public ApiResult changelogs(@RequestBody ChangelogListQueryDTO dto) {
+    //     return ApiResult.ok(srv.changelogs(dto));
+    // }
 
     @PostMapping("changelog-mini")
     public ApiResult changelog(@RequestBody EntityMinDTO dto) {

@@ -21,7 +21,8 @@ public class EntrySimpleVO {
     private String nameEn;
 
     private int gender;
-    private String date;
+    private String startDate;
+    private String endDate;
 
     private String thumb;
 

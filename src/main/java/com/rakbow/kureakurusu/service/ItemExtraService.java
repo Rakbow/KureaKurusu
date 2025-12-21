@@ -148,7 +148,7 @@ public class ItemExtraService {
                 .set(Item::getEpisodes, trackNum)
                 .set(Item::getRunTime, runTime);
         mapper.update(null, wrapper);
-        logSrv.create(EntityType.ITEM.getValue(), dto.getItemId(), ChangelogField.EPISODE, ChangelogOperate.CREATE);
+        // logSrv.create(EntityType.ITEM.getValue(), dto.getItemId(), ChangelogField.EPISODE, ChangelogOperate.CREATE);
     }
 
     @SneakyThrows

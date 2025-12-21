@@ -21,11 +21,13 @@ import java.util.Objects;
 public class EntrySearchQueryDTO extends ListQueryDTO {
 
     private Integer type;
+    private Integer subType;
     private String keyword;
     private List<String> keywords = new ArrayList<>();
 
     public void init() {
         type = super.getVal("type");
+        subType = super.getVal("subType");
         keyword = super.getVal("keyword");
         if(Objects.nonNull(keyword))
             if(keyword.contains(",")) {

@@ -19,7 +19,7 @@ import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
-import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.data.vo.item.ItemSearchVO;
 import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
 import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
@@ -161,8 +161,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, res);
         batchInsert.execute(method.insert());
 
-        logSrv.create(dto.getEntityType(), dto.getEntityId(),
-                ChangelogField.getByEntryType(dto.getRelatedEntitySubType()), ChangelogOperate.UPDATE);
+        // logSrv.create(dto.getEntityType(), dto.getEntityId(),
+        //         ChangelogField.getByEntryType(dto.getRelatedEntitySubType()), ChangelogOperate.UPDATE);
     }
 
     @Transactional
@@ -191,7 +191,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
-    public SearchResult<ItemMiniVO> relatedItems(RelatedItemQueryDTO dto) {
+    public SearchResult<ItemSearchVO> relatedItems(RelatedItemQueryDTO dto) {
         IPage<Item> pages;
         Page<Item> page = new Page<>(1, dto.getSize());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
@@ -207,7 +207,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         pages = itemMapper.selectJoinPage(page, Item.class, wrapper);
 
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
-        List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
+        List<ItemSearchVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemSearchVO.class));
         //get image cache
         items.forEach(i -> {
             i.setCover(imageSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.MAIN));

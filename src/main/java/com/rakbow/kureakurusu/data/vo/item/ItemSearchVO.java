@@ -8,7 +8,7 @@ import lombok.Data;
  * @since 2024/5/7 3:01
  */
 @Data
-public class ItemMiniVO {
+public class ItemSearchVO {
 
     private long id;
     private String name;

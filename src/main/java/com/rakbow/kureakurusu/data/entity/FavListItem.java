@@ -25,13 +25,13 @@ public class FavListItem extends Entity {
     private long listId;
     private int entityType;
     private long entityId;
-    private Timestamp createTime;
+    private Timestamp createdAt;
 
     public FavListItem(long listId, int entityType, long entityId) {
         this.listId = listId;
         this.entityType = entityType;
         this.entityId = entityId;
-        this.createTime = DateHelper.now();
+        this.createdAt = DateHelper.now();
     }
 
 }

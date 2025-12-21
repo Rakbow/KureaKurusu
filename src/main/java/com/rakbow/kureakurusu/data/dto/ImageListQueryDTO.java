@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 public class ImageListQueryDTO extends ListQueryDTO {
 
     private Integer type;
-    private Integer entityType;
-    private Integer entityId;
+    private Integer relEntityType;
+    private Integer relEntityId;
 
     public void init() {
         this.type = super.getVal("type");
-        this.entityType = super.getVal("entityType");
-        this.entityId = super.getVal("entityId");
+        this.relEntityType = super.getVal("entityType");
+        this.relEntityId = super.getVal("entityId");
     }
 
 }

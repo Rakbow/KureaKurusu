@@ -9,7 +9,7 @@ import com.rakbow.kureakurusu.data.enums.ItemSubType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.enums.ReleaseType;
 import com.rakbow.kureakurusu.data.entity.Entity;
-import com.rakbow.kureakurusu.data.vo.item.ItemMiniVO;
+import com.rakbow.kureakurusu.data.vo.item.ItemSearchVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.handler.StrListHandler;
@@ -32,7 +32,7 @@ import java.util.List;
 @TableName(value = "item", autoResultMap = true)
 @NoArgsConstructor
 @AutoMappers({
-        @AutoMapper(target = ItemMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
+        @AutoMapper(target = ItemSearchVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = ItemVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class Item extends Entity {

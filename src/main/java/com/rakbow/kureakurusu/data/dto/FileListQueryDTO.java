@@ -11,12 +11,12 @@ import lombok.EqualsAndHashCode;
 @Data
 public class FileListQueryDTO extends ListQueryDTO {
 
-    private Integer entityType;
-    private Integer entityId;
+    private Integer relEntityType;
+    private Integer relEntityId;
 
     public void init() {
-        entityType = super.getVal("entityType");
-        entityId = super.getVal("entityId");
+        relEntityType = super.getVal("entityType");
+        relEntityId = super.getVal("entityId");
     }
 
 }

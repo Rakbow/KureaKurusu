@@ -17,7 +17,7 @@ public class FavListItemVO {
 
     private long id;
 
-    private FavListItemTargetVO target;
+    private Object target;
     private Object parent;
 
     private String remark;

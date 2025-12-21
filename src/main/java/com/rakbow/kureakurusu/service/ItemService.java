@@ -8,6 +8,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.entity.FavListItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
@@ -77,7 +78,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             }
         }
 
-        logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
+        // logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
 
         return item.getId();
     }
@@ -87,7 +88,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     public void update(ItemUpdateDTO dto) {
         Item item = converter.convert(dto, Item.class);
         updateById(item);
-        logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
+        // logSrv.create(ENTITY_TYPE.getValue(), item.getId(), ChangelogField.BASIC, ChangelogOperate.UPDATE);
     }
 
     @Transactional
@@ -120,21 +121,21 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @SneakyThrows
     @Transactional(readOnly = true)
-    public SearchResult<ItemMiniVO> search(ItemSearchQueryDTO dto) {
-        // Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize(), !dto.allSearch());
+    public SearchResult<ItemSearchVO> search(ItemSearchQueryDTO dto) {
         Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
-                .selectAsClass(Item.class, ItemSimpleVO.class)
-                .like(StringUtil.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword())
-                .eq(Objects.nonNull(dto.getType()), Item::getType, dto.getType())
-                .eq(Objects.nonNull(dto.getSubType()), Item::getSubType, dto.getSubType())
-                .eq(Objects.nonNull(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType())
-                .eq(StringUtil.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion())
-                .eq(StringUtil.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode())
-                .eq(StringUtil.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId())
-                .eq(Item::getStatus, 1)
-                .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
-                .orderByDesc(!dto.isSort(), Item::getId);
+        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<>() {{
+            selectAsClass(Item.class, ItemSimpleVO.class);
+            like(StringUtil.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword());
+            likeRight(StringUtil.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode());
+            likeRight(StringUtil.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId());
+            eq(Objects.nonNull(dto.getType()), Item::getType, dto.getType());
+            eq(Objects.nonNull(dto.getSubType()), Item::getSubType, dto.getSubType());
+            eq(Objects.nonNull(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType());
+            eq(StringUtil.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion());
+            eq(Item::getStatus, 1);
+            orderBy(dto.isSort(), dto.asc(), dto.getSortField());
+            orderByDesc(!dto.isSort(), Item::getId);
+        }};
         if (dto.hasRelatedEntries()) {
             //inner join relation
             wrapper.innerJoin(Relation.class, on -> on
@@ -147,10 +148,15 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     .groupBy(Item::getId)
                     .having(STR."COUNT(t1.related_entity_type) = \{dto.getEntries().size()}");
         }
+        if (Objects.nonNull(dto.getListId())) {
+            wrapper.innerJoin(FavListItem.class, on ->
+                            on.eq(FavListItem::getEntityId, Item::getId))
+                    .and(aw -> aw.and(w ->
+                            w.eq(FavListItem::getListId, dto.getListId())));
+        }
         IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
-        // if (dto.allSearch()) pages.setTotal(entityUtil.getEntityTotalCache(ENTITY_TYPE));
-        List<ItemMiniVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemMiniVO.class));
+        List<ItemSearchVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemSearchVO.class));
         //get image cache
         items.forEach(i -> {
             i.setCover(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));

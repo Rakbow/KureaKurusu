@@ -1,20 +1,14 @@
 package com.rakbow.kureakurusu.service;
 
 import com.rakbow.kureakurusu.dao.CommonMapper;
-import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
-import com.rakbow.kureakurusu.data.SearchResult;
-import com.rakbow.kureakurusu.data.dto.ChangelogListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
-import com.rakbow.kureakurusu.data.entity.Link;
 import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
-import com.rakbow.kureakurusu.data.vo.ChangelogVO;
-import com.rakbow.kureakurusu.data.vo.LinkVO;
 import com.rakbow.kureakurusu.data.vo.LinksVO;
 import com.rakbow.kureakurusu.toolkit.*;
 import lombok.RequiredArgsConstructor;
@@ -113,7 +107,7 @@ public class GeneralService {
     public void updateEntityDetail(UpdateDetailDTO dto) {
         mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
 
-        logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.DETAIL, ChangelogOperate.UPDATE);
+        // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.DETAIL, ChangelogOperate.UPDATE);
     }
 
     public Map<String, Object> getOptions() {
@@ -124,9 +118,9 @@ public class GeneralService {
         return res;
     }
 
-    public SearchResult<ChangelogVO> changelogs(ChangelogListQueryDTO dto) {
-        return logSrv.list(dto);
-    }
+    // public SearchResult<ChangelogVO> changelogs(ChangelogListQueryDTO dto) {
+    //     return logSrv.list(dto);
+    // }
 
     public ChangelogMiniVO mini(int type, long id) {
         return logSrv.mini(type, id);

@@ -78,11 +78,11 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
                 .orderByDesc(!dto.isSort(), FileInfo::getId);
 
         //get file related part
-        if (dto.getEntityType() != null && dto.getEntityId() != null) {
+        if (dto.getRelEntityType() != null && dto.getRelEntityId() != null) {
             wrapper.selectAs(FileRelated::getId, FileInfo::getRelatedId)
                     .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
-                    .eq(FileRelated::getEntityType, dto.getEntityType())
-                    .eq(FileRelated::getEntityId, dto.getEntityId());
+                    .eq(FileRelated::getEntityType, dto.getRelEntityType())
+                    .eq(FileRelated::getEntityId, dto.getRelEntityId());
         }
         IPage<FileInfo> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);
@@ -128,7 +128,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
         frBatchInsert.execute(fileRelatedMethod.insert());
 
-        logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPLOAD);
+        // logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPLOAD);
     }
 
     @Transactional
@@ -153,14 +153,14 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
         MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
         frBatchInsert.execute(fileRelatedMethod.insert());
 
-        logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPDATE);
+        // logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPDATE);
     }
 
     @Transactional
     @SneakyThrows
     public void deleteRelated(FileRelatedDeleteDTO dto) {
         fileRelatedMapper.deleteByIds(dto.getIds());
-        logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.FILE, ChangelogOperate.DELETE);
+        // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.FILE, ChangelogOperate.DELETE);
     }
 
     @SneakyThrows
