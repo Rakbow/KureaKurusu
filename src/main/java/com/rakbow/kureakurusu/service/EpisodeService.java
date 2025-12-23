@@ -119,9 +119,9 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     public EpisodeRelatedVO related(EpisodeRelatedDTO dto) {
         EpisodeRelatedVO res = new EpisodeRelatedVO();
-        if (dto.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
+        if (dto.relatedType() == EntityType.ALBUM_DISC.getValue()) {
 
-            Disc disc = discMapper.selectById(dto.getRelatedId());
+            Disc disc = discMapper.selectById(dto.relatedId());
             if (disc == null) throw ErrorFactory.entityNull();
             Item album = itemMapper.selectById(disc.getItemId());
             res.setParent(
@@ -136,11 +136,11 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         }
         List<Episode> allEps = list(
                 new LambdaQueryWrapper<Episode>()
-                        .eq(Episode::getRelatedType, dto.getRelatedType())
-                        .eq(Episode::getRelatedId, dto.getRelatedId())
+                        .eq(Episode::getRelatedType, dto.relatedType())
+                        .eq(Episode::getRelatedId, dto.relatedId())
                         .orderByAsc(Episode::getSerial)
         );
-        List<Episode> nearEps = getNearbyRecords(allEps, dto.getId(), 10);
+        List<Episode> nearEps = getNearbyRecords(allEps, dto.id(), 10);
         res.setEps(converter.convert(nearEps, EpisodeListVO.class));
         return res;
     }

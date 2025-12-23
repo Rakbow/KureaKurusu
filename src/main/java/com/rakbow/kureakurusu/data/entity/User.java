@@ -47,10 +47,10 @@ public class User {
     }
 
     public User(UserRegisterDTO dto) {
-        this.username = dto.getUsername();
-        this.email = dto.getEmail();
+        this.username = dto.username();
+        this.email = dto.email();
         this.salt = CommonUtil.generateUUID(5);
-        this.password = CommonUtil.md5(STR."\{dto.getPassword()}\{this.salt}}");
+        this.password = CommonUtil.md5(STR."\{dto.password()}\{this.salt}}");
         this.type = UserAuthority.USER;
         this.activationCode = CommonUtil.generateUUID(0);
         //设置用户默认头像

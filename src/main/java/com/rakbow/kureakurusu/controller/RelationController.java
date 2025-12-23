@@ -36,7 +36,7 @@ public class RelationController {
 
     @PostMapping("personnel")
     public ApiResult personnel(@RequestBody EntityDTO dto) {
-        return ApiResult.ok(srv.personnel(dto.getEntityType(), dto.getEntityId()));
+        return ApiResult.ok(srv.personnel(dto.entityType(), dto.entityId()));
     }
 
     @PostMapping("items")
@@ -51,7 +51,7 @@ public class RelationController {
 
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
-        srv.removeByIds(dto.getIds());
+        srv.removeByIds(dto.ids());
         return ApiResult.ok("entity.crud.delete.success");
     }
 

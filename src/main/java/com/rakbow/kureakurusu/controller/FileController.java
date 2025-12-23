@@ -53,18 +53,18 @@ public class FileController {
     }
 
     @PostMapping("related")
-    public ApiResult related(@RequestBody EntityQryDTO dto) {
+    public ApiResult related(@RequestBody EntityDTO dto) {
         return ApiResult.ok(srv.related(dto));
     }
 
     @PostMapping("related-create")
     public ApiResult createRelated(@RequestBody FileCreateDTO dto) {
-        srv.createRelated(dto.getEntityType(), dto.getEntityId(), dto.getFileIds());
+        srv.createRelated(dto.entityType(), dto.entityId(), dto.fileIds());
         return ApiResult.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("related-delete")
-    public ApiResult deleteRelated(@RequestBody FileRelatedDeleteDTO dto) {
+    public ApiResult deleteRelated(@RequestBody CommonDeleteDTO dto) {
         srv.deleteRelated(dto);
         return ApiResult.ok("entity.crud.delete.success");
     }

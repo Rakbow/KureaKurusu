@@ -73,12 +73,12 @@ public class EntryController {
 
     @PostMapping("get-sub-products")
     public ApiResult getSubProducts(@RequestBody CommonDetailQry qry) {
-        return ApiResult.ok(srv.getSubProducts(qry.getId()));
+        return ApiResult.ok(srv.getSubProducts(qry.id()));
     }
 
     @PostMapping("get-extra-info")
     public ApiResult getExtraInfo(@RequestBody CommonDetailQry qry) {
-        return ApiResult.ok(srv.getItemExtraInfo(qry.getId()));
+        return ApiResult.ok(srv.getItemExtraInfo(qry.id()));
     }
 
 }

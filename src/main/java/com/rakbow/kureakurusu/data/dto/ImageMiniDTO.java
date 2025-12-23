@@ -20,9 +20,9 @@ public class ImageMiniDTO {
 
     public ImageMiniDTO(ImageCreateDTO dto, MultipartFile file) {
         this.file = file;
-        this.name = dto.getName();
-        this.type = dto.getType();
-        this.detail = dto.getDetail();
+        this.name = dto.name();
+        this.type = dto.type();
+        this.detail = dto.detail();
     }
 
     public ImageMiniDTO(int type, MultipartFile file) {

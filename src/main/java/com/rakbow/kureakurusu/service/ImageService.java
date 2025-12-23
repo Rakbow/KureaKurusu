@@ -13,8 +13,6 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
-import com.rakbow.kureakurusu.data.enums.ChangelogField;
-import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
@@ -49,7 +47,6 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     private final SqlSessionFactory sqlSessionFactory;
     private final RedisUtil redisUtil;
     private final Converter converter;
-    private final ChangelogService logSrv;
 
     private final static List<Integer> defaultImageType = Arrays.asList(
             ImageType.MAIN.getValue(),
@@ -120,9 +117,9 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     }
 
     public ImageDisplayVO preview(ImagePreviewDTO dto) {
-        IPage<Image> pages = page(new Page<>(1, dto.getCount()),
-                new LambdaQueryWrapper<Image>().eq(Image::getEntityType, dto.getEntityType())
-                        .eq(Image::getEntityId, dto.getEntityId())
+        IPage<Image> pages = page(new Page<>(1, dto.count()),
+                new LambdaQueryWrapper<Image>().eq(Image::getEntityType, dto.entityType())
+                        .eq(Image::getEntityId, dto.entityId())
                         .in(Image::getType, defaultImageType)
                         .orderByAsc(Image::getIdx)
         );

@@ -11,8 +11,6 @@ import com.rakbow.kureakurusu.data.entity.item.Disc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
-import com.rakbow.kureakurusu.data.enums.ChangelogField;
-import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackInfoVO;
 import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
@@ -168,10 +166,10 @@ public class ItemExtraService {
         List<Episode> eps = epMapper.selectList(
                 new LambdaQueryWrapper<Episode>()
                         .eq(Episode::getRelatedType, EntityType.ALBUM_DISC.getValue())
-                        .eq(Episode::getRelatedId, dto.getId())
+                        .eq(Episode::getRelatedId, dto.id())
         );
-        String filePrefix = StringUtil.isNotBlank(dto.getDiscCatalogId()) ?
-                dto.getDiscCatalogId() : STR."\{dto.getAlbumCatalogId()}_\{dto.getDiscNo()}";
+        String filePrefix = StringUtil.isNotBlank(dto.discCatalogId()) ?
+                dto.discCatalogId() : STR."\{dto.albumCatalogId()}_\{dto.discNo()}";
         for (MultipartFile f : files) {
             file = FileUtil.convertToTempFile(f);
             audio = AudioFileIO.read(file);

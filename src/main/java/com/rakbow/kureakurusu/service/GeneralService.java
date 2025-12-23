@@ -78,7 +78,7 @@ public class GeneralService {
      * @author rakbow
      */
     public void updateEntityStatus(UpdateStatusDTO dto) {
-        mapper.updateEntityStatus(EntityType.getTableName(dto.getEntity()), dto.getIds(), dto.status());
+        mapper.updateEntityStatus(EntityType.getTableName(dto.entity()), dto.ids(), dto.status() ? 1 : 0);
     }
 
     /**
@@ -105,7 +105,7 @@ public class GeneralService {
      */
     @SneakyThrows
     public void updateEntityDetail(UpdateDetailDTO dto) {
-        mapper.updateEntityDetail(EntityType.getTableName(dto.getEntityType()), dto.getEntityId(), dto.getText(), DateHelper.now());
+        mapper.updateEntityDetail(EntityType.getTableName(dto.entityType()), dto.entityId(), dto.text(), DateHelper.now());
 
         // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.DETAIL, ChangelogOperate.UPDATE);
     }
@@ -131,7 +131,7 @@ public class GeneralService {
     }
 
     public void localPath(EntityDTO dto) {
-        resSrv.getLocalPath(dto.getEntityType(), dto.getEntitySubType(), dto.getEntityId());
+        resSrv.getLocalPath(dto.entityType(), dto.entitySubType(), dto.entityId());
     }
 
 }

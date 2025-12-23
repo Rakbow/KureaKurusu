@@ -2,7 +2,9 @@ package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.*;
+import com.rakbow.kureakurusu.data.dto.EntityDTO;
+import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
+import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -71,12 +73,12 @@ public class GeneralController {
     // }
 
     @PostMapping("changelog-mini")
-    public ApiResult changelog(@RequestBody EntityMinDTO dto) {
-        return ApiResult.ok(srv.mini(dto.getEntityType(), dto.getEntityId()));
+    public ApiResult changelog(@RequestBody EntityDTO dto) {
+        return ApiResult.ok(srv.mini(dto.entityType(), dto.entityId()));
     }
 
     @PostMapping("like")
-    public ApiResult like(@RequestBody EntityQryDTO dto, HttpServletResponse response) {
+    public ApiResult like(@RequestBody EntityDTO dto, HttpServletResponse response) {
         ApiResult res = new ApiResult();
         //get like token from cookie
         String likeToken = TokenInterceptor.getLikeToken();
@@ -87,7 +89,7 @@ public class GeneralController {
             cookie.setPath(contextPath);
             response.addCookie(cookie);
         }
-        if (srv.like(dto.getEntityType(), dto.getEntityId(), likeToken)) {
+        if (srv.like(dto.entityType(), dto.entityId(), likeToken)) {
             return ApiResult.ok("entity.like.success");
         } else {
             throw new ApiException("entity.like.failed");
@@ -111,7 +113,7 @@ public class GeneralController {
     @SneakyThrows
     @PostMapping("links")
     public ApiResult links(@RequestBody EntityDTO dto) {
-        return ApiResult.ok(srv.links(dto.getEntityType(), dto.getEntityId()));
+        return ApiResult.ok(srv.links(dto.entityType(), dto.entityId()));
     }
 
     @SneakyThrows

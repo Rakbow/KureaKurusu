@@ -43,8 +43,8 @@ public class ItemController {
     }
 
     @DeleteMapping("delete")
-    public ApiResult delete(@RequestBody ItemDeleteDTO dto) {
-        srv.delete(dto.getIds());
+    public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
+        srv.delete(dto.ids());
         return ApiResult.ok("entity.crud.delete.success");
     }
 
@@ -73,8 +73,8 @@ public class ItemController {
     //region extra api
 
     @PostMapping("album-track-list")
-    public ApiResult getAlbumTracks(@RequestBody AlbumTrackInfoQry qry) {
-        return ApiResult.ok(extSrv.getAlbumTracks(qry.getId()));
+    public ApiResult getAlbumTracks(@RequestBody CommonDetailQry qry) {
+        return ApiResult.ok(extSrv.getAlbumTracks(qry.id()));
     }
 
     @PostMapping("album-track-quick-create")

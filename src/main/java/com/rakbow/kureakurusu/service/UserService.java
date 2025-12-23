@@ -46,9 +46,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     public void register(UserRegisterDTO dto) {
         //check username and email duplicate
         long count;
-        count = count(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
+        count = count(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.username()));
         if (count != 0) throw new ApiException("user.register.username_duplicate");
-        count = count(new LambdaQueryWrapper<User>().eq(User::getEmail, dto.getEmail()));
+        count = count(new LambdaQueryWrapper<User>().eq(User::getEmail, dto.email()));
         if (count != 0) throw new ApiException("user.register.email_duplicate");
         //register new user
         User user = new User(dto);
@@ -66,14 +66,14 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     @SneakyThrows
     @Transactional
     public void activation(UserActivationDTO dto) {
-        User user = getById(dto.getUserId());
+        User user = getById(dto.userId());
         //check
         if (user.getStatus())
             throw new ApiException("user.activation.duplicate");
-        if (!StringUtil.equals(user.getActivationCode(), dto.getCode()))
+        if (!StringUtil.equals(user.getActivationCode(), dto.code()))
             throw new ApiException("user.activation.failure");
         //activation
-        mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, dto.getUserId()).set(User::getStatus, 1));
+        mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, dto.userId()).set(User::getStatus, 1));
     }
 
     @SneakyThrows
@@ -81,20 +81,20 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     public LoginResult login(LoginDTO dto, String kaptcha) {
 
         //check captcha
-        if (StringUtil.isBlank(kaptcha) || StringUtil.isBlank(dto.getVerifyCode())
-                || !kaptcha.equalsIgnoreCase(dto.getVerifyCode()))
+        if (StringUtil.isBlank(kaptcha) || StringUtil.isBlank(dto.verifyCode())
+                || !kaptcha.equalsIgnoreCase(dto.verifyCode()))
             throw new ApiException("login.verify_code.error");
 
         //check user exist
-        User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.getUsername()));
+        User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.username()));
         if (user == null) throw new ApiException("login.user.not_exist");
         //check user activation status
         if (!user.getStatus()) throw new ApiException("login.user.inactivated");
         //check user password
-        String password = CommonUtil.md5(STR."\{dto.getPassword()}\{user.getSalt()}");
+        String password = CommonUtil.md5(STR."\{dto.password()}\{user.getSalt()}");
         if (!user.getPassword().equals(password)) throw new ApiException("login.password.error");
         //count expired time
-        int expires = (dto.getRememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS) * 1000;
+        int expires = (dto.rememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS) * 1000;
         //generate login ticket
         LoginTicket loginTicket = LoginTicket.builder()
                 .uid(user.getId())

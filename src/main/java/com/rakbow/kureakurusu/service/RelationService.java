@@ -17,7 +17,10 @@ import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
-import com.rakbow.kureakurusu.data.enums.*;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.EntryType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.vo.item.ItemSearchVO;
 import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
@@ -144,15 +147,15 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @Transactional
     public void create(RelationCreateDTO dto) {
         List<Relation> res = new ArrayList<>();
-        dto.getRelatedEntries().forEach(r ->
+        dto.relatedEntries().forEach(r ->
                 res.add(Relation.builder()
-                        .roleId(dto.getRelatedRoleId())
-                        .relatedRoleId(dto.getRoleId())
-                        .entityType(dto.getEntityType())
-                        .entitySubType(dto.getEntitySubType())
-                        .entityId(dto.getEntityId())
-                        .relatedEntityType(dto.getRelatedEntityType())
-                        .relatedEntitySubType(dto.getRelatedEntitySubType())
+                        .roleId(dto.relatedRoleId())
+                        .relatedRoleId(dto.roleId())
+                        .entityType(dto.entityType())
+                        .entitySubType(dto.entitySubType())
+                        .entityId(dto.entityId())
+                        .relatedEntityType(dto.relatedEntityType())
+                        .relatedEntitySubType(dto.relatedEntitySubType())
                         .relatedEntityId(r.getId())
                         .remark(r.getRemark())
                         .build()));
@@ -183,17 +186,17 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     public void update(RelationUpdateDTO dto) {
         update(
                 new LambdaUpdateWrapper<Relation>()
-                        .set(Relation::getRoleId, dto.getDirection() ? dto.getRoleId() : dto.getRelatedRoleId())
-                        .set(Relation::getRelatedRoleId, dto.getDirection() ? dto.getRelatedRoleId() : dto.getRoleId())
-                        .set(Relation::getRemark, dto.getRemark())
-                        .eq(Relation::getId, dto.getId())
+                        .set(Relation::getRoleId, dto.direction() ? dto.roleId() : dto.relatedRoleId())
+                        .set(Relation::getRelatedRoleId, dto.direction() ? dto.relatedRoleId() : dto.roleId())
+                        .set(Relation::getRemark, dto.remark())
+                        .eq(Relation::getId, dto.id())
         );
     }
 
     @Transactional
     public SearchResult<ItemSearchVO> relatedItems(RelatedItemQueryDTO dto) {
         IPage<Item> pages;
-        Page<Item> page = new Page<>(1, dto.getSize());
+        Page<Item> page = new Page<>(1, dto.size());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<Item>()
                 .selectAll(Item.class)
                 .innerJoin(Relation.class, on -> on
@@ -202,7 +205,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 )
                 .and(aw -> aw.or(w -> w
                         .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
-                        .eq(Relation::getRelatedEntityId, dto.getId())))
+                        .eq(Relation::getRelatedEntityId, dto.id())))
                 .orderByDesc(Item::getReleaseDate);
         pages = itemMapper.selectJoinPage(page, Item.class, wrapper);
 

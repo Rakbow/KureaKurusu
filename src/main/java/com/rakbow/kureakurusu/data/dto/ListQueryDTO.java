@@ -1,11 +1,8 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.LinkedHashMap;
 
@@ -13,9 +10,8 @@ import java.util.LinkedHashMap;
  * @author Rakbow
  * @since 2025/5/23 19:56
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-public abstract class ListQueryDTO extends QueryDTO {
+public abstract class ListQueryDTO {
 
     private int page;
     private int size;

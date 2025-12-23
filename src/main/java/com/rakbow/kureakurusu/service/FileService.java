@@ -12,8 +12,6 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.resource.FileInfo;
 import com.rakbow.kureakurusu.data.entity.resource.FileRelated;
-import com.rakbow.kureakurusu.data.enums.ChangelogField;
-import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.FileListVO;
 import com.rakbow.kureakurusu.data.vo.resource.FileRelatedVO;
@@ -158,8 +156,8 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
 
     @Transactional
     @SneakyThrows
-    public void deleteRelated(FileRelatedDeleteDTO dto) {
-        fileRelatedMapper.deleteByIds(dto.getIds());
+    public void deleteRelated(CommonDeleteDTO dto) {
+        fileRelatedMapper.deleteByIds(dto.ids());
         // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.FILE, ChangelogOperate.DELETE);
     }
 
@@ -192,12 +190,12 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
 
     @Transactional
     @SneakyThrows
-    public FileRelatedVO related(EntityQryDTO dto) {
+    public FileRelatedVO related(EntityDTO dto) {
         MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
                 .selectAll(FileInfo.class)
                 .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
-                .eq(FileRelated::getEntityType, dto.getEntityType())
-                .eq(FileRelated::getEntityId, dto.getEntityId())
+                .eq(FileRelated::getEntityType, dto.entityType())
+                .eq(FileRelated::getEntityId, dto.entityId())
                 .orderByDesc(FileInfo::getId);
 
         List<FileInfo> files = list(wrapper);

@@ -12,7 +12,9 @@ import com.rakbow.kureakurusu.data.entity.FavListItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
-import com.rakbow.kureakurusu.data.enums.*;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
+import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.item.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -59,15 +61,15 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional
     @SneakyThrows
     public long create(ItemSuperCreateDTO dto, MultipartFile[] images) {
-        ItemCreateDTO itemDTO = dto.getItem();
+        ItemCreateDTO itemDTO = dto.item();
         //save item
         Item item = converter.convert(itemDTO, Item.class);
         save(item);
         //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE.getValue(), item.getId(), dto.getItem().getType(), dto.getRelatedEntries());
+        relationSrv.batchCreate(ENTITY_TYPE.getValue(), item.getId(), itemDTO.getType(), dto.relatedEntries());
         //save image
-        IntStream.range(0, dto.getImages().size()).forEach(i -> dto.getImages().get(i).setFile(images[i]));
-        imageSrv.upload(ENTITY_TYPE.getValue(), item.getId(), dto.getImages(), dto.getGenerateThumb());
+        IntStream.range(0, dto.images().size()).forEach(i -> dto.images().get(i).setFile(images[i]));
+        imageSrv.upload(ENTITY_TYPE.getValue(), item.getId(), dto.images(), dto.generateThumb());
 
         //save episode
         if (itemDTO.getType().intValue() == ItemType.ALBUM.getValue()) {

@@ -6,10 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.FavListItemMapper;
 import com.rakbow.kureakurusu.dao.FavListMapper;
-import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.FavListItemListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.FavListQueryDTO;
@@ -42,13 +40,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
-    private final ImageService imgSrv;
     private final EpisodeService epSrv;
     private final SqlSessionFactory sqlSessionFactory;
-    private final FavListItemMapper iMapper;
     private final FavListMapper mapper;
-    private final ItemMapper itemMapper;
-    private final EpisodeMapper epMapper;
     private final Converter converter;
 
     public FavListVO detail(long id) {
@@ -79,11 +73,11 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
     public void addItems(ListItemCreateDTO dto) {
         List<FavListItem> items = new ArrayList<>();
-        for (long itemId : dto.getItemIds()) {
-            items.add(new FavListItem(dto.getListId(), dto.getType(), itemId));
+        for (long itemId : dto.itemIds()) {
+            items.add(new FavListItem(dto.listId(), dto.type(), itemId));
         }
         update(new LambdaUpdateWrapper<FavList>().set(FavList::getUpdateTime, DateHelper.now())
-                .eq(FavList::getId, dto.getListId()));
+                .eq(FavList::getId, dto.listId()));
         //batch insert
         MybatisBatch.Method<FavListItem> method = new MybatisBatch.Method<>(FavListItemMapper.class);
         MybatisBatch<FavListItem> batchInsert = new MybatisBatch<>(sqlSessionFactory, items);
