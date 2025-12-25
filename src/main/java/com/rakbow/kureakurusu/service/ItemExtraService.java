@@ -51,7 +51,6 @@ public class ItemExtraService {
     private final ItemMapper mapper;
 
     private final FileService fileSrv;
-    private final ChangelogService logSrv;
 
     private final SqlSessionFactory sqlSessionFactory;
     private final Converter converter;

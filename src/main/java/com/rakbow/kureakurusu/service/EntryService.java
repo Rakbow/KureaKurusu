@@ -10,7 +10,9 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.enums.*;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.EntryType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.entry.*;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
@@ -76,10 +78,10 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @SneakyThrows
     public long create(EntrySuperCreateDTO dto) {
         //save entry
-        Entry entry = converter.convert(dto.getEntry(), Entry.class);
+        Entry entry = converter.convert(dto.entry(), Entry.class);
         save(entry);
         //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE, entry.getId(), entry.getType().getValue(), dto.getRelatedEntries());
+        relationSrv.batchCreate(ENTITY_TYPE, entry.getId(), entry.getType().getValue(), dto.relatedEntries());
 
         // logSrv.create(ENTITY_TYPE, entry.getId(), ChangelogField.DEFAULT, ChangelogOperate.CREATE);
 

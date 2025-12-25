@@ -5,7 +5,6 @@ import com.rakbow.kureakurusu.data.vo.item.AlbumTrackVO;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -13,12 +12,11 @@ import java.util.List;
  * @author Rakbow
  * @since 2025/6/24 17:42
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @AutoMappers({
         @AutoMapper(target = Disc.class, reverseConvertGenerate = false)
 })
-public class DiscCreateDTO extends DTO {
+public class DiscCreateDTO {
 
     private long id;
     private long itemId;

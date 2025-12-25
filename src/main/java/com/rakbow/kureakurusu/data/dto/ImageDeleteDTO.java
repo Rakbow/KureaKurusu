@@ -1,18 +1,14 @@
 package com.rakbow.kureakurusu.data.dto;
 
-import lombok.Data;
-
 import java.util.List;
 
 /**
  * @author Rakbow
  * @since 2025/7/23 16:29
  */
-@Data
-public class ImageDeleteDTO {
-
-    private int entityType;
-    private long entityId;
-    private List<ImageDeleteMiniDTO> images;
-
+public record ImageDeleteDTO(
+        int entityType,
+        long entityId,
+        List<ImageDeleteMiniDTO> images
+) {
 }

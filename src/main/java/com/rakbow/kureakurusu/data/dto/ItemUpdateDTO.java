@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,7 +11,6 @@ import java.util.List;
  * @author Rakbow
  * @since 2024/4/25 14:42
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -23,7 +21,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = BookUpdateDTO.class, name = "2"),
         @JsonSubTypes.Type(value = VideoUpdateDTO.class, name = "3")
 })
-public class ItemUpdateDTO extends DTO {
+public class ItemUpdateDTO {
 
     private Long id;
     private Integer type;

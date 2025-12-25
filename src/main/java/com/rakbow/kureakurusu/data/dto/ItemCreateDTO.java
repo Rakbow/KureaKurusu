@@ -6,7 +6,6 @@ import com.rakbow.kureakurusu.data.enums.ReleaseType;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
  * @author Rakbow
  * @since 2024/5/3 4:02
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -26,7 +24,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = BookCreateDTO.class, name = "2"),
         @JsonSubTypes.Type(value = VideoCreateDTO.class, name = "3")
 })
-public class ItemCreateDTO extends DTO {
+public class ItemCreateDTO {
 
     private long id;
     private Integer type;

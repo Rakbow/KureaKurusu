@@ -19,7 +19,6 @@ import lombok.*;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @AllArgsConstructor
 @ToString(callSuper = true)
 @TableName(value = "episode", autoResultMap = true)
@@ -29,7 +28,6 @@ import lombok.*;
 })
 public class Episode extends Entity {
 
-    @Builder.Default
     private Long id;
     private int relatedType;//Album Product
     private long relatedId;//AlbumDisc.id Product.id

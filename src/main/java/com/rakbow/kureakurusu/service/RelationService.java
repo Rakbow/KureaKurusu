@@ -64,6 +64,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @SneakyThrows
     public SearchResult<RelationVO> list(RelationListQueryDTO dto) {
         int targetEntityType = dto.getTargetEntityType();
+        dto.setOffset((dto.getPage() - 1) * dto.getSize());
         List<RelationVO> res = new ArrayList<>();
         List<Relation> relations = mapper.list(dto);
         if (relations.isEmpty()) return new SearchResult<>();
@@ -225,27 +226,28 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         int targetEntityType = EntityType.ENTRY.getValue();
         List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
 
-        List<SearchResult<RelationVO>> resultSet = IntStream.range(0, dto.getEntryTypeSets().size())
+        List<SearchResult<RelationVO>> resultSet = IntStream.range(0, dto.entryTypeSets().size())
                 .mapToObj(_ -> new SearchResult<RelationVO>()).toList();
         List<List<Relation>> relationSets = new ArrayList<>();
         List<Long> entryIds = new ArrayList<>();
         int curIndex = -1;
-        for (List<Integer> entryTypes : dto.getEntryTypeSets()) {
+        for (List<Integer> entryTypes : dto.entryTypeSets()) {
             curIndex++;
             RelationListQueryDTO subDTO = new RelationListQueryDTO();
             subDTO.setPage(1);
-            subDTO.setSize(dto.getSize());
-            subDTO.setEntityType(dto.getEntityType());
-            subDTO.setEntityId(dto.getEntityId());
+            subDTO.setSize(dto.size());
+            subDTO.setEntityType(dto.entityType());
+            subDTO.setEntityId(dto.entityId());
             subDTO.setTargetEntityType(targetEntityType);
             subDTO.setTargetEntitySubTypes(entryTypes);
+            subDTO.setOffset((subDTO.getPage() - 1) * subDTO.getSize());
             List<Relation> relations = mapper.list(subDTO);
             relationSets.add(relations);
             if (relations.isEmpty()) continue;
             resultSet.get(curIndex).total = mapper.count(subDTO);
             relations.forEach(r -> {
-                if (r.getRelatedEntityType() == dto.getEntityType()
-                        && r.getRelatedEntityId() == dto.getEntityId()) {
+                if (r.getRelatedEntityType() == dto.entityType()
+                        && r.getRelatedEntityId() == dto.entityId()) {
                     r.setDirection(-1);
                 }
             });

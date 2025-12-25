@@ -15,6 +15,7 @@ public abstract class ListQueryDTO {
 
     private int page;
     private int size;
+    private int offset;
     private String sortField;
     private int sortOrder;
     private String keyword;

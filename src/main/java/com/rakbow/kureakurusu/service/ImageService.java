@@ -106,12 +106,12 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
 
     @Transactional
     public void delete(ImageDeleteDTO dto) {
-        String[] keys = dto.getImages().stream().map(ImageDeleteMiniDTO::getUrl)
+        String[] keys = dto.images().stream().map(ImageDeleteMiniDTO::url)
                 .map(url -> url.replace(Constant.FILE_DOMAIN, "")).toArray(String[]::new);
         //delete from qiniu server
         List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(keys);
         //delete from database
-        removeByIds(deleteIndexes.stream().map(index -> dto.getImages().get(index).getId()).toList());
+        removeByIds(deleteIndexes.stream().map(index -> dto.images().get(index).id()).toList());
 
         // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.IMAGE, ChangelogOperate.DELETE);
     }

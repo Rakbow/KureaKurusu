@@ -5,7 +5,6 @@
 <mapper namespace="com.rakbow.kureakurusu.dao.RelationMapper">
 
     <select id="list" resultType="Relation">
-        <bind name="offset" value="(param.page - 1) * param.size" />
         SELECT *
         FROM (
         (SELECT *
@@ -36,7 +35,7 @@
         ) AS combined_results
         ORDER BY related_entity_id, entity_id
         <if test="param.size > 0">
-            LIMIT #{offset}, #{param.size}
+            LIMIT #{param.offset}, #{param.size}
         </if>
     </select>
 
