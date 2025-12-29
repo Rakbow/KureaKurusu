@@ -12,18 +12,19 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
-import com.rakbow.kureakurusu.data.enums.EntityType;
-import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.entity.Entity;
 import com.rakbow.kureakurusu.data.entity.Episode;
 import com.rakbow.kureakurusu.data.entity.item.Disc;
 import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.vo.EntityMiniVO;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
+import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
@@ -62,7 +63,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     public EpisodeVO detail(long id) {
         Episode ep = getById(id);
-        if (ep == null) throw ErrorFactory.entityNull();
+        if (ep == null) throw new EntityNullException();
         EpisodeVO vo = converter.convert(ep, EpisodeVO.class);
         int relatedType = ep.getRelatedType();
         long relatedId = ep.getRelatedId();

@@ -17,7 +17,7 @@ import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.entry.*;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
-import com.rakbow.kureakurusu.exception.ErrorFactory;
+import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
@@ -47,7 +47,6 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     private final QiniuImageUtil qiniuImageUtil;
     private final EntryMapper mapper;
     private final RelationService relationSrv;
-    private final ChangelogService logSrv;
     private final static int ENTITY_TYPE = EntityType.ENTRY.getValue();
 
     @SneakyThrows
@@ -55,7 +54,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     public EntryDetailVO detail(long id) {
 
         Entry entry = getById(id);
-        if (entry == null) throw ErrorFactory.entryNull();
+        if (entry == null) throw new EntityNullException();
         //update popular
         // popularUtil.updateEntryPopularity(entry.getType(), id);
         return EntryDetailVO.builder()

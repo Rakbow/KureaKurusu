@@ -46,8 +46,7 @@ public class RedisUtil {
      * @return 时间(秒) 返回0 代表永久有效
      */
     public long getExpire(String key) {
-        Long result = template.getExpire(key, TimeUnit.SECONDS);
-        return result != null ? result : 0L;
+        return template.getExpire(key, TimeUnit.SECONDS);
     }
 
     /**
@@ -59,7 +58,7 @@ public class RedisUtil {
      */
     public boolean hasKey(String key) {
         if (!StringUtil.hasLength(key)) return false;
-        return Boolean.TRUE.equals(template.hasKey(key));
+        return template.hasKey(key);
     }
 
     /**

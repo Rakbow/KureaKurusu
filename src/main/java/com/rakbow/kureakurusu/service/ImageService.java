@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,6 +18,7 @@ import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.resource.ImageDisplayVO;
 import com.rakbow.kureakurusu.data.vo.resource.ImageVO;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import com.rakbow.kureakurusu.toolkit.MybatisBatchUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
@@ -26,7 +26,6 @@ import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,7 @@ import java.util.Objects;
 public class ImageService extends ServiceImpl<ImageMapper, Image> {
 
     private final QiniuImageUtil qiniuImageUtil;
-    private final SqlSessionFactory sqlSessionFactory;
+    private final MybatisBatchUtil mybatisBatchUtil;
     private final RedisUtil redisUtil;
     private final Converter converter;
 
@@ -87,9 +86,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         //upload to qiniu server
         List<Image> addImages = qiniuImageUtil.uploadImages(entityType, entityId, images);
         //batch insert
-        MybatisBatch.Method<Image> method = new MybatisBatch.Method<>(ImageMapper.class);
-        MybatisBatch<Image> batchInsert = new MybatisBatch<>(sqlSessionFactory, addImages);
-        batchInsert.execute(method.insert());
+        mybatisBatchUtil.batchInsert(addImages, ImageMapper.class);
 
         //update item image redis cache
         if (entityType == EntityType.ITEM.getValue()) {

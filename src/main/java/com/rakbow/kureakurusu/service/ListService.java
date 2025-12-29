@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,13 +19,13 @@ import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.vo.favList.FavListVO;
 import com.rakbow.kureakurusu.data.vo.temp.EntitySearchVO;
 import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
-import com.rakbow.kureakurusu.exception.ErrorFactory;
+import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
+import com.rakbow.kureakurusu.toolkit.MybatisBatchUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,13 +40,13 @@ import java.util.List;
 public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
     private final EpisodeService epSrv;
-    private final SqlSessionFactory sqlSessionFactory;
+    private final MybatisBatchUtil mybatisBatchUtil;
     private final FavListMapper mapper;
     private final Converter converter;
 
     public FavListVO detail(long id) {
         FavList list = getById(id);
-        if (list == null) throw ErrorFactory.entityNull();
+        if (list == null) throw new EntityNullException();
         return converter.convert(list, FavListVO.class);
     }
 
@@ -79,9 +78,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
         update(new LambdaUpdateWrapper<FavList>().set(FavList::getUpdateTime, DateHelper.now())
                 .eq(FavList::getId, dto.listId()));
         //batch insert
-        MybatisBatch.Method<FavListItem> method = new MybatisBatch.Method<>(FavListItemMapper.class);
-        MybatisBatch<FavListItem> batchInsert = new MybatisBatch<>(sqlSessionFactory, items);
-        batchInsert.execute(method.insert());
+        mybatisBatchUtil.batchInsert(items, FavListItemMapper.class);
     }
 
     @SneakyThrows
@@ -90,11 +87,11 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
         int targetEntityType = dto.getType();
         ListQueryDTO param = dto.getParam();
         param.init();
-        IPage<? extends EntitySearchVO> pages;
+        IPage<? extends EntitySearchVO> pages = new Page<>();
         Page page = new Page<>(param.getPage(), param.getSize());
         List<? extends EntitySearchVO> targets;
         if (dto.getType() == EntityType.EPISODE.getValue()) {
-            pages = mapper.episodes(page, dto.getListId(), param);
+            // pages = mapper.episodes(page, dto.getListId(), param);
         } else {
             throw new Exception("");
         }

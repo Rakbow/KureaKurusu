@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.dao.*;
@@ -20,7 +19,6 @@ import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -47,12 +45,11 @@ public class ItemExtraService {
 
     private final EpisodeMapper epMapper;
     private final AlbumDiscMapper discMapper;
-    private final FileInfoMapper fileMapper;
     private final ItemMapper mapper;
 
     private final FileService fileSrv;
 
-    private final SqlSessionFactory sqlSessionFactory;
+    private final MybatisBatchUtil mybatisBatchUtil;
     private final Converter converter;
 
     //region album
@@ -128,10 +125,7 @@ public class ItemExtraService {
             eps.add(ep);
         }
 
-
-        MybatisBatch.Method<Episode> epMethod = new MybatisBatch.Method<>(EpisodeMapper.class);
-        MybatisBatch<Episode> epBatchInsert = new MybatisBatch<>(sqlSessionFactory, eps);
-        epBatchInsert.execute(epMethod.insert());
+        mybatisBatchUtil.batchInsert(eps, EpisodeMapper.class);
 
         //update album track disc duration
         if (!updateAlbum) return;
@@ -196,17 +190,11 @@ public class ItemExtraService {
             related.getFileInfo().setName(STR."\{filePrefix}_\{ep.getSerial()}.\{FileUtil.getExtension(f.getOriginalFilename())}");
         }
 
-        MybatisBatch.Method<Episode> epMethod = new MybatisBatch.Method<>(EpisodeMapper.class);
-        MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
-
-        MybatisBatch<Episode> epBatchUpdate = new MybatisBatch<>(sqlSessionFactory, updateEps);
-        MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
-
-        epBatchUpdate.execute(epMethod.updateById());
-        addFiles.forEach(fileMapper::insert);
+        mybatisBatchUtil.batchUpdateById(updateEps, EpisodeMapper.class);
+        mybatisBatchUtil.batchInsert(addFiles, FileInfoMapper.class);
 
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
-        frBatchInsert.execute(fileRelatedMethod.insert());
+        mybatisBatchUtil.batchInsert(addFileRelatedList, FileRelatedMapper.class);
     }
 
     //endregion

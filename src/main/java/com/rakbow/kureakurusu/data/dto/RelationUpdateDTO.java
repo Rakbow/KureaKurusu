@@ -6,6 +6,8 @@ package com.rakbow.kureakurusu.data.dto;
  */
 public record RelationUpdateDTO(
         long id,
+        int entityType,
+        long entityId,
         long roleId,
         long relatedRoleId,
         String remark,

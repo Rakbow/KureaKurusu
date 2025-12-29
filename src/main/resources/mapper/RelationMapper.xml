@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.RelationMapper">
 
-    <select id="list" resultType="Relation">
+    <select id="list" resultType="com.rakbow.kureakurusu.data.entity.Relation">
         SELECT *
         FROM (
         (SELECT *

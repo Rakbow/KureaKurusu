@@ -52,6 +52,7 @@ public class RelationController {
     @DeleteMapping("delete")
     public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
         srv.removeByIds(dto.ids());
+        srv.refreshPersonnel(dto.entityType(), dto.entityId());
         return ApiResult.ok("entity.crud.delete.success");
     }
 

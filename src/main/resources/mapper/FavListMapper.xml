@@ -4,27 +4,27 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.FavListMapper">
 
-    <select id="episodes" resultType="com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO">
-        select
-            ep.id, ep.name, ep.duration, ep.serial, fli.created_at, ep.related_id as disc_id
-        from fav_list_item fli
-        inner join episode ep on fli.entity_id = ep.id and fli.list_id = #{listId}
-        where 1 = 1
-        <if test="param.keyword != null and param.keyword != ''">
-            and ep.name like concat('%', #{param.keyword}, '%')
-        </if>
-        <if test="param.sortField != null and param.sortField != ''">
-            order by #{param.sortField}
-            <if test="param.sortOrder == 1">
-                asc
-            </if>
-            <if test="param.sortOrder == -1">
-                desc
-            </if>
-        </if>
-        <if test="param.sortField == null or param.sortField == ''">
-            order by fli.created_at desc
-        </if>
-    </select>
+<!--    <select id="episodes" resultType="com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO">-->
+<!--        select-->
+<!--            ep.id, ep.name, ep.duration, ep.serial, fli.created_at, ep.related_id as disc_id-->
+<!--        from fav_list_item fli-->
+<!--        inner join episode ep on fli.entity_id = ep.id and fli.list_id = #{listId}-->
+<!--        where 1 = 1-->
+<!--        <if test="param.keyword != null and param.keyword != ''">-->
+<!--            and ep.name like concat('%', #{param.keyword}, '%')-->
+<!--        </if>-->
+<!--        <if test="param.sortField != null and param.sortField != ''">-->
+<!--            order by #{param.sortField}-->
+<!--            <if test="param.sortOrder == 1">-->
+<!--                asc-->
+<!--            </if>-->
+<!--            <if test="param.sortOrder == -1">-->
+<!--                desc-->
+<!--            </if>-->
+<!--        </if>-->
+<!--        <if test="param.sortField == null or param.sortField == ''">-->
+<!--            order by fli.created_at desc-->
+<!--        </if>-->
+<!--    </select>-->
 
 </mapper>

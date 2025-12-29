@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,7 +18,6 @@ import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,9 +44,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
 
     private final FileRelatedMapper fileRelatedMapper;
     private final Converter converter;
-    private final SqlSessionFactory sqlSessionFactory;
-
-    private final ChangelogService logSrv;
+    private final MybatisBatchUtil mybatisBatchUtil;
 
     @Value("${system.path.upload.file}")
     private String FILE_UPLOAD_DIR;
@@ -121,12 +117,8 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
             file.delete();
             addFileRelatedList.add(related);
         }
-        MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
-        MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
         addFileRelatedList.forEach(r -> r.setFileId(r.getFileInfo().getId()));
-        frBatchInsert.execute(fileRelatedMethod.insert());
-
-        // logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPLOAD);
+        mybatisBatchUtil.batchInsert(addFileRelatedList, FileRelatedMapper.class);
     }
 
     @Transactional
@@ -147,11 +139,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
             related.setFileId(fid);
             addFileRelatedList.add(related);
         });
-        MybatisBatch.Method<FileRelated> fileRelatedMethod = new MybatisBatch.Method<>(FileRelatedMapper.class);
-        MybatisBatch<FileRelated> frBatchInsert = new MybatisBatch<>(sqlSessionFactory, addFileRelatedList);
-        frBatchInsert.execute(fileRelatedMethod.insert());
-
-        // logSrv.create(entityType, entityId, ChangelogField.FILE, ChangelogOperate.UPDATE);
+        mybatisBatchUtil.batchInsert(addFileRelatedList, FileRelatedMapper.class);
     }
 
     @Transactional

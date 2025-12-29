@@ -1,9 +1,5 @@
 package com.rakbow.kureakurusu;
 
-import com.rakbow.kureakurusu.dao.ImageMapper;
-import com.rakbow.kureakurusu.dao.ItemMapper;
-import jakarta.annotation.Resource;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,13 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 @ContextConfiguration(classes = KureaKurusuApp.class)
 public class DatabaseTests {
-
-    @Resource
-    private ImageMapper imageMapper;
-    @Resource
-    private ItemMapper itemMapper;
-    @Resource
-    private SqlSessionFactory sqlSessionFactory;
 
 //    @Test
 //    public void moveImage() {

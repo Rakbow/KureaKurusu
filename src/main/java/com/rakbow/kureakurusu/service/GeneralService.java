@@ -1,10 +1,14 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.rakbow.kureakurusu.dao.CommonMapper;
+import com.rakbow.kureakurusu.dao.RoleMapper;
+import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.RedisKey;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
+import com.rakbow.kureakurusu.data.entity.Role;
 import com.rakbow.kureakurusu.data.enums.*;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
@@ -34,6 +38,7 @@ public class GeneralService {
     private final RedisUtil redisUtil;
 
     private final CommonMapper mapper;
+    private final RoleMapper roleMapper;
     private final LinkService lnkSrv;
     private final ResourceService resSrv;
 
@@ -62,19 +67,28 @@ public class GeneralService {
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
+        if (!redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:zh")
+                || !redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:en")) {
+            List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
+            roles.forEach(i -> {
+                MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
+                MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
+            });
+            redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}:zh");
+            redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:zh", MetaData.optionsZh.roleSet);
+            redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}:en");
+            redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:en", MetaData.optionsEn.roleSet);
+        }
 
-        if(redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:zh")) {
-            String roleSetZhJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:zh"));
-            MetaData.optionsZh.roleSet = JsonUtil.toAttributes(roleSetZhJson, Long.class);
-        }
-        if(redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:en")) {
-            String roleSetEnJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:en"));
-            MetaData.optionsEn.roleSet = JsonUtil.toAttributes(roleSetEnJson, Long.class);
-        }
+        String roleSetZhJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:zh"));
+        MetaData.optionsZh.roleSet = JsonUtil.toAttributes(roleSetZhJson, Long.class);
+        String roleSetEnJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:en"));
+        MetaData.optionsEn.roleSet = JsonUtil.toAttributes(roleSetEnJson, Long.class);
     }
 
     /**
      * 批量更新数据库实体激活状态
+     *
      * @author rakbow
      */
     public void updateEntityStatus(UpdateStatusDTO dto) {
@@ -83,6 +97,7 @@ public class GeneralService {
 
     /**
      * 点赞
+     *
      * @author rakbow
      */
     public boolean like(int entityType, long entityId, String likeToken) {

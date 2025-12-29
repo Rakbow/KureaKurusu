@@ -16,6 +16,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface FavListMapper extends MPJBaseMapper<FavList> {
 
-    IPage<EpisodeSearchVO> episodes(Page<EpisodeSearchVO> page, @Param("listId") long listId, @Param("param") ListQueryDTO param);
+    // IPage<EpisodeSearchVO> episodes(Page<EpisodeSearchVO> page, @Param("listId") long listId, @Param("param") ListQueryDTO param);
 
 }

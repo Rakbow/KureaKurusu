@@ -1,9 +1,7 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.SneakyThrows;
 
@@ -51,43 +49,6 @@ public class JsonUtil {
     @SneakyThrows
     public static String toJson(Object obj) {
         return mapper.writeValueAsString(obj);
-    }
-
-    @SneakyThrows
-    public static Object getValueByKey(String key, String json) {
-        return mapper.readTree(json).get(key);
-    }
-
-    @SneakyThrows
-    public static int getIntValueByKey(String key, String json) {
-        return mapper.readTree(json).get(key).asInt();
-    }
-
-    @SneakyThrows
-    public static <T> List<T> getValueByKey(String json, Class<T> clazz, String key) {
-        JsonNode rootNode = mapper.readTree(json);
-
-        List<T> values = new ArrayList<>();
-
-        if (rootNode.isObject()) {
-            JsonNode valueNode = rootNode.get(key);
-            if (valueNode != null && valueNode.isArray()) {
-                ArrayNode arrayNode = (ArrayNode) valueNode;
-                for (JsonNode node : arrayNode) {
-                    if (clazz == String.class && node.isTextual()) {
-                        values.add(clazz.cast(node.textValue()));
-                    } else if (clazz == Integer.class && node.isInt()) {
-                        values.add(clazz.cast(node.intValue()));
-                    } else if (clazz == Double.class && node.isDouble()) {
-                        values.add(clazz.cast(node.doubleValue()));
-                    } else if (clazz == Boolean.class && node.isBoolean()) {
-                        values.add(clazz.cast(node.booleanValue()));
-                    }
-                }
-            }
-        }
-
-        return values;
     }
 
     @SneakyThrows

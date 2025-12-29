@@ -1,6 +1,5 @@
 package com.rakbow.kureakurusu.service;
 
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -27,14 +26,11 @@ import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
 import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.DataFinder;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +46,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
-    private final SqlSessionFactory sqlSessionFactory;
+    private final MybatisBatchUtil mybatisBatchUtil;
     private final Converter converter;
 
     private final RelationMapper mapper;
@@ -58,7 +54,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     private final ItemMapper itemMapper;
 
     private final ImageService imageSrv;
-    private final ChangelogService logSrv;
+
+    private final RedisUtil redisUtil;
 
     @Transactional
     @SneakyThrows
@@ -161,12 +158,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                         .remark(r.getRemark())
                         .build()));
         //batch insert
-        MybatisBatch.Method<Relation> method = new MybatisBatch.Method<>(RelationMapper.class);
-        MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, res);
-        batchInsert.execute(method.insert());
-
-        // logSrv.create(dto.getEntityType(), dto.getEntityId(),
-        //         ChangelogField.getByEntryType(dto.getRelatedEntitySubType()), ChangelogOperate.UPDATE);
+        mybatisBatchUtil.batchInsert(res, RelationMapper.class);
+        refreshPersonnel(dto.entityType(), dto.entityId());
     }
 
     @Transactional
@@ -178,9 +171,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
             r.setEntityId(entityId);
         });
         //batch insert
-        MybatisBatch.Method<Relation> method = new MybatisBatch.Method<>(RelationMapper.class);
-        MybatisBatch<Relation> batchInsert = new MybatisBatch<>(sqlSessionFactory, relations);
-        batchInsert.execute(method.insert());
+        mybatisBatchUtil.batchInsert(relations, RelationMapper.class);
+        refreshPersonnel(entityType, entityId);
     }
 
     @Transactional
@@ -192,6 +184,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                         .set(Relation::getRemark, dto.remark())
                         .eq(Relation::getId, dto.id())
         );
+        refreshPersonnel(dto.entityType(), dto.entityId());
     }
 
     @Transactional
@@ -305,8 +298,14 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
     @Transactional
     public List<Personnel> personnel(int entityType, long entityId) {
-        List<Personnel> res = new ArrayList<>();
+        String key = STR."entity_personnel:\{entityType}:\{entityId}";
+        if (!redisUtil.hasKey(key)) {
+            refreshPersonnel(entityType, entityId);
+        }
+        return JsonUtil.toJavaList(redisUtil.get(key), Personnel.class);
+    }
 
+    private RelationListQueryDTO getPersonnelParam(int entityType, long entityId) {
         RelationListQueryDTO param = new RelationListQueryDTO();
         param.setEntityType(entityType);
         param.setEntityId(entityId);
@@ -316,9 +315,21 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
         param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
         param.getFilters().computeIfAbsent("targetEntitySubTypes", _ -> new LinkedHashMap<>()).put("value", List.of(EntryType.PERSON.getValue()));
+        return param;
+    }
+
+    @Transactional
+    public void refreshPersonnel(int entityType, long entityId) {
+        List<Personnel> res = new ArrayList<>();
+        String key = STR."entity_personnel:\{entityType}:\{entityId}";
+
+        RelationListQueryDTO param = getPersonnelParam(entityType, entityId);
 
         SearchResult<RelationVO> relations = list(param);
-        if (relations.data.isEmpty()) return res;
+        if (relations.data.isEmpty()) {
+            redisUtil.set(key, JsonUtil.toJson(res));
+            return;
+        }
 
         Map<Attribute<Long>, List<RelationVO>> relationGroup = relations.data.stream()
                 .collect(Collectors.groupingBy(r -> r.getTarget().getRole()));
@@ -338,21 +349,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     return pl;
                 })
                 .toList();
-        return res;
-    }
 
-    // @Transactional
-    // public void refreshPersonnel(int entityType, long entityId) {
-    //     String key = STR."entity_personnel:\{entityType}:\{entityId}";
-    //
-    //     RelationListQueryDTO param = new RelationListQueryDTO();
-    //     param.getFilters().computeIfAbsent("entityType", _ -> new LinkedHashMap<>()).put("value", entityType);
-    //     param.getFilters().computeIfAbsent("entityId", _ -> new LinkedHashMap<>()).put("value", (int) entityId);
-    //     param.getFilters().computeIfAbsent("targetEntityType", _ -> new LinkedHashMap<>()).put("value", EntityType.ENTRY.getValue());
-    //     param.getFilters().computeIfAbsent("targetEntitySubTypes", _ -> new LinkedHashMap<>()).put("value", List.of(EntryType.PERSON.getValue()));
-    //
-    //     SearchResult<RelationVO> relations = list(param);
-    //     redisUtil.set(key, relations.data);
-    // }
+        redisUtil.set(key, JsonUtil.toJson(res));
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import java.util.List;
+
 /**
  * @author Rakbow
  * @since 2025/12/15 20:55
@@ -12,6 +14,14 @@ public class CollectionUtil {
 
     public static int indexOf(Object[] array, Object objectToFind) {
         return indexOf(array, objectToFind, 0);
+    }
+
+    public static <T> boolean isEmpty(List<T> data) {
+        return data == null || data.isEmpty();
+    }
+
+    public static <T> boolean notEmpty(List<T> data) {
+        return data != null && !data.isEmpty();
     }
 
     public static int indexOf(Object[] array, Object objectToFind, int startIndex) {
