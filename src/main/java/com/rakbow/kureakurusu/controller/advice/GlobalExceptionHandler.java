@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.controller.advice;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.exception.ApiException;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ApiResult exceptionHandler(Exception e) {
         String msg = StringUtil.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
+        if (e instanceof ApiException) {
+            if (
+                    StringUtil.equals(msg, I18nHelper.getMessage("item.url.error"))
+                            || StringUtil.equals(msg, I18nHelper.getMessage("entry.url.error"))
+                            || StringUtil.equals(msg, I18nHelper.getMessage("entity.url.error"))
+            ) {
+                return ApiResult.notFound(msg);
+            }
+        }
         log.error(msg, e);
         return new ApiResult().fail(msg);
     }
