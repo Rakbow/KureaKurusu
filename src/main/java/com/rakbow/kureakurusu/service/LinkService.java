@@ -33,14 +33,13 @@ public class LinkService extends ServiceImpl<LinkMapper, Link> {
     private final Converter converter;
     private final RedisUtil redisUtil;
 
-    @SuppressWarnings("unchecked")
     @Transactional
     public List<LinksVO> group(int entityType, long entityId) {
         String key = STR."entity_links:\{entityType}:\{entityId}";
         if (!redisUtil.hasKey(key)) {
             refreshLinks(entityType, entityId);
-        }log.info(key);
-        List<LinksVO> res = (List<LinksVO>) redisUtil.get(key);
+        }
+        List<LinksVO> res = JsonUtil.toJavaList(redisUtil.get(key), LinksVO.class);
         res.forEach(lnk -> lnk.setType(new Attribute<>(LinkType.get(lnk.getType().getValue()))));
         return res;
     }
@@ -64,7 +63,6 @@ public class LinkService extends ServiceImpl<LinkMapper, Link> {
                 .sorted(Comparator.comparing(e -> e.getKey().getValue()))
                 .map(entry -> new LinksVO(entry.getKey(), entry.getValue()))
                 .toList();
-        log.info(JsonUtil.toJson(res));
         redisUtil.set(key, res);
 
     }

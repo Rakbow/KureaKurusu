@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.toolkit;
 
+import com.rakbow.kureakurusu.data.Attribute;
 import lombok.SneakyThrows;
+import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -17,17 +19,17 @@ public class JsonUtil {
         return mapper.readValue(json, mapper.getTypeFactory().constructParametricType(List.class, clazz));
     }
 
-    // @SneakyThrows
-    // public static <T> List<T> toJavaList(Object obj, Class<T> clazz) {
-    //     return mapper.readValue(obj.toString(), mapper.getTypeFactory().constructParametricType(List.class, clazz));
-    // }
-    //
-    // @SneakyThrows
-    // public static <T> List<Attribute<T>> toAttributes(String json, Class<T> clazz) {
-    //     JavaType attributeType = mapper.getTypeFactory().constructParametricType(Attribute.class, clazz);
-    //     JavaType listType = mapper.getTypeFactory().constructCollectionType(List.class, attributeType);
-    //     return mapper.readValue(json, listType);
-    // }
+    @SneakyThrows
+    public static <T> List<T> toJavaList(Object o, Class<T> clazz) {
+        return mapper.readValue(toJson(o), mapper.getTypeFactory().constructParametricType(List.class, clazz));
+    }
+
+    @SneakyThrows
+    public static <T> List<Attribute<T>> toAttributes(Object o, Class<T> clazz) {
+        JavaType attributeType = mapper.getTypeFactory().constructParametricType(Attribute.class, clazz);
+        JavaType listType = mapper.getTypeFactory().constructCollectionType(List.class, attributeType);
+        return mapper.readValue(toJson(o), listType);
+    }
 
     @SneakyThrows
     public static <T> T to(String json, Class<T> clazz) {

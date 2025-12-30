@@ -9,7 +9,9 @@ import com.rakbow.kureakurusu.data.dto.EntityDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Role;
-import com.rakbow.kureakurusu.data.enums.*;
+import com.rakbow.kureakurusu.data.enums.AlbumFormat;
+import com.rakbow.kureakurusu.data.enums.EntityType;
+import com.rakbow.kureakurusu.data.enums.MediaFormat;
 import com.rakbow.kureakurusu.data.meta.MetaData;
 import com.rakbow.kureakurusu.data.meta.MetaOption;
 import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
@@ -83,8 +85,8 @@ public class GeneralService {
             redisUtil.set(roleSetEnKey, MetaData.optionsEn.roleSet);
         }
 
-        MetaData.optionsZh.roleSet = (List<Attribute<Long>>) redisUtil.get(roleSetZhKey);
-        MetaData.optionsEn.roleSet = (List<Attribute<Long>>) redisUtil.get(roleSetEnKey);
+        MetaData.optionsZh.roleSet = JsonUtil.toAttributes(redisUtil.get(roleSetZhKey), Long.class);
+        MetaData.optionsEn.roleSet = JsonUtil.toAttributes(redisUtil.get(roleSetEnKey), Long.class);
     }
 
     /**

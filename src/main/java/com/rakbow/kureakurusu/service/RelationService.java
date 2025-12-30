@@ -296,14 +296,13 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         return resultSet;
     }
 
-    @SuppressWarnings("unchecked")
     @Transactional
     public List<Personnel> personnel(int entityType, long entityId) {
         String key = STR."entity_personnel:\{entityType}:\{entityId}";
         if (!redisUtil.hasKey(key)) {
             refreshPersonnel(entityType, entityId);
         }
-        return (List<Personnel>) redisUtil.get(key);
+        return JsonUtil.toJavaList(redisUtil.get(key), Personnel.class);
     }
 
     private RelationListQueryDTO getPersonnelParam(int entityType, long entityId) {
