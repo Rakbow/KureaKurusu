@@ -296,13 +296,14 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         return resultSet;
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional
     public List<Personnel> personnel(int entityType, long entityId) {
         String key = STR."entity_personnel:\{entityType}:\{entityId}";
         if (!redisUtil.hasKey(key)) {
             refreshPersonnel(entityType, entityId);
         }
-        return JsonUtil.toJavaList(redisUtil.get(key), Personnel.class);
+        return (List<Personnel>) redisUtil.get(key);
     }
 
     private RelationListQueryDTO getPersonnelParam(int entityType, long entityId) {
@@ -327,7 +328,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
         SearchResult<RelationVO> relations = list(param);
         if (relations.data.isEmpty()) {
-            redisUtil.set(key, JsonUtil.toJson(res));
+            redisUtil.set(key, res);
             return;
         }
 
@@ -350,7 +351,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 })
                 .toList();
 
-        redisUtil.set(key, JsonUtil.toJson(res));
+        redisUtil.set(key, res);
     }
 
 }

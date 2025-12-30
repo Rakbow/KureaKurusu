@@ -1,43 +1,54 @@
 package com.rakbow.kureakurusu.toolkit.jackson;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
-
-import java.io.IOException;
+import lombok.SneakyThrows;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.ValueDeserializerModifier;
+import tools.jackson.databind.deser.std.DelegatingDeserializer;
 
 /**
  * @author Rakbow
- * @since 2025/9/1 14:59
- */
-public class ListQueryDTOModifier extends BeanDeserializerModifier {
+ * @since 2025/12/30 22:46
+*/
+public class ListQueryDTOModifier extends ValueDeserializerModifier {
 
     @Override
-    public JsonDeserializer<?> modifyDeserializer(
+    public ValueDeserializer<?> modifyDeserializer(
             DeserializationConfig config,
-            BeanDescription beanDesc,
-            JsonDeserializer<?> deserializer) {
+            BeanDescription.Supplier beanDescRef,
+            ValueDeserializer<?> deserializer) {
 
-        // 只处理 ListQueryDTO 及其子类
-        if (ListQueryDTO.class.isAssignableFrom(beanDesc.getBeanClass()) && deserializer instanceof BeanDeserializer original) {
-
-            return new BeanDeserializer(original) {
-                @Override
-                public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                    Object obj = super.deserialize(p, ctxt); // 调用原始反序列化逻辑
-                    if (obj instanceof ListQueryDTO) {
-                        ((ListQueryDTO) obj).init(); // 调用子类 init()
-                    }
-                    return obj;
-                }
-            };
+        if (ListQueryDTO.class.isAssignableFrom(beanDescRef.get().getBeanClass())) {
+            return new ListQueryDTODeserializer(deserializer);
         }
 
         return deserializer;
+    }
+
+    /**
+     * 自定义 DelegatingDeserializer
+     */
+    public static class ListQueryDTODeserializer extends DelegatingDeserializer {
+
+        public ListQueryDTODeserializer(ValueDeserializer<?> delegate) {
+            super(delegate);
+        }
+
+        @Override
+        protected ValueDeserializer<?> newDelegatingInstance(ValueDeserializer<?> newDelegatee) {
+            return new ListQueryDTODeserializer(newDelegatee);
+        }
+
+        @SneakyThrows
+        @Override
+        public Object deserialize(JsonParser p, DeserializationContext context) {
+            Object o = super.deserialize(p, context);
+            if (o instanceof ListQueryDTO dto) dto.init();
+            return o;
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.data.common.UserMiniVO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
 import com.rakbow.kureakurusu.data.enums.UserAuthority;

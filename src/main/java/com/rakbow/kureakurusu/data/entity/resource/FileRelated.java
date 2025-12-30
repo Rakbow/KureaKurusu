@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import io.github.linpeilie.annotations.AutoMapping;

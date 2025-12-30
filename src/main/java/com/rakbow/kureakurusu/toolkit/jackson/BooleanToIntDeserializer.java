@@ -1,13 +1,12 @@
 package com.rakbow.kureakurusu.toolkit.jackson;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.core.JsonParser;
-import java.io.IOException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.ValueDeserializer;
 
-public class BooleanToIntDeserializer extends JsonDeserializer<Integer> {
+public class BooleanToIntDeserializer extends ValueDeserializer<Integer> {
     @Override
-    public Integer deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException {
+    public Integer deserialize(JsonParser p, DeserializationContext deserializationContext) {
         boolean boolValue = p.getBooleanValue();
         return boolValue ? 1 : 0;
     }

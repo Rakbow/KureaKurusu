@@ -1,30 +1,25 @@
 package com.rakbow.kureakurusu.config;
 
-import com.rakbow.kureakurusu.interceptor.LoginTicketInterceptor;
 import com.rakbow.kureakurusu.interceptor.LocaleResolver;
+import com.rakbow.kureakurusu.interceptor.LoginTicketInterceptor;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-
-import jakarta.annotation.Resource;
-
-import java.util.Locale;
 
 /**
  * @author Rakbow
  * @since 2022-08-17 23:53
  */
+@RequiredArgsConstructor
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Resource
-    private LoginTicketInterceptor loginTicketInterceptor;
-    @Resource
-    private TokenInterceptor tokenInterceptor;
+    private final LoginTicketInterceptor loginTicketInterceptor;
+    private final TokenInterceptor tokenInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -35,12 +30,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocaleResolver localeResolver(){
-        LocaleResolver resolver = new LocaleResolver();
-        resolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        resolver.setCookieName("lang");
-        return resolver;
+    public LocaleResolver localeResolver() {
+        return new LocaleResolver();
     }
+
     //配置拦截器获取URL中的key=“lang” （?lang=zh_CN）
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {

@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.data.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 

@@ -42,10 +42,11 @@ public class LocaleResolver extends CookieLocaleResolver {
     }
 
     //重写构造方法,改变cookie信息
-    public LocaleResolver(){
-        super("locale");
+    public LocaleResolver() {
+        super("lang");
+        super.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
         //cookie有效期30天
-        this.setCookieMaxAge(Duration.ofSeconds(30*24*60*60));
+        this.setCookieMaxAge(Duration.ofSeconds(30 * 24 * 60 * 60));
     }
 
 }

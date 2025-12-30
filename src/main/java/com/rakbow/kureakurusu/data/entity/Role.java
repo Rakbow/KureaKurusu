@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

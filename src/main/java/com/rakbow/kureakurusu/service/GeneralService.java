@@ -57,6 +57,7 @@ public class GeneralService {
     // }
 
     //region common
+    @SuppressWarnings("unchecked")
     public void loadMetaData() {
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
@@ -67,23 +68,23 @@ public class GeneralService {
         MetaData.optionsZh.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "zh");
         MetaData.optionsEn.mediaFormatSet = EnumHelper.getAttributeOptions(MediaFormat.class, "en");
 
-        if (!redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:zh")
-                || !redisUtil.hasKey(STR."\{RedisKey.OPTION_ROLE_SET}:en")) {
+        String roleSetZhKey = STR."\{RedisKey.OPTION_ROLE_SET}:zh";
+        String roleSetEnKey = STR."\{RedisKey.OPTION_ROLE_SET}:en";
+
+        if (!redisUtil.hasKey(roleSetZhKey) || !redisUtil.hasKey(roleSetEnKey)) {
             List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
             roles.forEach(i -> {
                 MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
                 MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
             });
-            redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}:zh");
-            redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:zh", MetaData.optionsZh.roleSet);
-            redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}:en");
-            redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:en", MetaData.optionsEn.roleSet);
+            redisUtil.delete(roleSetZhKey);
+            redisUtil.set(roleSetZhKey, MetaData.optionsZh.roleSet);
+            redisUtil.delete(roleSetEnKey);
+            redisUtil.set(roleSetEnKey, MetaData.optionsEn.roleSet);
         }
 
-        String roleSetZhJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:zh"));
-        MetaData.optionsZh.roleSet = JsonUtil.toAttributes(roleSetZhJson, Long.class);
-        String roleSetEnJson = JsonUtil.toJson(redisUtil.get(STR."\{RedisKey.OPTION_ROLE_SET}:en"));
-        MetaData.optionsEn.roleSet = JsonUtil.toAttributes(roleSetEnJson, Long.class);
+        MetaData.optionsZh.roleSet = (List<Attribute<Long>>) redisUtil.get(roleSetZhKey);
+        MetaData.optionsEn.roleSet = (List<Attribute<Long>>) redisUtil.get(roleSetEnKey);
     }
 
     /**
