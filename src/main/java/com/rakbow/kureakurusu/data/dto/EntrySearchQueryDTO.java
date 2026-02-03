@@ -29,15 +29,19 @@ public class EntrySearchQueryDTO extends ListQueryDTO {
         type = super.getVal("type");
         subType = super.getVal("subType");
         keyword = super.getVal("keyword");
-        if(Objects.nonNull(keyword))
-            if(keyword.contains(",")) {
+        if (Objects.nonNull(keyword)) {
+            if (keyword.contains(",")) {
                 keywords = Arrays.stream(super.getKeyword().split(","))
                         .map(String::trim)
                         .filter(s -> !s.isEmpty())
                         .toList();
-            }else {
+            } else {
+                keywords = new ArrayList<>();
                 keywords.add(keyword);
             }
+        } else {
+            keywords = new ArrayList<>();
+        }
     }
 
 }

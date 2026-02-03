@@ -134,7 +134,8 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             eq(Objects.nonNull(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType());
             eq(StringUtil.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion());
             eq(Item::getStatus, 1);
-            orderBy(dto.isSort(), dto.asc(), dto.getSortField());
+            orderBy(!(Objects.nonNull(dto.getListId()) && StringUtil.equals(dto.getSortField(), "id"))
+                            && dto.isSort(), dto.asc(), dto.getSortField());
             orderByDesc(!dto.isSort(), Item::getId);
         }};
         if (dto.hasRelatedEntries()) {
@@ -154,6 +155,13 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                             on.eq(FavListItem::getEntityId, Item::getId))
                     .and(aw -> aw.and(w ->
                             w.eq(FavListItem::getListId, dto.getListId())));
+            if (dto.isSort() && StringUtil.equals(dto.getSortField(), "id")) {
+                if (dto.asc()) {
+                    wrapper.orderByAsc(FavListItem::getCreatedAt);
+                } else {
+                    wrapper.orderByDesc(FavListItem::getCreatedAt);
+                }
+            }
         }
         IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
