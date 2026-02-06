@@ -30,13 +30,13 @@ public class EntryController {
     }
 
     @PostMapping("create")
-    public ApiResult create(@Valid @RequestBody EntrySuperCreateDTO dto, BindingResult errors) {
+    public ApiResult create(@Valid @RequestBody EntryDTO.EntrySuperCreateDTO dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         return ApiResult.ok(srv.create(dto));
     }
 
     @PostMapping("update")
-    public ApiResult update(@Valid @RequestBody EntryUpdateDTO dto, BindingResult errors) {
+    public ApiResult update(@Valid @RequestBody EntryDTO.EntryUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
@@ -45,12 +45,12 @@ public class EntryController {
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody EntryListQueryDTO dto) {
+    public ApiResult list(@RequestBody EntryDTO.EntryListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody EntrySearchQueryDTO param) {
+    public ApiResult search(@RequestBody EntryDTO.EntrySearchQueryDTO param) {
         return ApiResult.ok(srv.search(param));
     }
 

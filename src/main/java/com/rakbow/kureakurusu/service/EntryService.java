@@ -75,7 +75,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public long create(EntrySuperCreateDTO dto) {
+    public long create(EntryDTO.EntrySuperCreateDTO dto) {
         //save entry
         Entry entry = converter.convert(dto.entry(), Entry.class);
         save(entry);
@@ -89,7 +89,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public void update(EntryUpdateDTO dto) {
+    public void update(EntryDTO.EntryUpdateDTO dto) {
         Entry entry = converter.convert(dto, Entry.class);
         updateById(entry);
 
@@ -98,7 +98,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EntrySearchVO> search(EntrySearchQueryDTO dto) {
+    public SearchResult<EntrySearchVO> search(EntryDTO.EntrySearchQueryDTO dto) {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<>() {{
             selectAsClass(Entry.class, EntrySimpleVO.class);
             eq(Entry::getStatus, 1);
@@ -179,7 +179,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
-    public SearchResult<EntryListVO> list(EntryListQueryDTO dto) {
+    public SearchResult<EntryListVO> list(EntryDTO.EntryListQueryDTO dto) {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getType, dto.getType())
                 .and(StringUtil.isNotEmpty(dto.getKeyword()), i -> i
