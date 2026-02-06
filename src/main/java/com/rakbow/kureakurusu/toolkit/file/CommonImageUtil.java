@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.toolkit.file;
 
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.common.Constant;
-import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
+import com.rakbow.kureakurusu.data.dto.ImageDTO;
 import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.SneakyThrows;
@@ -50,8 +50,8 @@ public class CommonImageUtil {
     }
 
     @SneakyThrows
-    public static ImageMiniDTO generateThumbTmp(ImageMiniDTO cover) {
-        ImageMiniDTO thumb = new ImageMiniDTO();
+    public static ImageDTO.ImageMiniDTO generateThumbTmp(ImageDTO.ImageMiniDTO cover) {
+        ImageDTO.ImageMiniDTO thumb = new ImageDTO.ImageMiniDTO();
         thumb.setName("Thumb");
         thumb.setType(ImageType.THUMB.getValue());
 
@@ -93,8 +93,8 @@ public class CommonImageUtil {
     }
 
     @SneakyThrows
-    public static ImageMiniDTO generateThumb(ImageMiniDTO cover) {
-        ImageMiniDTO thumb = new ImageMiniDTO();
+    public static ImageDTO.ImageMiniDTO generateThumb(ImageDTO.ImageMiniDTO cover) {
+        ImageDTO.ImageMiniDTO thumb = new ImageDTO.ImageMiniDTO();
         thumb.setName("Thumb");
         thumb.setType(ImageType.THUMB.getValue());
 

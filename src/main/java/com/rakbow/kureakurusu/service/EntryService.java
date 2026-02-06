@@ -150,7 +150,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
     @SneakyThrows
     @Transactional
     public String uploadImage(long id, int type, MultipartFile file) {
-        ImageMiniDTO image = new ImageMiniDTO(type, file);
+        ImageDTO.ImageMiniDTO image = new ImageDTO.ImageMiniDTO(type, file);
         Entry entry = getById(id);
         String finalUrl;
         String fieldName;

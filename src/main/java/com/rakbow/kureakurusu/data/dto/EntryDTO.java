@@ -57,7 +57,7 @@ public class EntryDTO {
 
     public record EntrySuperCreateDTO(
             EntryDTO.EntryCreateDTO entry,
-            List<ImageMiniDTO> images,
+            List<ImageDTO.ImageMiniDTO> images,
             List<RelatedEntityMiniDTO> relatedEntries
     ) {
     }

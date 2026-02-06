@@ -28,12 +28,12 @@ public class ImageController {
     //region image
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ImageListQueryDTO dto) {
+    public ApiResult list(@RequestBody ImageDTO.ImageListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("preview")
-    public ApiResult preview(@RequestBody ImagePreviewDTO dto) {
+    public ApiResult preview(@RequestBody ImageDTO.ImagePreviewDTO dto) {
         return ApiResult.ok(srv.preview(dto));
     }
 
@@ -45,10 +45,10 @@ public class ImageController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("generateThumb") boolean generateThumb
     ) {
-        List<ImageCreateDTO> infos = JsonUtil.toJavaList(infoStr, ImageCreateDTO.class);
-        List<ImageMiniDTO> images = new ArrayList<>();
+        List<ImageDTO.ImageCreateDTO> infos = JsonUtil.toJavaList(infoStr, ImageDTO.ImageCreateDTO.class);
+        List<ImageDTO.ImageMiniDTO> images = new ArrayList<>();
         for (int i = 0; i < infos.size(); i++) {
-            images.add(new ImageMiniDTO(infos.get(i), files.get(i)));
+            images.add(new ImageDTO.ImageMiniDTO(infos.get(i), files.get(i)));
         }
         //check
         if (images.isEmpty()) throw ErrorFactory.fileEmpty();
@@ -58,7 +58,7 @@ public class ImageController {
     }
 
     @PostMapping("update")
-    public ApiResult update(@Valid @RequestBody ImageUpdateDTO dto, BindingResult errors) {
+    public ApiResult update(@Valid @RequestBody ImageDTO.ImageUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         //update
@@ -67,7 +67,7 @@ public class ImageController {
     }
 
     @DeleteMapping("delete")
-    public ApiResult delete(@RequestBody ImageDeleteDTO dto) {
+    public ApiResult delete(@RequestBody ImageDTO.ImageDeleteDTO dto) {
         srv.delete(dto);
         return ApiResult.ok("entity.crud.delete.success");
     }

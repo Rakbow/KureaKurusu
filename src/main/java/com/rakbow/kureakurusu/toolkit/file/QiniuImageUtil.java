@@ -3,7 +3,7 @@ package com.rakbow.kureakurusu.toolkit.file;
 import com.rakbow.kureakurusu.data.UploadImage;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.common.Constant;
-import com.rakbow.kureakurusu.data.dto.ImageMiniDTO;
+import com.rakbow.kureakurusu.data.dto.ImageDTO;
 import com.rakbow.kureakurusu.data.enums.FileType;
 import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.entity.resource.Image;
@@ -41,9 +41,9 @@ public class QiniuImageUtil {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
-    public List<Image> uploadImages(int entityType, long entityId, List<ImageMiniDTO> addImages) {
+    public List<Image> uploadImages(int entityType, long entityId, List<ImageDTO.ImageMiniDTO> addImages) {
         List<Image> images = new ArrayList<>();
-        for (ImageMiniDTO miniImage : addImages) {
+        for (ImageDTO.ImageMiniDTO miniImage : addImages) {
             //handle image
             UploadImage img = handleImage(entityType, entityId, miniImage);
             //upload image
@@ -113,7 +113,7 @@ public class QiniuImageUtil {
 
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
-    public String uploadEntryImage(int entityType, long entityId, ImageMiniDTO image) {
+    public String uploadEntryImage(int entityType, long entityId, ImageDTO.ImageMiniDTO image) {
         //handle image
         UploadImage img = handleImage(entityType, entityId, image);
         //upload image
@@ -123,7 +123,7 @@ public class QiniuImageUtil {
     }
 
     @SneakyThrows
-    private UploadImage handleImage(int entityType, long entityId, ImageMiniDTO image) {
+    private UploadImage handleImage(int entityType, long entityId, ImageDTO.ImageMiniDTO image) {
         UploadImage res = new UploadImage();
         //generate upload file pre-fix
         res.setPrefixKey(STR."\{IMAGE_PREFIX}\{entityType}/\{entityId}/");

@@ -58,7 +58,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     );
 
     @Transactional
-    public SearchResult<ImageVO> list(ImageListQueryDTO dto) {
+    public SearchResult<ImageVO> list(ImageDTO.ImageListQueryDTO dto) {
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
                 .eq(Image::getEntityType, dto.getRelEntityType())
                 .eq(Image::getEntityId, dto.getRelEntityId())
@@ -74,12 +74,12 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
 
     @SneakyThrows
     @Transactional
-    public void upload(int entityType, long entityId, List<ImageMiniDTO> images, boolean generateThumb) {
+    public void upload(int entityType, long entityId, List<ImageDTO.ImageMiniDTO> images, boolean generateThumb) {
         //generate thumb
         if (generateThumb) {
-            ImageMiniDTO cover = images.stream().filter(i -> i.getType() == ImageType.MAIN.getValue()).findFirst().orElse(null);
+            ImageDTO.ImageMiniDTO cover = images.stream().filter(i -> i.getType() == ImageType.MAIN.getValue()).findFirst().orElse(null);
             if (cover != null) {
-                ImageMiniDTO thumb = CommonImageUtil.generateThumbTmp(cover);
+                ImageDTO.ImageMiniDTO thumb = CommonImageUtil.generateThumbTmp(cover);
                 images.add(thumb);
             }
         }
@@ -97,13 +97,13 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     }
 
     @Transactional
-    public void update(ImageUpdateDTO dto) {
+    public void update(ImageDTO.ImageUpdateDTO dto) {
         updateById(converter.convert(dto, Image.class));
     }
 
     @Transactional
-    public void delete(ImageDeleteDTO dto) {
-        String[] keys = dto.images().stream().map(ImageDeleteMiniDTO::url)
+    public void delete(ImageDTO.ImageDeleteDTO dto) {
+        String[] keys = dto.images().stream().map(ImageDTO.ImageDeleteMiniDTO::url)
                 .map(url -> url.replace(Constant.FILE_DOMAIN, "")).toArray(String[]::new);
         //delete from qiniu server
         List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(keys);
@@ -113,7 +113,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         // logSrv.create(dto.getEntityType(), dto.getEntityId(), ChangelogField.IMAGE, ChangelogOperate.DELETE);
     }
 
-    public ImageDisplayVO preview(ImagePreviewDTO dto) {
+    public ImageDisplayVO preview(ImageDTO.ImagePreviewDTO dto) {
         IPage<Image> pages = page(new Page<>(1, dto.count()),
                 new LambdaQueryWrapper<Image>().eq(Image::getEntityType, dto.entityType())
                         .eq(Image::getEntityId, dto.entityId())
