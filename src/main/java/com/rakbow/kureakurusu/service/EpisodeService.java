@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.AlbumDiscMapper;
 import com.rakbow.kureakurusu.dao.EpisodeMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
@@ -85,6 +86,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
 
     @Transactional
     @SneakyThrows
+    @Search
     public SearchResult<EpisodeListVO> list(EpisodeListQueryDTO dto) {
         MPJLambdaWrapper<Episode> wrapper = new MPJLambdaWrapper<Episode>()
                 .orderBy(dto.isSort(), dto.asc(), dto.getSortField())

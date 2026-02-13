@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -122,6 +123,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @SneakyThrows
     @Transactional(readOnly = true)
+    @Search
     public SearchResult<ItemSearchVO> search(ItemSearchQueryDTO dto) {
         Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
         MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<>() {{
@@ -176,6 +178,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
     @SneakyThrows
     @Transactional(readOnly = true)
+    @Search
     public SearchResult<? extends ItemListVO> list(ItemListQueryDTO param) {
         param.init();
         Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());

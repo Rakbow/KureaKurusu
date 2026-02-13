@@ -21,12 +21,12 @@ public class SearchAspect {
      * set search time to all search method
      */
     @SneakyThrows
-    @Around("within(@org.springframework.stereotype.Service *) && execution(* *(..))")
-    public Object setSearchTime(ProceedingJoinPoint pjp) {
-        long start = System.currentTimeMillis();
+    @Around("@annotation(com.rakbow.kureakurusu.annotation.Search)")
+    public Object recordSearchTime(ProceedingJoinPoint pjp) {
+        long start = System.nanoTime();
         Object result = pjp.proceed();
-        String time = String.format("%.2f", (System.currentTimeMillis() - start) / 1000.0);
-        if (result instanceof SearchResult<?> searchResult) searchResult.time = time;
+        if (result instanceof SearchResult<?> searchResult)
+            searchResult.time = String.format("%.3f", (System.nanoTime() - start) / 1000_000_000.000);
         return result;
     }
 

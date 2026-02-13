@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.ImageMapper;
 import com.rakbow.kureakurusu.data.CommonConstant;
 import com.rakbow.kureakurusu.data.RedisKey;
@@ -58,6 +59,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     );
 
     @Transactional
+    @Search
     public SearchResult<ImageVO> list(ImageDTO.ImageListQueryDTO dto) {
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
                 .eq(Image::getEntityType, dto.getRelEntityType())

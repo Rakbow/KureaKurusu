@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.dao.RelationMapper;
@@ -59,6 +60,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
     @Transactional
     @SneakyThrows
+    @Search
     public SearchResult<RelationVO> list(RelationListQueryDTO dto) {
         int targetEntityType = dto.getTargetEntityType();
         dto.setOffset((dto.getPage() - 1) * dto.getSize());
@@ -188,6 +190,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     }
 
     @Transactional
+    @Search
     public SearchResult<ItemSearchVO> relatedItems(RelatedItemQueryDTO dto) {
         IPage<Item> pages;
         Page<Item> page = new Page<>(1, dto.size());

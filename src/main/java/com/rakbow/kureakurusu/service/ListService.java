@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.FavListItemMapper;
 import com.rakbow.kureakurusu.dao.FavListMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
@@ -57,6 +58,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
         save(list);
     }
 
+    @Search
     public SearchResult<FavList> lists(FavListQueryDTO dto) {
         User user = AuthorityInterceptor.getCurrentUser();
         IPage<FavList> pages = page(
@@ -83,6 +85,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
     @SneakyThrows
     @SuppressWarnings({"unchecked", "rawTypes"})
+    @Search
     public SearchResult<? extends EntitySearchVO> getItems(FavListItemListQueryDTO dto) {
         int targetEntityType = dto.getType();
         ListQueryDTO param = dto.getParam();

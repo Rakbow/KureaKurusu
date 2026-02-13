@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.FileInfoMapper;
 import com.rakbow.kureakurusu.dao.FileRelatedMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
@@ -52,6 +53,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
 
     @Transactional
     @SneakyThrows
+    @Search
     public SearchResult<FileListVO> search(FileSearchParams param) {
         LambdaQueryWrapper<FileInfo> wrapper = new LambdaQueryWrapper<FileInfo>()
                 .eq(FileInfo::getStatus, 1)
@@ -64,6 +66,7 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
 
     @Transactional
     @SneakyThrows
+    @Search
     public SearchResult<FileListVO> list(FileListQueryDTO dto) {
         MPJLambdaWrapper<FileInfo> wrapper = new MPJLambdaWrapper<FileInfo>()
                 .selectAll(FileInfo.class)
