@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.EntryMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Entry;
+import com.rakbow.kureakurusu.data.entity.FavListItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
+import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.EntryType;
 import com.rakbow.kureakurusu.data.enums.ImageType;
@@ -98,6 +101,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
+    @Search
     public SearchResult<EntrySearchVO> search(EntryDTO.EntrySearchQueryDTO dto) {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<>() {{
             selectAsClass(Entry.class, EntrySimpleVO.class);
@@ -134,11 +138,21 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
             wrapper.and(w -> dto.getKeywords().forEach(k ->
                     w.or(i -> i
-                    .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
-                    .or().like(Entry::getName, k)
-                    .or().like(Entry::getNameZh, k)
-                    .or().like(Entry::getNameEn, k)
-            )));
+                            .apply("JSON_UNQUOTE(JSON_EXTRACT(aliases, '$[*]')) LIKE concat('%', {0}, '%')", k)
+                            .or().like(Entry::getName, k)
+                            .or().like(Entry::getNameZh, k)
+                            .or().like(Entry::getNameEn, k)
+                    )));
+        }
+        if (Objects.nonNull(dto.getListId())) {
+            wrapper.innerJoin(Relation.class, on -> on
+                            .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                            .eq(Relation::getRelatedEntityId, Entry::getId))
+                    .innerJoin(FavListItem.class, on -> on
+                            .eq(FavListItem::getEntityType, Relation::getEntityType)
+                            .eq(FavListItem::getEntityId, Relation::getEntityId))
+                    .eq(FavListItem::getListId, dto.getListId())
+                    .distinct();
         }
         IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);
         List<EntrySearchVO> res = pages.getRecords().stream().map(EntrySearchVO::new).toList();
@@ -179,6 +193,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
 
     @Transactional
     @SneakyThrows
+    @Search
     public SearchResult<EntryListVO> list(EntryDTO.EntryListQueryDTO dto) {
         MPJLambdaWrapper<Entry> wrapper = new MPJLambdaWrapper<Entry>()
                 .eq(Entry::getType, dto.getType())

@@ -81,12 +81,14 @@ public class EntryDTO {
     public static class EntrySearchQueryDTO extends ListQueryDTO {
 
         private Integer type;
+        private Integer listId;
         private Integer subType;
         private String keyword;
         private List<String> keywords = new ArrayList<>();
 
         public void init() {
             type = super.getVal("type");
+            listId = super.getVal("listId");
             subType = super.getVal("subType");
             keyword = super.getVal("keyword");
             if (Objects.nonNull(keyword)) {
