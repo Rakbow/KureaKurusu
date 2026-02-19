@@ -43,9 +43,10 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class ItemService extends ServiceImpl<ItemMapper, Item> {
 
-    private final ImageService imageSrv;
+    private final ImageService imgSrv;
     private final FileService fileSrv;
-    private final RelationService relationSrv;
+    private final RelationService relSrv;
+    private final ResourceService resSrv;
     private final ItemExtraService extSrv;
 
     private final PopularUtil popularUtil;
@@ -66,10 +67,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         Item item = converter.convert(itemDTO, Item.class);
         save(item);
         //save related entities
-        relationSrv.batchCreate(ENTITY_TYPE.getValue(), item.getId(), itemDTO.getType(), dto.relatedEntries());
+        relSrv.batchCreate(ENTITY_TYPE.getValue(), item.getId(), itemDTO.getType(), dto.relatedEntries());
         //save image
         IntStream.range(0, dto.images().size()).forEach(i -> dto.images().get(i).setFile(images[i]));
-        imageSrv.upload(ENTITY_TYPE.getValue(), item.getId(), dto.images(), dto.generateThumb());
+        imgSrv.upload(ENTITY_TYPE.getValue(), item.getId(), dto.images(), dto.generateThumb());
 
         //save episode
         if (itemDTO.getType().intValue() == ItemType.ALBUM.getValue()) {
@@ -117,7 +118,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         return ItemDetailVO.builder()
                 .item(vo)
                 .traffic(entityUtil.buildTraffic(ENTITY_TYPE.getValue(), id))
-                .cover(imageSrv.getCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))
+                .cover(imgSrv.getCache(ENTITY_TYPE.getValue(), item.getId(), ImageType.MAIN))
                 .build();
     }
 
@@ -170,9 +171,12 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         List<ItemSearchVO> items = new ArrayList<>(converter.convert(pages.getRecords(), ItemSearchVO.class));
         //get image cache
         items.forEach(i -> {
-            i.setCover(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
-            i.setThumb(imageSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
+            i.setCover(imgSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
+            i.setThumb(imgSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
         });
+        if (Objects.nonNull(dto.getListId())) {
+            resSrv.getLocalResourceCompletedFlag(items);
+        }
         return new SearchResult<>(items, pages.getTotal());
     }
 
@@ -221,7 +225,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
         // 将资源统计列表转换为 Map<entityId, count>
         Map<Long, Integer> fileCountMap = fileSrv.count(entityType, ids).stream()
                 .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
-        Map<Long, Integer> imageCountMap = imageSrv.count(entityType, ids).stream()
+        Map<Long, Integer> imageCountMap = imgSrv.count(entityType, ids).stream()
                 .collect(Collectors.toMap(EntityRelatedCount::getEntityId, EntityRelatedCount::getCount));
         for (ItemListVO item : items) {
             item.setFileCount(fileCountMap.getOrDefault(item.getId(), 0));

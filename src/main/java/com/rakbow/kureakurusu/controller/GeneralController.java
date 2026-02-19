@@ -3,8 +3,10 @@ package com.rakbow.kureakurusu.controller;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
+import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
+import com.rakbow.kureakurusu.data.entity.EntityResourceInfo;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -120,6 +122,13 @@ public class GeneralController {
     @PostMapping("local-path")
     public ApiResult localPath(@RequestBody EntityDTO dto) {
         srv.localPath(dto);
+        return ApiResult.ok();
+    }
+
+    @SneakyThrows
+    @PostMapping("local-completed-flag-update")
+    public ApiResult updateLocalResourceCompletedFlag(@RequestBody EntityResourceInfoUpdateDTO dto) {
+        srv.updateLocalResourceCompletedFlag(dto);
         return ApiResult.ok();
     }
 

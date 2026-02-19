@@ -22,5 +22,6 @@ public class ItemSearchVO {
     private double price;
     private String currency;
     private String region;
+    private Boolean completedFlag;
 
 }

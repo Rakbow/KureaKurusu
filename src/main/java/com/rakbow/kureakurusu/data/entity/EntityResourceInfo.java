@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author Rakbow
@@ -16,5 +18,7 @@ public class EntityResourceInfo {
     private Integer entitySubType;
     private Long entityId;
     private String path;
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean completedFlag;
 
 }
