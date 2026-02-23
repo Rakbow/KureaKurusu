@@ -141,18 +141,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                             && dto.isSort(), dto.asc(), dto.getSortField());
             orderByDesc(!dto.isSort(), Item::getId);
         }};
-        if (dto.hasRelatedEntries()) {
-            //inner join relation
-            wrapper.innerJoin(Relation.class, on -> on
-                            .eq(Relation::getEntityId, Item::getId)
-                            .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
-                    )
-                    .and(aw -> aw.or(w -> w
-                            .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
-                            .in(Relation::getRelatedEntityId, dto.getEntries())))
-                    .groupBy(Item::getId)
-                    .having(STR."COUNT(t1.related_entity_type) = \{dto.getEntries().size()}");
-        }
         if (Objects.nonNull(dto.getListId())) {
             wrapper.innerJoin(FavListItem.class, on ->
                             on.eq(FavListItem::getEntityId, Item::getId))
@@ -165,6 +153,18 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     wrapper.orderByDesc(FavListItem::getCreatedAt);
                 }
             }
+        }
+        if (dto.hasRelatedEntries()) {
+            //inner join relation
+            wrapper.innerJoin(Relation.class, on -> on
+                            .eq(Relation::getEntityId, Item::getId)
+                            .eq(Relation::getEntityType, ENTITY_TYPE.getValue())
+                    )
+                    .and(aw -> aw.or(w -> w
+                            .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
+                            .in(Relation::getRelatedEntityId, dto.getEntries())));
+                    // .groupBy(Item::getId)
+                    // .having(STR."COUNT(t2.related_entity_type) = \{dto.getEntries().size()}");
         }
         IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();

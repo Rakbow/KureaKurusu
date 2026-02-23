@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +23,7 @@ import com.rakbow.kureakurusu.data.vo.temp.EntitySearchVO;
 import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
 import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.toolkit.CollectionUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.MybatisBatchUtil;
 import io.github.linpeilie.Converter;
@@ -43,6 +45,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     private final EpisodeService epSrv;
     private final MybatisBatchUtil mybatisBatchUtil;
     private final FavListMapper mapper;
+    private final FavListItemMapper favListItemMapper;
     private final Converter converter;
 
     public FavListVO detail(long id) {
@@ -75,12 +78,18 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     public void addItems(ListItemCreateDTO dto) {
         List<FavListItem> items = new ArrayList<>();
         for (long itemId : dto.itemIds()) {
+            long count = favListItemMapper.selectCount(new LambdaQueryWrapper<FavListItem>()
+                    .eq(FavListItem::getListId, dto.listId())
+                    .eq(FavListItem::getEntityType, dto.type())
+                    .eq(FavListItem::getEntityId, itemId));
+            if (count > 0) continue;
             items.add(new FavListItem(dto.listId(), dto.type(), itemId));
         }
-        update(new LambdaUpdateWrapper<FavList>().set(FavList::getUpdateTime, DateHelper.now())
-                .eq(FavList::getId, dto.listId()));
+        if (CollectionUtil.isEmpty(items)) return;
         //batch insert
         mybatisBatchUtil.batchInsert(items, FavListItemMapper.class);
+        update(new LambdaUpdateWrapper<FavList>().set(FavList::getUpdateTime, DateHelper.now())
+                .eq(FavList::getId, dto.listId()));
     }
 
     @SneakyThrows

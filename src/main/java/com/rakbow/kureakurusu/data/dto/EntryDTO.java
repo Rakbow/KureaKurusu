@@ -99,7 +99,7 @@ public class EntryDTO {
                             .toList();
                 } else {
                     keywords = new ArrayList<>();
-                    keywords.add(keyword);
+                    keywords.add(keyword.trim());
                 }
             } else {
                 keywords = new ArrayList<>();
