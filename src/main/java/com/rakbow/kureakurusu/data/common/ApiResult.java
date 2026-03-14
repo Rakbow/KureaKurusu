@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.common;
 
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -18,7 +17,6 @@ public class ApiResult {
     /**
      * Http Status Code
      */
-    private String code;
     private int state;//操作状态 0-失败 1-成功
     private Object data;//响应数据
     private long total;//数据总数
@@ -27,13 +25,8 @@ public class ApiResult {
     private static final int SUCCESS_STATE = 1;
     private static final int FAIL_STATE = 0;
 
-    private static final String SUCCESS_CODE = String.valueOf(HttpStatus.OK.value());
-    private static final String FAIL_CODE = String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    private static final String NOT_FOUND_CODE = String.valueOf(HttpStatus.NOT_FOUND.value());
-
     public ApiResult() {
         this.state = SUCCESS_STATE;
-        this.code = SUCCESS_CODE;
         this.message = "";
     }
 
@@ -44,7 +37,6 @@ public class ApiResult {
 
     public ApiResult(Exception e) {
         this.state = FAIL_STATE;
-        this.code = FAIL_CODE;
         this.message = e.getMessage();
     }
 
@@ -71,21 +63,18 @@ public class ApiResult {
     public static ApiResult notFound(String error) {
         ApiResult r =  new ApiResult();
         r.state = FAIL_STATE;
-        r.code = NOT_FOUND_CODE;
         r.message = error;
         return r;
     }
 
     public ApiResult ok(Object data, String messageKey) {
         this.data = data;
-        this.code = SUCCESS_CODE;
         this.message = I18nHelper.getMessage(messageKey);
         return this;
     }
 
     public ApiResult fail(String error) {
         this.state = FAIL_STATE;
-        this.code = FAIL_CODE;
         this.message = error;
         return this;
     }
@@ -95,7 +84,6 @@ public class ApiResult {
         this.message = errors.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("\n"));
-        this.code = FAIL_CODE;
         return this;
     }
 

@@ -69,8 +69,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         if (relations.isEmpty()) return new SearchResult<>();
         long total = mapper.count(dto);
 
-        List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
-
         //mark direction
         relations.forEach(r -> {
             if (r.getRelatedEntityType() == dto.getEntityType()
@@ -99,8 +97,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
             Long roleId = positive ? r.getRoleId() : r.getRelatedRoleId();
             Long targetRoleId = positive ? r.getRelatedRoleId() : r.getRoleId();
-            Attribute<Long> role = DataFinder.findAttributeByValue(roleId, roleSet);
-            Attribute<Long> targetRole = DataFinder.findAttributeByValue(targetRoleId, roleSet);
+            Attribute<Long> role = MetaData.getOptions().roleSet.get(roleId);
+            Attribute<Long> targetRole = MetaData.getOptions().roleSet.get(targetRoleId);
 
             int subTypeValue = positive ? r.getRelatedEntitySubType() : r.getEntitySubType();
             String subTypeLabel;
@@ -220,7 +218,6 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
     @SneakyThrows
     public List<SearchResult<RelationVO>> relatedEntries(RelatedEntryQueryDTO dto) {
         int targetEntityType = EntityType.ENTRY.getValue();
-        List<Attribute<Long>> roleSet = MetaData.getOptions().roleSet;
 
         List<SearchResult<RelationVO>> resultSet = IntStream.range(0, dto.entryTypeSets().size())
                 .mapToObj(_ -> new SearchResult<RelationVO>()).toList();
@@ -263,8 +260,8 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
                 Long roleId = positive ? r.getRoleId() : r.getRelatedRoleId();
                 Long targetRoleId = positive ? r.getRelatedRoleId() : r.getRoleId();
-                Attribute<Long> role = DataFinder.findAttributeByValue(roleId, roleSet);
-                Attribute<Long> targetRole = DataFinder.findAttributeByValue(targetRoleId, roleSet);
+                Attribute<Long> role = MetaData.getOptions().roleSet.get(roleId);
+                Attribute<Long> targetRole = MetaData.getOptions().roleSet.get(targetRoleId);
 
                 int subTypeValue = positive ? r.getRelatedEntitySubType() : r.getEntitySubType();
                 String subTypeLabel = I18nHelper.getMessage(EntryType.get(subTypeValue).getLabelKey());

@@ -25,7 +25,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 
 @Data
-@TableName(value = "entry", autoResultMap = true)
+@TableName(value = "zz_bak_entry", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = EntryListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = EntryVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)

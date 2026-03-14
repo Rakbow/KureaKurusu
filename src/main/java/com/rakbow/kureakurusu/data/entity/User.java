@@ -17,7 +17,7 @@ import lombok.Data;
  * @since 2022-08-01 18:14
  */
 @Data
-@TableName(value = "user", autoResultMap = true)
+@TableName(value = "r1_sys_user", autoResultMap = true)
 @AutoMapper(target = UserMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 public class User {
 

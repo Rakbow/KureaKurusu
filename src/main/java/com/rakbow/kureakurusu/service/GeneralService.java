@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -60,7 +61,6 @@ public class GeneralService {
     // }
 
     //region common
-    @SuppressWarnings("unchecked")
     public void loadMetaData() {
         MetaData.optionsZh = new MetaOption();
         MetaData.optionsEn = new MetaOption();
@@ -76,18 +76,16 @@ public class GeneralService {
 
         if (!redisUtil.hasKey(roleSetZhKey) || !redisUtil.hasKey(roleSetEnKey)) {
             List<Role> roles = roleMapper.selectList(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
-            roles.forEach(i -> {
-                MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
-                MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
-            });
+            MetaData.optionsZh.roleSet = roles.stream().collect(Collectors.toMap(Role::getId, i -> new Attribute<>(i.getNameZh(), i.getId())));
+            MetaData.optionsEn.roleSet = roles.stream().collect(Collectors.toMap(Role::getId, i -> new Attribute<>(i.getNameEn(), i.getId())));
             redisUtil.delete(roleSetZhKey);
             redisUtil.set(roleSetZhKey, MetaData.optionsZh.roleSet);
             redisUtil.delete(roleSetEnKey);
             redisUtil.set(roleSetEnKey, MetaData.optionsEn.roleSet);
         }
 
-        MetaData.optionsZh.roleSet = JsonUtil.toAttributes(redisUtil.get(roleSetZhKey), Long.class);
-        MetaData.optionsEn.roleSet = JsonUtil.toAttributes(redisUtil.get(roleSetEnKey), Long.class);
+        MetaData.optionsZh.roleSet = JsonUtil.toAttributeMap(redisUtil.get(roleSetZhKey), Long.class);
+        MetaData.optionsEn.roleSet = JsonUtil.toAttributeMap(redisUtil.get(roleSetEnKey), Long.class);
     }
 
     /**

@@ -4,11 +4,10 @@ import com.rakbow.kureakurusu.data.Attribute;
 import lombok.SneakyThrows;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.type.MapType;
+import tools.jackson.databind.type.TypeFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JsonUtil {
 
@@ -26,8 +25,9 @@ public class JsonUtil {
 
     @SneakyThrows
     public static <T> List<Attribute<T>> toAttributes(Object o, Class<T> clazz) {
-        JavaType attributeType = mapper.getTypeFactory().constructParametricType(Attribute.class, clazz);
-        JavaType listType = mapper.getTypeFactory().constructCollectionType(List.class, attributeType);
+        TypeFactory typeFactory = mapper.getTypeFactory();
+        JavaType attributeType = typeFactory.constructParametricType(Attribute.class, clazz);
+        JavaType listType = typeFactory.constructCollectionType(List.class, attributeType);
         return mapper.readValue(toJson(o), listType);
     }
 
@@ -63,4 +63,19 @@ public class JsonUtil {
         return res;
     }
 
+    @SneakyThrows
+    public static <T> Map<T, Attribute<T>> toAttributeMap(Object o, Class<T> clazz) {
+        if (o == null) return Collections.emptyMap();
+        TypeFactory typeFactory = mapper.getTypeFactory();
+        JavaType keyType = typeFactory.constructType(clazz);
+        JavaType valType = typeFactory.constructParametricType(Attribute.class, clazz);
+        MapType mapType = typeFactory.constructMapType(HashMap.class, keyType, valType);
+        if (o instanceof String) {
+            return mapper.readValue((String) o, mapType);
+        } else if (o instanceof Map) {
+            return mapper.convertValue(o, mapType);
+        } else {
+            return mapper.convertValue(o, mapType);
+        }
+    }
 }

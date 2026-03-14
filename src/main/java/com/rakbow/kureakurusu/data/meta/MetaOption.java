@@ -3,7 +3,9 @@ package com.rakbow.kureakurusu.data.meta;
 import com.rakbow.kureakurusu.data.Attribute;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Rakbow
@@ -11,14 +13,14 @@ import java.util.List;
  */
 public class MetaOption {
 
-    public List<Attribute<Long>> roleSet;
+    public Map<Long, Attribute<Long>> roleSet;
 
     //album
     public List<Attribute<Integer>> albumFormatSet;
     public List<Attribute<Integer>> mediaFormatSet;
 
     public MetaOption() {
-        roleSet = new ArrayList<>();
+        roleSet = new HashMap<>();
         albumFormatSet = new ArrayList<>();
         mediaFormatSet = new ArrayList<>();
     }

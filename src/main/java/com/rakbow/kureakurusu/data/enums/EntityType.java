@@ -20,7 +20,7 @@ public enum EntityType {
     EPISODE(4, "enum.entity.episode", "episode"),
     ALBUM_DISC(5, "enum.default", "album_disc"),
     FILE(98, "enum.entity.file", "file_info"),
-    USER(101, "enum.entity.user", "user");
+    USER(101, "enum.entity.user", "r1_sys_user");
 
     @EnumValue
     private final Integer value;

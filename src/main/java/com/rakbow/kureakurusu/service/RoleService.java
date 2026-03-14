@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Rakbow
@@ -59,10 +60,8 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
         MetaData.optionsZh.roleSet.clear();
         MetaData.optionsEn.roleSet.clear();
         List<Role> roles = list(new LambdaQueryWrapper<Role>().orderByAsc(Role::getId));
-        roles.forEach(i -> {
-            MetaData.optionsZh.roleSet.add(new Attribute<>(i.getNameZh(), i.getId()));
-            MetaData.optionsEn.roleSet.add(new Attribute<>(i.getNameEn(), i.getId()));
-        });
+        MetaData.optionsZh.roleSet = roles.stream().collect(Collectors.toMap(Role::getId, i -> new Attribute<>(i.getNameZh(), i.getId())));
+        MetaData.optionsEn.roleSet = roles.stream().collect(Collectors.toMap(Role::getId, i -> new Attribute<>(i.getNameEn(), i.getId())));
         redisUtil.delete(STR."\{RedisKey.OPTION_ROLE_SET}*");
         redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:zh", MetaData.optionsZh.roleSet);
         redisUtil.set(STR."\{RedisKey.OPTION_ROLE_SET}:en", MetaData.optionsEn.roleSet);
