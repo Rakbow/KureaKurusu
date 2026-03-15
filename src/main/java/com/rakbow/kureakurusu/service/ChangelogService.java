@@ -7,7 +7,7 @@ import com.rakbow.kureakurusu.data.entity.Changelog;
 import com.rakbow.kureakurusu.data.enums.ChangelogField;
 import com.rakbow.kureakurusu.data.enums.ChangelogOperate;
 import com.rakbow.kureakurusu.data.vo.ChangelogMiniVO;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class ChangelogService extends ServiceImpl<ChangelogMapper, Changelog> {
                 .entityId(id)
                 .field(field)
                 .operate(operate)
-                .operator(AuthorityInterceptor.getCurrentUser().getUsername())
+                .operator(UserContextHolder.getCurrentUser().getName())
                 .operateTime(DateHelper.now())
                 .build()
         );

@@ -1,78 +1,94 @@
 package com.rakbow.kureakurusu.interceptor;
 
-import com.rakbow.kureakurusu.data.entity.User;
-import com.rakbow.kureakurusu.service.UserService;
+import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.toolkit.CookieUtil;
+import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
-import static com.rakbow.kureakurusu.data.common.Constant.RISK;
 
 /**
  * @author Rakbow
  * @since 2022-08-17 23:25
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class LoginTicketInterceptor implements HandlerInterceptor {
 
-    @Resource
-    private UserService userSrv;
-    @Resource
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    //每次请求前
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
+        long startTime = System.currentTimeMillis();
+
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        if (isPublicPath(path)) return true;
 
         //get ticket from cookie
         String ticket = CookieUtil.getValue(request, "ticket");
         if (StringUtil.isBlank(ticket)) return true;
-        User user = null;
         //get login ticket from redis
-        String redisTicketKey = STR."login_ticket\{RISK}\{ticket}";
-        if (redisUtil.hasKey(redisTicketKey)) {
-            long userId = Long.parseLong(redisUtil.get(redisTicketKey).toString());
-            if ((AuthorityInterceptor.isCurrentUser() && AuthorityInterceptor.getCurrentUser().getId() != userId)
-                    || !AuthorityInterceptor.isCurrentUser()) {
-                user = userSrv.getById(userId);
-                AuthorityInterceptor.clearCurrentUser();
-                // 在本次请求中持有用户
-                AuthorityInterceptor.setCurrentUser(user);
-            }
-            if(user == null) user = AuthorityInterceptor.getCurrentUser();
-            // 构建用户认证的结果，并存入securityContext，以便security进行授权
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    user, user.getPassword(), AuthorityInterceptor.getAuthorities(user));
-            SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
-        } else {
-            // 凭证失效
-            AuthorityInterceptor.clearCurrentUser();
-        }
-        return true;
-    }
+        String redisKey = STR."\{RedisKey.LOGIN_TICKET}\{ticket}";
 
-    @Override
-    public void postHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, ModelAndView modelAndView) {
-        User user = AuthorityInterceptor.getCurrentUser();
-        if (user != null && modelAndView != null) {
-            modelAndView.addObject("loginUser", user);
+        try {
+
+            if (!redisUtil.hasKey(redisKey)) {
+                UserContextHolder.clear();
+                return true;
+            }
+
+            LoginUser user = JsonUtil.to(redisUtil.get(redisKey), LoginUser.class);
+
+            // // ip address are changed, need login again
+            // String ip = request.getHeader("X-Forwarded-For");
+            // if (StringUtil.isNotBlank(ip)) ip = request.getRemoteAddr();
+            // if (!StringUtil.equals(ip, user.getIpAddress())) {
+            //     UserContextHolder.clear();
+            //     redisUtil.delete(redisKey);
+            //     return true;
+            // }
+            //
+            // // login by different remote, need login again
+            // String userAgent = request.getHeader("User-Agent");
+            // if (!StringUtil.equals(userAgent, user.getAgent())) {
+            //     UserContextHolder.clear();
+            //     redisUtil.delete(redisKey);
+            //     return true;
+            // }
+
+            UserContextHolder.clear();
+            // 在本次请求中持有用户
+            UserContextHolder.setCurrentUser(user);
+            // // 构建用户认证的结果，并存入securityContext，以便security进行授权
+            // Authentication authentication = new UsernamePasswordAuthenticationToken(
+            //         user);
+            // SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
+            return true;
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            if (duration > 2000) log.warn("slow request: {} {} {}ms", method, path, duration);
         }
     }
 
     @Override
     public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, Exception ex) {
-        AuthorityInterceptor.clearCurrentUser();
+        UserContextHolder.clear();
+    }
+
+    private boolean isPublicPath(String path) {
+        return path.startsWith("/auth/login") ||
+                path.startsWith("/auth/logout") ||
+                path.startsWith("/auth/kaptcha");
     }
 
 }

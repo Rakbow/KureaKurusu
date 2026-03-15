@@ -1,12 +1,13 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.google.code.kaptcha.Producer;
+import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.common.LoginResult;
 import com.rakbow.kureakurusu.data.dto.LoginDTO;
-import com.rakbow.kureakurusu.service.UserService;
+import com.rakbow.kureakurusu.service.AuthService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -31,9 +32,10 @@ import static com.rakbow.kureakurusu.data.common.Constant.RISK;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+@RequestMapping("auth")
+public class AuthController {
 
-    private final UserService userSrv;
+    private final AuthService srv;
     private final Producer kaptchaProducer;
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -57,35 +59,38 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public ApiResult login(@Valid @RequestBody LoginDTO dto,
-                           HttpSession session, HttpServletResponse response, BindingResult errors) {
+    public ApiResult login(@Valid @RequestBody LoginDTO dto, HttpSession session,
+                           HttpServletRequest request, HttpServletResponse response, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        LoginResult loginRes = userSrv.login(dto, session.getAttribute("kaptcha").toString());
+        LoginUser res = srv.login(dto, request, session);
         //generate cookie
-        Cookie cookie = new Cookie("ticket", loginRes.getTicket());
+        Cookie cookie = new Cookie("ticket", res.getTicket());
+        cookie.setHttpOnly(true);
         cookie.setPath(contextPath);
-        cookie.setMaxAge(loginRes.getExpires());
+        cookie.setMaxAge(res.getExpires());
         //load cookie to response
         response.addCookie(cookie);
-        return ApiResult.ok(loginRes);
+        return ApiResult.ok(res);
     }
 
     @PostMapping("logout")
-    public ApiResult logout(@CookieValue("ticket") String ticket,
+    public ApiResult logout(@CookieValue(value = "ticket", required = false) String ticket,
                             HttpSession session,
-                            HttpServletResponse response) {
+                            HttpServletResponse response,
+                            HttpServletRequest request) {
         //logout
-        userSrv.logout(ticket);
+        srv.logout(ticket);
         //clear Spring Security context
         SecurityContextHolder.clearContext();
         //clear session
         session.invalidate();
         //clear cookie
         Cookie cookie = new Cookie("ticket", null);
+        cookie.setHttpOnly(true);
         cookie.setPath(contextPath);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-        return new ApiResult();
+        return ApiResult.ok();
     }
 
 }

@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.toolkit.support;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import com.rakbow.kureakurusu.toolkit.CollectionUtil;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -26,7 +26,7 @@ public class DataStatusPermissionHandler implements DataPermissionHandler {
     @Override
     public Expression getSqlSegment(Expression where, String mappedStatementId) {
         if (CollectionUtil.contains(IGNORE_INTERFACE, mappedStatementId)) return where;
-        if (AuthorityInterceptor.isJunior()) return where;
+        if (UserContextHolder.isLogin()) return where;
         EqualsTo equalsTo = new EqualsTo(new Column("status"), new LongValue("1"));
         // 如果原来没有where条件, 就添加一个where条件
         if (where == null) return equalsTo;

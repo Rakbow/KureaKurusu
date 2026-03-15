@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.dao;
 
+import com.rakbow.kureakurusu.data.auth.LoginUser;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -14,7 +16,10 @@ public interface CommonMapper {
 
     //修改状态(批量)
     void updateEntityStatus(String tableName, List<Long> ids, int status);
+
     //通用更新描述
     void updateEntityDetail(String tableName, long entityId, String text, Timestamp editedTime);
+
+    LoginUser getLoginUser(@Param("userId") long userId);
 
 }

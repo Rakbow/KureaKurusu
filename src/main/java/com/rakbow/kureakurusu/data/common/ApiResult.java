@@ -60,13 +60,6 @@ public class ApiResult {
         return r;
     }
 
-    public static ApiResult notFound(String error) {
-        ApiResult r =  new ApiResult();
-        r.state = FAIL_STATE;
-        r.message = error;
-        return r;
-    }
-
     public ApiResult ok(Object data, String messageKey) {
         this.data = data;
         this.message = I18nHelper.getMessage(messageKey);

@@ -1,16 +1,12 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import tools.jackson.databind.annotation.JsonDeserialize;
-import com.rakbow.kureakurusu.data.common.UserMiniVO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
-import com.rakbow.kureakurusu.data.enums.UserAuthority;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
-import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author Rakbow
@@ -18,7 +14,6 @@ import lombok.Data;
  */
 @Data
 @TableName(value = "r1_sys_user", autoResultMap = true)
-@AutoMapper(target = UserMiniVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 public class User {
 
     private Long id;
@@ -26,12 +21,11 @@ public class User {
     private String password;
     private String salt;
     private String email;
-    private UserAuthority type;
-    @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean status;
     private String activationCode;
     private String avatar;
-    private String createDate;
+    private String createdAt;
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean status;
 
     public User() {
         id = 0L;
@@ -39,11 +33,10 @@ public class User {
         password = "";
         salt = "";
         email = "";
-        type = UserAuthority.USER;
         status = true;
         activationCode = "";
         avatar = "";
-        createDate = DateHelper.nowStr();
+        createdAt = DateHelper.nowStr();
     }
 
     public User(UserRegisterDTO dto) {
@@ -51,7 +44,6 @@ public class User {
         this.email = dto.email();
         this.salt = CommonUtil.generateUUID(5);
         this.password = CommonUtil.md5(STR."\{dto.password()}\{this.salt}}");
-        this.type = UserAuthority.USER;
         this.activationCode = CommonUtil.generateUUID(0);
         //设置用户默认头像
         //user.setHeaderUrl(String.format("", new Random().nextInt(1000)));

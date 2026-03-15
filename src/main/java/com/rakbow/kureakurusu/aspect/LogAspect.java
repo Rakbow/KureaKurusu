@@ -22,9 +22,9 @@ import java.util.Date;
 @Slf4j
 @Component
 @Aspect
-public class ServiceLogAspect {
+public class LogAspect {
 
-    @Pointcut("execution(* com.rakbow.kureakurusu.service.*.*(..))")
+    @Pointcut("execution(* com.rakbow.kureakurusu.controller.*.*(..))")
     public void pointcut() {
 
     }
@@ -37,7 +37,7 @@ public class ServiceLogAspect {
             String ip = request.getRemoteHost();
             String now = new SimpleDateFormat(DateHelper.DATE_TIME_FORMAT).format(new Date());
             String target = STR."\{joinPoint.getSignature().getDeclaringTypeName()}.\{joinPoint.getSignature().getName()}";
-            log.info(String.format(I18nHelper.getMessage("system.service.log"), ip, now, target));
+            log.info(String.format(I18nHelper.getMessage("system.controller.log"), ip, now, target));
         }
     }
 

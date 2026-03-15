@@ -11,6 +11,7 @@ public class RedisKey {
     public static final String ENTITY_TOTAL_COUNT = "entity_total_count:%s";
     public static final String ENTITY_IMAGE_CACHE = "entity_image_cache:";
 
+    public static final String LOGIN_TICKET = "login_ticket:";
 
     //popular
     public static final String ENTRY_POPULAR_RANK = "entry_popular_rank";

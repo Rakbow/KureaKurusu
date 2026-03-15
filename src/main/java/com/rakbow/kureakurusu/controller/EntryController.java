@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -45,6 +46,7 @@ public class EntryController {
     }
 
     @PostMapping("list")
+    @Permission("entity:entry:list")
     public ApiResult list(@RequestBody EntryDTO.EntryListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }

@@ -6,6 +6,7 @@ import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Builder;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -14,13 +15,16 @@ import java.util.Date;
  */
 @Data
 @Builder
-@TableName(value = "login_ticket", autoResultMap = true)
+@TableName(value = "r1_sys_login_ticket", autoResultMap = true)
 public class LoginTicket {
 
     private Long id;
-    private long uid;
     private String ticket;
+    private long uid;
+    private String ipAddress;
+    private String agent;
+    private Date expired;
+    private Timestamp createdAt;
     @JsonDeserialize(using = BooleanToIntDeserializer.class)
     private Boolean status;
-    private Date expired;
 }

@@ -3,28 +3,16 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rakbow.kureakurusu.dao.LoginTicketMapper;
 import com.rakbow.kureakurusu.dao.UserMapper;
-import com.rakbow.kureakurusu.data.common.LoginResult;
-import com.rakbow.kureakurusu.data.common.UserMiniVO;
-import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
-import com.rakbow.kureakurusu.data.entity.LoginTicket;
 import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.exception.ApiException;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
-import com.rakbow.kureakurusu.toolkit.RedisUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
-import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-
-import static com.rakbow.kureakurusu.data.common.Constant.*;
 
 /**
  * @author Rakbow
@@ -36,10 +24,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     private final UserMapper mapper;
 //    private final MailClient mailClient;
-    private final LoginTicketMapper loginTicketMapper;
-    private final RedisUtil redisUtil;
-
-    private final Converter converter;
 
     @SneakyThrows
     @Transactional
@@ -74,61 +58,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             throw new ApiException("user.activation.failure");
         //activation
         mapper.update(new LambdaUpdateWrapper<User>().eq(User::getId, dto.userId()).set(User::getStatus, 1));
-    }
-
-    @SneakyThrows
-    @Transactional
-    public LoginResult login(LoginDTO dto, String kaptcha) {
-
-        //check captcha
-        if (StringUtil.isBlank(kaptcha) || StringUtil.isBlank(dto.verifyCode())
-                || !kaptcha.equalsIgnoreCase(dto.verifyCode()))
-            throw new ApiException("login.verify_code.error");
-
-        //check user exist
-        User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, dto.username()));
-        if (user == null) throw new ApiException("login.user.not_exist");
-        //check user activation status
-        if (!user.getStatus()) throw new ApiException("login.user.inactivated");
-        //check user password
-        String password = CommonUtil.md5(STR."\{dto.password()}\{user.getSalt()}");
-        if (!user.getPassword().equals(password)) throw new ApiException("login.password.error");
-        //count expired time
-        int expires = (dto.rememberMe() ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS) * 1000;
-        //generate login ticket
-        LoginTicket loginTicket = LoginTicket.builder()
-                .uid(user.getId())
-                .ticket(CommonUtil.generateUUID(0))
-                .expired(new Date(System.currentTimeMillis() + expires ))
-                .build();
-        loginTicketMapper.insert(loginTicket);
-
-        //save ticket to redis
-        redisUtil.set(STR."login_ticket\{RISK}\{loginTicket.getTicket()}", loginTicket.getUid(), expires);
-
-        //generate loginUser
-        UserMiniVO userMiniVO = converter.convert(user, UserMiniVO.class);
-
-        //generate login result
-        return LoginResult.builder()
-                .user(userMiniVO)
-                .ticket(loginTicket.getTicket())
-                .expires(expires)
-                .build();
-    }
-
-    @SneakyThrows
-    @Transactional
-    public void logout(String ticket) {
-        //delete login ticket from redis
-        String redisTicketKey = STR."login_ticket\{RISK}\{ticket}";
-        if (redisUtil.hasKey(redisTicketKey)) redisUtil.delete(redisTicketKey);
-        //update login ticket from db
-        loginTicketMapper.update(
-                new LambdaUpdateWrapper<LoginTicket>()
-                        .eq(LoginTicket::getTicket, ticket)
-                        .set(LoginTicket::getStatus, 1)
-        );
     }
 
 }

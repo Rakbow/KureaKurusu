@@ -37,6 +37,11 @@ public class JsonUtil {
     }
 
     @SneakyThrows
+    public static <T> T to(Object json, Class<T> clazz) {
+        return mapper.readValue(mapper.writeValueAsString(json), clazz);
+    }
+
+    @SneakyThrows
     public static <T> T to(Map<String, String> dic, Class<T> clazz) {
         return mapper.convertValue(dic, clazz);
     }

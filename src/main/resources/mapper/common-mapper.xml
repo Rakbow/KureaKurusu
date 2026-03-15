@@ -3,10 +3,31 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.CommonMapper">
+    <resultMap id="LoginUserResultMap" type="com.rakbow.kureakurusu.data.auth.LoginUser">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="avatar" property="avatar"/>
+        <result column="roles" property="roles"
+                typeHandler="com.rakbow.kureakurusu.toolkit.handler.JsonSetTypeHandler"/>
+        <result column="permissions" property="permissions"
+                typeHandler="com.rakbow.kureakurusu.toolkit.handler.JsonSetTypeHandler"/>
+    </resultMap>
 
-<!--    <resultMap id="imageResultMap" type="java.util.List">-->
-<!--        <result property="images" column="images" typeHandler="com.rakbow.kureakurusu.util.handler.TestHandler" />-->
-<!--    </resultMap>-->
+    <select id="getLoginUser" parameterType="java.lang.Long" resultMap="LoginUserResultMap">
+        SELECT
+        u.id AS id,
+        u.username AS name,
+        u.avatar as avatar,
+        COALESCE(JSON_ARRAYAGG(r.role_key), '[]') AS roles,
+        COALESCE(JSON_ARRAYAGG(m.perms), '[]') AS permissions
+        FROM r1_sys_user u
+        LEFT JOIN r1_sys_user_role ur ON u.id = ur.user_id
+        LEFT JOIN r1_sys_role r ON ur.role_id = r.id
+        LEFT JOIN r1_sys_role_menu rm ON r.id = rm.role_id
+        LEFT JOIN r1_sys_menu m ON rm.menu_id = m.id
+        WHERE u.id = #{userId}
+        GROUP BY u.id, u.username, u.avatar
+    </select>
 
     <update id="updateEntityStatus" keyProperty="id">
         update ${param1}

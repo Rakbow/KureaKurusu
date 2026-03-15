@@ -10,19 +10,19 @@ import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.FavListItemMapper;
 import com.rakbow.kureakurusu.dao.FavListMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
+import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.data.dto.FavListItemListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.FavListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.ListItemCreateDTO;
 import com.rakbow.kureakurusu.data.dto.ListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.FavList;
 import com.rakbow.kureakurusu.data.entity.FavListItem;
-import com.rakbow.kureakurusu.data.entity.User;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.vo.favList.FavListVO;
 import com.rakbow.kureakurusu.data.vo.temp.EntitySearchVO;
 import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
 import com.rakbow.kureakurusu.exception.EntityNullException;
-import com.rakbow.kureakurusu.interceptor.AuthorityInterceptor;
+import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import com.rakbow.kureakurusu.toolkit.CollectionUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.MybatisBatchUtil;
@@ -55,7 +55,7 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
     }
 
     public void create(FavList list) {
-        list.setCreator(AuthorityInterceptor.getCurrentUser().getUsername());
+        list.setCreator(UserContextHolder.getCurrentUser().getName());
         list.setCreateTime(DateHelper.now());
         list.setUpdateTime(DateHelper.now());
         save(list);
@@ -63,11 +63,11 @@ public class ListService extends ServiceImpl<FavListMapper, FavList> {
 
     @Search
     public SearchResult<FavList> lists(FavListQueryDTO dto) {
-        User user = AuthorityInterceptor.getCurrentUser();
+        LoginUser user = UserContextHolder.getCurrentUser();
         IPage<FavList> pages = page(
                 new Page<>(dto.getPage(), dto.getSize()),
                 new MPJLambdaWrapper<FavList>()
-                        .eq(FavList::getCreator, user.getUsername())
+                        .eq(FavList::getCreator, user.getName())
                         .eq(FavList::getType, dto.getType())
                         .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                         .orderByDesc(!dto.isSort(), FavList::getCreateTime)
