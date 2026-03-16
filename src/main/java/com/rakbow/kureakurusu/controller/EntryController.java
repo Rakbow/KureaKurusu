@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
+import com.rakbow.kureakurusu.data.PermissionConstant;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.EntryService;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.rakbow.kureakurusu.data.PermissionConstant.*;
 
 import java.util.List;
 
@@ -46,7 +49,7 @@ public class EntryController {
     }
 
     @PostMapping("list")
-    @Permission("entity:entry:list")
+    @Permission(ENTRY_LIST)
     public ApiResult list(@RequestBody EntryDTO.EntryListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }

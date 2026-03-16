@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
             case PermissionException _ -> response.setStatus(HttpStatus.FORBIDDEN.value());
             default -> response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        log.error(msg, e);
+        log.error(msg);
         return new ApiResult().fail(msg);
     }
 

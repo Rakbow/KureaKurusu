@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.LoginRequired;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -63,6 +64,7 @@ public class ItemController {
         return ApiResult.ok(srv.search(dto));
     }
 
+    @LoginRequired
     @PostMapping("list")
     public ApiResult list(@RequestBody ItemListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));

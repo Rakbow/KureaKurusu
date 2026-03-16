@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * @author Rakbow
  * @since 2022-09-30 9:49
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AdminAuthorityRequired {
+public @interface LoginRequired {
 }
