@@ -39,13 +39,11 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
         if (StringUtil.isBlank(ticket)) return true;
         //get login ticket from redis
         String redisKey = STR."\{RedisKey.LOGIN_TICKET}\{ticket}";
+        UserContextHolder.clear();
 
         try {
 
-            if (!redisUtil.hasKey(redisKey)) {
-                UserContextHolder.clear();
-                return true;
-            }
+            if (!redisUtil.hasKey(redisKey)) return true;
 
             LoginUser user = JsonUtil.to(redisUtil.get(redisKey), LoginUser.class);
 
@@ -53,7 +51,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
             // String ip = request.getHeader("X-Forwarded-For");
             // if (StringUtil.isNotBlank(ip)) ip = request.getRemoteAddr();
             // if (!StringUtil.equals(ip, user.getIpAddress())) {
-            //     UserContextHolder.clear();
             //     redisUtil.delete(redisKey);
             //     return true;
             // }
@@ -61,12 +58,10 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
             // // login by different remote, need login again
             // String userAgent = request.getHeader("User-Agent");
             // if (!StringUtil.equals(userAgent, user.getAgent())) {
-            //     UserContextHolder.clear();
             //     redisUtil.delete(redisKey);
             //     return true;
             // }
 
-            UserContextHolder.clear();
             // 在本次请求中持有用户
             UserContextHolder.setCurrentUser(user);
             // // 构建用户认证的结果，并存入securityContext，以便security进行授权

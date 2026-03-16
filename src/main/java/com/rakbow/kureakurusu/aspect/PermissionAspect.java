@@ -4,6 +4,7 @@ import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.data.enums.PermissionLogical;
 import com.rakbow.kureakurusu.exception.PermissionException;
+import com.rakbow.kureakurusu.exception.UnauthorizedException;
 import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -43,7 +43,7 @@ public class PermissionAspect {
 
         LoginUser user = UserContextHolder.getCurrentUser();
 
-        if(Objects.isNull(user)) throw new PermissionException("auth.no_login");
+        if(Objects.isNull(user)) throw new UnauthorizedException("auth.no_login");
 
         if(user.getRoles().contains("admin")) return;
 

@@ -2,13 +2,10 @@ package com.rakbow.kureakurusu.exception;
 
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 
-public class PermissionException extends RuntimeException {
+public class PermissionException extends ApiException {
 
     public PermissionException(String messageKey) {
-        super(I18nHelper.getMessage(messageKey));
+        super(messageKey);
     }
 
-    public PermissionException(String messageKey, String... args) {
-        super(I18nHelper.getMessage(messageKey, args));
-    }
 }

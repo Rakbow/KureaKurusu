@@ -3,6 +3,7 @@ package com.rakbow.kureakurusu.controller.advice;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.exception.PermissionException;
+import com.rakbow.kureakurusu.exception.UnauthorizedException;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +25,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ApiResult exceptionHandler(Exception e, HttpServletResponse response) {
          String msg = StringUtil.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
-        if (e instanceof EntityNullException) {
-            response.setStatus(HttpStatus.NOT_FOUND.value());
-        }else if (e instanceof PermissionException) {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-        }else {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        switch (e) {
+            case EntityNullException _ -> response.setStatus(HttpStatus.NOT_FOUND.value());
+            case UnauthorizedException _ -> response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            case PermissionException _ -> response.setStatus(HttpStatus.FORBIDDEN.value());
+            default -> response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         log.error(msg, e);
         return new ApiResult().fail(msg);
