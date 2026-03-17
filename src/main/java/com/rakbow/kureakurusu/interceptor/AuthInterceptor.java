@@ -1,7 +1,8 @@
 package com.rakbow.kureakurusu.interceptor;
 
-import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.constant.RedisKey;
 import com.rakbow.kureakurusu.data.auth.LoginUser;
+import com.rakbow.kureakurusu.exception.UnauthorizedException;
 import com.rakbow.kureakurusu.toolkit.CookieUtil;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import com.rakbow.kureakurusu.toolkit.RedisUtil;
@@ -21,29 +22,29 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LoginTicketInterceptor implements HandlerInterceptor {
+public class AuthInterceptor implements HandlerInterceptor {
 
     private final RedisUtil redisUtil;
 
     @Override
-    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
+    public boolean preHandle(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp, @NotNull Object handler) {
         long startTime = System.currentTimeMillis();
 
-        String path = request.getRequestURI();
-        String method = request.getMethod();
+        String path = req.getRequestURI();
+        String method = req.getMethod();
 
         if (isPublicPath(path)) return true;
 
         //get ticket from cookie
-        String ticket = CookieUtil.getValue(request, "ticket");
-        if (StringUtil.isBlank(ticket)) return true;
+        String ticket = CookieUtil.getValue(req, "ticket");
+        if (StringUtil.isBlank(ticket)) throw new UnauthorizedException("auth.no_login");
         //get login ticket from redis
         String redisKey = STR."\{RedisKey.LOGIN_TICKET}\{ticket}";
         UserContextHolder.clear();
 
         try {
 
-            if (!redisUtil.hasKey(redisKey)) return true;
+            if (!redisUtil.hasKey(redisKey)) throw new UnauthorizedException("auth.no_login");
 
             LoginUser user = JsonUtil.to(redisUtil.get(redisKey), LoginUser.class);
 
@@ -76,7 +77,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler, Exception ex) {
+    public void afterCompletion(@NotNull HttpServletRequest req, @NotNull HttpServletResponse resp, @NotNull Object handler, Exception ex) {
         UserContextHolder.clear();
     }
 

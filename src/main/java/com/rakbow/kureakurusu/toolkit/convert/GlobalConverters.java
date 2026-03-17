@@ -2,10 +2,8 @@ package com.rakbow.kureakurusu.toolkit.convert;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.enums.EntityType;
-import com.rakbow.kureakurusu.toolkit.CommonUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
-import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import lombok.SneakyThrows;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
@@ -38,16 +36,6 @@ public class GlobalConverters {
     @SneakyThrows
     public <E extends Enum<E>> int to(E e) {
         return (Integer) e.getClass().getMethod("getValue").invoke(e);
-    }
-
-    @Named("entryThumb")
-    public String entryThumb(String thumb) {
-        return CommonImageUtil.getEntryThumb(thumb);
-    }
-
-    @Named("subName")
-    public String subName(String nameEn, String nameZh) {
-        return CommonUtil.getSubName(nameEn, nameZh);
     }
 
     @Named("entityType")

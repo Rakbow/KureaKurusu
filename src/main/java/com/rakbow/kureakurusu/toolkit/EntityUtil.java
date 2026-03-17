@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.toolkit;
 
 import com.rakbow.kureakurusu.data.PageTraffic;
-import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.constant.RedisKey;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import lombok.RequiredArgsConstructor;

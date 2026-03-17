@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
-import com.rakbow.kureakurusu.data.UploadImage;
+import com.rakbow.kureakurusu.data.vo.resource.UploadImage;
 import com.rakbow.kureakurusu.data.common.ActionResult;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.ImageDTO;
@@ -12,7 +12,6 @@ import com.rakbow.kureakurusu.toolkit.FileUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QiniuImageUtil {
 
-    private final QiniuBaseUtil qiniuBaseUtil;
+    private final QiniuClient client;
     private final static String THUMBNAIL_URL = "?imageMogr2/auto-orient/thumbnail/";
-    @Value("${qiniu.domain}")
-    private static String FILE_DOMAIN;
     private final static String IMAGE_PREFIX = "upload/image/";
 
     /**
@@ -41,13 +38,13 @@ public class QiniuImageUtil {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
-    public List<Image> uploadImages(int entityType, long entityId, List<ImageDTO.ImageMiniDTO> addImages) {
+    public List<Image> batchUpload(int entityType, long entityId, List<ImageDTO.ImageMiniDTO> addImages) {
         List<Image> images = new ArrayList<>();
         for (ImageDTO.ImageMiniDTO miniImage : addImages) {
             //handle image
             UploadImage img = handleImage(entityType, entityId, miniImage);
             //upload image
-            ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(), img.getPrefixKey());
+            ActionResult ar = client.upload(img.getData(), img.getExtension(), img.getPrefixKey());
             if (!ar.state) throw new Exception(ar.message);
             Image image = new Image();
             image.setUrl(ar.data.toString().replace(Constant.FILE_DOMAIN, ""));
@@ -64,23 +61,12 @@ public class QiniuImageUtil {
 
     @SneakyThrows
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
-    public List<Integer> deleteImages(String[] keys) {
-        return qiniuBaseUtil.deleteFilesFromQiniu(keys);
-    }
-
-    /**
-     * delete all images
-     *
-     * @param images delete images
-     * @author Rakbow
-     */
-    public void deleteAllImage(List<Image> images) {
-        String[] keys = images.stream().map(Image::getUrl).toArray(String[]::new);
-        qiniuBaseUtil.deleteFilesFromQiniu(keys);
+    public List<Integer> batchDelete(String[] keys) {
+        return client.delete(keys);
     }
 
     public void deleteEntryImage(String key) {
-        qiniuBaseUtil.deleteFilesFromQiniu(new String[]{key});
+        client.delete(new String[]{key});
     }
 
     /**
@@ -101,23 +87,13 @@ public class QiniuImageUtil {
         return STR."\{imageUrl}\{THUMBNAIL_URL}\{size}x";
     }
 
-    public static String getBookThumbBackgroundUrl(String imageUrl, double width, double height) {
-
-        return STR."\{imageUrl}\{THUMBNAIL_URL}\{width}x\{height}/extent/\{width}x\{height}/background/IzJmMzY0Zg==";
-    }
-
-    public static String getThumbWithTransparentBackground(String url, double size) {
-
-        return STR."\{url}\{THUMBNAIL_URL}\{size}x\{size}/extent/\{size}x\{size}/background/IzAwMDAwMDAw";
-    }
-
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     @SneakyThrows
     public String uploadEntryImage(int entityType, long entityId, ImageDTO.ImageMiniDTO image) {
         //handle image
         UploadImage img = handleImage(entityType, entityId, image);
         //upload image
-        ActionResult ar = qiniuBaseUtil.uploadFileToQiniu(img.getData(), img.getExtension(), img.getPrefixKey());
+        ActionResult ar = client.upload(img.getData(), img.getExtension(), img.getPrefixKey());
         if (!ar.state) throw new Exception(ar.message);
         return ar.data.toString();
     }

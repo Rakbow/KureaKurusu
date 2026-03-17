@@ -8,7 +8,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
-import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.constant.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.GroupCacheRoleRelation;

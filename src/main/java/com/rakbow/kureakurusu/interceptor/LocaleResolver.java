@@ -7,6 +7,7 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -17,28 +18,19 @@ public class LocaleResolver extends CookieLocaleResolver {
 
     public static final Locale DEFAULT_LOCALE = Locale.CHINA;
 
-    public static final String[] SUPPORTED_LOCALES = {"en", "zh"};
+    public static final List<String> SUPPORTED_LOCALES = List.of("en", "zh");
 
     @NotNull
     @Override
     public Locale resolveLocale(@NotNull HttpServletRequest request) {
         Locale locale = super.resolveLocale(request);
 
-        if (!isSupported(locale)) {
+        if (!SUPPORTED_LOCALES.contains(locale.getLanguage())) {
             locale = DEFAULT_LOCALE;
         }
 
         LocaleContextHolder.setLocale(locale);
         return locale;
-    }
-
-    private boolean isSupported(Locale locale) {
-        for (String supportedLocale : SUPPORTED_LOCALES) {
-            if (supportedLocale.equals(locale.getLanguage())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     //重写构造方法,改变cookie信息

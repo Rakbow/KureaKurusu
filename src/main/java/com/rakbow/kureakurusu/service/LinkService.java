@@ -52,7 +52,7 @@ public class LinkService extends ServiceImpl<LinkMapper, Link> {
                 .eq(Link::getEntityType, entityType).eq(Link::getEntityId, entityId)
                 .orderByAsc(Link::getType, Link::getTag));
         if (links.isEmpty()) {
-            redisUtil.set(key, res);
+            redisUtil.set(key, res, 3600 * 12);
             return;
         }
         List<LinkVO> vos = converter.convert(links, LinkVO.class);
@@ -63,7 +63,7 @@ public class LinkService extends ServiceImpl<LinkMapper, Link> {
                 .sorted(Comparator.comparing(e -> e.getKey().getValue()))
                 .map(entry -> new LinksVO(entry.getKey(), entry.getValue()))
                 .toList();
-        redisUtil.set(key, res);
+        redisUtil.set(key, res, 3600 * 12);
 
     }
 

@@ -42,16 +42,16 @@ public class AuthController {
 
     //get captcha image
     @GetMapping("kaptcha")
-    public void getKaptcha(HttpServletResponse response, HttpSession session) {
+    public void getKaptcha(HttpServletResponse resp, HttpSession session) {
         //generate captcha text and image
         String text = kaptchaProducer.createText();
         BufferedImage image = kaptchaProducer.createImage(text);
         //save to session
         session.setAttribute("kaptcha", text);
         //save image to browser
-        response.setContentType("image/png");
+        resp.setContentType("image/png");
         try {
-            OutputStream os = response.getOutputStream();
+            OutputStream os = resp.getOutputStream();
             ImageIO.write(image, "png", os);
         } catch (IOException e) {
             log.error(STR."\{I18nHelper.getMessage("system.captcha.failed")}\{RISK}}\{e.getMessage()}");
@@ -60,24 +60,22 @@ public class AuthController {
 
     @PostMapping("login")
     public ApiResult login(@Valid @RequestBody LoginDTO dto, HttpSession session,
-                           HttpServletRequest request, HttpServletResponse response, BindingResult errors) {
+                           HttpServletRequest req, HttpServletResponse resp, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
-        LoginUser res = srv.login(dto, request, session);
+        LoginUser res = srv.login(dto, req, session);
         //generate cookie
         Cookie cookie = new Cookie("ticket", res.getTicket());
         cookie.setHttpOnly(true);
         cookie.setPath(contextPath);
         cookie.setMaxAge(res.getExpires());
         //load cookie to response
-        response.addCookie(cookie);
+        resp.addCookie(cookie);
         return ApiResult.ok(res);
     }
 
     @PostMapping("logout")
     public ApiResult logout(@CookieValue(value = "ticket", required = false) String ticket,
-                            HttpSession session,
-                            HttpServletResponse response,
-                            HttpServletRequest request) {
+                            HttpSession session, HttpServletResponse resp) {
         //logout
         srv.logout(ticket);
         //clear Spring Security context
@@ -89,7 +87,7 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setPath(contextPath);
         cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        resp.addCookie(cookie);
         return ApiResult.ok();
     }
 

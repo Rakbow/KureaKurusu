@@ -3,16 +3,18 @@ package com.rakbow.kureakurusu.toolkit.file;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
-import com.qiniu.storage.Configuration;
-import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
 import com.rakbow.kureakurusu.data.common.ActionResult;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -27,44 +29,23 @@ import java.util.stream.IntStream;
  * @since 2022-12-01 1:44
  */
 @Component
-public class QiniuBaseUtil {
+@RequiredArgsConstructor
+@Slf4j
+public class QiniuClient {
 
-    @Value("${qiniu.access-key}")
-    private String ACCESS_KEY;
-    @Value("${qiniu.secret-key}")
-    private String SECRET_KEY;
     @Value("${qiniu.bucketName}")
     private String BUCKET_NAME;
-    
+    private final UploadManager uploadManager;
+    private final Auth auth;
+    private final BucketManager bucketManager;
+
 
     /**
      * 获取上传文件的token值
      */
     public String getUpToken() {
         // 密钥配置
-        Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
         return auth.uploadToken(BUCKET_NAME);
-    }
-
-    @SneakyThrows
-    public List<Integer> deleteFilesFromQiniu(String[] keys){
-        List<Integer> deleteIndexes = new ArrayList<>();
-        try{
-            //构造一个带指定Zone对象的配置类
-            Configuration cfg = new Configuration(Region.autoRegion());
-            Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
-            BucketManager bucketManager = new BucketManager(auth, cfg);
-            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
-            //batch delete
-            batchOperations.addDeleteOp(BUCKET_NAME, keys);
-            //filter successfully deleted indexes
-            Response response = bucketManager.batch(batchOperations);
-            BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
-            IntStream.range(0, keys.length).filter(i -> batchStatusList[i].code == 200).forEach(deleteIndexes::add);
-        }catch (QiniuException ex) {
-            throw ErrorFactory.qiniuError(ex);
-        }
-        return deleteIndexes;
     }
 
     /**
@@ -74,21 +55,12 @@ public class QiniuBaseUtil {
      * @return ActionResult
      */
     @SneakyThrows
-    public ActionResult uploadFileToQiniu(byte[] file, String fileExt, String filePath) {
+    public ActionResult upload(byte[] file, String fileExt, String filePath) {
         ActionResult ar = new ActionResult();
         try {
-            // 构造一个带指定Zone对象的配置类,不同的七云牛存储区域调用不同的zone
-            // 华东-浙江2 CnEast2
-            Configuration cfg = new Configuration(Region.autoRegion());
-            // 创建上传对象
-            UploadManager uploadManager = new UploadManager(cfg);
-
             // 通过随机UUID生成唯一文件名 长度：16
             String fileName = STR."\{UUID.randomUUID().toString().replaceAll("-", "")}.\{fileExt}";
-
-            // 生成完整文件名，例：album/11/xxx.jpg
             String fullFileName = filePath + fileName;
-
             // 调用put方法上传
             Response res = uploadManager.put(file, fullFileName, getUpToken());
 
@@ -104,6 +76,41 @@ public class QiniuBaseUtil {
             // 请求失败时打印的异常的信息
             ar.setErrorMessage(I18nHelper.getMessage("qiniu.exception", ex.getMessage()));
             return ar;
+        }
+    }
+
+    @SneakyThrows
+    public List<Integer> delete(String[] keys) {
+        List<Integer> deleteIndexes = new ArrayList<>();
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            //batch delete
+            batchOperations.addDeleteOp(BUCKET_NAME, keys);
+            //filter successfully deleted indexes
+            Response response = bucketManager.batch(batchOperations);
+            BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
+            IntStream.range(0, keys.length).filter(i -> batchStatusList[i].code == HttpStatus.OK.value())
+                    .forEach(deleteIndexes::add);
+        } catch (QiniuException ex) {
+            throw ErrorFactory.qiniuError(ex);
+        }
+        return deleteIndexes;
+    }
+
+    @SneakyThrows
+    public void delete(String key) {
+        try {
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            //batch delete
+            batchOperations.addDeleteOp(BUCKET_NAME, key);
+            //filter successfully deleted indexes
+            Response response = bucketManager.batch(batchOperations);
+            BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
+            if(batchStatusList[0].code != HttpStatus.OK.value()) {
+                throw new ApiException("qiniu.exception", (batchStatusList[0].data.error));
+            }
+        } catch (QiniuException ex) {
+            throw ErrorFactory.qiniuError(ex);
         }
     }
 

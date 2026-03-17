@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.ImageMapper;
-import com.rakbow.kureakurusu.data.CommonConstant;
-import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.constant.CommonConstant;
+import com.rakbow.kureakurusu.data.constant.RedisKey;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -86,7 +86,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
             }
         }
         //upload to qiniu server
-        List<Image> addImages = qiniuImageUtil.uploadImages(entityType, entityId, images);
+        List<Image> addImages = qiniuImageUtil.batchUpload(entityType, entityId, images);
         //batch insert
         mybatisBatchUtil.batchInsert(addImages, ImageMapper.class);
 
@@ -108,7 +108,7 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
         String[] keys = dto.images().stream().map(ImageDTO.ImageDeleteMiniDTO::url)
                 .map(url -> url.replace(Constant.FILE_DOMAIN, "")).toArray(String[]::new);
         //delete from qiniu server
-        List<Integer> deleteIndexes = qiniuImageUtil.deleteImages(keys);
+        List<Integer> deleteIndexes = qiniuImageUtil.batchDelete(keys);
         //delete from database
         removeByIds(deleteIndexes.stream().map(index -> dto.images().get(index).id()).toList());
 

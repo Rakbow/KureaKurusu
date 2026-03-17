@@ -81,7 +81,6 @@ public class GeneralController {
 
     @PostMapping("like")
     public ApiResult like(@RequestBody EntityDTO dto, HttpServletResponse response) {
-        ApiResult res = new ApiResult();
         //get like token from cookie
         String likeToken = TokenInterceptor.getLikeToken();
         if (StringUtil.isBlank(likeToken)) {

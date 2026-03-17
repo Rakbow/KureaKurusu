@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit;
 
-import com.rakbow.kureakurusu.data.RedisKey;
+import com.rakbow.kureakurusu.data.constant.RedisKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

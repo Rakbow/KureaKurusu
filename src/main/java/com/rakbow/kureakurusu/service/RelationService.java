@@ -248,7 +248,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                     r -> r.getDirection() == 1 ? r.getRelatedEntityId() : r.getEntityId()
             ).distinct().toList());
         }
-        if(entryIds.isEmpty()) return resultSet;
+        if (entryIds.isEmpty()) return resultSet;
 
         List<Entry> entries = entryMapper.selectByIds(entryIds);
         curIndex = 0;
@@ -327,7 +327,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
 
         SearchResult<RelationVO> relations = list(param);
         if (relations.data.isEmpty()) {
-            redisUtil.set(key, res);
+            redisUtil.set(key, res, 3600 * 12);
             return;
         }
 
@@ -350,7 +350,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
                 })
                 .toList();
 
-        redisUtil.set(key, res);
+        redisUtil.set(key, res, 3600 * 12);
     }
 
 }

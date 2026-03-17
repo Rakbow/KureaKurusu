@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.toolkit.file;
 
-import com.rakbow.kureakurusu.data.CommonConstant;
+import com.rakbow.kureakurusu.data.constant.CommonConstant;
 import com.rakbow.kureakurusu.data.common.Constant;
 import com.rakbow.kureakurusu.data.dto.ImageDTO;
 import com.rakbow.kureakurusu.data.enums.ImageType;
