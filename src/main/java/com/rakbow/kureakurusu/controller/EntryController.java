@@ -33,12 +33,14 @@ public class EntryController {
     }
 
     @PostMapping("create")
+    @Permission(ENTRY_CREATE)
     public ApiResult create(@Valid @RequestBody EntryDTO.EntrySuperCreateDTO dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         return ApiResult.ok(srv.create(dto));
     }
 
     @PostMapping("update")
+    @Permission(ENTRY_UPDATE)
     public ApiResult update(@Valid @RequestBody EntryDTO.EntryUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
@@ -59,6 +61,7 @@ public class EntryController {
     }
 
     @PostMapping("upload-image")
+    @Permission(ENTRY_UPLOAD_IMAGE)
     public ApiResult uploadImage(
             @RequestParam("id") int id,
             @RequestParam("file") MultipartFile file,

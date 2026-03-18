@@ -1,12 +1,12 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
 import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
-import com.rakbow.kureakurusu.data.entity.EntityResourceInfo;
 import com.rakbow.kureakurusu.data.entity.Entry;
 import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
 
 /**
  * @author Rakbow
@@ -44,6 +46,7 @@ public class GeneralController {
     //region common
 
     @PostMapping("statistic-info")
+    @Permission(ADMIN)
     public ApiResult getStatisticInfo() {
         return new ApiResult();
     }
@@ -54,12 +57,14 @@ public class GeneralController {
     }
 
     @PostMapping("update-entity-status")
+    @Permission(ENTITY_STATUS_UPDATE)
     public ApiResult updateEntityStatus(@RequestBody UpdateStatusDTO dto) {
         srv.updateEntityStatus(dto);
         return ApiResult.ok("entity.crud.status.update.success");
     }
 
     @PostMapping("update-entity-detail")
+    @Permission(ENTITY_DETAIL_UPDATE)
     public ApiResult updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
         srv.updateEntityDetail(dto);
         return ApiResult.ok("entity.crud.detail.update.success");
@@ -75,6 +80,7 @@ public class GeneralController {
     // }
 
     @PostMapping("changelog-mini")
+    @Permission(ADMIN)
     public ApiResult changelog(@RequestBody EntityDTO dto) {
         return ApiResult.ok(srv.mini(dto.entityType(), dto.entityId()));
     }
@@ -103,6 +109,7 @@ public class GeneralController {
 
     @SneakyThrows
     @PostMapping("import-entity")
+    @Permission(ADMIN)
     public ApiResult importEntity(MultipartFile file) {
         ApiResult res = new ApiResult();
         if (file.isEmpty()) throw ErrorFactory.fileEmpty();
@@ -119,6 +126,7 @@ public class GeneralController {
 
     @SneakyThrows
     @PostMapping("local-path")
+    @Permission(FILE_LOCAL_PATH)
     public ApiResult localPath(@RequestBody EntityDTO dto) {
         srv.localPath(dto);
         return ApiResult.ok();
@@ -126,6 +134,7 @@ public class GeneralController {
 
     @SneakyThrows
     @PostMapping("local-completed-flag-update")
+    @Permission(FILE_LOCAL_FLAG_UPDATE)
     public ApiResult updateLocalResourceCompletedFlag(@RequestBody EntityResourceInfoUpdateDTO dto) {
         srv.updateLocalResourceCompletedFlag(dto);
         return ApiResult.ok();

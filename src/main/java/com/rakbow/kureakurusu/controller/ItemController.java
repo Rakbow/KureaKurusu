@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.LoginRequired;
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
 
 /**
  * @author Rakbow
@@ -28,6 +31,7 @@ public class ItemController {
     //region basic crud
 
     @PostMapping("create")
+    @Permission(ITEM_CREATE)
     public ApiResult advanceCreate(
             @RequestParam("param") String param,
             @RequestParam("images") MultipartFile[] images
@@ -37,6 +41,7 @@ public class ItemController {
     }
 
     @PostMapping("update")
+    @Permission(ITEM_UPDATE)
     public ApiResult update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.update(dto);
@@ -44,6 +49,7 @@ public class ItemController {
     }
 
     @DeleteMapping("delete")
+    @Permission(ITEM_DELETE)
     public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
         srv.delete(dto.ids());
         return ApiResult.ok("entity.crud.delete.success");
@@ -66,6 +72,7 @@ public class ItemController {
 
     @LoginRequired
     @PostMapping("list")
+    @Permission(ITEM_QUERY_LIST)
     public ApiResult list(@RequestBody ItemListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }
@@ -80,12 +87,14 @@ public class ItemController {
     }
 
     @PostMapping("album-track-quick-create")
+    @Permission(ADMIN)
     public ApiResult albumTrackQuickCreate(@RequestBody DiscCreateDTO dto) {
         extSrv.albumTrackQuickCreate(dto, true);
         return ApiResult.ok("entity.crud.create.success");
     }
 
     @PostMapping("album-track-quick-upload")
+    @Permission(ADMIN)
     public ApiResult albumTrackQuickUpload(
             @RequestParam("files") MultipartFile[] files,
             @ModelAttribute AlbumTrackQuickUploadDTO dto

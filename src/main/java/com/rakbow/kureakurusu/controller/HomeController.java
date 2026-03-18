@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.ADMIN;
 
 /**
  * @author Rakbow
@@ -26,6 +29,7 @@ public class HomeController {
 
     //获取图像
     @GetMapping("/img/{fileName}")
+    @Permission(ADMIN)
     public void getCommonImage(@PathVariable("fileName") String fileName, HttpServletResponse response) {
         // 服务器存放路径
         fileName = STR."\{imgPath}/\{fileName}";
@@ -49,6 +53,7 @@ public class HomeController {
 
     //获取图像
     @GetMapping("/db/{entity}/{id}/{fileName}")
+    @Permission(ADMIN)
     public void getImg(@PathVariable("entity") String entity, @PathVariable("fileName") String fileName,
                        @PathVariable("id") int entityId, HttpServletResponse response) {
         // 服务器存放路径

@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.aspect;
 
 import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.auth.LoginUser;
+import com.rakbow.kureakurusu.data.constant.PermissionConstant;
 import com.rakbow.kureakurusu.data.enums.PermissionLogical;
 import com.rakbow.kureakurusu.exception.PermissionException;
 import com.rakbow.kureakurusu.exception.UnauthorizedException;
@@ -45,12 +46,14 @@ public class PermissionAspect {
 
         if(Objects.isNull(user)) throw new UnauthorizedException("auth.no_login");
 
-        if(user.getRoles().contains("admin")) return;
-
         Set<String> permissions = user.getPermissions();
 
         String[] perms = permission.value();
         PermissionLogical logical = permission.logical();
+
+        //admin
+        if(permissions.contains(PermissionConstant.ADMIN)) return;
+
         if (logical == PermissionLogical.AND) {
             for (String perm : perms) {
                 if (permissions.contains(perm)) continue;

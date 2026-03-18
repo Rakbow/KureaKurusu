@@ -19,12 +19,12 @@
         u.username AS name,
         u.avatar as avatar,
         COALESCE(JSON_ARRAYAGG(r.role_key), '[]') AS roles,
-        COALESCE(JSON_ARRAYAGG(m.perms), '[]') AS permissions
+        COALESCE(JSON_ARRAYAGG(p.key), '[]') AS permissions
         FROM r1_sys_user u
         LEFT JOIN r1_sys_user_role ur ON u.id = ur.user_id
         LEFT JOIN r1_sys_role r ON ur.role_id = r.id
-        LEFT JOIN r1_sys_role_menu rm ON r.id = rm.role_id
-        LEFT JOIN r1_sys_menu m ON rm.menu_id = m.id
+        LEFT JOIN r1_sys_role_perm rp ON r.id = rp.role_id
+        LEFT JOIN r1_sys_permission p ON rp.perm_id = p.id
         WHERE u.id = #{userId}
         GROUP BY u.id, u.username, u.avatar
     </select>

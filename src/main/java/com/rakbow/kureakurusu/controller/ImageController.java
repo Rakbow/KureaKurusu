@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
 
 /**
  * @author Rakbow
@@ -38,6 +41,7 @@ public class ImageController {
     }
 
     @PostMapping("upload")
+    @Permission(IMAGE_UPLOAD)
     public ApiResult upload(
             @RequestParam("entityType") int entityType,
             @RequestParam("entityId") int entityId,
@@ -58,6 +62,7 @@ public class ImageController {
     }
 
     @PostMapping("update")
+    @Permission(IMAGE_UPDATE)
     public ApiResult update(@Valid @RequestBody ImageDTO.ImageUpdateDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
@@ -67,6 +72,7 @@ public class ImageController {
     }
 
     @DeleteMapping("delete")
+    @Permission(IMAGE_DELETE)
     public ApiResult delete(@RequestBody ImageDTO.ImageDeleteDTO dto) {
         srv.delete(dto);
         return ApiResult.ok("entity.crud.delete.success");

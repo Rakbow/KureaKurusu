@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.ADMIN;
 
 /**
  * @author Rakbow
@@ -25,6 +28,7 @@ public class UserController {
 
     //register new user
     @PostMapping("register")
+    @Permission(ADMIN)
     public ApiResult register(@Valid @RequestBody UserRegisterDTO dto, BindingResult errors) {
         //check
         if (errors.hasErrors()) return new ApiResult().fail(errors);
@@ -35,6 +39,7 @@ public class UserController {
 
     //activation user
     @PostMapping("activation")
+    @Permission(ADMIN)
     public ApiResult activation(@RequestBody UserActivationDTO dto) {
         srv.activation(dto);
         return ApiResult.ok("user.activation.success");

@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.RoleListQueryDTO;
 import com.rakbow.kureakurusu.data.entity.Role;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
 
 /**
  * @author Rakbow
@@ -24,11 +27,13 @@ public class RoleController {
     private final RoleService srv;
 
     @PostMapping("list")
+    @Permission(ROLE_QUERY_LIST)
     public ApiResult list(@RequestBody RoleListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }
 
     @PostMapping("create")
+    @Permission(ROLE_CREATE)
     public ApiResult create(@Valid @RequestBody Role role, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.save(role);
@@ -36,6 +41,7 @@ public class RoleController {
     }
 
     @PostMapping("update")
+    @Permission(ROLE_UPDATE)
     public ApiResult update(@Valid @RequestBody Role role, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.updateById(role);
@@ -43,6 +49,7 @@ public class RoleController {
     }
 
     @PostMapping("refresh")
+    @Permission(ROLE_REFRESH)
     public ApiResult refresh() {
         srv.refresh();
         return ApiResult.ok("entity.crud.refresh.success");

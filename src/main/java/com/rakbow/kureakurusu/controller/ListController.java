@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.controller;
 
+import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.FavListItemListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.FavListQueryDTO;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
 
 /**
  * @author Rakbow
@@ -28,6 +31,7 @@ public class ListController {
     }
 
     @PostMapping("create")
+    @Permission(INDEX_CREATE)
     public ApiResult create(@Valid @RequestBody FavList dto, BindingResult errors) {
         if (errors.hasErrors()) return new ApiResult().fail(errors);
         srv.create(dto);
@@ -40,6 +44,7 @@ public class ListController {
     }
 
     @PostMapping("add-items")
+    @Permission(INDEX_ADD_ITEM)
     public ApiResult addItems(@RequestBody ListItemCreateDTO dto) {
         srv.addItems(dto);
         return ApiResult.ok("entity.crud.create.success");
