@@ -16,9 +16,9 @@ import java.sql.Timestamp;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(value = "fav_list_item", autoResultMap = true)
+@TableName(value = "r4_index_item", autoResultMap = true)
 @NoArgsConstructor
-public class FavListItem extends Entity {
+public class IndexItem extends Entity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -27,7 +27,7 @@ public class FavListItem extends Entity {
     private long entityId;
     private Timestamp createdAt;
 
-    public FavListItem(long listId, int entityType, long entityId) {
+    public IndexItem(long listId, int entityType, long entityId) {
         this.listId = listId;
         this.entityType = entityType;
         this.entityId = entityId;

@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.rakbow.kureakurusu.data.vo.favList.FavListVO;
+import com.rakbow.kureakurusu.data.vo.index.IndexVO;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -21,12 +21,12 @@ import java.sql.Timestamp;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(value = "fav_list", autoResultMap = true)
+@TableName(value = "r4_index", autoResultMap = true)
 @NoArgsConstructor
 @AutoMappers({
-        @AutoMapper(target = FavListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
+        @AutoMapper(target = IndexVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
-public class FavList extends Entity {
+public class Index extends Entity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -39,12 +39,12 @@ public class FavList extends Entity {
     private String name;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
-    private String creator;
+    private String createdBy;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     @OrderBy
-    private Timestamp createTime;
+    private Timestamp createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
-    private Timestamp updateTime;
+    private Timestamp updatedAt;
 
 }

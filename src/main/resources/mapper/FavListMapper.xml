@@ -2,12 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rakbow.kureakurusu.dao.FavListMapper">
+<mapper namespace="com.rakbow.kureakurusu.dao.IndexMapper">
 
 <!--    <select id="episodes" resultType="com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO">-->
 <!--        select-->
 <!--            ep.id, ep.name, ep.duration, ep.serial, fli.created_at, ep.related_id as disc_id-->
-<!--        from fav_list_item fli-->
+<!--        from index_item fli-->
 <!--        inner join episode ep on fli.entity_id = ep.id and fli.list_id = #{listId}-->
 <!--        where 1 = 1-->
 <!--        <if test="param.keyword != null and param.keyword != ''">-->

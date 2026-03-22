@@ -9,7 +9,7 @@ import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.entity.FavListItem;
+import com.rakbow.kureakurusu.data.entity.IndexItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
@@ -142,15 +142,15 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             orderByDesc(!dto.isSort(), Item::getId);
         }};
         if (Objects.nonNull(dto.getListId())) {
-            wrapper.innerJoin(FavListItem.class, on ->
-                            on.eq(FavListItem::getEntityId, Item::getId))
+            wrapper.innerJoin(IndexItem.class, on ->
+                            on.eq(IndexItem::getEntityId, Item::getId))
                     .and(aw -> aw.and(w ->
-                            w.eq(FavListItem::getListId, dto.getListId())));
+                            w.eq(IndexItem::getListId, dto.getListId())));
             if (dto.isSort() && StringUtil.equals(dto.getSortField(), "id")) {
                 if (dto.asc()) {
-                    wrapper.orderByAsc(FavListItem::getCreatedAt);
+                    wrapper.orderByAsc(IndexItem::getCreatedAt);
                 } else {
-                    wrapper.orderByDesc(FavListItem::getCreatedAt);
+                    wrapper.orderByDesc(IndexItem::getCreatedAt);
                 }
             }
         }

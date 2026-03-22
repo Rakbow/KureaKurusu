@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo.favList;
+package com.rakbow.kureakurusu.data.vo.index;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FavListItemTargetVO {
+public class IndexItemTargetVO {
 
     private int entityType;
     private long entityId;

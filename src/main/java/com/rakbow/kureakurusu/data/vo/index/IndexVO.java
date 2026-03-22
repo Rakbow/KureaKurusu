@@ -1,4 +1,4 @@
-package com.rakbow.kureakurusu.data.vo.favList;
+package com.rakbow.kureakurusu.data.vo.index;
 
 import com.rakbow.kureakurusu.data.Attribute;
 import lombok.Data;
@@ -8,14 +8,14 @@ import lombok.Data;
  * @since 2025/7/25 14:06
  */
 @Data
-public class FavListVO {
+public class IndexVO {
 
     private Long id;
     private Attribute<Integer> type;
     private String name;
-    private String creator;
-    private String createTime;
-    private String updateTime;
+    private String createdBy;
+    private String createdAt;
+    private String updatedAt;
     private String remark;
 
 }

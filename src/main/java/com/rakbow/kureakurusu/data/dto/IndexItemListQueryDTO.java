@@ -7,7 +7,7 @@ import lombok.Data;
  * @since 2025/7/24 22:44
  */
 @Data
-public class FavListItemListQueryDTO {
+public class IndexItemListQueryDTO {
 
     private long listId;
     private int type;

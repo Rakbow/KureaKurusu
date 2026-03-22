@@ -16,7 +16,7 @@ public class HttpUtil {
     public static EntityMiniVO getEntityInfoByRequestURI(String uri) {
         Pattern pattern = Pattern.compile("^/db/([^/]+)/detail/(\\d+)$");
         Matcher matcher = pattern.matcher(uri);
-        if (!matcher.matches()) throw new ApiException("");
+        if (!matcher.matches()) throw new ApiException();
         EntityMiniVO res = new EntityMiniVO();
         String type = matcher.group(1);
         long id = Long.parseLong(matcher.group(2));

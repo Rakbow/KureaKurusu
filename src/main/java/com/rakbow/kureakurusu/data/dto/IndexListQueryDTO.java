@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class FavListQueryDTO extends ListQueryDTO {
+public class IndexListQueryDTO extends ListQueryDTO {
 
     private Integer type;
 

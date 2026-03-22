@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EntryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageDTO;
 import com.rakbow.kureakurusu.data.entity.Entry;
-import com.rakbow.kureakurusu.data.entity.FavListItem;
+import com.rakbow.kureakurusu.data.entity.IndexItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.EntryType;
@@ -20,6 +20,7 @@ import com.rakbow.kureakurusu.data.result.ItemExtraInfo;
 import com.rakbow.kureakurusu.data.vo.entry.*;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.ItemUtil;
@@ -148,10 +149,10 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
             wrapper.innerJoin(Relation.class, on -> on
                             .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
                             .eq(Relation::getRelatedEntityId, Entry::getId))
-                    .innerJoin(FavListItem.class, on -> on
-                            .eq(FavListItem::getEntityType, Relation::getEntityType)
-                            .eq(FavListItem::getEntityId, Relation::getEntityId))
-                    .eq(FavListItem::getListId, dto.getListId())
+                    .innerJoin(IndexItem.class, on -> on
+                            .eq(IndexItem::getEntityType, Relation::getEntityType)
+                            .eq(IndexItem::getEntityId, Relation::getEntityId))
+                    .eq(IndexItem::getListId, dto.getListId())
                     .distinct();
         }
         IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);
@@ -179,7 +180,7 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
                 qiniuImageUtil.deleteEntryImage(entry.getThumb());
             }
         } else {
-            throw new Exception();
+            throw new ApiException();
         }
         //upload new entry image
         finalUrl = qiniuImageUtil.uploadEntryImage(ENTITY_TYPE, id, image);

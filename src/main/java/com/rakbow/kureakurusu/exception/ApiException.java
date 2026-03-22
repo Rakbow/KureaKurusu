@@ -8,6 +8,10 @@ import com.rakbow.kureakurusu.toolkit.I18nHelper;
  */
 public class ApiException extends RuntimeException {
 
+    public  ApiException() {
+        super(I18nHelper.getMessage("system.internal_server_error"));
+    }
+
     public ApiException(String messageKey) {
         super(I18nHelper.getMessage(messageKey));
     }

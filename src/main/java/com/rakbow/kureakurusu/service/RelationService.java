@@ -27,6 +27,7 @@ import com.rakbow.kureakurusu.data.vo.relation.PersonVO;
 import com.rakbow.kureakurusu.data.vo.relation.Personnel;
 import com.rakbow.kureakurusu.data.vo.relation.RelationTargetVO;
 import com.rakbow.kureakurusu.data.vo.relation.RelationVO;
+import com.rakbow.kureakurusu.exception.ApiException;
 import com.rakbow.kureakurusu.toolkit.*;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
 import io.github.linpeilie.Converter;
@@ -85,7 +86,7 @@ public class RelationService extends ServiceImpl<RelationMapper, Relation> {
         } else if (targetEntityType == EntityType.ENTRY.getValue()) {
             subMapper = entryMapper;
         } else {
-            throw new Exception();
+            throw new ApiException();
         }
         List<? extends Entity> targets = subMapper.selectByIds(targetIds);
 
