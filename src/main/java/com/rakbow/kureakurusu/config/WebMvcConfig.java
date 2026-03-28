@@ -1,7 +1,6 @@
 package com.rakbow.kureakurusu.config;
 
 import com.rakbow.kureakurusu.interceptor.LocaleResolver;
-import com.rakbow.kureakurusu.interceptor.AuthInterceptor;
 import com.rakbow.kureakurusu.interceptor.TokenInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,15 +17,12 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final AuthInterceptor authInterceptor;
     private final TokenInterceptor tokenInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(tokenInterceptor);
-        registry.addInterceptor(authInterceptor)
-                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.ico", "/**/*.cur");
     }
 
     @Bean

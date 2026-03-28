@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>21</java.version>
+		<argLine>--enable-preview</argLine>
 		<mapstruct-plus.version>1.5.0</mapstruct-plus.version>
 		<mybatis-plus.version>3.5.15</mybatis-plus.version>
 		<spring-boot.version>4.0.1</spring-boot.version>

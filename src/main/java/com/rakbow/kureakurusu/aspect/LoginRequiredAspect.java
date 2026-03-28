@@ -1,12 +1,12 @@
 package com.rakbow.kureakurusu.aspect;
 
-import com.rakbow.kureakurusu.exception.UnauthorizedException;
 import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +25,7 @@ public class LoginRequiredAspect {
 
     @Before("pointcut()")
     public void checkLogin() {
-        if(!UserContextHolder.isLogin()) throw new UnauthorizedException("auth.no_login");
+        if(!UserContextHolder.isLogin()) throw new AuthenticationCredentialsNotFoundException("auth.no_login");
     }
 
 }

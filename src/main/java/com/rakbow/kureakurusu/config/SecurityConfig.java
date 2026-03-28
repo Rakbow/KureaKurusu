@@ -1,20 +1,24 @@
 package com.rakbow.kureakurusu.config;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.interceptor.TokenAuthFilter;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
-
-import java.io.PrintWriter;
 
 /**
  * @author Rakbow
@@ -22,7 +26,10 @@ import java.io.PrintWriter;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final TokenAuthFilter tokenFilter;
 
     @Bean
     public HttpFirewall httpFirewall() {
@@ -39,71 +46,41 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        // .requestMatchers(
-                        //     //需要登陆权限
-                        //     "/user/setting",
-                        //     "/user/upload"
-                        // )
-                        // .hasAnyAuthority(
-                        //         "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                        //         "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn(),
-                        //         "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
-                        //         "ROLE_" + UserAuthority.USER.getNameEn()
-                        // )
-                        // .requestMatchers(
-                        //         "/db/update-item-detail",
-                        //         "/db/update-item-bonus"
-                        // )
-                        // .hasAnyAuthority(
-                        //         "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                        //         "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn(),
-                        //         "ROLE_" + UserAuthority.JUNIOR_EDITOR.getNameEn()
-                        // )
-                        // .requestMatchers(
-                        //         "/db/franchise/add",
-                        //         "/db/franchise/delete",
-                        //         "/db/franchise/update"
-                        // )
-                        // .hasAnyAuthority(
-                        //         "ROLE_" + UserAuthority.ADMIN.getNameEn(),
-                        //         "ROLE_" + UserAuthority.SENIOR_EDITOR.getNameEn()
-                        // )
-                        .anyRequest()
-                        .permitAll()
+                        //部分接口绕开登录校验
+                        .requestMatchers(
+                                "/auth/login",
+                                "/auth/logout",
+                                "/auth/kaptcha"
+                        ).permitAll()
+                        //其余接口需登录校验
+                        .anyRequest().authenticated()
                 )
-                //禁用跨域访问限制
-                .cors(AbstractHttpConfigurer::disable)
+                //前后端分离项目, 启用跨域支持
+                .cors(Customizer.withDefaults())
+                //前后端分离（JWT / Token）一般不用 CSRF
                 .csrf(AbstractHttpConfigurer::disable)
+                //关闭浏览器弹窗认证（用户名密码弹窗）
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // 清除session
-                // .logout(logout -> logout.clearAuthentication(true).invalidateHttpSession(true))
+                //禁用 Session
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .logout(AbstractHttpConfigurer::disable)
-
-                //权限不足时
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                //异常处理
                 .exceptionHandling(auth -> auth
-                                .authenticationEntryPoint((request, response, e) -> {
-                                    String xRequestedWith = request.getHeader("x-requested-with");
-                                    //识别请求为同步请求还是异步请求
-                                    if ("XMLHttpRequest".equals(xRequestedWith)) {
-                                        //异步请求
-                                        response.setContentType("application/plain;charset=utf-8");
-                                        PrintWriter writer = response.getWriter();
-                                        writer.write(JsonUtil.toJson(new ApiResult(0, I18nHelper.getMessage("auth.not_login"))));
-                                    } else {
-                                        //同步请求
-                                        response.sendRedirect("/login");
-                                    }
-                                })
-                                .accessDeniedHandler((request, response, e) -> {
-                                String xRequestedWith = request.getHeader("x-requested-with");
-                                if ("XMLHttpRequest".equals(xRequestedWith)) {
-                                    response.setContentType("application/plain;charset=utf-8");
-                                    PrintWriter writer = response.getWriter();
-                                    writer.write(JsonUtil.toJson(new ApiResult(0, I18nHelper.getMessage("auth.not_authority"))));
-                                } else {
-                                    response.sendRedirect("/denied");
-                                }
-                                })
+                        //未登录
+                        .authenticationEntryPoint((_, resp, _) -> {
+                            resp.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            resp.setContentType("application/json;charset=utf-8");
+                            resp.getWriter().write(JsonUtil.toJson(ApiResult.fail(I18nHelper.getMessage("auth.not_login"))));
+                        })
+                        //权限不足
+                        .accessDeniedHandler((_, resp, _) -> {
+                            resp.setStatus(HttpStatus.FORBIDDEN.value());
+                            resp.setContentType("application/json;charset=utf-8");
+                            resp.getWriter().write(JsonUtil.toJson(ApiResult.fail(I18nHelper.getMessage("auth.not_authority"))));
+                        })
                 ).build();
     }
 

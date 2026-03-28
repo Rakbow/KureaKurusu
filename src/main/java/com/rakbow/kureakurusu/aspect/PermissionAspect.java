@@ -4,9 +4,8 @@ import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.data.constant.PermissionConstant;
 import com.rakbow.kureakurusu.data.enums.PermissionLogical;
-import com.rakbow.kureakurusu.exception.PermissionException;
-import com.rakbow.kureakurusu.exception.UnauthorizedException;
 import com.rakbow.kureakurusu.interceptor.UserContextHolder;
+import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -14,6 +13,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -44,7 +45,7 @@ public class PermissionAspect {
 
         LoginUser user = UserContextHolder.getCurrentUser();
 
-        if(Objects.isNull(user)) throw new UnauthorizedException("auth.no_login");
+        if(Objects.isNull(user)) throw new AuthenticationCredentialsNotFoundException("auth.no_login");
 
         Set<String> permissions = user.getPermissions();
 
@@ -58,11 +59,11 @@ public class PermissionAspect {
             for (String perm : perms) {
                 if (permissions.contains(perm)) continue;
 
-                throw new PermissionException("auth.no_permission");
+                throw new AccessDeniedException(I18nHelper.getMessage("auth.no_permission"));
             }
         } else {
             if (Arrays.stream(perms).noneMatch(permissions::contains))
-                throw new PermissionException("auth.no_permission");
+                throw new AccessDeniedException(I18nHelper.getMessage("auth.no_permission"));
         }
 
     }

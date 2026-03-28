@@ -21,7 +21,6 @@ public class RelationController {
     private final RelationService srv;
 
     @PostMapping("list")
-    @Permission(RELATION_QUERY_LIST)
     public ApiResult list(@RequestBody RelationListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
     }

@@ -66,10 +66,8 @@ public class ApiResult {
         return this;
     }
 
-    public ApiResult fail(String error) {
-        this.state = FAIL_STATE;
-        this.message = error;
-        return this;
+    public static ApiResult fail(String error) {
+        return new ApiResult(FAIL_STATE, error);
     }
 
     public ApiResult fail(BindingResult errors) {

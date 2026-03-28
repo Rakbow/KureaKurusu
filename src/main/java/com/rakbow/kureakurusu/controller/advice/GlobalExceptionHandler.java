@@ -2,12 +2,12 @@ package com.rakbow.kureakurusu.controller.advice;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.exception.EntityNullException;
-import com.rakbow.kureakurusu.exception.PermissionException;
-import com.rakbow.kureakurusu.exception.UnauthorizedException;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,12 +27,12 @@ public class GlobalExceptionHandler {
          String msg = StringUtil.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
         switch (e) {
             case EntityNullException _ -> response.setStatus(HttpStatus.NOT_FOUND.value());
-            case UnauthorizedException _ -> response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            case PermissionException _ -> response.setStatus(HttpStatus.FORBIDDEN.value());
+            case AuthenticationException _ -> response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            case AccessDeniedException _ -> response.setStatus(HttpStatus.FORBIDDEN.value());
             default -> response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         log.error(msg);
-        return new ApiResult().fail(msg);
+        return ApiResult.fail(msg);
     }
 
 }
