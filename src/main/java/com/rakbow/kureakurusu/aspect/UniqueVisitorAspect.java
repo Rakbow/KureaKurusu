@@ -33,16 +33,15 @@ public class UniqueVisitorAspect {
 
     private final VisitUtil visitUtil;
 
-
     @Pointcut("@annotation(com.rakbow.kureakurusu.annotation.UniqueVisitor)")
     private void pointcut() {
     }
 
     @Before("pointcut()")
     public void before() {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-        HttpServletResponse response = ((ServletRequestAttributes) requestAttributes).getResponse();
+        RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest req = ((ServletRequestAttributes) attrs).getRequest();
+        HttpServletResponse resp = ((ServletRequestAttributes) attrs).getResponse();
 
         //if visit token empty, generate it and set in cookie
         String visitToken = TokenInterceptor.getVisitToken();
@@ -50,12 +49,12 @@ public class UniqueVisitorAspect {
             visitToken = CommonUtil.generateUUID(0);
             Cookie cookie = new Cookie("visit_token", visitToken);
             cookie.setPath(contextPath);
-            assert response != null;
-            response.addCookie(cookie);
+            assert resp != null;
+            resp.addCookie(cookie);
         }
 
         //get entity info
-        String uri = request.getRequestURI();
+        String uri = req.getRequestURI();
         EntityMiniVO e = HttpUtil.getEntityInfoByRequestURI(uri);
         // increase visit count
         visitUtil.increase(e.getType(), e.getId(), visitToken);

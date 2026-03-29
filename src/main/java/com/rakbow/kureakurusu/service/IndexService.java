@@ -22,7 +22,7 @@ import com.rakbow.kureakurusu.data.vo.index.IndexVO;
 import com.rakbow.kureakurusu.data.vo.temp.EntitySearchVO;
 import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
 import com.rakbow.kureakurusu.exception.ApiException;
-import com.rakbow.kureakurusu.exception.EntityNullException;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import com.rakbow.kureakurusu.toolkit.CollectionUtil;
 import com.rakbow.kureakurusu.toolkit.DateHelper;
@@ -49,16 +49,16 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
     private final Converter converter;
 
     public IndexVO detail(long id) {
-        Index list = getById(id);
-        if (list == null) throw new EntityNullException();
-        return converter.convert(list, IndexVO.class);
+        Index idx = getById(id);
+        if (idx == null) throw ErrorFactory.entityNotFound();
+        return converter.convert(idx, IndexVO.class);
     }
 
-    public void create(Index list) {
-        list.setCreatedBy(UserContextHolder.getCurrentUser().getName());
-        list.setCreatedAt(DateHelper.now());
-        list.setUpdatedAt(DateHelper.now());
-        save(list);
+    public void create(Index idx) {
+        idx.setCreatedBy(UserContextHolder.getCurrentUser().getName());
+        idx.setCreatedAt(DateHelper.now());
+        idx.setUpdatedAt(DateHelper.now());
+        save(idx);
     }
 
     @Search

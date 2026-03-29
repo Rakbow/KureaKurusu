@@ -29,8 +29,13 @@ public class DateHelper {
     public static Timestamp now() {
         return new Timestamp(System.currentTimeMillis());
     }
+
     public static String nowStr() {
         return timestampToString(new Timestamp(System.currentTimeMillis()));
+    }
+
+    public static String nowDate() {
+        return new SimpleDateFormat(DATE_TIME_FORMAT).format(new Date());
     }
 
     //日期转为字符串(自定义格式)，例如：yyyy/MM/dd
@@ -81,7 +86,7 @@ public class DateHelper {
     }
 
     public static String getDuration(int seconds) {
-        if(seconds == 0) return "";
+        if (seconds == 0) return "";
         int hours = seconds / 3600;
         int minutes = (seconds % 3600) / 60;
         int remainingSeconds = seconds % 60;
@@ -94,7 +99,7 @@ public class DateHelper {
     }
 
     public static int getDuration(String timeStr) {
-        if(StringUtil.isBlank(timeStr)) return 0;
+        if (StringUtil.isBlank(timeStr)) return 0;
         String time = timeStr.replace(TAB, "").trim();
         String[] parts = time.split(":");
 

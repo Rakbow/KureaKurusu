@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.aspect;
 
 import com.rakbow.kureakurusu.toolkit.DateHelper;
-import com.rakbow.kureakurusu.toolkit.I18nHelper;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,10 +10,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import jakarta.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author Rakbow
@@ -26,19 +22,17 @@ public class LogAspect {
 
     @Pointcut("execution(* com.rakbow.kureakurusu.controller.*.*(..))")
     public void pointcut() {
-
     }
 
     @Before("pointcut()")
     public void before(JoinPoint joinPoint) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if(attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            String ip = request.getRemoteHost();
-            String now = new SimpleDateFormat(DateHelper.DATE_TIME_FORMAT).format(new Date());
-            String target = STR."\{joinPoint.getSignature().getDeclaringTypeName()}.\{joinPoint.getSignature().getName()}";
-            log.info(String.format(I18nHelper.getMessage("system.controller.log"), ip, now, target));
-        }
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attrs == null) return;
+        HttpServletRequest req = attrs.getRequest();
+        String ip = req.getRemoteHost();
+        String now = DateHelper.nowDate();
+        String target = STR."\{joinPoint.getSignature().getDeclaringTypeName()}.\{joinPoint.getSignature().getName()}";
+        log.info("User {} in {} access {}", ip, now, target);
     }
 
 }

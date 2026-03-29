@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.config;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.interceptor.TokenAuthFilter;
+import com.rakbow.kureakurusu.interceptor.AuthFilter;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import org.springframework.security.web.firewall.HttpFirewall;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final TokenAuthFilter tokenFilter;
+    private final AuthFilter authFilter;
 
     @Bean
     public HttpFirewall httpFirewall() {
@@ -66,7 +66,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .logout(AbstractHttpConfigurer::disable)
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 //异常处理
                 .exceptionHandling(auth -> auth
                         //未登录

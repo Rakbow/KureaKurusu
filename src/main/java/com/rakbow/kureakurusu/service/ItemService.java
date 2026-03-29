@@ -18,7 +18,7 @@ import com.rakbow.kureakurusu.data.enums.ImageType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.vo.EntityRelatedCount;
 import com.rakbow.kureakurusu.data.vo.item.*;
-import com.rakbow.kureakurusu.exception.EntityNullException;
+import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.*;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +108,7 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional(readOnly = true)
     public ItemDetailVO detail(long id) {
         Item item = getById(id);
-        if (item == null) throw new EntityNullException();
+        if (item == null) throw ErrorFactory.entityNotFound();
         ItemVO vo = converter.convert(item, ItemVO.class);
         vo.setSpec(ItemUtil.generateSpec(vo.getWidth(), vo.getLength(), vo.getHeight(), vo.getWeight()));
 

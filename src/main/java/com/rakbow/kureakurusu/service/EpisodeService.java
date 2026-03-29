@@ -25,7 +25,6 @@ import com.rakbow.kureakurusu.data.vo.episode.EpisodeListVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeRelatedVO;
 import com.rakbow.kureakurusu.data.vo.episode.EpisodeVO;
 import com.rakbow.kureakurusu.data.vo.temp.EpisodeSearchVO;
-import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.toolkit.DataFinder;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
@@ -64,13 +63,13 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
     @SneakyThrows
     public EpisodeVO detail(long id) {
         Episode ep = getById(id);
-        if (ep == null) throw new EntityNullException();
+        if (ep == null) throw ErrorFactory.entityNotFound();
         EpisodeVO vo = converter.convert(ep, EpisodeVO.class);
         int relatedType = ep.getRelatedType();
         long relatedId = ep.getRelatedId();
         if (ep.getRelatedType() == EntityType.ALBUM_DISC.getValue()) {
             Disc disc = discMapper.selectById(ep.getRelatedId());
-            if (disc == null) throw ErrorFactory.entityNull();
+            if (disc == null) throw ErrorFactory.entityNotFound();
             vo.setDiscNo(disc.getDiscNo());
             relatedType = EntityType.ITEM.getValue();
             relatedId = disc.getItemId();
@@ -125,7 +124,7 @@ public class EpisodeService extends ServiceImpl<EpisodeMapper, Episode> {
         if (dto.relatedType() == EntityType.ALBUM_DISC.getValue()) {
 
             Disc disc = discMapper.selectById(dto.relatedId());
-            if (disc == null) throw ErrorFactory.entityNull();
+            if (disc == null) throw ErrorFactory.entityNotFound();
             Item album = itemMapper.selectById(disc.getItemId());
             res.setParent(
                     EntityMiniVO.builder()

@@ -1,12 +1,11 @@
 package com.rakbow.kureakurusu.controller;
 
-import com.rakbow.kureakurusu.annotation.LoginRequired;
 import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
 import com.rakbow.kureakurusu.data.common.ApiResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.service.ItemExtraService;
+import com.rakbow.kureakurusu.service.ItemService;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +69,6 @@ public class ItemController {
         return ApiResult.ok(srv.search(dto));
     }
 
-    @LoginRequired
     @PostMapping("list")
     @Permission(ITEM_QUERY_LIST)
     public ApiResult list(@RequestBody ItemListQueryDTO dto) {
