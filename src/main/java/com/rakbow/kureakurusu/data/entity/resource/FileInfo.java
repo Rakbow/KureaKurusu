@@ -23,7 +23,7 @@ import java.sql.Timestamp;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName(value = "file_info", autoResultMap = true)
+@TableName(value = "r5_file_info", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = FileListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })

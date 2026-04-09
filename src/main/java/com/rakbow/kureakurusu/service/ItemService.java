@@ -9,7 +9,6 @@ import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.*;
-import com.rakbow.kureakurusu.data.entity.IndexItem;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.entity.item.SuperItem;
@@ -137,23 +136,10 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             eq(Objects.nonNull(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType());
             eq(StringUtil.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion());
             eq(Item::getStatus, 1);
-            orderBy(!(Objects.nonNull(dto.getListId()) && StringUtil.equals(dto.getSortField(), "id"))
+            orderBy(!(Objects.nonNull(dto.getIndexId()) && StringUtil.equals(dto.getSortField(), "id"))
                             && dto.isSort(), dto.asc(), dto.getSortField());
             orderByDesc(!dto.isSort(), Item::getId);
         }};
-        if (Objects.nonNull(dto.getListId())) {
-            wrapper.innerJoin(IndexItem.class, on ->
-                            on.eq(IndexItem::getEntityId, Item::getId))
-                    .and(aw -> aw.and(w ->
-                            w.eq(IndexItem::getListId, dto.getListId())));
-            if (dto.isSort() && StringUtil.equals(dto.getSortField(), "id")) {
-                if (dto.asc()) {
-                    wrapper.orderByAsc(IndexItem::getCreatedAt);
-                } else {
-                    wrapper.orderByDesc(IndexItem::getCreatedAt);
-                }
-            }
-        }
         if (dto.hasRelatedEntries()) {
             //inner join relation
             wrapper.innerJoin(Relation.class, on -> on
@@ -163,8 +149,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
                     .and(aw -> aw.or(w -> w
                             .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
                             .in(Relation::getRelatedEntityId, dto.getEntries())));
-                    // .groupBy(Item::getId)
-                    // .having(STR."COUNT(t2.related_entity_type) = \{dto.getEntries().size()}");
         }
         IPage<ItemSimpleVO> pages = mapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
         if (pages.getRecords().isEmpty()) return new SearchResult<>();
@@ -174,9 +158,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
             i.setCover(imgSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.MAIN));
             i.setThumb(imgSrv.getCache(ENTITY_TYPE.getValue(), i.getId(), ImageType.THUMB));
         });
-        if (Objects.nonNull(dto.getListId())) {
-            resSrv.getLocalResourceCompletedFlag(items);
-        }
         return new SearchResult<>(items, pages.getTotal());
     }
 

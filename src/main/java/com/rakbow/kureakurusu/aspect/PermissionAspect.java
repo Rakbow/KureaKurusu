@@ -56,7 +56,6 @@ public class PermissionAspect {
         if (logical == PermissionLogical.AND) {
             for (String perm : perms) {
                 if (permissions.contains(perm)) continue;
-
                 throw ErrorFactory.noPermission();
             }
         } else {

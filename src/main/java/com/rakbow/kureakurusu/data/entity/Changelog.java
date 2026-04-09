@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@TableName(value = "changelog", autoResultMap = true)
+@TableName(value = "r1_operation_log", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = ChangelogVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })

@@ -2,9 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.data.dto.IndexItemListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.IndexListQueryDTO;
-import com.rakbow.kureakurusu.data.dto.ListItemCreateDTO;
+import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Index;
 import com.rakbow.kureakurusu.service.IndexService;
 import jakarta.validation.Valid;
@@ -43,6 +41,11 @@ public class IndexController {
         return ApiResult.ok(srv.list(dto));
     }
 
+    @PostMapping("get-items")
+    public ApiResult getItems(@RequestBody IndexItemSearchQueryDTO dto) {
+        return ApiResult.ok(srv.getItems(dto));
+    }
+
     @PostMapping("add-items")
     @Permission(INDEX_ADD_ITEM)
     public ApiResult addItems(@RequestBody ListItemCreateDTO dto) {
@@ -50,9 +53,9 @@ public class IndexController {
         return ApiResult.ok("entity.crud.create.success");
     }
 
-    @PostMapping("get-items")
-    public ApiResult getItems(@RequestBody IndexItemListQueryDTO dto) {
-        return ApiResult.ok(srv.getItems(dto));
-    }
+    // @PostMapping("get-items")
+    // public ApiResult getItems(@RequestBody IndexItemListQueryDTO dto) {
+    //     return ApiResult.ok(srv.getItems(dto));
+    // }
 
 }

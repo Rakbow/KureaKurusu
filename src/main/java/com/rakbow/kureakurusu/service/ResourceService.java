@@ -7,6 +7,7 @@ import com.rakbow.kureakurusu.data.entity.EntityResourceInfo;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
+import com.rakbow.kureakurusu.data.vo.index.IndexElementItemVO;
 import com.rakbow.kureakurusu.data.vo.item.ItemSearchVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
@@ -96,8 +97,8 @@ public class ResourceService {
     }
 
     @SneakyThrows
-    public void getLocalResourceCompletedFlag(List<ItemSearchVO> items) {
-        List<Long> ids = items.stream().map(ItemSearchVO::getId).toList();
+    public void getLocalResourceCompletedFlag(List<IndexElementItemVO> items) {
+        List<Long> ids = items.stream().map(IndexElementItemVO::getId).toList();
         List<EntityResourceInfo> infos = entityResourceInfoMapper.selectList(new LambdaUpdateWrapper<>() {{
             eq(EntityResourceInfo::getEntityType, EntityType.ITEM.getValue());
             in(EntityResourceInfo::getEntityId, ids);
@@ -107,7 +108,7 @@ public class ResourceService {
                 items,
                 info -> info.getEntityType().intValue() == EntityType.ITEM.getValue(),
                 EntityResourceInfo::getEntityId,
-                ItemSearchVO::getId,
+                IndexElementItemVO::getId,
                 (info, item) -> item.setCompletedFlag(info.getCompletedFlag())
         );
     }

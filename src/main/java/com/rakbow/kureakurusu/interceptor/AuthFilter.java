@@ -43,6 +43,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
             String ticket = CookieUtil.getValue(req, "ticket");
             if (StringUtil.isBlank(ticket)) {
+                SecurityContextHolder.clearContext();
                 chain.doFilter(req, resp);
                 return;
             }
@@ -50,6 +51,7 @@ public class AuthFilter extends OncePerRequestFilter {
             String redisKey = RedisKey.LOGIN_TICKET + ticket;
 
             UserContextHolder.clear();
+            SecurityContextHolder.clearContext();
 
             if (!redisUtil.hasKey(redisKey)) {
                 chain.doFilter(req, resp);

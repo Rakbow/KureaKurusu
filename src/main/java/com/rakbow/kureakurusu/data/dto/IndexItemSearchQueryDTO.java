@@ -9,13 +9,13 @@ import java.util.List;
 
 /**
  * @author Rakbow
- * @since 2025/1/16 5:09
+ * @since 2026/4/3 0:31
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemSearchQueryDTO extends ListQueryDTO {
+public class IndexItemSearchQueryDTO extends ListQueryDTO {
 
     private List<Long> entries;
     private Integer entryType;
@@ -30,7 +30,8 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
 
     public void init() {
         entries = super.getVal("entries");
-        indexId = super.getVal("listId");
+        entryType = super.getVal("entryType");
+        indexId = super.getVal("indexId");
 
         type = super.getVal("type");
         subType = super.getVal("subType");
@@ -38,7 +39,7 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
         region = super.getVal("region");
         barcode = super.getVal("barcode");
         catalogId = super.getVal("catalogId");
-        
+
         super.setKeyword(super.getVal("keyword"));
     }
 

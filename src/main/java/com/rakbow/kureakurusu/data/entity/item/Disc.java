@@ -20,7 +20,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(value = "disc", autoResultMap = true)
+@TableName(value = "r7_disc", autoResultMap = true)
 @NoArgsConstructor
 @AutoMapper(target = DiscVO.class, reverseConvertGenerate = false)
 public class Disc extends Entity {

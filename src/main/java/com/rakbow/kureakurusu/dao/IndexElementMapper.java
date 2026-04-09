@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.dao;
 
 import com.github.yulichang.base.MPJBaseMapper;
-import com.rakbow.kureakurusu.data.entity.IndexItem;
+import com.rakbow.kureakurusu.data.entity.IndexElement;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2025/7/24 22:16
  */
 @Mapper
-public interface IndexItemMapper extends MPJBaseMapper<IndexItem> {
+public interface IndexElementMapper extends MPJBaseMapper<IndexElement> {
 }

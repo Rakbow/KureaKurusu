@@ -14,12 +14,12 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum EntityType {
 
-    ITEM(0, "enum.entity.item", "item"),
-    ENTRY(1, "enum.entity.entry", "entry"),
-    ROLE(3, "enum.entity.role", "role"),
-    EPISODE(4, "enum.entity.episode", "episode"),
-    ALBUM_DISC(5, "enum.default", "album_disc"),
-    FILE(98, "enum.entity.file", "file_info"),
+    ITEM(0, "enum.entity.item", "r2_item"),
+    ENTRY(1, "enum.entity.entry", "r3_entry"),
+    ROLE(3, "enum.entity.role", "r6_role"),
+    EPISODE(4, "enum.entity.episode", "r7_episode"),
+    ALBUM_DISC(5, "enum.default", "r7_disc"),
+    FILE(98, "enum.entity.file", "r5_file_info"),
     USER(101, "enum.entity.user", "r1_sys_user");
 
     @EnumValue

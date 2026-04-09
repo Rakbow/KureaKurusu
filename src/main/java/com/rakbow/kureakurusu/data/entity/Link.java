@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Data
-@TableName(value = "link", autoResultMap = true)
+@TableName(value = "r8_link", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = LinkVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })

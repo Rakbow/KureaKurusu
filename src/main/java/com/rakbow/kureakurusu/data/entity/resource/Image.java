@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(callSuper = true)
-@TableName(value = "image", autoResultMap = true)
+@TableName(value = "r5_image", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = ImageVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })

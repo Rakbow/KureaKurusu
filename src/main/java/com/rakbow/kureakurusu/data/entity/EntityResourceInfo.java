@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 import tools.jackson.databind.annotation.JsonDeserialize;
@@ -10,6 +11,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
  * @since 2025/12/14 15:59
  */
 @Data
+@TableName(value = "r5_entity_resource_info", autoResultMap = true)
 public class EntityResourceInfo {
 
     @TableId

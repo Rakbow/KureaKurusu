@@ -11,7 +11,7 @@ import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.dto.EntryDTO;
 import com.rakbow.kureakurusu.data.dto.ImageDTO;
 import com.rakbow.kureakurusu.data.entity.Entry;
-import com.rakbow.kureakurusu.data.entity.IndexItem;
+import com.rakbow.kureakurusu.data.entity.IndexElement;
 import com.rakbow.kureakurusu.data.entity.Relation;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.EntryType;
@@ -149,10 +149,10 @@ public class EntryService extends ServiceImpl<EntryMapper, Entry> {
             wrapper.innerJoin(Relation.class, on -> on
                             .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
                             .eq(Relation::getRelatedEntityId, Entry::getId))
-                    .innerJoin(IndexItem.class, on -> on
-                            .eq(IndexItem::getEntityType, Relation::getEntityType)
-                            .eq(IndexItem::getEntityId, Relation::getEntityId))
-                    .eq(IndexItem::getListId, dto.getListId())
+                    .innerJoin(IndexElement.class, on -> on
+                            .eq(IndexElement::getEntityType, Relation::getEntityType)
+                            .eq(IndexElement::getEntityId, Relation::getEntityId))
+                    .eq(IndexElement::getIndexId, dto.getListId())
                     .distinct();
         }
         IPage<EntrySimpleVO> pages = mapper.selectJoinPage(new Page<>(dto.getPage(), dto.getSize()), EntrySimpleVO.class, wrapper);

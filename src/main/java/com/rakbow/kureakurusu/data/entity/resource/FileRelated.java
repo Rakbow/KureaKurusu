@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  */
 @Data
 @NoArgsConstructor
-@TableName(value = "file_related", autoResultMap = true)
+@TableName(value = "r5_file_related", autoResultMap = true)
 public class FileRelated {
 
     private Long id = 0L;

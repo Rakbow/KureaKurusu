@@ -16,19 +16,19 @@ import java.sql.Timestamp;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(value = "r4_index_item", autoResultMap = true)
+@TableName(value = "r4_index_element", autoResultMap = true)
 @NoArgsConstructor
-public class IndexItem extends Entity {
+public class IndexElement extends Entity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
-    private long listId;
+    private long indexId;
     private int entityType;
     private long entityId;
     private Timestamp createdAt;
 
-    public IndexItem(long listId, int entityType, long entityId) {
-        this.listId = listId;
+    public IndexElement(long indexId, int entityType, long entityId) {
+        this.indexId = indexId;
         this.entityType = entityType;
         this.entityId = entityId;
         this.createdAt = DateHelper.now();

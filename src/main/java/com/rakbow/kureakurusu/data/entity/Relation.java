@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@TableName(value = "relation", autoResultMap = true)
+@TableName(value = "r6_relation", autoResultMap = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Relation {

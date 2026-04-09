@@ -21,7 +21,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @ToString(callSuper = true)
-@TableName(value = "episode", autoResultMap = true)
+@TableName(value = "r7_episode", autoResultMap = true)
 @AutoMappers({
         @AutoMapper(target = EpisodeVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
         @AutoMapper(target = EpisodeListVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)

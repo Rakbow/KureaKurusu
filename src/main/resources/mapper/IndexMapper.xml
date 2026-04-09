@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rakbow.kureakurusu.dao.IndexMapper">
+
+    <select id="getItemGroupByEntry" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
+        select i.id,
+        i.type,
+        i.sub_type,
+        i.name,
+        i.release_date,
+        i.barcode,
+        i.catalog_id,
+        e.id                                                   as entry_id,
+        e.name                                                 as entry_name,
+        COALESCE(NULLIF(e.name_zh, ''), NULLIF(e.name_en, '')) as entry_sub_name,
+        e.sub_type                                             as entry_sub_type,
+        e.thumb                                                as entry_thumb,
+        DATE_FORMAT(idx_e.created_at, '%Y/%m/%d %H:%i:%s')     as createdAt
+        from r4_index idx
+        inner join r4_index_element idx_e on idx_e.index_id = idx.id
+        inner join r2_item i on i.id = idx_e.entity_id
+        inner join r6_relation rel on rel.entity_type = 0 and rel.entity_id = i.id
+        inner join r3_entry e on rel.related_entity_type = 1 and rel.related_entity_id = e.id
+        where idx.id = #{param.indexId}
+        and e.type = #{param.entryType}
+        <if test="param.entries != null and param.entries.size() > 0">
+            and e.id in
+            <foreach item="entryId" index="index" collection="param.entries" separator="," open="(" close=")">
+                #{entryId}
+            </foreach>
+        </if>
+        order by e.id, i.release_date
+        limit #{param.offset}, #{param.size}
+    </select>
+
+    <select id="countItemGroupByEntry" resultType="long">
+        select
+        count(1)
+        from r4_index idx
+        inner join r4_index_element idx_e on idx_e.index_id = idx.id
+        inner join r2_item i on i.id = idx_e.entity_id
+        inner join r6_relation rel on rel.entity_type = 0 and rel.entity_id = i.id
+        inner join r3_entry e on rel.related_entity_type = 1 and rel.related_entity_id = e.id
+        where idx.id = #{param.indexId}
+        and e.type = #{param.entryType}
+        <if test="param.entries != null and param.entries.size() > 0">
+            and e.id in
+            <foreach item="entryId" index="index" collection="param.entries" separator="," open="(" close=")">
+                #{entryId}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

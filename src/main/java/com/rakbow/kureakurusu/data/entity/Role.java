@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@TableName("role")
+@TableName("r6_role")
 public class Role {
 
     @OrderBy

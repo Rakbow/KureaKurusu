@@ -25,6 +25,7 @@ public class GlobalConverters {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public <X, E extends Enum<E>> Attribute<X> toAttribute(E e) {
+        if(e == null) return null;
         Method getValueMethod = e.getClass().getMethod("getValue");
         Method getLabelMethod = e.getClass().getMethod("getLabelKey");
         String labelKey = getLabelMethod.invoke(e).toString();
@@ -35,6 +36,7 @@ public class GlobalConverters {
 
     @SneakyThrows
     public <E extends Enum<E>> int to(E e) {
+        if(e == null) return 0;
         return (Integer) e.getClass().getMethod("getValue").invoke(e);
     }
 
@@ -42,7 +44,5 @@ public class GlobalConverters {
     public Attribute<Integer> entityType(int type) {
         return toAttribute(EntityType.get(type));
     }
-
-
 
 }

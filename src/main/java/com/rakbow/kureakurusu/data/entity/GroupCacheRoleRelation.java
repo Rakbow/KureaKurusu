@@ -8,7 +8,7 @@ import lombok.Data;
  * @since 2025/6/29 18:20
  */
 @Data
-@TableName(value = "group_cache_role_relation", autoResultMap = true)
+@TableName(value = "r10_group_cache_role_relation", autoResultMap = true)
 public class GroupCacheRoleRelation {
 
     private Long roleId;

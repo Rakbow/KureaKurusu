@@ -1,7 +1,9 @@
 package com.rakbow.kureakurusu.data.vo.item;
 
+import com.rakbow.kureakurusu.data.enums.EntrySubType;
 import com.rakbow.kureakurusu.data.enums.ItemSubType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
+import com.rakbow.kureakurusu.data.vo.index.IndexElementItemVO;
 import com.rakbow.kureakurusu.toolkit.convert.GlobalConverters;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
@@ -14,7 +16,8 @@ import lombok.Data;
  */
 @Data
 @AutoMappers({
-        @AutoMapper(target = ItemSearchVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
+        @AutoMapper(target = ItemSearchVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),
+        @AutoMapper(target = IndexElementItemVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class)
 })
 public class ItemSimpleVO {
 
@@ -28,5 +31,14 @@ public class ItemSimpleVO {
     private double price;
     @AutoMapping(target = "currency", qualifiedByName = "getCurrency")
     private String region;
+
+    private String createdAt;
+
+    //entry
+    private Long entryId;
+    private String entryName;
+    private String entrySubName;
+    private EntrySubType entrySubType;
+    private String entryThumb;
 
 }

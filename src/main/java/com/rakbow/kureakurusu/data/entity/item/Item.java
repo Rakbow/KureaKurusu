@@ -29,7 +29,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName(value = "item", autoResultMap = true)
+@TableName(value = "r2_item", autoResultMap = true)
 @NoArgsConstructor
 @AutoMappers({
         @AutoMapper(target = ItemSearchVO.class, reverseConvertGenerate = false, uses = GlobalConverters.class),

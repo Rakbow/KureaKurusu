@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.data.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rakbow.kureakurusu.data.constant.PermissionConstant;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +40,10 @@ public class LoginUser implements UserDetails {
 
     private String ticket;
     private int expires;
+
+    public boolean isAdmin() {
+        return this.permissions.contains(PermissionConstant.ADMIN);
+    }
 
     public void setRoles(Set<String> roles) {
         if(roles == null) {

@@ -18,6 +18,7 @@ public abstract class ListQueryDTO {
     private int offset;
     private String sortField;
     private int sortOrder;
+    private String groupField;
     private String keyword;
     private LinkedHashMap<String, LinkedHashMap<String, Object>> filters = new LinkedHashMap<>();
 
