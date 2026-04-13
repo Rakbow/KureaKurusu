@@ -87,6 +87,21 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
         return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
 
+    @SneakyThrows
+    @Transactional(readOnly = true)
+    @Search
+    public SearchResult<Index> search(IndexListQueryDTO dto) {
+        IPage<Index> pages = page(
+                new Page<>(dto.getPage(), dto.getSize()),
+                new MPJLambdaWrapper<Index>()
+                        .eq(Objects.nonNull(dto.getType()), Index::getType, dto.getType())
+                        .like(StringUtil.isNotBlank(dto.getKeyword()), Index::getName, dto.getKeyword())
+                        .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
+                        .orderByDesc(!dto.isSort(), Index::getCreatedAt)
+        );
+        return new SearchResult<>(pages.getRecords(), pages.getTotal());
+    }
+
     public void addItems(ListItemCreateDTO dto) {
         List<IndexElement> items = new ArrayList<>();
         for (long itemId : dto.itemIds()) {
@@ -216,7 +231,6 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
     public SearchResult<?> getElements(IndexItemListQueryDTO dto) {
         int targetEntityType = dto.getType();
         ListQueryDTO param = dto.getParam();
-        param.init();
         IPage<? extends EntitySearchVO> pages = new Page<>();
         // Page page = new Page<>(param.getPage(), param.getSize());
         List<? extends EntitySearchVO> targets;

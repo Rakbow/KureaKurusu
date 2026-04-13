@@ -68,9 +68,7 @@ public class EntryDTO {
 
         private int type;
 
-        public void init() {
-            type = super.getVal("type");
-        }
+        // 不再需要手动init(),父类会自动映射type字段
 
     }
 
@@ -87,13 +85,10 @@ public class EntryDTO {
         private List<String> keywords = new ArrayList<>();
 
         public void init() {
-            type = super.getVal("type");
-            listId = super.getVal("listId");
-            subType = super.getVal("subType");
-            keyword = super.getVal("keyword");
+            super.init();
             if (Objects.nonNull(keyword)) {
                 if (keyword.contains(",")) {
-                    keywords = Arrays.stream(super.getKeyword().split(","))
+                    keywords = Arrays.stream(keyword.split(","))
                             .map(String::trim)
                             .filter(s -> !s.isEmpty())
                             .toList();

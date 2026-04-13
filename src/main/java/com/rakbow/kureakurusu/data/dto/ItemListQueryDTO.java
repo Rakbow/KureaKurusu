@@ -2,7 +2,6 @@ package com.rakbow.kureakurusu.data.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Rakbow
@@ -13,9 +12,5 @@ import lombok.NoArgsConstructor;
 public class ItemListQueryDTO extends ListQueryDTO {
 
     private int type;
-
-    public void init() {
-        type = super.getVal("type");
-    }
 
 }

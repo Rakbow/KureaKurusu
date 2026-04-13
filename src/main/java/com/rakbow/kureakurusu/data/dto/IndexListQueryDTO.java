@@ -13,8 +13,4 @@ public class IndexListQueryDTO extends ListQueryDTO {
 
     private Integer type;
 
-    public void init() {
-        type = super.getVal("type");
-    }
-
 }

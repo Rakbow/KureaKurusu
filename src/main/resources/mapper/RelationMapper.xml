@@ -8,7 +8,7 @@
         SELECT *
         FROM (
         (SELECT *
-        FROM relation
+        FROM r6_relation
         WHERE entity_type = #{param.targetEntityType}
         <if test="param.targetEntitySubTypes.size() > 0">
             AND entity_sub_type IN
@@ -21,7 +21,7 @@
         AND related_entity_id = #{param.entityId})
         UNION ALL
         (SELECT *
-        FROM relation
+        FROM r6_relation
         WHERE related_entity_type = #{param.targetEntityType}
         <if test="param.targetEntitySubTypes.size() > 0">
             AND related_entity_sub_type IN
@@ -43,7 +43,7 @@
         SELECT COUNT(id)
         FROM (
         (SELECT *
-        FROM relation
+        FROM r6_relation
         WHERE entity_type = #{param.targetEntityType}
         <if test="param.targetEntitySubTypes.size() > 0">
             AND entity_sub_type IN
@@ -56,7 +56,7 @@
         AND related_entity_id = #{param.entityId})
         UNION ALL
         (SELECT *
-        FROM relation
+        FROM r6_relation
         WHERE related_entity_type = #{param.targetEntityType}
         <if test="param.targetEntitySubTypes.size() > 0">
             AND related_entity_sub_type IN

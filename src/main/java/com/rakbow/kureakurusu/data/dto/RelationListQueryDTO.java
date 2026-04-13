@@ -23,11 +23,4 @@ public class RelationListQueryDTO extends ListQueryDTO {
     private int targetEntityType;
     private List<Integer> targetEntitySubTypes;
 
-    public void init() {
-        this.entityType = super.getVal("entityType");
-        this.entityId = ((Integer)super.getVal("entityId")).longValue();
-        this.targetEntityType = super.getVal("targetEntityType");
-        this.targetEntitySubTypes = super.getVal("targetEntitySubTypes");
-    }
-
 }

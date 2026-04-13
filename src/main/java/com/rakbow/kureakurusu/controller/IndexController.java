@@ -37,8 +37,13 @@ public class IndexController {
     }
 
     @PostMapping("list")
-    public ApiResult lists(@RequestBody IndexListQueryDTO dto) {
+    public ApiResult list(@RequestBody IndexListQueryDTO dto) {
         return ApiResult.ok(srv.list(dto));
+    }
+
+    @PostMapping("search")
+    public ApiResult search(@RequestBody IndexListQueryDTO dto) {
+        return ApiResult.ok(srv.search(dto));
     }
 
     @PostMapping("get-items")

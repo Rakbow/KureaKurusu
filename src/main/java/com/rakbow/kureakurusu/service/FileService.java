@@ -75,11 +75,11 @@ public class FileService extends ServiceImpl<FileInfoMapper, FileInfo> {
                 .orderByDesc(!dto.isSort(), FileInfo::getId);
 
         //get file related part
-        if (dto.getRelEntityType() != null && dto.getRelEntityId() != null) {
+        if (dto.getEntityType() != null && dto.getEntityId() != null) {
             wrapper.selectAs(FileRelated::getId, FileInfo::getRelatedId)
                     .innerJoin(FileRelated.class, FileRelated::getFileId, FileInfo::getId)
-                    .eq(FileRelated::getEntityType, dto.getRelEntityType())
-                    .eq(FileRelated::getEntityId, dto.getRelEntityId());
+                    .eq(FileRelated::getEntityType, dto.getEntityType())
+                    .eq(FileRelated::getEntityId, dto.getEntityId());
         }
         IPage<FileInfo> pages = page(new Page<>(dto.getPage(), dto.getSize()), wrapper);
         List<FileListVO> res = converter.convert(pages.getRecords(), FileListVO.class);

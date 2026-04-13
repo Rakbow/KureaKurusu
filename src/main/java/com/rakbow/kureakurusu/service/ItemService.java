@@ -165,7 +165,6 @@ public class ItemService extends ServiceImpl<ItemMapper, Item> {
     @Transactional(readOnly = true)
     @Search
     public SearchResult<? extends ItemListVO> list(ItemListQueryDTO param) {
-        param.init();
         Class<? extends SuperItem> superClass = ItemUtil.getSuperItem(param.getType());
         Class<? extends ItemListVO> itemListVOClass = ItemUtil.getItemListVO(param.getType());
 

@@ -11,12 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class FileListQueryDTO extends ListQueryDTO {
 
-    private Integer relEntityType;
-    private Integer relEntityId;
-
-    public void init() {
-        relEntityType = super.getVal("entityType");
-        relEntityId = super.getVal("entityId");
-    }
+    private Integer entityType;
+    private Integer entityId;
 
 }

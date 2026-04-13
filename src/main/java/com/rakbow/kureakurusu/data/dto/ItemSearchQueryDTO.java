@@ -28,20 +28,6 @@ public class ItemSearchQueryDTO extends ListQueryDTO {
     private String barcode;
     private String catalogId;
 
-    public void init() {
-        entries = super.getVal("entries");
-        indexId = super.getVal("listId");
-
-        type = super.getVal("type");
-        subType = super.getVal("subType");
-        releaseType = super.getVal("releaseType");
-        region = super.getVal("region");
-        barcode = super.getVal("barcode");
-        catalogId = super.getVal("catalogId");
-        
-        super.setKeyword(super.getVal("keyword"));
-    }
-
     public boolean hasRelatedEntries() {
         return !this.entries.isEmpty();
     }

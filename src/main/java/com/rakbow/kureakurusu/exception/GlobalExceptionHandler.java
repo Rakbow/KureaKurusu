@@ -1,7 +1,6 @@
-package com.rakbow.kureakurusu.controller.advice;
+package com.rakbow.kureakurusu.exception;
 
 import com.rakbow.kureakurusu.data.common.ApiResult;
-import com.rakbow.kureakurusu.exception.EntityNullException;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

@@ -36,6 +36,7 @@ public class JacksonConfig {
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false)
                 .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false)
+                .addModule(listQueryDTOModule())  // 注册 ListQueryDTO 修饰器模块
                 .build();
     }
 }

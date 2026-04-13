@@ -62,8 +62,8 @@ public class ImageService extends ServiceImpl<ImageMapper, Image> {
     @Search
     public SearchResult<ImageVO> list(ImageDTO.ImageListQueryDTO dto) {
         MPJLambdaWrapper<Image> wrapper = new MPJLambdaWrapper<Image>()
-                .eq(Image::getEntityType, dto.getRelEntityType())
-                .eq(Image::getEntityId, dto.getRelEntityId())
+                .eq(Image::getEntityType, dto.getEntityType())
+                .eq(Image::getEntityId, dto.getEntityId())
                 .like(StringUtil.isNotEmpty(dto.getKeyword()), Image::getName, dto.getKeyword())
                 .eq(Objects.nonNull(dto.getType()) && dto.getType() != -1 && dto.getType() != -2, Image::getType, dto.getType())
                 .in(Objects.nonNull(dto.getType()) && dto.getType() == -2, Image::getType, defaultImageType)

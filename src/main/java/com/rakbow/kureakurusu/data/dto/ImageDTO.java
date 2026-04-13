@@ -24,14 +24,8 @@ public class ImageDTO {
     public static class ImageListQueryDTO extends ListQueryDTO {
 
         private Integer type;
-        private Integer relEntityType;
-        private Integer relEntityId;
-
-        public void init() {
-            this.type = super.getVal("type");
-            this.relEntityType = super.getVal("entityType");
-            this.relEntityId = super.getVal("entityId");
-        }
+        private Integer entityType;
+        private Integer entityId;
 
     }
 
