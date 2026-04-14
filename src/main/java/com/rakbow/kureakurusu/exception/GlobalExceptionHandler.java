@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.exception;
 
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler({Exception.class})
-    public ApiResult exceptionHandler(Exception e, HttpServletResponse response) {
+    public R exceptionHandler(Exception e, HttpServletResponse response) {
          String msg = StringUtil.isNotBlank(e.getMessage()) ? e.getMessage() : e.getCause().getMessage();
         switch (e) {
             case EntityNullException _ -> response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
             default -> response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
         log.error(msg);
-        return ApiResult.fail(msg);
+        return R.fail(msg);
     }
 
 }

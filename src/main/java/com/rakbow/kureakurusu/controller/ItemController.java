@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.ItemExtraService;
 import com.rakbow.kureakurusu.service.ItemService;
@@ -31,27 +31,27 @@ public class ItemController {
 
     @PostMapping("create")
     @Permission(ITEM_CREATE)
-    public ApiResult advanceCreate(
+    public R advanceCreate(
             @RequestParam("param") String param,
             @RequestParam("images") MultipartFile[] images
     ) {
         ItemSuperCreateDTO dto = JsonUtil.to(param, ItemSuperCreateDTO.class);
-        return ApiResult.ok(srv.create(dto, images));
+        return R.ok(srv.create(dto, images));
     }
 
     @PostMapping("update")
     @Permission(ITEM_UPDATE)
-    public ApiResult update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
+    public R update(@Valid @RequestBody ItemUpdateDTO dto, BindingResult errors) {
+        if (errors.hasErrors()) return new R().fail(errors);
         srv.update(dto);
-        return ApiResult.ok("entity.crud.update.success");
+        return R.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete")
     @Permission(ITEM_DELETE)
-    public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
+    public R delete(@RequestBody CommonDeleteDTO dto) {
         srv.delete(dto.ids());
-        return ApiResult.ok("entity.crud.delete.success");
+        return R.ok("entity.crud.delete.success");
     }
 
     //endregion
@@ -60,19 +60,19 @@ public class ItemController {
 
     @UniqueVisitor
     @PostMapping("detail/{id}")
-    public ApiResult detail(@PathVariable("id") long id) {
-        return ApiResult.ok(srv.detail(id));
+    public R detail(@PathVariable("id") long id) {
+        return R.ok(srv.detail(id));
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody ItemSearchQueryDTO dto) {
-        return ApiResult.ok(srv.search(dto));
+    public R search(@RequestBody ItemSearchQueryDTO dto) {
+        return R.ok(srv.search(dto));
     }
 
     @PostMapping("list")
     @Permission(ITEM_QUERY_LIST)
-    public ApiResult list(@RequestBody ItemListQueryDTO dto) {
-        return ApiResult.ok(srv.list(dto));
+    public R list(@RequestBody ItemListQueryDTO dto) {
+        return R.ok(srv.list(dto));
     }
 
     //endregion
@@ -80,30 +80,30 @@ public class ItemController {
     //region extra api
 
     @PostMapping("album-track-list")
-    public ApiResult getAlbumTracks(@RequestBody CommonDetailQry qry) {
-        return ApiResult.ok(extSrv.getAlbumTracks(qry.id()));
+    public R getAlbumTracks(@RequestBody CommonDetailQry qry) {
+        return R.ok(extSrv.getAlbumTracks(qry.id()));
     }
 
     @PostMapping("album-track-quick-create")
     @Permission(ADMIN)
-    public ApiResult albumTrackQuickCreate(@RequestBody DiscCreateDTO dto) {
+    public R albumTrackQuickCreate(@RequestBody DiscCreateDTO dto) {
         extSrv.albumTrackQuickCreate(dto, true);
-        return ApiResult.ok("entity.crud.create.success");
+        return R.ok("entity.crud.create.success");
     }
 
     @PostMapping("album-track-quick-upload")
     @Permission(ADMIN)
-    public ApiResult albumTrackQuickUpload(
+    public R albumTrackQuickUpload(
             @RequestParam("files") MultipartFile[] files,
             @ModelAttribute AlbumTrackQuickUploadDTO dto
     ) {
         extSrv.albumTrackQuickUpload(files, dto);
-        return ApiResult.ok("entity.crud.upload.success");
+        return R.ok("entity.crud.upload.success");
     }
 
     @PostMapping("convert-isbn")
-    public ApiResult convertISBN13(@RequestBody ISBNConvertDTO dto) {
-        return ApiResult.ok(extSrv.convertISBN13(dto.isbn10()));
+    public R convertISBN13(@RequestBody ISBNConvertDTO dto) {
+        return R.ok(extSrv.convertISBN13(dto.isbn10()));
     }
 
     //endregion

@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.google.code.kaptcha.Producer;
 import com.rakbow.kureakurusu.data.auth.LoginUser;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.LoginDTO;
 import com.rakbow.kureakurusu.service.AuthService;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
@@ -59,9 +59,9 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ApiResult login(@Valid @RequestBody LoginDTO dto, HttpSession session,
-                           HttpServletRequest req, HttpServletResponse resp, BindingResult errors) {
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
+    public R login(@Valid @RequestBody LoginDTO dto, HttpSession session,
+                   HttpServletRequest req, HttpServletResponse resp, BindingResult errors) {
+        if (errors.hasErrors()) return new R().fail(errors);
         LoginUser res = srv.login(dto, req, session);
         //generate cookie
         Cookie cookie = new Cookie("ticket", res.getTicket());
@@ -70,12 +70,12 @@ public class AuthController {
         cookie.setMaxAge(res.getExpires());
         //load cookie to response
         resp.addCookie(cookie);
-        return ApiResult.ok(res);
+        return R.ok(res);
     }
 
     @PostMapping("logout")
-    public ApiResult logout(@CookieValue(value = "ticket", required = false) String ticket,
-                            HttpSession session, HttpServletResponse resp) {
+    public R logout(@CookieValue(value = "ticket", required = false) String ticket,
+                    HttpSession session, HttpServletResponse resp) {
         //logout
         srv.logout(ticket);
         //clear Spring Security context
@@ -88,7 +88,7 @@ public class AuthController {
         cookie.setPath(contextPath);
         cookie.setMaxAge(0);
         resp.addCookie(cookie);
-        return ApiResult.ok();
+        return R.ok();
     }
 
 }

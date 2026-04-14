@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.FileService;
 import jakarta.validation.Valid;
@@ -27,56 +27,56 @@ public class FileController {
 
     @PostMapping("upload")
     @Permission(ADMIN)
-    public ApiResult upload(
+    public R upload(
             @RequestParam("entityType") int entityType,
             @RequestParam("entityId") long entityId,
             @RequestParam("files") MultipartFile[] files,
             @RequestParam("names") List<String> names
     ) {
         srv.upload(entityType, entityId, files, names);
-        return ApiResult.ok("entity.crud.update.success");
+        return R.ok("entity.crud.update.success");
     }
 
     @PostMapping("update")
     @Permission(ADMIN)
-    public ApiResult update(@Valid @RequestBody FileUpdateDTO dto, BindingResult errors) {
+    public R update(@Valid @RequestBody FileUpdateDTO dto, BindingResult errors) {
         //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        if (errors.hasErrors()) return new R().fail(errors);
         //update
         srv.update(dto);
-        return ApiResult.ok("entity.crud.update.success");
+        return R.ok("entity.crud.update.success");
     }
 
     @PostMapping("list")
     @Permission(ADMIN)
-    public ApiResult list(@RequestBody FileListQueryDTO dto) {
-        return ApiResult.ok(srv.list(dto));
+    public R list(@RequestBody FileListQueryDTO dto) {
+        return R.ok(srv.list(dto));
     }
 
     @PostMapping("search")
     @Permission(ADMIN)
-    public ApiResult search(@RequestBody FileSearchParams param) {
-        return ApiResult.ok(srv.search(param));
+    public R search(@RequestBody FileSearchParams param) {
+        return R.ok(srv.search(param));
     }
 
     @PostMapping("related")
     @Permission(ADMIN)
-    public ApiResult related(@RequestBody EntityDTO dto) {
-        return ApiResult.ok(srv.related(dto));
+    public R related(@RequestBody EntityDTO dto) {
+        return R.ok(srv.related(dto));
     }
 
     @PostMapping("related-create")
     @Permission(ADMIN)
-    public ApiResult createRelated(@RequestBody FileCreateDTO dto) {
+    public R createRelated(@RequestBody FileCreateDTO dto) {
         srv.createRelated(dto.entityType(), dto.entityId(), dto.fileIds());
-        return ApiResult.ok("entity.crud.update.success");
+        return R.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("related-delete")
     @Permission(ADMIN)
-    public ApiResult deleteRelated(@RequestBody CommonDeleteDTO dto) {
+    public R deleteRelated(@RequestBody CommonDeleteDTO dto) {
         srv.deleteRelated(dto);
-        return ApiResult.ok("entity.crud.delete.success");
+        return R.ok("entity.crud.delete.success");
     }
 
 }

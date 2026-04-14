@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Index;
 import com.rakbow.kureakurusu.service.IndexService;
@@ -24,38 +24,38 @@ public class IndexController {
     private final IndexService srv;
 
     @PostMapping("detail/{id}")
-    public ApiResult detail(@PathVariable("id") long id) {
-        return ApiResult.ok(srv.detail(id));
+    public R detail(@PathVariable("id") long id) {
+        return R.ok(srv.detail(id));
     }
 
     @PostMapping("create")
     @Permission(INDEX_CREATE)
-    public ApiResult create(@Valid @RequestBody Index dto, BindingResult errors) {
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
+    public R create(@Valid @RequestBody Index dto, BindingResult errors) {
+        if (errors.hasErrors()) return new R().fail(errors);
         srv.create(dto);
-        return ApiResult.ok("entity.crud.create.success");
+        return R.ok("entity.crud.create.success");
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody IndexListQueryDTO dto) {
-        return ApiResult.ok(srv.list(dto));
+    public R list(@RequestBody IndexListQueryDTO dto) {
+        return R.ok(srv.list(dto));
     }
 
     @PostMapping("search")
-    public ApiResult search(@RequestBody IndexListQueryDTO dto) {
-        return ApiResult.ok(srv.search(dto));
+    public R search(@RequestBody IndexListQueryDTO dto) {
+        return R.ok(srv.search(dto));
     }
 
     @PostMapping("get-items")
-    public ApiResult getItems(@RequestBody IndexItemSearchQueryDTO dto) {
-        return ApiResult.ok(srv.getItems(dto));
+    public R getItems(@RequestBody IndexItemSearchQueryDTO dto) {
+        return R.ok(srv.getItems(dto));
     }
 
     @PostMapping("add-items")
     @Permission(INDEX_ADD_ITEM)
-    public ApiResult addItems(@RequestBody ListItemCreateDTO dto) {
+    public R addItems(@RequestBody ListItemCreateDTO dto) {
         srv.addItems(dto);
-        return ApiResult.ok("entity.crud.create.success");
+        return R.ok("entity.crud.create.success");
     }
 
     // @PostMapping("get-items")

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * @since 2022-09-04 3:45
  */
 @Data
-public class ApiResult {
+public class R {
 
     /**
      * Http Status Code
@@ -25,52 +25,52 @@ public class ApiResult {
     private static final int SUCCESS_STATE = 1;
     private static final int FAIL_STATE = 0;
 
-    public ApiResult() {
+    public R() {
         this.state = SUCCESS_STATE;
         this.message = "";
     }
 
-    public ApiResult(int state, String message) {
+    public R(int state, String message) {
         this.state = state;
         this.message = message;
     }
 
-    public ApiResult(Exception e) {
+    public R(Exception e) {
         this.state = FAIL_STATE;
         this.message = e.getMessage();
     }
 
-    public ApiResult(Object data) {
+    public R(Object data) {
         this.data = data;
     }
 
-    public static ApiResult ok() {
-        return new ApiResult();
+    public static R ok() {
+        return new R();
     }
 
-    public static ApiResult ok(Object data) {
-        ApiResult r =  new ApiResult();
+    public static R ok(Object data) {
+        R r =  new R();
         r.data = data;
         return r;
     }
 
-    public static ApiResult ok(String messageKey) {
-        ApiResult r =  new ApiResult();
+    public static R ok(String messageKey) {
+        R r =  new R();
         r.message = I18nHelper.getMessage(messageKey);
         return r;
     }
 
-    public ApiResult ok(Object data, String messageKey) {
+    public R ok(Object data, String messageKey) {
         this.data = data;
         this.message = I18nHelper.getMessage(messageKey);
         return this;
     }
 
-    public static ApiResult fail(String error) {
-        return new ApiResult(FAIL_STATE, error);
+    public static R fail(String error) {
+        return new R(FAIL_STATE, error);
     }
 
-    public ApiResult fail(BindingResult errors) {
+    public R fail(BindingResult errors) {
         this.state = FAIL_STATE;
         this.message = errors.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)

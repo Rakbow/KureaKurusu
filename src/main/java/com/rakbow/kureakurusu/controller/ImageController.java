@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.exception.ErrorFactory;
 import com.rakbow.kureakurusu.service.ImageService;
@@ -31,18 +31,18 @@ public class ImageController {
     //region image
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody ImageDTO.ImageListQueryDTO dto) {
-        return ApiResult.ok(srv.list(dto));
+    public R list(@RequestBody ImageDTO.ImageListQueryDTO dto) {
+        return R.ok(srv.list(dto));
     }
 
     @PostMapping("preview")
-    public ApiResult preview(@RequestBody ImageDTO.ImagePreviewDTO dto) {
-        return ApiResult.ok(srv.preview(dto));
+    public R preview(@RequestBody ImageDTO.ImagePreviewDTO dto) {
+        return R.ok(srv.preview(dto));
     }
 
     @PostMapping("upload")
     @Permission(IMAGE_UPLOAD)
-    public ApiResult upload(
+    public R upload(
             @RequestParam("entityType") int entityType,
             @RequestParam("entityId") int entityId,
             @RequestParam("infos") String infoStr,
@@ -58,24 +58,24 @@ public class ImageController {
         if (images.isEmpty()) throw ErrorFactory.fileEmpty();
         //save
         srv.upload(entityType, entityId, images, generateThumb);
-        return ApiResult.ok("entity.crud.create.success");
+        return R.ok("entity.crud.create.success");
     }
 
     @PostMapping("update")
     @Permission(IMAGE_UPDATE)
-    public ApiResult update(@Valid @RequestBody ImageDTO.ImageUpdateDTO dto, BindingResult errors) {
+    public R update(@Valid @RequestBody ImageDTO.ImageUpdateDTO dto, BindingResult errors) {
         //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        if (errors.hasErrors()) return new R().fail(errors);
         //update
         srv.update(dto);
-        return ApiResult.ok("entity.crud.update.success");
+        return R.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete")
     @Permission(IMAGE_DELETE)
-    public ApiResult delete(@RequestBody ImageDTO.ImageDeleteDTO dto) {
+    public R delete(@RequestBody ImageDTO.ImageDeleteDTO dto) {
         srv.delete(dto);
-        return ApiResult.ok("entity.crud.delete.success");
+        return R.ok("entity.crud.delete.success");
     }
 
     //endregion

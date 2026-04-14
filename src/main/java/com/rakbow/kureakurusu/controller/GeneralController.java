@@ -2,7 +2,7 @@ package com.rakbow.kureakurusu.controller;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.annotation.Permission;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
 import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
@@ -47,27 +47,27 @@ public class GeneralController {
 
     @PostMapping("statistic-info")
     @Permission(ADMIN)
-    public ApiResult getStatisticInfo() {
-        return new ApiResult();
+    public R getStatisticInfo() {
+        return new R();
     }
 
     @GetMapping("get-options")
-    public ApiResult getOption() {
-        return ApiResult.ok(srv.getOptions());
+    public R getOption() {
+        return R.ok(srv.getOptions());
     }
 
     @PostMapping("update-entity-status")
     @Permission(ENTITY_STATUS_UPDATE)
-    public ApiResult updateEntityStatus(@RequestBody UpdateStatusDTO dto) {
+    public R updateEntityStatus(@RequestBody UpdateStatusDTO dto) {
         srv.updateEntityStatus(dto);
-        return ApiResult.ok("entity.crud.status.update.success");
+        return R.ok("entity.crud.status.update.success");
     }
 
     @PostMapping("update-entity-detail")
     @Permission(ENTITY_DETAIL_UPDATE)
-    public ApiResult updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
+    public R updateEntityDetail(@RequestBody UpdateDetailDTO dto) {
         srv.updateEntityDetail(dto);
-        return ApiResult.ok("entity.crud.detail.update.success");
+        return R.ok("entity.crud.detail.update.success");
     }
 
     //endregion
@@ -81,12 +81,12 @@ public class GeneralController {
 
     @PostMapping("changelog-mini")
     @Permission(ADMIN)
-    public ApiResult changelog(@RequestBody EntityDTO dto) {
-        return ApiResult.ok(srv.mini(dto.entityType(), dto.entityId()));
+    public R changelog(@RequestBody EntityDTO dto) {
+        return R.ok(srv.mini(dto.entityType(), dto.entityId()));
     }
 
     @PostMapping("like")
-    public ApiResult like(@RequestBody EntityDTO dto, HttpServletResponse response) {
+    public R like(@RequestBody EntityDTO dto, HttpServletResponse response) {
         //get like token from cookie
         String likeToken = TokenInterceptor.getLikeToken();
         if (StringUtil.isBlank(likeToken)) {
@@ -97,7 +97,7 @@ public class GeneralController {
             response.addCookie(cookie);
         }
         if (srv.like(dto.entityType(), dto.entityId(), likeToken)) {
-            return ApiResult.ok("entity.like.success");
+            return R.ok("entity.like.success");
         } else {
             throw new ApiException("entity.like.failed");
         }
@@ -110,8 +110,8 @@ public class GeneralController {
     @SneakyThrows
     @PostMapping("import-entity")
     @Permission(ADMIN)
-    public ApiResult importEntity(MultipartFile file) {
-        ApiResult res = new ApiResult();
+    public R importEntity(MultipartFile file) {
+        R res = new R();
         if (file.isEmpty()) throw ErrorFactory.fileEmpty();
         List<Entry> items = ExcelUtil.getDataFromExcel(file.getInputStream(), Entry.class);
         Db.saveBatch(items);
@@ -120,24 +120,24 @@ public class GeneralController {
 
     @SneakyThrows
     @PostMapping("links")
-    public ApiResult links(@RequestBody EntityDTO dto) {
-        return ApiResult.ok(srv.links(dto.entityType(), dto.entityId()));
+    public R links(@RequestBody EntityDTO dto) {
+        return R.ok(srv.links(dto.entityType(), dto.entityId()));
     }
 
     @SneakyThrows
     @PostMapping("local-path")
     @Permission(FILE_LOCAL_PATH)
-    public ApiResult localPath(@RequestBody EntityDTO dto) {
+    public R localPath(@RequestBody EntityDTO dto) {
         srv.localPath(dto);
-        return ApiResult.ok();
+        return R.ok();
     }
 
     @SneakyThrows
     @PostMapping("local-completed-flag-update")
     @Permission(FILE_LOCAL_FLAG_UPDATE)
-    public ApiResult updateLocalResourceCompletedFlag(@RequestBody EntityResourceInfoUpdateDTO dto) {
+    public R updateLocalResourceCompletedFlag(@RequestBody EntityResourceInfoUpdateDTO dto) {
         srv.updateLocalResourceCompletedFlag(dto);
-        return ApiResult.ok();
+        return R.ok();
     }
 
     //endregion

@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.service.RelationService;
 import lombok.RequiredArgsConstructor;
@@ -21,45 +21,45 @@ public class RelationController {
     private final RelationService srv;
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody RelationListQueryDTO dto) {
-        return ApiResult.ok(srv.list(dto));
+    public R list(@RequestBody RelationListQueryDTO dto) {
+        return R.ok(srv.list(dto));
     }
 
     @PostMapping("create")
     @Permission(RELATION_CREATE)
-    public ApiResult create(@RequestBody RelationCreateDTO dto) {
+    public R create(@RequestBody RelationCreateDTO dto) {
         srv.create(dto);
-        return ApiResult.ok("entity.crud.create.success");
+        return R.ok("entity.crud.create.success");
     }
 
     @PostMapping("update")
     @Permission(RELATION_UPDATE)
-    public ApiResult update(@RequestBody RelationUpdateDTO dto) {
+    public R update(@RequestBody RelationUpdateDTO dto) {
         srv.update(dto);
-        return ApiResult.ok("entity.crud.update.success");
+        return R.ok("entity.crud.update.success");
     }
 
     @DeleteMapping("delete")
     @Permission(RELATION_DELETE)
-    public ApiResult delete(@RequestBody CommonDeleteDTO dto) {
+    public R delete(@RequestBody CommonDeleteDTO dto) {
         srv.removeByIds(dto.ids());
         srv.refreshPersonnel(dto.entityType(), dto.entityId());
-        return ApiResult.ok("entity.crud.delete.success");
+        return R.ok("entity.crud.delete.success");
     }
 
     @PostMapping("personnel")
-    public ApiResult personnel(@RequestBody EntityDTO dto) {
-        return ApiResult.ok(srv.personnel(dto.entityType(), dto.entityId()));
+    public R personnel(@RequestBody EntityDTO dto) {
+        return R.ok(srv.personnel(dto.entityType(), dto.entityId()));
     }
 
     @PostMapping("items")
-    public ApiResult relatedItems(@RequestBody RelatedItemQueryDTO dto) {
-        return ApiResult.ok(srv.relatedItems(dto));
+    public R relatedItems(@RequestBody RelatedItemQueryDTO dto) {
+        return R.ok(srv.relatedItems(dto));
     }
 
     @PostMapping("entries")
-    public ApiResult relatedEntries(@RequestBody RelatedEntryQueryDTO dto) {
-        return ApiResult.ok(srv.relatedEntries(dto));
+    public R relatedEntries(@RequestBody RelatedEntryQueryDTO dto) {
+        return R.ok(srv.relatedEntries(dto));
     }
 
 }

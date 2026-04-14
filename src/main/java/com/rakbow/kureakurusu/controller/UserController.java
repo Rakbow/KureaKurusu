@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.Permission;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.UserActivationDTO;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
 import com.rakbow.kureakurusu.service.UserService;
@@ -29,20 +29,20 @@ public class UserController {
     //register new user
     @PostMapping("register")
     @Permission(ADMIN)
-    public ApiResult register(@Valid @RequestBody UserRegisterDTO dto, BindingResult errors) {
+    public R register(@Valid @RequestBody UserRegisterDTO dto, BindingResult errors) {
         //check
-        if (errors.hasErrors()) return new ApiResult().fail(errors);
+        if (errors.hasErrors()) return new R().fail(errors);
         //register
         srv.register(dto);
-        return ApiResult.ok("user.register.success");
+        return R.ok("user.register.success");
     }
 
     //activation user
     @PostMapping("activation")
     @Permission(ADMIN)
-    public ApiResult activation(@RequestBody UserActivationDTO dto) {
+    public R activation(@RequestBody UserActivationDTO dto) {
         srv.activation(dto);
-        return ApiResult.ok("user.activation.success");
+        return R.ok("user.activation.success");
     }
 
 }

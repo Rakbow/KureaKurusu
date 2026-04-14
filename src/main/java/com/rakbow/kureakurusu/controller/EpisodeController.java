@@ -1,7 +1,7 @@
 package com.rakbow.kureakurusu.controller;
 
 import com.rakbow.kureakurusu.annotation.UniqueVisitor;
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.EpisodeListQueryDTO;
 import com.rakbow.kureakurusu.data.dto.EpisodeRelatedDTO;
 import com.rakbow.kureakurusu.service.EpisodeService;
@@ -21,18 +21,18 @@ public class EpisodeController {
 
     @UniqueVisitor
     @PostMapping("detail/{id}")
-    public ApiResult detail(@PathVariable("id") long id) {
-        return ApiResult.ok(srv.detail(id));
+    public R detail(@PathVariable("id") long id) {
+        return R.ok(srv.detail(id));
     }
 
     @PostMapping("list")
-    public ApiResult list(@RequestBody EpisodeListQueryDTO dto) {
-        return ApiResult.ok(srv.list(dto));
+    public R list(@RequestBody EpisodeListQueryDTO dto) {
+        return R.ok(srv.list(dto));
     }
 
     @PostMapping("related")
-    public ApiResult related(@RequestBody EpisodeRelatedDTO dto) {
-        return ApiResult.ok(srv.related(dto));
+    public R related(@RequestBody EpisodeRelatedDTO dto) {
+        return R.ok(srv.related(dto));
     }
 
 }

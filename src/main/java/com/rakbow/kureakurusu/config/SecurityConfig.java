@@ -1,6 +1,6 @@
 package com.rakbow.kureakurusu.config;
 
-import com.rakbow.kureakurusu.data.common.ApiResult;
+import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.interceptor.AuthFilter;
 import com.rakbow.kureakurusu.toolkit.I18nHelper;
 import com.rakbow.kureakurusu.toolkit.JsonUtil;
@@ -73,13 +73,13 @@ public class SecurityConfig {
                         .authenticationEntryPoint((_, resp, _) -> {
                             resp.setStatus(HttpStatus.UNAUTHORIZED.value());
                             resp.setContentType("application/json;charset=utf-8");
-                            resp.getWriter().write(JsonUtil.toJson(ApiResult.fail(I18nHelper.getMessage("auth.not_login"))));
+                            resp.getWriter().write(JsonUtil.toJson(R.fail(I18nHelper.getMessage("auth.not_login"))));
                         })
                         //权限不足
                         .accessDeniedHandler((_, resp, _) -> {
                             resp.setStatus(HttpStatus.FORBIDDEN.value());
                             resp.setContentType("application/json;charset=utf-8");
-                            resp.getWriter().write(JsonUtil.toJson(ApiResult.fail(I18nHelper.getMessage("auth.not_authority"))));
+                            resp.getWriter().write(JsonUtil.toJson(R.fail(I18nHelper.getMessage("auth.not_authority"))));
                         })
                 ).build();
     }
