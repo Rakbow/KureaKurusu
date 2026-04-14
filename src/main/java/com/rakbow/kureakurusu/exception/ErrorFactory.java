@@ -20,8 +20,8 @@ public class ErrorFactory {
         throw new AccessDeniedException(I18nHelper.getMessage("auth.no_permission"));
     }
 
-    public static ApiException entityNotFound() {
-        return new ApiException("entity.url.error");
+    public static EntityNullException entityNotFound() {
+        return new EntityNullException();
     }
 
     public static ApiException fileEmpty() {
