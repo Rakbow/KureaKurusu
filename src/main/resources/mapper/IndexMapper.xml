@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rakbow.kureakurusu.dao.IndexMapper">
 
-    <select id="getItemGroupByEntry" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
+    <select id="getGroupedItem" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
         select i.id,
         i.type,
         i.sub_type,
@@ -12,6 +12,7 @@
         i.release_date,
         i.barcode,
         i.catalog_id,
+        idx_e.remark,
         e.id                                                   as entry_id,
         e.name                                                 as entry_name,
         COALESCE(NULLIF(e.name_zh, ''), NULLIF(e.name_en, '')) as entry_sub_name,
@@ -27,7 +28,7 @@
         and e.type = #{param.entryType}
         <if test="param.entries != null and param.entries.size() > 0">
             and e.id in
-            <foreach item="entryId" index="index" collection="param.entries" separator="," open="(" close=")">
+            <foreach item="entryId" collection="param.entries" separator="," open="(" close=")">
                 #{entryId}
             </foreach>
         </if>
@@ -35,7 +36,7 @@
         limit #{param.offset}, #{param.size}
     </select>
 
-    <select id="countItemGroupByEntry" resultType="long">
+    <select id="countGroupedItem" resultType="long">
         select
         count(1)
         from r4_index idx
@@ -47,7 +48,116 @@
         and e.type = #{param.entryType}
         <if test="param.entries != null and param.entries.size() > 0">
             and e.id in
-            <foreach item="entryId" index="index" collection="param.entries" separator="," open="(" close=")">
+            <foreach item="entryId" collection="param.entries" separator="," open="(" close=")">
+                #{entryId}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getSortedItem" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
+        select i.id,
+               i.type,
+               i.sub_type,
+               i.name,
+               i.release_date,
+               i.barcode,
+               i.catalog_id,
+               idx_e.remark,
+               DATE_FORMAT(idx_e.created_at, '%Y/%m/%d %H:%i:%s') as createdAt
+        from r4_index idx
+        inner join r4_index_element idx_e on idx_e.index_id = idx.id
+        inner join r2_item i on i.id = idx_e.entity_id
+        <if test="param.entries != null and param.entries.size() > 0">
+            inner join r6_relation rel on rel.entity_type = 0 and rel.entity_id = i.id
+            inner join r3_entry e on rel.related_entity_type = 1 and rel.related_entity_id = e.id
+        </if>
+        where idx.id = #{param.indexId}
+        <if test="param.keyword != null and param.keyword != ''">
+            and (
+                i.name like concat('%', #{param.keyword}, '%') or
+                i.name_zh like concat('%', #{param.keyword}, '%') or
+                i.name_en like concat('%', #{param.keyword}, '%')
+            )
+        </if>
+        <if test="param.barcode != null and param.barcode != ''">
+            and i.barcode = #{param.barcode}
+        </if>
+        <if test="param.catalogId != null and param.catalogId != ''">
+            and i.catalog_id = #{param.catalogId}
+        </if>
+        <if test="param.type != null">
+            and i.type = #{param.type}
+        </if>
+        <if test="param.subType != null">
+            and i.sub_type = #{param.sub_type}
+        </if>
+        <if test="param.releaseType != null">
+            and i.release_type = #{param.releaseType}
+        </if>
+        <if test="param.region != null and param.region != ''">
+            and i.region = #{param.region}
+        </if>
+        <if test="param.entries != null and param.entries.size() > 0">
+            and e.id in
+            <foreach item="entryId" collection="param.entries" open="(" separator="," close=")">
+                #{entryId}
+            </foreach>
+        </if>
+        order by
+        <choose>
+            <when test="param.sortField != null and param.sortField != ''">
+                ${param.sortField}
+                <choose>
+                    <when test="param.asc()">asc</when>
+                    <otherwise>desc</otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                idx_e.created_at desc
+            </otherwise>
+        </choose>
+        limit #{param.offset}, #{param.size}
+    </select>
+
+    <select id="countSortedItem" resultType="long">
+        select
+        count(1)
+        from r4_index idx
+        inner join r4_index_element idx_e on idx_e.index_id = idx.id
+        inner join r2_item i on i.id = idx_e.entity_id
+        <if test="param.entries != null and param.entries.size() > 0">
+            inner join r6_relation rel on rel.entity_type = 0 and rel.entity_id = i.id
+            inner join r3_entry e on rel.related_entity_type = 1 and rel.related_entity_id = e.id
+        </if>
+        where idx.id = #{param.indexId}
+        <if test="param.keyword != null and param.keyword != ''">
+            and (
+            i.name like concat('%', #{param.keyword}, '%') or
+            i.name_zh like concat('%', #{param.keyword}, '%') or
+            i.name_en like concat('%', #{param.keyword}, '%')
+            )
+        </if>
+        <if test="param.barcode != null and param.barcode != ''">
+            and i.barcode = #{param.barcode}
+        </if>
+        <if test="param.catalogId != null and param.catalogId != ''">
+            and i.catalog_id = #{param.catalogId}
+        </if>
+        <if test="param.type != null">
+            and i.type = #{param.type}
+        </if>
+        <if test="param.subType != null">
+            and i.sub_type = #{param.sub_type}
+        </if>
+        <if test="param.releaseType != null">
+            and i.release_type = #{param.releaseType}
+        </if>
+        <if test="param.region != null and param.region != ''">
+            and i.region = #{param.region}
+        </if>
+        <if test="param.entries != null and param.entries.size() > 0">
+            and e.id in
+            <foreach item="entryId" collection="param.entries" open="(" separator="," close=")">
                 #{entryId}
             </foreach>
         </if>
