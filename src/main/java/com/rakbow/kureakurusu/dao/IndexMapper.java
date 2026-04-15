@@ -16,8 +16,11 @@ import java.util.List;
 @Mapper
 public interface IndexMapper extends MPJBaseMapper<Index> {
 
-    List<ItemSimpleVO> getItemGroupByEntry(@Param("param") IndexItemSearchQueryDTO param);
+    List<ItemSimpleVO> getGroupedItem(@Param("param") IndexItemSearchQueryDTO param);
 
-    long countItemGroupByEntry(@Param("param") IndexItemSearchQueryDTO param);
+    long countGroupedItem(@Param("param") IndexItemSearchQueryDTO param);
 
+    List<ItemSimpleVO> getSortedItem(@Param("param") IndexItemSearchQueryDTO param);
+
+    long countSortedItem(@Param("param") IndexItemSearchQueryDTO param);
 }

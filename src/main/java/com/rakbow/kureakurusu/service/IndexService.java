@@ -15,8 +15,6 @@ import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.data.dto.*;
 import com.rakbow.kureakurusu.data.entity.Index;
 import com.rakbow.kureakurusu.data.entity.IndexElement;
-import com.rakbow.kureakurusu.data.entity.Relation;
-import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.EntryType;
 import com.rakbow.kureakurusu.data.enums.ImageType;
@@ -132,60 +130,20 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
 
     @SneakyThrows
     private SearchResult<IndexElementItemVO> getSortedItem(IndexItemSearchQueryDTO dto) {
-        Page<ItemSimpleVO> page = new Page<>(dto.getPage(), dto.getSize());
-        MPJLambdaWrapper<Item> wrapper = new MPJLambdaWrapper<>() {{
-            selectAsClass(Item.class, ItemSimpleVO.class);
-            like(StringUtil.isNotBlank(dto.getKeyword()), Item::getName, dto.getKeyword());
-            likeRight(StringUtil.isNotBlank(dto.getBarcode()), Item::getBarcode, dto.getBarcode());
-            likeRight(StringUtil.isNotBlank(dto.getCatalogId()), Item::getCatalogId, dto.getCatalogId());
-            eq(Objects.nonNull(dto.getType()), Item::getType, dto.getType());
-            eq(Objects.nonNull(dto.getSubType()), Item::getSubType, dto.getSubType());
-            eq(Objects.nonNull(dto.getReleaseType()), Item::getReleaseType, dto.getReleaseType());
-            eq(StringUtil.isNotBlank(dto.getRegion()), Item::getRegion, dto.getRegion());
-            eq(Item::getStatus, 1);
+        dto.setOffset((dto.getPage() - 1) * dto.getSize());
+        List<ItemSimpleVO> items = mapper.getSortedItem(dto);
+        if (items.isEmpty()) return new SearchResult<>();
+        long total = mapper.countSortedItem(dto);
 
-            innerJoin(IndexElement.class, on ->
-                    on.eq(IndexElement::getEntityId, Item::getId))
-                    .and(aw -> aw.and(w ->
-                            w.eq(IndexElement::getIndexId, dto.getIndexId())));
-
-            if (dto.isSort()) {
-                if (StringUtil.equals(dto.getSortField(), "id")) {
-                    if (dto.asc()) {
-                        orderByAsc(IndexElement::getCreatedAt);
-                    } else {
-                        orderByDesc(IndexElement::getCreatedAt);
-                    }
-                } else {
-                    if (dto.asc()) {
-                        orderByAsc(dto.getSortField());
-                    } else {
-                        orderByDesc(dto.getSortField());
-                    }
-                }
-            }
-
-        }};
-        if (dto.hasRelatedEntries()) {
-            wrapper.innerJoin(Relation.class, on -> on
-                            .eq(Relation::getEntityId, Item::getId)
-                            .eq(Relation::getEntityType, EntityType.ITEM.getValue())
-                    )
-                    .and(aw -> aw.or(w -> w
-                            .eq(Relation::getRelatedEntityType, EntityType.ENTRY.getValue())
-                            .in(Relation::getRelatedEntityId, dto.getEntries())));
-        }
-        IPage<ItemSimpleVO> pages = itemMapper.selectJoinPage(page, ItemSimpleVO.class, wrapper);
-        if (pages.getRecords().isEmpty()) return new SearchResult<>();
-        List<IndexElementItemVO> items = new ArrayList<>(converter.convert(pages.getRecords(), IndexElementItemVO.class));
+        List<IndexElementItemVO> elements = converter.convert(items, IndexElementItemVO.class);
         //get image cache
-        items.forEach(i -> {
+        elements.forEach(i -> {
             i.setCover(imgSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.MAIN));
             i.setThumb(imgSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.THUMB));
         });
 
-        getLocalResourceCompletedFlag(items);
-        return new SearchResult<>(items, pages.getTotal());
+        getLocalResourceCompletedFlag(elements);
+        return new SearchResult<>(elements, total);
     }
 
     @SneakyThrows
@@ -201,9 +159,9 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
             }
         }
 
-        List<ItemSimpleVO> items = mapper.getItemGroupByEntry(dto);
+        List<ItemSimpleVO> items = mapper.getGroupedItem(dto);
         if (items.isEmpty()) return new SearchResult<>();
-        long total = mapper.countItemGroupByEntry(dto);
+        long total = mapper.countGroupedItem(dto);
 
         // Convert to ItemSearchVO and get image cache
         List<IndexElementItemVO> elements = converter.convert(items, IndexElementItemVO.class);

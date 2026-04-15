@@ -22,6 +22,7 @@ public class IndexElementItemVO {
     private double price;
     private String currency;
     private String region;
+    private String remark;
     private Boolean completedFlag;
 
     private Long entryId;

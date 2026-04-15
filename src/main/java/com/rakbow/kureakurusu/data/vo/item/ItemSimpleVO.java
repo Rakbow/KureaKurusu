@@ -31,6 +31,7 @@ public class ItemSimpleVO {
     private double price;
     @AutoMapping(target = "currency", qualifiedByName = "getCurrency")
     private String region;
+    private String remark;
 
     private String createdAt;
 
