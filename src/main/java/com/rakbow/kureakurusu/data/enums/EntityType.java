@@ -19,6 +19,7 @@ public enum EntityType {
     ROLE(3, "enum.entity.role", "r6_role"),
     EPISODE(4, "enum.entity.episode", "r7_episode"),
     ALBUM_DISC(5, "enum.default", "r7_disc"),
+    INDEX(6, "enum.default", "r4_index"),
     FILE(98, "enum.entity.file", "r5_file_info"),
     USER(101, "enum.entity.user", "r1_sys_user");
 

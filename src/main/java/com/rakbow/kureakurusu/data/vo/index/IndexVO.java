@@ -13,6 +13,7 @@ public class IndexVO {
     private Long id;
     private Attribute<Integer> type;
     private String name;
+    private String cover;
     private String createdBy;
     private String createdAt;
     private String updatedAt;

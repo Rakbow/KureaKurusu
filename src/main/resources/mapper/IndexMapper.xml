@@ -5,7 +5,9 @@
 <mapper namespace="com.rakbow.kureakurusu.dao.IndexMapper">
 
     <select id="getGroupedItem" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
-        select i.id,
+        select
+        idx_e.id as indexElementId,
+        i.id,
         i.type,
         i.sub_type,
         i.name,
@@ -55,15 +57,17 @@
     </select>
 
     <select id="getSortedItem" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
-        select i.id,
-               i.type,
-               i.sub_type,
-               i.name,
-               i.release_date,
-               i.barcode,
-               i.catalog_id,
-               idx_e.remark,
-               DATE_FORMAT(idx_e.created_at, '%Y/%m/%d %H:%i:%s') as createdAt
+        select
+        idx_e.id as indexElementId,
+        i.id,
+        i.type,
+        i.sub_type,
+        i.name,
+        i.release_date,
+        i.barcode,
+        i.catalog_id,
+        idx_e.remark,
+        DATE_FORMAT(idx_e.created_at, '%Y/%m/%d %H:%i:%s') as createdAt
         from r4_index idx
         inner join r4_index_element idx_e on idx_e.index_id = idx.id
         inner join r2_item i on i.id = idx_e.entity_id

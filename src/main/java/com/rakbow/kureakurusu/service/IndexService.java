@@ -9,7 +9,6 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.rakbow.kureakurusu.annotation.Search;
 import com.rakbow.kureakurusu.dao.IndexElementMapper;
 import com.rakbow.kureakurusu.dao.IndexMapper;
-import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.SearchResult;
 import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.data.dto.*;
@@ -31,11 +30,13 @@ import com.rakbow.kureakurusu.toolkit.DateHelper;
 import com.rakbow.kureakurusu.toolkit.MybatisBatchUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import com.rakbow.kureakurusu.toolkit.file.CommonImageUtil;
+import com.rakbow.kureakurusu.toolkit.file.QiniuImageUtil;
 import io.github.linpeilie.Converter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,16 +53,18 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
     private final EpisodeService epSrv;
     private final MybatisBatchUtil mybatisBatchUtil;
     private final IndexElementMapper indexElementMapper;
-    private final ItemMapper itemMapper;
     private final IndexMapper mapper;
     private final Converter converter;
     private final ImageService imgSrv;
     private final ResourceService resSrv;
+    private final QiniuImageUtil qiniuImageUtil;
 
     public IndexVO detail(long id) {
         Index idx = getById(id);
         if (idx == null) throw ErrorFactory.entityNotFound();
-        return converter.convert(idx, IndexVO.class);
+        IndexVO res = converter.convert(idx, IndexVO.class);
+        res.setCover(CommonImageUtil.getEntryCover(idx.getCover()));
+        return res;
     }
 
     public void create(Index idx) {
@@ -71,16 +74,26 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
         save(idx);
     }
 
+    public void update(IndexDTO.IndexUpdateDTO idx) {
+        mapper.update(new LambdaUpdateWrapper<>() {{
+            eq(Index::getId, idx.id());
+            set(Index::getName, idx.name());
+            set(Index::getRemark, idx.remark());
+            set(Index::getUpdatedAt, DateHelper.now());
+        }});
+    }
+
     @Search
     public SearchResult<Index> list(IndexListQueryDTO dto) {
         LoginUser user = UserContextHolder.getCurrentUser();
         IPage<Index> pages = page(
                 new Page<>(dto.getPage(), dto.getSize()),
-                new MPJLambdaWrapper<Index>()
-                        .eq(Index::getCreatedBy, user.getName())
-                        .eq(Index::getType, dto.getType())
-                        .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
-                        .orderByDesc(!dto.isSort(), Index::getCreatedAt)
+                new MPJLambdaWrapper<>() {{
+                    eq(Index::getCreatedBy, user.getName());
+                    eq(Index::getType, dto.getType());
+                    orderBy(dto.isSort(), dto.asc(), dto.getSortField());
+                    orderByDesc(!dto.isSort(), Index::getCreatedAt);
+                }}
         );
         return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
@@ -97,10 +110,11 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
                         .orderBy(dto.isSort(), dto.asc(), dto.getSortField())
                         .orderByDesc(!dto.isSort(), Index::getCreatedAt)
         );
+        pages.getRecords().forEach(idx -> idx.setCover(CommonImageUtil.getEntryCover(idx.getCover())));
         return new SearchResult<>(pages.getRecords(), pages.getTotal());
     }
 
-    public void addItems(ListItemCreateDTO dto) {
+    public void addElement(IndexItemCreateDTO dto) {
         List<IndexElement> items = new ArrayList<>();
         for (long itemId : dto.itemIds()) {
             long count = indexElementMapper.selectCount(new LambdaQueryWrapper<IndexElement>()
@@ -121,11 +135,14 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
     @Transactional(readOnly = true)
     @Search
     public SearchResult<IndexElementItemVO> getItems(IndexItemSearchQueryDTO dto) {
+        SearchResult<IndexElementItemVO> res;
         if (StringUtil.isNotBlank(dto.getGroupField())) {
-            return getGroupedItem(dto);
+            res = getGroupedItem(dto);
         } else {
-            return getSortedItem(dto);
+            res = getSortedItem(dto);
         }
+        getLocalResourceCompletedFlag(res.data);
+        return res;
     }
 
     @SneakyThrows
@@ -142,7 +159,6 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
             i.setThumb(imgSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.THUMB));
         });
 
-        getLocalResourceCompletedFlag(elements);
         return new SearchResult<>(elements, total);
     }
 
@@ -170,8 +186,6 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
             i.setThumb(imgSrv.getCache(EntityType.ITEM.getValue(), i.getId(), ImageType.THUMB));
             i.setEntryThumb(CommonImageUtil.getEntryThumb(i.getEntryThumb()));
         });
-
-        getLocalResourceCompletedFlag(elements);
 
         return new SearchResult<>(elements, total);
     }
@@ -208,5 +222,25 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
         return new SearchResult<>(targets, pages.getTotal());
     }
     //endregion
+
+    public void updateElement(IndexDTO.IndexElementUpdateDTO dto) {
+        indexElementMapper.update(new LambdaUpdateWrapper<>() {{
+            eq(IndexElement::getId, dto.indexElementId());
+            set(IndexElement::getRemark, dto.remark());
+        }});
+    }
+
+    @SneakyThrows
+    @Transactional
+    public String uploadImage(long id, MultipartFile file) {
+        ImageDTO.ImageMiniDTO image = new ImageDTO.ImageMiniDTO(0, file);
+        String cover = qiniuImageUtil.uploadEntryImage(EntityType.INDEX.getValue(), id, image);
+        update(null, new LambdaUpdateWrapper<Index>()
+                .eq(Index::getId, id)
+                .set(Index::getCover, cover)
+                .set(Index::getUpdatedAt, DateHelper.now())
+        );
+        return cover;
+    }
 
 }

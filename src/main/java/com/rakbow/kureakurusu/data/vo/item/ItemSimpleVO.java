@@ -22,6 +22,7 @@ import lombok.Data;
 public class ItemSimpleVO {
 
     private Long id;
+    private Long indexElementId;
     private ItemType type;
     private ItemSubType subType;
     private String name;

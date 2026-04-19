@@ -2,8 +2,6 @@ package com.rakbow.kureakurusu.interceptor;
 
 import com.rakbow.kureakurusu.data.auth.LoginUser;
 
-import java.util.Objects;
-
 /**
  * @author Rakbow
  * @since 2022-09-30 9:51
@@ -20,10 +18,6 @@ public class UserContextHolder {
 
     public static LoginUser getCurrentUser() {
         return CURRENT_USER.get();
-    }
-
-    public static boolean isLogin() {
-        return Objects.nonNull(CURRENT_USER.get());
     }
 
     public static void clear() {

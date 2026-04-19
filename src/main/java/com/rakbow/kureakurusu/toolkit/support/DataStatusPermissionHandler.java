@@ -1,6 +1,7 @@
 package com.rakbow.kureakurusu.toolkit.support;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
+import com.rakbow.kureakurusu.data.auth.LoginUser;
 import com.rakbow.kureakurusu.interceptor.UserContextHolder;
 import com.rakbow.kureakurusu.toolkit.CollectionUtil;
 import net.sf.jsqlparser.expression.Expression;
@@ -10,6 +11,8 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * @author Rakbow
  * @since 2024/4/3 18:19
@@ -18,15 +21,15 @@ import org.springframework.stereotype.Component;
 public class DataStatusPermissionHandler implements DataPermissionHandler {
 
     private static final String[] IGNORE_INTERFACE = {
-            "com.rakbow.kureakurusu.dao.PersonRelationMapper.selectList",
             "com.rakbow.kureakurusu.dao.UserMapper.selectById",
-            "com.rakbow.kureakurusu.dao.ItemAlbumMapper.updateById"
+            "com.rakbow.kureakurusu.dao.UserMapper.selectOne",
     };
 
     @Override
     public Expression getSqlSegment(Expression where, String mappedStatementId) {
         if (CollectionUtil.contains(IGNORE_INTERFACE, mappedStatementId)) return where;
-        if (UserContextHolder.isLogin()) return where;
+        LoginUser user = UserContextHolder.getCurrentUser();
+        if (Objects.isNull(user) || user.isAdmin()) return where;
         EqualsTo equalsTo = new EqualsTo(new Column("status"), new LongValue("1"));
         // 如果原来没有where条件, 就添加一个where条件
         if (where == null) return equalsTo;

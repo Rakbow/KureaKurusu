@@ -39,6 +39,9 @@ public class Index extends Entity {
     private String name;
 
     @TableField(updateStrategy = FieldStrategy.NEVER)
+    private String cover;
+
+    @TableField(updateStrategy = FieldStrategy.NEVER)
     private String createdBy;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateHelper.DATE_TIME_FORMAT, timezone="GMT+8")
     @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)

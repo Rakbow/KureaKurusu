@@ -11,6 +11,7 @@ import lombok.Data;
 public class IndexElementItemVO {
 
     private long id;
+    private long indexElementId;
     private String name;
     private Attribute<Integer> type;
     private Attribute<Integer> subType;

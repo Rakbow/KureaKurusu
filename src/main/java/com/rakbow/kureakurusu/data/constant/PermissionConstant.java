@@ -20,7 +20,10 @@ public interface PermissionConstant {
     String ITEM_DELETE = "entity:item:delete";
 
     String INDEX_CREATE = "entity:index:add";
-    String INDEX_ADD_ITEM = "entity:index:add-item";
+    String INDEX_UPDATE = "entity:index:update";
+    String INDEX_UPDATE_COVER = "entity:index:update-cover";
+    String INDEX_ELEMENT_ADD = "entity:index:element-add";
+    String INDEX_ELEMENT_UPDATE = "entity:index:element-update";
 
     String IMAGE_UPLOAD = "resource:image:upload";
     String IMAGE_DELETE = "resource:image:delete";

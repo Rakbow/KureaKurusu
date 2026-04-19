@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
 
@@ -36,6 +37,14 @@ public class IndexController {
         return R.ok("entity.crud.create.success");
     }
 
+    @PostMapping("update")
+    @Permission(INDEX_UPDATE)
+    public R update(@Valid @RequestBody IndexDTO.IndexUpdateDTO dto, BindingResult errors) {
+        if (errors.hasErrors()) return new R().fail(errors);
+        srv.update(dto);
+        return R.ok("entity.crud.update.success");
+    }
+
     @PostMapping("list")
     public R list(@RequestBody IndexListQueryDTO dto) {
         return R.ok(srv.list(dto));
@@ -51,16 +60,24 @@ public class IndexController {
         return R.ok(srv.getItems(dto));
     }
 
-    @PostMapping("add-items")
-    @Permission(INDEX_ADD_ITEM)
-    public R addItems(@RequestBody ListItemCreateDTO dto) {
-        srv.addItems(dto);
+    @PostMapping("add-element")
+    @Permission(INDEX_ELEMENT_ADD)
+    public R addElement(@RequestBody IndexItemCreateDTO dto) {
+        srv.addElement(dto);
         return R.ok("entity.crud.create.success");
     }
 
-    // @PostMapping("get-items")
-    // public ApiResult getItems(@RequestBody IndexItemListQueryDTO dto) {
-    //     return ApiResult.ok(srv.getItems(dto));
-    // }
+    @PostMapping("update-element")
+    @Permission(INDEX_ELEMENT_UPDATE)
+    public R updateElement(@RequestBody IndexDTO.IndexElementUpdateDTO dto) {
+        srv.updateElement(dto);
+        return R.ok("entity.crud.update.success");
+    }
+
+    @PostMapping("upload-image")
+    @Permission(INDEX_UPDATE_COVER)
+    public R uploadImage(@RequestParam("id") int id, @RequestParam("file") MultipartFile file) {
+        return new R().ok(srv.uploadImage(id, file), "entity.crud.update.success");
+    }
 
 }
