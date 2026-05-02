@@ -56,6 +56,7 @@ public class IndexController {
     }
 
     @PostMapping("get-items")
+    @Permission(INDEX_ELEMENT_LIST)
     public R getItems(@RequestBody IndexItemSearchQueryDTO dto) {
         return R.ok(srv.getItems(dto));
     }

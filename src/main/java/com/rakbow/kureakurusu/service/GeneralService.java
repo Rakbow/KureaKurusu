@@ -5,8 +5,6 @@ import com.rakbow.kureakurusu.dao.CommonMapper;
 import com.rakbow.kureakurusu.dao.RoleMapper;
 import com.rakbow.kureakurusu.data.Attribute;
 import com.rakbow.kureakurusu.data.constant.RedisKey;
-import com.rakbow.kureakurusu.data.dto.EntityDTO;
-import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Role;
@@ -145,14 +143,6 @@ public class GeneralService {
 
     public List<LinksVO> links(int entityType, long entityId) {
         return lnkSrv.group(entityType, entityId);
-    }
-
-    public void localPath(EntityDTO dto) {
-        resSrv.getLocalPath(dto.entityType(), dto.entitySubType(), dto.entityId());
-    }
-
-    public void updateLocalResourceCompletedFlag(EntityResourceInfoUpdateDTO dto) {
-        resSrv.updateLocalResourceCompletedFlag(dto.entityType(), dto.entityId(), dto.flag());
     }
 
 }

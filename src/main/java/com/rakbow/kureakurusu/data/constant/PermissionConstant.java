@@ -23,6 +23,7 @@ public interface PermissionConstant {
     String INDEX_UPDATE = "entity:index:update";
     String INDEX_UPDATE_COVER = "entity:index:update-cover";
     String INDEX_ELEMENT_ADD = "entity:index:element-add";
+    String INDEX_ELEMENT_LIST = "entity:index:element-add";
     String INDEX_ELEMENT_UPDATE = "entity:index:element-update";
 
     String IMAGE_UPLOAD = "resource:image:upload";

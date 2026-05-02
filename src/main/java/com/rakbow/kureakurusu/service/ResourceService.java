@@ -3,12 +3,12 @@ package com.rakbow.kureakurusu.service;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.rakbow.kureakurusu.dao.EntityResourceInfoMapper;
 import com.rakbow.kureakurusu.dao.ItemMapper;
+import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.entity.EntityResourceInfo;
 import com.rakbow.kureakurusu.data.entity.item.Item;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
 import com.rakbow.kureakurusu.data.vo.index.IndexElementItemVO;
-import com.rakbow.kureakurusu.data.vo.item.ItemSearchVO;
 import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -109,17 +109,18 @@ public class ResourceService {
                 info -> info.getEntityType().intValue() == EntityType.ITEM.getValue(),
                 EntityResourceInfo::getEntityId,
                 IndexElementItemVO::getId,
-                (info, item) -> item.setCompletedFlag(info.getCompletedFlag())
+                (info, item) -> item.setResourceFlag(info.getCompletedFlag())
         );
     }
 
     @SneakyThrows
-    public void updateLocalResourceCompletedFlag(int entityType, long entityId, int flag) {
-        entityResourceInfoMapper.update(new LambdaUpdateWrapper<>() {{
-            eq(EntityResourceInfo::getEntityType, entityType);
-            eq(EntityResourceInfo::getEntityId, entityId);
-            set(EntityResourceInfo::getCompletedFlag, flag);
-        }});
+    public void updateResourceFlag(EntityResourceInfoUpdateDTO dto) {
+        if (dto.entityType() == EntityType.ITEM.getValue()) {
+            itemMapper.update(new LambdaUpdateWrapper<>() {{
+                eq(Item::getId, dto.entityId());
+                set(Item::getResourceFlag, dto.flag());
+            }});
+        }
     }
 
 }

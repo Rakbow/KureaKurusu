@@ -88,6 +88,9 @@ public class Item extends Entity {
     @TableField(typeHandler = StrListHandler.class)
     private List<String> versionsEn;
 
+    @JsonDeserialize(using = BooleanToIntDeserializer.class)
+    private Boolean resourceFlag;
+
     @TableLogic
     private int del;
 

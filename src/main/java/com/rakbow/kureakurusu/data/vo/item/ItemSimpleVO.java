@@ -33,6 +33,7 @@ public class ItemSimpleVO {
     @AutoMapping(target = "currency", qualifiedByName = "getCurrency")
     private String region;
     private String remark;
+    private Boolean resourceFlag;
 
     private String createdAt;
 

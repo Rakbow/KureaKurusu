@@ -56,7 +56,6 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
     private final IndexMapper mapper;
     private final Converter converter;
     private final ImageService imgSrv;
-    private final ResourceService resSrv;
     private final QiniuImageUtil qiniuImageUtil;
 
     public IndexVO detail(long id) {
@@ -135,14 +134,7 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
     @Transactional(readOnly = true)
     @Search
     public SearchResult<IndexElementItemVO> getItems(IndexItemSearchQueryDTO dto) {
-        SearchResult<IndexElementItemVO> res;
-        if (StringUtil.isNotBlank(dto.getGroupField())) {
-            res = getGroupedItem(dto);
-        } else {
-            res = getSortedItem(dto);
-        }
-        getLocalResourceCompletedFlag(res.data);
-        return res;
+        return dto.groupMode() ? getGroupedItem(dto) : getSortedItem(dto);
     }
 
     @SneakyThrows
@@ -188,12 +180,6 @@ public class IndexService extends ServiceImpl<IndexMapper, Index> {
         });
 
         return new SearchResult<>(elements, total);
-    }
-
-    private void getLocalResourceCompletedFlag(List<IndexElementItemVO> items) {
-        LoginUser user = UserContextHolder.getCurrentUser();
-        if (!user.isAdmin()) return;
-        resSrv.getLocalResourceCompletedFlag(items);
     }
 
     //region temp

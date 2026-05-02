@@ -15,6 +15,7 @@
         i.barcode,
         i.catalog_id,
         idx_e.remark,
+        i.resource_flag,
         e.id                                                   as entry_id,
         e.name                                                 as entry_name,
         COALESCE(NULLIF(e.name_zh, ''), NULLIF(e.name_en, '')) as entry_sub_name,
@@ -33,6 +34,9 @@
             <foreach item="entryId" collection="param.entries" separator="," open="(" close=")">
                 #{entryId}
             </foreach>
+        </if>
+        <if test="param.onlyResource">
+            and i.resource_flag = 1
         </if>
         order by e.id, i.release_date
         limit #{param.offset}, #{param.size}
@@ -54,6 +58,9 @@
                 #{entryId}
             </foreach>
         </if>
+        <if test="param.onlyResource">
+            and i.resource_flag = 1
+        </if>
     </select>
 
     <select id="getSortedItem" resultType="com.rakbow.kureakurusu.data.vo.item.ItemSimpleVO">
@@ -67,6 +74,7 @@
         i.barcode,
         i.catalog_id,
         idx_e.remark,
+        i.resource_flag,
         DATE_FORMAT(idx_e.created_at, '%Y/%m/%d %H:%i:%s') as createdAt
         from r4_index idx
         inner join r4_index_element idx_e on idx_e.index_id = idx.id
@@ -106,6 +114,9 @@
             <foreach item="entryId" collection="param.entries" open="(" separator="," close=")">
                 #{entryId}
             </foreach>
+        </if>
+        <if test="param.onlyResource">
+            and i.resource_flag = 1
         </if>
         order by
         <choose>
@@ -164,6 +175,9 @@
             <foreach item="entryId" collection="param.entries" open="(" separator="," close=")">
                 #{entryId}
             </foreach>
+        </if>
+        <if test="param.onlyResource">
+            and i.resource_flag = 1
         </if>
     </select>
 

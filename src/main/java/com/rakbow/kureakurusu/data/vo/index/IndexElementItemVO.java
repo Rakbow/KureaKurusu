@@ -24,7 +24,7 @@ public class IndexElementItemVO {
     private String currency;
     private String region;
     private String remark;
-    private Boolean completedFlag;
+    private Boolean resourceFlag;
 
     private Long entryId;
     private String entryName;

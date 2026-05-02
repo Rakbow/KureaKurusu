@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.dto;
 
+import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,13 +24,14 @@ public class IndexItemSearchQueryDTO extends ListQueryDTO {
 
     private Integer type;
     private Integer subType;
+    private boolean onlyResource;
     private Integer releaseType;
     private String region;
     private String barcode;
     private String catalogId;
 
-    public boolean hasRelatedEntries() {
-        return !this.entries.isEmpty();
+    public boolean groupMode() {
+        return StringUtil.isNotBlank(super.getGroupField());
     }
 
 }

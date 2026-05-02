@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
-import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateDetailDTO;
 import com.rakbow.kureakurusu.data.dto.UpdateStatusDTO;
 import com.rakbow.kureakurusu.data.entity.Entry;
@@ -122,22 +121,6 @@ public class GeneralController {
     @PostMapping("links")
     public R links(@RequestBody EntityDTO dto) {
         return R.ok(srv.links(dto.entityType(), dto.entityId()));
-    }
-
-    @SneakyThrows
-    @PostMapping("local-path")
-    @Permission(FILE_LOCAL_PATH)
-    public R localPath(@RequestBody EntityDTO dto) {
-        srv.localPath(dto);
-        return R.ok();
-    }
-
-    @SneakyThrows
-    @PostMapping("local-completed-flag-update")
-    @Permission(FILE_LOCAL_FLAG_UPDATE)
-    public R updateLocalResourceCompletedFlag(@RequestBody EntityResourceInfoUpdateDTO dto) {
-        srv.updateLocalResourceCompletedFlag(dto);
-        return R.ok();
     }
 
     //endregion
