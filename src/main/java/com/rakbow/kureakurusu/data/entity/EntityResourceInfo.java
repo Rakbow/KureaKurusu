@@ -2,6 +2,7 @@ package com.rakbow.kureakurusu.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.rakbow.kureakurusu.data.enums.EntityResourceType;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
 import lombok.Data;
 import tools.jackson.databind.annotation.JsonDeserialize;
@@ -19,8 +20,8 @@ public class EntityResourceInfo {
     private Integer entityType;
     private Integer entitySubType;
     private Long entityId;
+    private EntityResourceType type;
     private String path;
-    @JsonDeserialize(using = BooleanToIntDeserializer.class)
-    private Boolean completedFlag;
+    private String remark;
 
 }

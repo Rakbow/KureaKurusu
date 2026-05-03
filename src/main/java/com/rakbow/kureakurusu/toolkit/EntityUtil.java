@@ -47,6 +47,16 @@ public class EntityUtil {
         return Long.parseLong(redisUtil.get(key).toString());
     }
 
+    /**
+     * EntityUtil.matchAndAssign(
+     *                 infos,
+     *                 items,
+     *                 info -> info.getEntityType().intValue() == EntityType.ITEM.getValue(),
+     *                 EntityResourceInfo::getEntityId,
+     *                 IndexElementItemVO::getId,
+     *                 (info, item) -> item.setResourceFlag(info.getCompletedFlag())
+     *         );
+     * */
     public static <S, T, K> void matchAndAssign(
             List<S> sourceList,
             List<T> targetList,

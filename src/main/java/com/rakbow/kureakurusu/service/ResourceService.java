@@ -6,10 +6,9 @@ import com.rakbow.kureakurusu.dao.ItemMapper;
 import com.rakbow.kureakurusu.data.dto.EntityResourceInfoUpdateDTO;
 import com.rakbow.kureakurusu.data.entity.EntityResourceInfo;
 import com.rakbow.kureakurusu.data.entity.item.Item;
+import com.rakbow.kureakurusu.data.enums.EntityResourceType;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.enums.ItemType;
-import com.rakbow.kureakurusu.data.vo.index.IndexElementItemVO;
-import com.rakbow.kureakurusu.toolkit.EntityUtil;
 import com.rakbow.kureakurusu.toolkit.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -19,8 +18,8 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Rakbow
@@ -40,12 +39,19 @@ public class ResourceService {
      */
     @SneakyThrows
     public void getLocalPath(int entityType, int entitySubType, long entityId) {
+        // windows system only
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (!osName.contains("windows")) {
+            throw new Exception(STR."This feature is only supported on Windows operating system. Current OS: \{osName}");
+        }
+        
         if (entityType != EntityType.ITEM.getValue()) throw new Exception("Entity type error");
         if (entitySubType != ItemType.ALBUM.getValue()) throw new Exception("Entity Sub type error");
 
         EntityResourceInfo info = entityResourceInfoMapper.selectOne(new LambdaUpdateWrapper<>() {{
             eq(EntityResourceInfo::getEntityType, entityType);
             eq(EntityResourceInfo::getEntityId, entityId);
+            eq(EntityResourceInfo::getType, EntityResourceType.LOCAL.getValue());
         }});
         if (Objects.isNull(info)) {
             Item item = itemMapper.selectById(entityId);
@@ -56,6 +62,7 @@ public class ResourceService {
             info.setEntityType(entityType);
             info.setEntitySubType(entitySubType);
             info.setEntityId(entityId);
+            info.setType(EntityResourceType.LOCAL);
             info.setPath(STR."\{releasePath}/\{folderName}");
             entityResourceInfoMapper.insert(info);
 
@@ -68,8 +75,23 @@ public class ResourceService {
                 .normalize();
         Files.createDirectories(path);
         Files.createDirectories(ripPath);
-        new ProcessBuilder("explorer.exe", path.toString()).start();
-        new ProcessBuilder("explorer.exe", ripPath.toString()).start();
+        
+        // 异步打开资源管理器
+        CompletableFuture.runAsync(() -> {
+            try {
+                new ProcessBuilder("explorer.exe", path.toString()).start();
+            } catch (Exception e) {
+                throw new RuntimeException(STR."Failed to open path: \{path}", e);
+            }
+        });
+        
+        CompletableFuture.runAsync(() -> {
+            try {
+                new ProcessBuilder("explorer.exe", ripPath.toString()).start();
+            } catch (Exception e) {
+                throw new RuntimeException(STR."Failed to open rip path: \{ripPath}", e);
+            }
+        });
     }
 
     @SneakyThrows
@@ -94,23 +116,6 @@ public class ResourceService {
 
         // 年月日
         return STR."/\{year}/\{month}/\{day}";
-    }
-
-    @SneakyThrows
-    public void getLocalResourceCompletedFlag(List<IndexElementItemVO> items) {
-        List<Long> ids = items.stream().map(IndexElementItemVO::getId).toList();
-        List<EntityResourceInfo> infos = entityResourceInfoMapper.selectList(new LambdaUpdateWrapper<>() {{
-            eq(EntityResourceInfo::getEntityType, EntityType.ITEM.getValue());
-            in(EntityResourceInfo::getEntityId, ids);
-        }});
-        EntityUtil.matchAndAssign(
-                infos,
-                items,
-                info -> info.getEntityType().intValue() == EntityType.ITEM.getValue(),
-                EntityResourceInfo::getEntityId,
-                IndexElementItemVO::getId,
-                (info, item) -> item.setResourceFlag(info.getCompletedFlag())
-        );
     }
 
     @SneakyThrows
