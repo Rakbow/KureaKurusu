@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rakbow
@@ -18,6 +19,12 @@ public class SearchResult<T> {
 
     public SearchResult(List<T> data, long total) {
         this.total = total;
+        this.data = data;
+    }
+
+    public SearchResult(List<T> data) {
+        if (Objects.isNull(data)) data = new ArrayList<>();
+        this.total = data.size();
         this.data = data;
     }
 

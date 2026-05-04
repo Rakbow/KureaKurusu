@@ -32,6 +32,9 @@ public interface PermissionConstant {
 
     String FILE_LOCAL_PATH = "resource:file:local-path";
     String FILE_LOCAL_FLAG_UPDATE = "resource:file:local-flag-update";
+    String RESOURCE_UPDATE = "resource:info:update";
+    String RESOURCE_CREATE = "resource:info:add";
+    String RESOURCE_DELETE = "resource:info:delete";
 
     String ENTITY_STATUS_UPDATE = "entity:status:update";
     String ENTITY_DETAIL_UPDATE = "entity:detail:update";
