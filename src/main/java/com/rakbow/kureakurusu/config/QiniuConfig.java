@@ -17,7 +17,7 @@ public class QiniuConfig {
 
     @Bean
     public Configuration qiniuConfiguration() {
-        return Configuration.create(Region.autoRegion());
+        return Configuration.create(Region.huanan());
     }
 
     /**
