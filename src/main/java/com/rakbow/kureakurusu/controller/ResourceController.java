@@ -4,14 +4,10 @@ import com.rakbow.kureakurusu.annotation.Permission;
 import com.rakbow.kureakurusu.data.common.R;
 import com.rakbow.kureakurusu.data.dto.CommonDeleteDTO;
 import com.rakbow.kureakurusu.data.dto.EntityDTO;
-import com.rakbow.kureakurusu.data.dto.ImageDTO;
 import com.rakbow.kureakurusu.data.dto.ResourceDTO;
-import com.rakbow.kureakurusu.data.entity.Index;
 import com.rakbow.kureakurusu.service.ResourceService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import static com.rakbow.kureakurusu.data.constant.PermissionConstant.*;
@@ -66,8 +62,8 @@ public class ResourceController {
     }
 
     @PostMapping("list")
-    public R list(@RequestBody ResourceDTO.ResourceInfoCommonDTO dto) {
-        return R.ok(srv.list(dto.entityType(), dto.entityId()));
+    public R list(@RequestBody ResourceDTO.ResourceInfoListQueryDTO dto) {
+        return R.ok(srv.list(dto.getEntityType(), dto.getEntityId()));
     }
 
 }

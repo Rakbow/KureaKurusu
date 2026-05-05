@@ -1,5 +1,6 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.enums.EntityResourceType;
@@ -13,7 +14,7 @@ import lombok.Data;
 @TableName(value = "r5_resource_info", autoResultMap = true)
 public class ResourceInfo {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
     private Integer entityType;
     private Long entityId;

@@ -1,8 +1,6 @@
 package com.rakbow.kureakurusu.data.entity;
 
-import com.baomidou.mybatisplus.annotation.OrderBy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
@@ -19,6 +17,7 @@ import lombok.NoArgsConstructor;
 @TableName("r6_role")
 public class Role {
 
+    @TableId(type = IdType.AUTO)
     @OrderBy
     private Long id;
     @NotBlank(message = "{entity.crud.name.required_field}")

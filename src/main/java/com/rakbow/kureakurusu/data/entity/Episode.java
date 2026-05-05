@@ -1,6 +1,8 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.enums.EntityType;
 import com.rakbow.kureakurusu.data.entity.item.Item;
@@ -28,6 +30,7 @@ import lombok.*;
 })
 public class Episode extends Entity {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
     private int relatedType;//Album Product
     private long relatedId;//AlbumDisc.id Product.id

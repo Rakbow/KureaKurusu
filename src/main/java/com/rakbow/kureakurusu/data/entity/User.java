@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kureakurusu.data.dto.UserRegisterDTO;
 import com.rakbow.kureakurusu.toolkit.CommonUtil;
@@ -16,6 +18,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @TableName(value = "r1_sys_user", autoResultMap = true)
 public class User {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String username;
     private String password;

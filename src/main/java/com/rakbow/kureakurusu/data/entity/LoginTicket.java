@@ -1,5 +1,7 @@
 package com.rakbow.kureakurusu.data.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import com.rakbow.kureakurusu.toolkit.jackson.BooleanToIntDeserializer;
@@ -18,6 +20,7 @@ import java.util.Date;
 @TableName(value = "r1_sys_login_ticket", autoResultMap = true)
 public class LoginTicket {
 
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String ticket;
     private long uid;
